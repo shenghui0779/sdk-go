@@ -1,2 +1,2 @@
 # gochat
-微信平台 Golang SKD
+微信平台 Golang SDK
