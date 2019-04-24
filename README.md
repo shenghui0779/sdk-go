@@ -1,8 +1,7 @@
 # gochat
 
 [![golang](https://img.shields.io/badge/Language-Go-green.svg?style=flat)](https://golang.org)
-[![GoDoc](https://godoc.org/github.com/IIInsomnia/yiigo?status.svg)](https://godoc.org/github.com/IIInsomnia/yiigo)
-[![GitHub release](https://img.shields.io/github/release/IIInsomnia/gochat.svg)](https://github.com/IIInsomnia/gochat/releases/latest)
+[![GoDoc](https://godoc.org/github.com/iiinsomnia/gochat?status.svg)](https://godoc.org/github.com/iiinsomnia/gochat)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
 微信平台 Golang SDK
