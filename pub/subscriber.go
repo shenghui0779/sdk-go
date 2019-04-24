@@ -5,16 +5,15 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/iiinsomnia/yiigo"
+	"github.com/iiinsomnia/gochat/utils"
 	"github.com/tidwall/gjson"
-	"go.uber.org/zap"
 )
 
-// MaxUserListCount 用户列表的最大数目
-const MaxUserListCount = 10000
+// MaxSubscriberListCount 公众号订阅者列表的最大数目
+const MaxSubscriberListCount = 10000
 
-// WXPubUserInfo 微信公众号用户信息
-type WXPubUserInfo struct {
+// Subscriber 微信公众号订阅者信息
+type Subscriber struct {
 	Subscribe      int     `json:"subscribe"`
 	OpenID         string  `json:"openid"`
 	NickName       string  `json:"nickName"`
@@ -34,49 +33,43 @@ type WXPubUserInfo struct {
 	QRSceneStr     string  `json:"qr_scene_str"`
 }
 
-// WXPubUserList 微信公众号用户列表
-type WXPubUserList struct {
+// SubscriberList 微信公众号订阅者列表
+type SubscriberList struct {
 	Total      int                 `json:"total"`
 	Count      int                 `json:"count"`
 	Data       map[string][]string `json:"data"`
 	NextOpenID string              `json:"next_openid"`
 }
 
-// GetWXPubUserInfo 获取微信公众号用户信息
-func GetWXPubUserInfo(accessToken, openid string) (*WXPubUserInfo, error) {
-	resp, err := yiigo.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN", accessToken, openid))
+// GetSubscriberInfo 获取微信公众号订阅者信息
+func GetSubscriberInfo(accessToken, openid string) (*Subscriber, error) {
+	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN", accessToken, openid))
 
 	if err != nil {
-		yiigo.Logger.Error("get wxpub userinfo error", zap.String("error", err.Error()))
-
 		return nil, err
 	}
 
 	r := gjson.ParseBytes(resp)
 
 	if r.Get("errcode").Int() != 0 {
-		yiigo.Logger.Error("get wxpub userinfo error", zap.ByteString("resp", resp))
-
 		return nil, errors.New(r.Get("errmsg").String())
 	}
 
-	reply := new(WXPubUserInfo)
+	reply := new(Subscriber)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
-		yiigo.Logger.Error("unmarshal wxpub userinfo error", zap.String("error", err.Error()))
-
 		return nil, err
 	}
 
 	return reply, nil
 }
 
-// BatchGetWXPubUserInfo 批量获取微信公众号用户信息
-func BatchGetWXPubUserInfo(accessToken string, openid ...string) ([]*WXPubUserInfo, error) {
+// BatchGetSubscriberInfo 批量获取微信公众号订阅者信息
+func BatchGetSubscriberInfo(accessToken string, openid ...string) ([]*Subscriber, error) {
 	l := len(openid)
 
 	if l == 0 {
-		return []*WXPubUserInfo{}, nil
+		return []*Subscriber{}, nil
 	}
 
 	userList := make([]map[string]string, 0, l)
@@ -91,47 +84,39 @@ func BatchGetWXPubUserInfo(accessToken string, openid ...string) ([]*WXPubUserIn
 	b, err := json.Marshal(map[string][]map[string]string{"user_list": userList})
 
 	if err != nil {
-		yiigo.Logger.Error("marshal batch get wxpub userinfo req body error", zap.String("error", err.Error()))
-
 		return nil, err
 	}
 
-	resp, err := yiigo.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=%s", accessToken), b, yiigo.WithHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
-		yiigo.Logger.Error("batch get wxpub userinfo error", zap.String("error", err.Error()))
-
 		return nil, err
 	}
 
 	r := gjson.ParseBytes(resp)
 
 	if r.Get("errcode").Int() != 0 {
-		yiigo.Logger.Error("batch get wxpub userinfo error", zap.ByteString("resp", resp))
-
 		return nil, errors.New(r.Get("errmsg").String())
 	}
 
-	reply := make(map[string][]*WXPubUserInfo)
+	reply := make(map[string][]*Subscriber)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
-		yiigo.Logger.Error("unmarshal batch wxpub userinfo error", zap.String("error", err.Error()))
-
 		return nil, err
 	}
 
 	return reply["user_info_list"], nil
 }
 
-// GetUserList 获取微信公众号用户列表
-func GetWXPubUserList(accessToken string, nextOpenID ...string) (*WXPubUserList, error) {
+// GetSubscriberList 获取微信公众号订阅者列表
+func GetSubscriberList(accessToken string, nextOpenID ...string) (*SubscriberList, error) {
 	url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s", accessToken)
 
 	if len(nextOpenID) > 0 {
 		url = fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s", accessToken, nextOpenID[0])
 	}
 
-	resp, err := yiigo.HTTPGet(url)
+	resp, err := utils.HTTPGet(url)
 
 	if err != nil {
 		return nil, err
@@ -140,16 +125,12 @@ func GetWXPubUserList(accessToken string, nextOpenID ...string) (*WXPubUserList,
 	r := gjson.ParseBytes(resp)
 
 	if r.Get("errcode").Int() != 0 {
-		yiigo.Logger.Error("get wxpub user list error", zap.ByteString("resp", resp))
-
 		return nil, errors.New(r.Get("errmsg").String())
 	}
 
-	reply := new(WXPubUserList)
+	reply := new(SubscriberList)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
-		yiigo.Logger.Error("unmarshal wxpub user list error", zap.String("error", err.Error()))
-
 		return nil, err
 	}
 

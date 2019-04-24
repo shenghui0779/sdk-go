@@ -1,12 +1,6 @@
 package pub
 
-import (
-	"time"
-
-	"github.com/iiinsomnia/gochat/utils"
-	"meipian.cn/printapi/wechat"
-)
-
+// WXPub 微信公众号
 type WXPub struct {
 	AccountID      string
 	AppID          string
@@ -15,74 +9,36 @@ type WXPub struct {
 	EncodingAESKey string
 }
 
-// UseTextReplyMsg returns a new wxpub text reply msg
-func (wx *WXPub) UseTextReplyMsg(openid, content string) *TextReplyMsg {
-	m := &TextReplyMsg{
-		ReplyMsgHeader: ReplyMsgHeader{
-			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(wx.AccountID),
-			CreateTime:   time.Now().Unix(),
-			MsgType:      utils.CDATA("text"),
-		},
+// Sns returns new sns
+func (wx *WXPub) Sns() *Sns {
+	return &Sns{
+		appid:     wx.AppID,
+		appsecret: wx.AppSecret,
 	}
-
-	m.Content = utils.CDATA(content)
-
-	return m
 }
 
-// NewImageReplyMsg returns a new wxpub image reply msg
-func NewImageReplyMsg(openid, mediaID string) *ImageReplyMsg {
-	settings := wechat.GetSettingsWithChannel(wechat.WXPub)
-
-	m := &ImageReplyMsg{
-		ReplyMsgHeader: ReplyMsgHeader{
-			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(settings.AccountID),
-			CreateTime:   time.Now().Unix(),
-			MsgType:      utils.CDATA("text"),
-		},
+// CgiBin returns new cgi-bin
+func (wx *WXPub) CgiBin() *CgiBin {
+	return &CgiBin{
+		appid:     wx.AppID,
+		appsecret: wx.AppSecret,
 	}
-
-	m.Image.MediaID = utils.CDATA(mediaID)
-
-	return m
 }
 
-// NewVoiceReplyMsg returns a new wxpub voice reply msg
-func NewVoiceReplyMsg(openid, mediaID string) *VoiceReplyMsg {
-	settings := wechat.GetSettingsWithChannel(wechat.WXPub)
-
-	m := &VoiceReplyMsg{
-		ReplyMsgHeader: ReplyMsgHeader{
-			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(settings.AccountID),
-			CreateTime:   time.Now().Unix(),
-			MsgType:      utils.CDATA("text"),
-		},
+// MsgChiper returns new msg chiper
+func (wx *WXPub) MsgChiper() *MsgChiper {
+	return &MsgChiper{
+		appid:          wx.AppID,
+		encodingAESKey: wx.EncodingAESKey,
 	}
-
-	m.Voice.MediaID = utils.CDATA(mediaID)
-
-	return m
 }
 
-// NewVideoReplyMsg returns a new wxpub video reply msg
-func NewVideoReplyMsg(openid, mediaID, title, desc string) *VideoReplyMsg {
-	settings := wechat.GetSettingsWithChannel(wechat.WXPub)
-
-	m := &VideoReplyMsg{
-		ReplyMsgHeader: ReplyMsgHeader{
-			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(settings.AccountID),
-			CreateTime:   time.Now().Unix(),
-			MsgType:      utils.CDATA("text"),
-		},
+// Reply returns new reply
+func (wx *WXPub) Reply() *Reply {
+	return &Reply{
+		accountID:      wx.AccountID,
+		appid:          wx.AppID,
+		signToken:      wx.SignToken,
+		encodingAESKey: wx.EncodingAESKey,
 	}
-
-	m.Video.MediaID = utils.CDATA(mediaID)
-	m.Video.Title = utils.CDATA(title)
-	m.Video.Description = utils.CDATA(desc)
-
-	return m
 }

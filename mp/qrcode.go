@@ -6,9 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/iiinsomnia/yiigo"
 	"github.com/tidwall/gjson"
-	"meipian.cn/printapi/wechat/utils"
 )
 
 type wxaqrcodeOptions struct {
@@ -87,7 +85,7 @@ func (q *WXAQRCode) CreateWXAQRCode(path string, options ...WXAQRCodeOption) ([]
 		}
 	}
 
-	body := yiigo.X{"path": path}
+	body := utils.X{"path": path}
 
 	if o.width != 0 {
 		body["width"] = o.width
@@ -99,7 +97,7 @@ func (q *WXAQRCode) CreateWXAQRCode(path string, options ...WXAQRCodeOption) ([]
 		return nil, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=%s", q.accessToken), b, yiigo.WithHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=%s", q.accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -124,7 +122,7 @@ func (q *WXAQRCode) GetWXACode(path string, options ...WXAQRCodeOption) ([]byte,
 		}
 	}
 
-	body := yiigo.X{"path": path}
+	body := utils.X{"path": path}
 
 	if o.width != 0 {
 		body["width"] = o.width
@@ -148,7 +146,7 @@ func (q *WXAQRCode) GetWXACode(path string, options ...WXAQRCodeOption) ([]byte,
 		return nil, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacode?access_token=%s", q.accessToken), b, yiigo.WithHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacode?access_token=%s", q.accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -173,7 +171,7 @@ func (q *WXAQRCode) GetWXACodeUnlimit(scene string, options ...WXAQRCodeOption) 
 		}
 	}
 
-	body := yiigo.X{"scene": scene}
+	body := utils.X{"scene": scene}
 
 	if o.page != "" {
 		body["page"] = o.page
@@ -201,7 +199,7 @@ func (q *WXAQRCode) GetWXACodeUnlimit(scene string, options ...WXAQRCodeOption) 
 		return nil, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s", q.accessToken), b, yiigo.WithHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s", q.accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err

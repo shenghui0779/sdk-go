@@ -35,9 +35,9 @@ type WaterMark struct {
 	AppID     string `json:"appid"`
 }
 
-// BizData ...
+// BizDataCrypt ...
 type BizDataCrypt struct {
-	appID string
+	appid string
 	data  []byte
 }
 
@@ -79,7 +79,7 @@ func (b *BizDataCrypt) GetUserData() (*UserData, error) {
 		return nil, err
 	}
 
-	if userData.WaterMark.AppID != b.appID {
+	if userData.WaterMark.AppID != b.appid {
 		return nil, utils.ErrIllegaAppID
 	}
 
@@ -93,7 +93,7 @@ func (b *BizDataCrypt) GetPhoneData() (*PhoneData, error) {
 		return nil, err
 	}
 
-	if phoneData.WaterMark.AppID != b.appID {
+	if phoneData.WaterMark.AppID != b.appid {
 		return nil, utils.ErrIllegaAppID
 	}
 

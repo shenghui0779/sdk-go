@@ -10,8 +10,8 @@ import (
 
 // CgiBin ...
 type CgiBin struct {
-	appID     string
-	appSecret string
+	appid     string
+	appsecret string
 	reply     *cgiBinReply
 }
 
@@ -25,7 +25,7 @@ type cgiBinReply struct {
 
 // GetAccessToken 获取普通AccessToken
 func (p *CgiBin) GetAccessToken() error {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", p.appID, p.appSecret))
+	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", p.appid, p.appsecret))
 
 	if err != nil {
 		return err

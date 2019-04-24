@@ -1,0 +1,3 @@
+package: github.com/iiinsomnia/gochat
+import:
+- package: github.com/tidwall/gjson

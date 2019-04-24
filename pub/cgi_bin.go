@@ -1,4 +1,4 @@
-package gochat
+package pub
 
 import (
 	"encoding/json"
@@ -10,13 +10,13 @@ import (
 
 // CgiBin ...
 type CgiBin struct {
-	appID     string
-	appSecret string
-	reply     *CgiBinReply
+	appid     string
+	appsecret string
+	reply     *cgiBinReply
 }
 
-// CgiBinReply ...
-type CgiBinReply struct {
+// cgiBinReply ...
+type cgiBinReply struct {
 	AccessToken string `json:"access_token"`
 	Ticket      string `json:"ticket"`
 	ExpiresIn   int64  `json:"expires_in"`
@@ -26,13 +26,13 @@ type CgiBinReply struct {
 
 // GetAccessToken 获取普通AccessToken
 func (p *CgiBin) GetAccessToken() error {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", p.appID, p.appSecret))
+	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", p.appid, p.appsecret))
 
 	if err != nil {
 		return err
 	}
 
-	reply := new(CgiBinReply)
+	reply := new(cgiBinReply)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
 		return err
@@ -55,7 +55,7 @@ func (p *CgiBin) GetTicket(accessToken string) error {
 		return err
 	}
 
-	reply := new(CgiBinReply)
+	reply := new(cgiBinReply)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
 		return err
@@ -83,14 +83,4 @@ func (p *CgiBin) Ticket() string {
 // ExpiresIn ...
 func (p *CgiBin) ExpiresIn() int64 {
 	return p.reply.ExpiresIn
-}
-
-// NewCgiBin returns new cgi-bin
-func NewCgiBin(channel WXChannel) *CgiBin {
-	setting := GetConfigWithChannel(channel)
-
-	return &CgiBin{
-		appID:     setting.AppID,
-		appSecret: setting.AppSecret,
-	}
 }

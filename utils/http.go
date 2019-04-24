@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
@@ -13,14 +14,30 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
 // defaultHTTPTimeout default http request timeout
-const efaultHTTPTimeout = 10 * time.Second
+const defaultHTTPTimeout = 10 * time.Second
 
 // errCookieFileNotFound cookie file not found error
 var errCookieFileNotFound = errors.New("cookie file not found")
+
+// ErrXMLWriterNil ...
+var ErrXMLWriterNil = errors.New("nil xml writer")
+
+// ErrXMLReaderNil ...
+var ErrXMLReaderNil = errors.New("nil xml reader")
+
+// WXML 微信返回结果
+type WXML map[string]string
+
+var bufferPool = sync.Pool{
+	New: func() interface{} {
+		return bytes.NewBuffer(make([]byte, 0, 16<<10)) // 16KB
+	},
+}
 
 // httpClientOptions http client options
 type httpClientOptions struct {
@@ -434,6 +451,33 @@ func (h *HTTPClient) Post(url string, body []byte, options ...HTTPRequestOption)
 	return b, nil
 }
 
+func (h *HTTPClient) PostXML(url string, body WXML, options ...HTTPRequestOption) (WXML, error) {
+	buf := bufferPool.Get().(*bytes.Buffer)
+	buf.Reset()
+
+	defer bufferPool.Put(buf)
+
+	if err := FormatMap2XML(buf, body); err != nil {
+		return nil, err
+	}
+
+	options = append(options, WithRequestHeader("Content-Type", "text/xml; charset=utf-8"))
+
+	resp, err := h.Post(url, buf.Bytes(), options...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	wxml, err := ParseXML2Map(bytes.NewReader(resp))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return wxml, nil
+}
+
 // defaultHTTPClient default http client
 var defaultHTTPClient = &HTTPClient{
 	client: &http.Client{
@@ -509,6 +553,106 @@ func HTTPGet(url string, options ...HTTPRequestOption) ([]byte, error) {
 // HTTPPost http post request
 func HTTPPost(url string, body []byte, options ...HTTPRequestOption) ([]byte, error) {
 	return defaultHTTPClient.Post(url, body, options...)
+}
+
+// HTTPPostXML http xml post request
+func HTTPPostXML(url string, body WXML, options ...HTTPRequestOption) (WXML, error) {
+	return defaultHTTPClient.PostXML(url, body, options...)
+}
+
+// FormatMap2XML format map to xml
+func FormatMap2XML(xmlWriter io.Writer, m WXML) (err error) {
+	if xmlWriter == nil {
+		err = ErrXMLWriterNil
+
+		return
+	}
+
+	if _, err = io.WriteString(xmlWriter, "<xml>"); err != nil {
+		return
+	}
+
+	for k, v := range m {
+		if _, err = io.WriteString(xmlWriter, fmt.Sprintf("<%s>", k)); err != nil {
+			return
+		}
+
+		if err = xml.EscapeText(xmlWriter, []byte(v)); err != nil {
+			return
+		}
+
+		if _, err = io.WriteString(xmlWriter, fmt.Sprintf("</%s>", k)); err != nil {
+			return
+		}
+	}
+
+	if _, err = io.WriteString(xmlWriter, "</xml>"); err != nil {
+		return
+	}
+
+	return
+}
+
+// ParseXML2Map parse xml to map
+func ParseXML2Map(xmlReader io.Reader) (m WXML, err error) {
+	if xmlReader == nil {
+		err = ErrXMLReaderNil
+
+		return
+	}
+
+	m = make(WXML)
+
+	var (
+		d     = xml.NewDecoder(xmlReader)
+		tk    xml.Token
+		depth = 0 // current xml.Token depth
+		key   string
+		buf   bytes.Buffer
+	)
+
+	for {
+		tk, err = d.Token()
+
+		if err != nil {
+			if err == io.EOF {
+				err = nil
+
+				return
+			}
+
+			return
+		}
+
+		switch v := tk.(type) {
+		case xml.StartElement:
+			depth++
+
+			switch depth {
+			case 2:
+				key = v.Name.Local
+				buf.Reset()
+			case 3:
+				if err = d.Skip(); err != nil {
+
+					return
+				}
+
+				depth--
+				key = "" // key == "" indicates that the node with depth==2 has children
+			}
+		case xml.CharData:
+			if depth == 2 && key != "" {
+				buf.Write(v)
+			}
+		case xml.EndElement:
+			if depth == 2 && key != "" {
+				m[key] = buf.String()
+			}
+
+			depth--
+		}
+	}
 }
 
 // mkCookieFile create cookie file

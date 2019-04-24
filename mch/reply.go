@@ -3,7 +3,7 @@ package mch
 import (
 	"encoding/xml"
 
-	"meipian.cn/printapi/wechat/utils"
+	"github.com/iiinsomnia/gochat/utils"
 )
 
 // Reply 回复支付结果

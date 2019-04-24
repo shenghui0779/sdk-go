@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -15,6 +16,19 @@ import (
 
 // ErrIllegaAppID appid illegal
 var ErrIllegaAppID = errors.New("appid is not match")
+
+// X is a convenient alias for a map[string]interface{}.
+type X map[string]interface{}
+
+// CDATA XML CDATA section which is defined as blocks of text that are not parsed by the parser, but are otherwise recognized as markup.
+type CDATA string
+
+// MarshalXML encodes the receiver as zero or more XML elements.
+func (c CDATA) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	return e.EncodeElement(struct {
+		string `xml:",cdata"`
+	}{string(c)}, start)
+}
 
 // NonceStr 随机字符串
 func NonceStr() string {
@@ -40,7 +54,7 @@ func SHA1(s string) string {
 }
 
 // PaySign 生成签名
-func PaySign(m WXML, apiKey string) string {
+func PaySign(m WXML, apikey string) string {
 	l := len(m)
 
 	ks := make([]string, 0, l)
@@ -62,7 +76,7 @@ func PaySign(m WXML, apiKey string) string {
 		}
 	}
 
-	kvs = append(kvs, fmt.Sprintf("key=%s", apiKey))
+	kvs = append(kvs, fmt.Sprintf("key=%s", apikey))
 
 	signature := MD5(strings.Join(kvs, "&"))
 

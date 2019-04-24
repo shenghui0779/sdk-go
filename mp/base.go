@@ -1,26 +1,30 @@
 package mp
 
+// WXMP 微信小程序
 type WXMP struct {
 	AppID     string
 	AppSecret string
 }
 
-func (wx *WXMP) UseSns() *Sns {
+// Sns returns new sns
+func (wx *WXMP) Sns() *Sns {
 	return &Sns{
-		appID:     wx.AppID,
-		appSecret: wx.AppSecret,
+		appid:     wx.AppID,
+		appsecret: wx.AppSecret,
 	}
 }
 
-func (wx *WXMP) UseBizDataCrypt() *BizDataCrypt {
-	return &BizDataCrypt{
-		appID: wx.AppID,
-	}
-}
-
-func (wx *WXMP) UseCgiBin() *CgiBin {
+// CgiBin returns new cgi-bin
+func (wx *WXMP) CgiBin() *CgiBin {
 	return &CgiBin{
-		appID:     wx.AppID,
-		appSecret: wx.AppSecret,
+		appid:     wx.AppID,
+		appsecret: wx.AppSecret,
+	}
+}
+
+// BizDataCrypt returns new bizdatacrypt
+func (wx *WXMP) BizDataCrypt() *BizDataCrypt {
+	return &BizDataCrypt{
+		appid: wx.AppID,
 	}
 }

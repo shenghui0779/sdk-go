@@ -36,42 +36,49 @@ type EventMsg struct {
 }
 
 type MsgChiper struct {
-	appid  string
-	aesKey string
+	appid          string
+	encodingAESKey string
+	msg            *EventMsg
 }
 
 // Decrypt 消息解密，参考微信[加密解密技术方案](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318482&token=&lang=zh_CN)
-func (c *MsgChiper) Decrypt(encrypt string) (*EventMsg, error) {
-	key, err := base64.StdEncoding.DecodeString(c.aesKey + "=")
+func (c *MsgChiper) Decrypt(encrypt string) error {
+	key, err := base64.StdEncoding.DecodeString(c.encodingAESKey + "=")
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	cipherText, err := base64.StdEncoding.DecodeString(encrypt)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	plainText, err := utils.AESCBCDecrypt(cipherText, key)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	appidOffset := len(plainText) - len([]byte(c.appid))
 
 	// 校验APPID
 	if string(plainText[appidOffset:]) != c.appid {
-		return nil, utils.ErrIllegaAppID
+		return utils.ErrIllegaAppID
 	}
 
-	msg := new(EventMsg)
+	m := new(EventMsg)
 
-	if err := xml.Unmarshal(plainText[20:appidOffset], msg); err != nil {
-		return nil, err
+	if err := xml.Unmarshal(plainText[20:appidOffset], m); err != nil {
+		return err
 	}
 
-	return msg, nil
+	c.msg = m
+
+	return nil
+}
+
+func (c *MsgChiper) Msg() *EventMsg {
+	return c.msg
 }
