@@ -45,12 +45,12 @@ func (p *CgiBin) GetAccessToken() error {
 	return nil
 }
 
-// AccessToken ...
+// AccessToken returns access_token
 func (p *CgiBin) AccessToken() string {
 	return p.reply.AccessToken
 }
 
-// ExpiresIn ...
+// ExpiresIn returns expires_in
 func (p *CgiBin) ExpiresIn() int64 {
 	return p.reply.ExpiresIn
 }

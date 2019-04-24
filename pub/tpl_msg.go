@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/iiinsomnia/gochat/utils"
 	"github.com/tidwall/gjson"
 )
 
@@ -82,7 +83,7 @@ func (m *TplMsg) Send(tplID string, data TplMsgData) (int64, error) {
 	return r.Get("msgid").Int(), nil
 }
 
-// NewTplMsg ...
+// NewTplMsg returns new wxpub tpl msg
 func NewTplMsg(openid string) *TplMsg {
 	return &TplMsg{openID: openid}
 }

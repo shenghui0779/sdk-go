@@ -7,7 +7,7 @@ import (
 	"github.com/iiinsomnia/gochat/utils"
 )
 
-// UserData ...
+// UserData 用户数据
 type UserData struct {
 	OpenID    string     `json:"openId"`
 	Language  string     `json:"language"`
@@ -21,7 +21,7 @@ type UserData struct {
 	WaterMark *WaterMark `json:"watermark"`
 }
 
-// PhoneData ...
+// PhoneData 用户手机号绑定数据
 type PhoneData struct {
 	PhoneNumber     string     `json:"phoneNumber"`
 	PurePhoneNumber string     `json:"purePhoneNumber"`
@@ -29,19 +29,19 @@ type PhoneData struct {
 	WaterMark       *WaterMark `json:"watermark"`
 }
 
-// WaterMark ...
+// WaterMark 水印
 type WaterMark struct {
 	Timestamp int64  `json:"timestamp"`
 	AppID     string `json:"appid"`
 }
 
-// BizDataCrypt ...
+// BizDataCrypt 数据解析
 type BizDataCrypt struct {
 	appid string
 	data  []byte
 }
 
-// Decrypt ...
+// Decrypt 数据解密
 func (b *BizDataCrypt) Decrypt(sessionKey, iv, bizData string) error {
 	aesKey, err := base64.StdEncoding.DecodeString(sessionKey)
 
@@ -72,6 +72,7 @@ func (b *BizDataCrypt) Decrypt(sessionKey, iv, bizData string) error {
 	return nil
 }
 
+// GetUserData 获取用户数据（需先解密）
 func (b *BizDataCrypt) GetUserData() (*UserData, error) {
 	userData := new(UserData)
 
@@ -86,6 +87,7 @@ func (b *BizDataCrypt) GetUserData() (*UserData, error) {
 	return userData, nil
 }
 
+// GetPhoneData 获取用户手机号绑定数据（需先解密）
 func (b *BizDataCrypt) GetPhoneData() (*PhoneData, error) {
 	phoneData := new(PhoneData)
 

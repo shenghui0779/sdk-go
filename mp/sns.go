@@ -46,17 +46,17 @@ func (s *Sns) Code2Session(code string) error {
 	return nil
 }
 
-// SessionKey ...
+// SessionKey returns session_key
 func (s *Sns) SessionKey() string {
 	return s.reply.SessionKey
 }
 
-// OpenID ...
+// OpenID returns openid
 func (s *Sns) OpenID() string {
 	return s.reply.OpenID
 }
 
-// UnionID ...
+// UnionID returns unionid
 func (s *Sns) UnionID() string {
 	return s.reply.UnionID
 }

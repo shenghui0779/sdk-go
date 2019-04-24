@@ -13,7 +13,7 @@ type Reply struct {
 	ReturnMsg  utils.CDATA `xml:"return_msg"`
 }
 
-// ReplyOK ...
+// ReplyOK 回复成功
 func ReplyOK() *Reply {
 	return &Reply{
 		ReturnCode: "SUCCESS",
@@ -21,7 +21,7 @@ func ReplyOK() *Reply {
 	}
 }
 
-// ReplyFail ...
+// ReplyFail 回复失败
 func ReplyFail(msg string) *Reply {
 	return &Reply{
 		ReturnCode: "FAIL",

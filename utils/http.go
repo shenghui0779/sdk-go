@@ -24,10 +24,10 @@ const defaultHTTPTimeout = 10 * time.Second
 // errCookieFileNotFound cookie file not found error
 var errCookieFileNotFound = errors.New("cookie file not found")
 
-// ErrXMLWriterNil ...
+// ErrXMLWriterNil error for xml writer nil
 var ErrXMLWriterNil = errors.New("nil xml writer")
 
-// ErrXMLReaderNil ...
+// ErrXMLReaderNil error for xml reader nil
 var ErrXMLReaderNil = errors.New("nil xml reader")
 
 // WXML 微信返回结果

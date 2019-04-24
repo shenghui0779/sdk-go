@@ -62,22 +62,22 @@ func (s *Sns) Code2Token(code string) error {
 	return nil
 }
 
-// AccessToken ...
+// AccessToken returns access_token
 func (s *Sns) AccessToken() string {
 	return s.reply.AccessToken
 }
 
-// RefreshToken ...
+// RefreshToken returns refresh_token
 func (s *Sns) RefreshToken() string {
 	return s.reply.RefreshToken
 }
 
-// ExpiresIn ...
+// ExpiresIn returns expires_in
 func (s *Sns) ExpiresIn() int64 {
 	return s.reply.ExpiresIn
 }
 
-// OpenID ...
+// OpenID returns openid
 func (s *Sns) OpenID() string {
 	return s.reply.OpenID
 }

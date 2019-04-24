@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/iiinsomnia/gochat/utils"
 	"github.com/tidwall/gjson"
 )
 
@@ -214,12 +215,12 @@ func (q *WXAQRCode) GetWXACodeUnlimit(scene string, options ...WXAQRCodeOption) 
 	return resp, nil
 }
 
-// NewWXAQRCode ...
+// NewWXAQRCode returns new wxaqrcode
 func NewWXAQRCode(accessToken string) *WXAQRCode {
 	return &WXAQRCode{accessToken: accessToken}
 }
 
-// MarshalWithNoEscapeHTML ...
+// MarshalWithNoEscapeHTML marshal with no escape HTML
 func MarshalWithNoEscapeHTML(v interface{}) ([]byte, error) {
 	buf := new(bytes.Buffer)
 

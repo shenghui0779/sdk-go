@@ -69,17 +69,17 @@ func (p *CgiBin) GetTicket(accessToken string) error {
 	return nil
 }
 
-// AccessToken ...
+// AccessToken returns access_token
 func (p *CgiBin) AccessToken() string {
 	return p.reply.AccessToken
 }
 
-// Ticket ...
+// Ticket returns ticket
 func (p *CgiBin) Ticket() string {
 	return p.reply.Ticket
 }
 
-// ExpiresIn ...
+// ExpiresIn returns expires_in
 func (p *CgiBin) ExpiresIn() int64 {
 	return p.reply.ExpiresIn
 }
