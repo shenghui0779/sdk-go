@@ -8,14 +8,13 @@ import (
 	"github.com/iiinsomnia/gochat/utils"
 )
 
-// CgiBin ...
+// CgiBin cgi-bin
 type CgiBin struct {
 	appid     string
 	appsecret string
 	reply     *cgiBinReply
 }
 
-// cgiBinReply ...
 type cgiBinReply struct {
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int64  `json:"expires_in"`

@@ -8,7 +8,7 @@ import (
 	"github.com/iiinsomnia/gochat/utils"
 )
 
-// Sns ...
+// Sns sns
 type Sns struct {
 	appid     string
 	appsecret string

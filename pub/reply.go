@@ -13,7 +13,7 @@ import (
 	"github.com/iiinsomnia/gochat/utils"
 )
 
-// DefaultReply 公众号默认自动回复
+// DefaultReply 公众号默认回复
 const DefaultReply = "success"
 
 // ReplyHeader 公众号消息回复公共头

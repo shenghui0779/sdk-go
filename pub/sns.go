@@ -32,7 +32,7 @@ type User struct {
 	Privilege []string `json:"privilege"`
 }
 
-// Sns ...
+// Sns sns
 type Sns struct {
 	appid     string
 	appsecret string
