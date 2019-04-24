@@ -1,13 +1,10 @@
-package wxpub
+package pub
 
 import (
 	"encoding/base64"
 	"encoding/xml"
 
-	"github.com/iiinsomnia/yiigo"
-	"go.uber.org/zap"
-	"meipian.cn/printapi/wechat"
-	"meipian.cn/printapi/wechat/utils"
+	"github.com/iiinsomnia/gochat/utils"
 )
 
 // EventMsg 微信公众号事件消息
@@ -38,52 +35,41 @@ type EventMsg struct {
 	Precision    float64 `xml:"Precision"`
 }
 
-// EncryptMsg 微信公众号加密消息
-type EncryptMsg struct {
-	ToUserName string `xml:"ToUserName"`
-	Encrypt    string `xml:"Encrypt"`
+type MsgChiper struct {
+	appid  string
+	aesKey string
 }
 
-// Decrypt 消息解密，参考微信文档[加密解密技术方案](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318482&token=&lang=zh_CN)
-func (e *EncryptMsg) Decrypt() (*EventMsg, error) {
-	settings := wechat.GetSettingsWithChannel(wechat.WXPub)
-
-	key, err := base64.StdEncoding.DecodeString(settings.EncodingAESKey + "=")
+// Decrypt 消息解密，参考微信[加密解密技术方案](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318482&token=&lang=zh_CN)
+func (c *MsgChiper) Decrypt(encrypt string) (*EventMsg, error) {
+	key, err := base64.StdEncoding.DecodeString(c.aesKey + "=")
 
 	if err != nil {
-		yiigo.Logger.Error("base64.decode wxpub EncodingAESKey error", zap.String("error", err.Error()), zap.String("encrypted_msg", e.Encrypt))
-
 		return nil, err
 	}
 
-	cipherText, err := base64.StdEncoding.DecodeString(e.Encrypt)
+	cipherText, err := base64.StdEncoding.DecodeString(encrypt)
 
 	if err != nil {
-		yiigo.Logger.Error("base64.decode wxpub encrypted_msg error", zap.String("error", err.Error()), zap.String("encrypted_msg", e.Encrypt))
-
 		return nil, err
 	}
 
 	plainText, err := utils.AESCBCDecrypt(cipherText, key)
 
 	if err != nil {
-		yiigo.Logger.Error("decrypt wxpub encrypted_msg error", zap.String("error", err.Error()), zap.String("encrypted_msg", e.Encrypt))
-
 		return nil, err
 	}
 
-	appidOffset := len(plainText) - len([]byte(settings.AppID))
+	appidOffset := len(plainText) - len([]byte(c.appid))
 
 	// 校验APPID
-	if string(plainText[appidOffset:]) != settings.AppID {
+	if string(plainText[appidOffset:]) != c.appid {
 		return nil, utils.ErrIllegaAppID
 	}
 
 	msg := new(EventMsg)
 
 	if err := xml.Unmarshal(plainText[20:appidOffset], msg); err != nil {
-		yiigo.Logger.Error("unmarshal wxpub decrypted_msg error", zap.String("error", err.Error()), zap.ByteString("decrypted_msg", plainText))
-
 		return nil, err
 	}
 

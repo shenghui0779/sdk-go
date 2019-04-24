@@ -87,7 +87,7 @@ func GetConfigWithChannel(channel WXChannel) *WXConfig {
 	v, ok := wxmap.Load(channel)
 
 	if !ok {
-		return nil
+		return new(WXConfig)
 	}
 
 	return v.(*WXConfig)

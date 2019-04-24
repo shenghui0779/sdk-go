@@ -1,12 +1,13 @@
-package wxpay
+package mch
 
 import (
 	"errors"
 
+	"github.com/iiinsomnia/gochat"
+	"github.com/iiinsomnia/gochat/utils"
 	"github.com/iiinsomnia/yiigo"
 	"go.uber.org/zap"
 	"meipian.cn/printapi/wechat"
-	"meipian.cn/printapi/wechat/utils"
 )
 
 // Refund 退款
@@ -20,7 +21,7 @@ type Refund struct {
 	RefundDesc    string
 	RefundAccount string
 	NotifyURL     string
-	Channel       string
+	Channel       gochat.WXChannel
 	wxResp        utils.WXML
 }
 

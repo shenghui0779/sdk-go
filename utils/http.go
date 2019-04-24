@@ -17,7 +17,7 @@ import (
 )
 
 // defaultHTTPTimeout default http request timeout
-const defaultHTTPTimeout = 10 * time.Second
+const efaultHTTPTimeout = 10 * time.Second
 
 // errCookieFileNotFound cookie file not found error
 var errCookieFileNotFound = errors.New("cookie file not found")

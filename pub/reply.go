@@ -1,4 +1,4 @@
-package wxpub
+package pub
 
 import (
 	"crypto/sha1"

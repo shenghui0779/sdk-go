@@ -11,8 +11,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/iiinsomnia/gochat"
 )
 
 // ErrIllegaAppID appid illegal
@@ -42,7 +40,7 @@ func SHA1(s string) string {
 }
 
 // PaySign 生成签名
-func PaySign(m gochat.WXML, apiKey string) string {
+func PaySign(m WXML, apiKey string) string {
 	l := len(m)
 
 	ks := make([]string, 0, l)
@@ -66,7 +64,7 @@ func PaySign(m gochat.WXML, apiKey string) string {
 
 	kvs = append(kvs, fmt.Sprintf("key=%s", apiKey))
 
-	signature := yiigo.MD5(strings.Join(kvs, "&"))
+	signature := MD5(strings.Join(kvs, "&"))
 
 	return strings.ToUpper(signature)
 }

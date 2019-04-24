@@ -1,4 +1,4 @@
-package wxmp
+package mp
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 
 	"github.com/iiinsomnia/yiigo"
 	"github.com/tidwall/gjson"
-	"go.uber.org/zap"
+	"meipian.cn/printapi/wechat/utils"
 )
 
 type wxaqrcodeOptions struct {
@@ -96,24 +96,18 @@ func (q *WXAQRCode) CreateWXAQRCode(path string, options ...WXAQRCodeOption) ([]
 	b, err := MarshalWithNoEscapeHTML(body)
 
 	if err != nil {
-		yiigo.Logger.Error("marshal wxa_qrcode body error", zap.String("error", err.Error()), zap.Any("body", body))
-
 		return nil, err
 	}
 
-	resp, err := yiigo.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=%s", q.accessToken), b, yiigo.WithHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=%s", q.accessToken), b, yiigo.WithHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
-		yiigo.Logger.Error("get wxa_qrcode error", zap.String("error", err.Error()), zap.ByteString("body", b))
-
 		return nil, err
 	}
 
 	r := gjson.ParseBytes(resp)
 
 	if r.Get("errcode").Int() != 0 {
-		yiigo.Logger.Error("get wxa_qrcode error", zap.ByteString("body", b), zap.ByteString("resp", resp))
-
 		return nil, errors.New(r.Get("errmsg").String())
 	}
 
@@ -151,24 +145,18 @@ func (q *WXAQRCode) GetWXACode(path string, options ...WXAQRCodeOption) ([]byte,
 	b, err := MarshalWithNoEscapeHTML(body)
 
 	if err != nil {
-		yiigo.Logger.Error("marshal wxa_code body error", zap.String("error", err.Error()), zap.Any("body", body))
-
 		return nil, err
 	}
 
-	resp, err := yiigo.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacode?access_token=%s", q.accessToken), b, yiigo.WithHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacode?access_token=%s", q.accessToken), b, yiigo.WithHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
-		yiigo.Logger.Error("get wxa_code error", zap.String("error", err.Error()), zap.ByteString("body", b))
-
 		return nil, err
 	}
 
 	r := gjson.ParseBytes(resp)
 
 	if r.Get("errcode").Int() != 0 {
-		yiigo.Logger.Error("get wxa_code error", zap.ByteString("body", b), zap.ByteString("resp", resp))
-
 		return nil, errors.New(r.Get("errmsg").String())
 	}
 
@@ -210,24 +198,18 @@ func (q *WXAQRCode) GetWXACodeUnlimit(scene string, options ...WXAQRCodeOption) 
 	b, err := MarshalWithNoEscapeHTML(body)
 
 	if err != nil {
-		yiigo.Logger.Error("marshal unlimited wxa_code body error", zap.String("error", err.Error()), zap.Any("body", body))
-
 		return nil, err
 	}
 
-	resp, err := yiigo.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s", q.accessToken), b, yiigo.WithHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s", q.accessToken), b, yiigo.WithHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
-		yiigo.Logger.Error("get unlimited wxa_code error", zap.String("error", err.Error()), zap.ByteString("body", b))
-
 		return nil, err
 	}
 
 	r := gjson.ParseBytes(resp)
 
 	if r.Get("errcode").Int() != 0 {
-		yiigo.Logger.Error("get unlimited wxa_code error", zap.ByteString("body", b), zap.ByteString("resp", resp))
-
 		return nil, errors.New(r.Get("errmsg").String())
 	}
 

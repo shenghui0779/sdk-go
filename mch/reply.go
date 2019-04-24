@@ -1,4 +1,4 @@
-package wxpay
+package mch
 
 import (
 	"encoding/xml"

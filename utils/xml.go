@@ -28,8 +28,6 @@ var ErrXMLReaderNil = errors.New("nil xml reader")
 // WXML 微信返回结果
 type WXML map[string]string
 
-var ErrHTTPClientNil = errors.New("nil http client")
-
 var bufferPool = sync.Pool{
 	New: func() interface{} {
 		return bytes.NewBuffer(make([]byte, 0, 16<<10)) // 16KB
@@ -37,9 +35,11 @@ var bufferPool = sync.Pool{
 }
 
 // PostXML XML POST 请求
-func PostXML(client *HTTPClient, url string, body WXML) (WXML, error) {
-	if client == nil {
-		return nil, ErrHTTPClientNil
+func PostXML(url string, body WXML, client ...*HTTPClient) (WXML, error) {
+	c := defaultHTTPClient
+
+	if len(client) > 0 {
+		c = client[0]
 	}
 
 	buf := bufferPool.Get().(*bytes.Buffer)
@@ -51,7 +51,7 @@ func PostXML(client *HTTPClient, url string, body WXML) (WXML, error) {
 		return nil, err
 	}
 
-	resp, err := client.Post(url, buf.Bytes(), WithRequestHeader("Content-Type", "text/xml; charset=utf-8"))
+	resp, err := c.Post(url, buf.Bytes(), WithRequestHeader("Content-Type", "text/xml; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
