@@ -25,7 +25,6 @@ go get github.com/iiinsomnia/gochat
 ## 说明
 
 - 支持 Go1.11+
-
 - 配合 [yiigo](https://github.com/iiinsomnia/yiigo) 使用更方便
 
 **Enjoy 😊**
