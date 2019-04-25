@@ -12,8 +12,13 @@ import (
 // MaxSubscriberListCount 公众号订阅者列表的最大数目
 const MaxSubscriberListCount = 10000
 
-// Subscriber 微信公众号订阅者信息
+// Subscriber 微信公众号订阅者
 type Subscriber struct {
+	accessToken string
+}
+
+// SubscriberInfo 微信公众号订阅者信息
+type SubscriberInfo struct {
 	Subscribe      int     `json:"subscribe"`
 	OpenID         string  `json:"openid"`
 	NickName       string  `json:"nickName"`
@@ -42,8 +47,8 @@ type SubscriberList struct {
 }
 
 // GetSubscriberInfo 获取微信公众号订阅者信息
-func GetSubscriberInfo(accessToken, openid string) (*Subscriber, error) {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN", accessToken, openid))
+func (s *Subscriber) Get(openid string) (*SubscriberInfo, error) {
+	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN", s.accessToken, openid))
 
 	if err != nil {
 		return nil, err
@@ -55,7 +60,7 @@ func GetSubscriberInfo(accessToken, openid string) (*Subscriber, error) {
 		return nil, errors.New(r.Get("errmsg").String())
 	}
 
-	reply := new(Subscriber)
+	reply := new(SubscriberInfo)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
 		return nil, err
@@ -64,12 +69,12 @@ func GetSubscriberInfo(accessToken, openid string) (*Subscriber, error) {
 	return reply, nil
 }
 
-// BatchGetSubscriberInfo 批量获取微信公众号订阅者信息
-func BatchGetSubscriberInfo(accessToken string, openid ...string) ([]*Subscriber, error) {
+// BatchGet 批量获取微信公众号订阅者信息
+func (s *Subscriber) BatchGet(openid ...string) ([]*SubscriberInfo, error) {
 	l := len(openid)
 
 	if l == 0 {
-		return []*Subscriber{}, nil
+		return []*SubscriberInfo{}, nil
 	}
 
 	userList := make([]map[string]string, 0, l)
@@ -87,7 +92,7 @@ func BatchGetSubscriberInfo(accessToken string, openid ...string) ([]*Subscriber
 		return nil, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=%s", s.accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -99,7 +104,7 @@ func BatchGetSubscriberInfo(accessToken string, openid ...string) ([]*Subscriber
 		return nil, errors.New(r.Get("errmsg").String())
 	}
 
-	reply := make(map[string][]*Subscriber)
+	reply := make(map[string][]*SubscriberInfo)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
 		return nil, err
@@ -109,11 +114,11 @@ func BatchGetSubscriberInfo(accessToken string, openid ...string) ([]*Subscriber
 }
 
 // GetSubscriberList 获取微信公众号订阅者列表
-func GetSubscriberList(accessToken string, nextOpenID ...string) (*SubscriberList, error) {
-	url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s", accessToken)
+func (s *Subscriber) GetSubscriberList(nextOpenID ...string) (*SubscriberList, error) {
+	url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s", s.accessToken)
 
 	if len(nextOpenID) > 0 {
-		url = fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s", accessToken, nextOpenID[0])
+		url = fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s", s.accessToken, nextOpenID[0])
 	}
 
 	resp, err := utils.HTTPGet(url)

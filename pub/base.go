@@ -33,6 +33,14 @@ func (wx *WXPub) MsgChiper() *MsgChiper {
 	}
 }
 
+func (wx *WXPub) Menu(accessToken string) *Menu {
+	return &Menu{accessToken: accessToken}
+}
+
+func (wx *WXPub) Subsciber(accessToken string) *Subscriber {
+	return &Subscriber{accessToken: accessToken}
+}
+
 // Reply returns new reply
 func (wx *WXPub) Reply() *Reply {
 	return &Reply{
