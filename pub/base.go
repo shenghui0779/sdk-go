@@ -33,8 +33,8 @@ func (wx *WXPub) MsgChiper() *MsgChiper {
 	}
 }
 
-func (wx *WXPub) Menu(accessToken string) *Menu {
-	return &Menu{accessToken: accessToken}
+func (wx *WXPub) Menu() *Menu {
+	return new(Menu)
 }
 
 func (wx *WXPub) Subsciber(accessToken string) *Subscriber {

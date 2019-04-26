@@ -13,9 +13,7 @@ import (
 const MaxSubscriberListCount = 10000
 
 // Subscriber 微信公众号订阅者
-type Subscriber struct {
-	accessToken string
-}
+type Subscriber struct{}
 
 // SubscriberInfo 微信公众号订阅者信息
 type SubscriberInfo struct {
@@ -47,8 +45,8 @@ type SubscriberList struct {
 }
 
 // GetSubscriberInfo 获取微信公众号订阅者信息
-func (s *Subscriber) Get(openid string) (*SubscriberInfo, error) {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN", s.accessToken, openid))
+func (s *Subscriber) Get(accessToken, openid string) (*SubscriberInfo, error) {
+	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN", accessToken, openid))
 
 	if err != nil {
 		return nil, err
@@ -70,7 +68,7 @@ func (s *Subscriber) Get(openid string) (*SubscriberInfo, error) {
 }
 
 // BatchGet 批量获取微信公众号订阅者信息
-func (s *Subscriber) BatchGet(openid ...string) ([]*SubscriberInfo, error) {
+func (s *Subscriber) BatchGet(accessToken string, openid ...string) ([]*SubscriberInfo, error) {
 	l := len(openid)
 
 	if l == 0 {
@@ -92,7 +90,7 @@ func (s *Subscriber) BatchGet(openid ...string) ([]*SubscriberInfo, error) {
 		return nil, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=%s", s.accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -114,11 +112,11 @@ func (s *Subscriber) BatchGet(openid ...string) ([]*SubscriberInfo, error) {
 }
 
 // GetList 获取微信公众号订阅者列表
-func (s *Subscriber) GetList(nextOpenID ...string) (*SubscriberList, error) {
-	url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s", s.accessToken)
+func (s *Subscriber) GetList(accessToken string, nextOpenID ...string) (*SubscriberList, error) {
+	url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s", accessToken)
 
 	if len(nextOpenID) > 0 {
-		url = fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s", s.accessToken, nextOpenID[0])
+		url = fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s", accessToken, nextOpenID[0])
 	}
 
 	resp, err := utils.HTTPGet(url)
