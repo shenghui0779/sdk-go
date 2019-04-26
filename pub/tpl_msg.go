@@ -14,18 +14,11 @@ type TplMsgData map[string]map[string]string
 
 // TplMsg 公众号模板消息
 type TplMsg struct {
-	openID      string
+	tplID       string
 	accessToken string
 	redirectURL string
 	mpAppID     string
 	mpPagePath  string
-}
-
-// SetAccessToken 设置AccessToken
-func (m *TplMsg) SetAccessToken(token string) {
-	m.accessToken = token
-
-	return
 }
 
 // SetRedirectURL 设置跳转URL
@@ -44,10 +37,10 @@ func (m *TplMsg) SetMPPath(appid, path string) {
 }
 
 // Send 发送模板消息
-func (m *TplMsg) Send(tplID string, data TplMsgData) (int64, error) {
+func (m *TplMsg) Send(openid string, data TplMsgData) (int64, error) {
 	body := utils.X{
-		"touser":      m.openID,
-		"template_id": tplID,
+		"touser":      openid,
+		"template_id": m.tplID,
 		"data":        data,
 	}
 
@@ -84,6 +77,9 @@ func (m *TplMsg) Send(tplID string, data TplMsgData) (int64, error) {
 }
 
 // NewTplMsg returns new wxpub tpl msg
-func NewTplMsg(openid string) *TplMsg {
-	return &TplMsg{openID: openid}
+func NewTplMsg(tplID, accessToken string) *TplMsg {
+	return &TplMsg{
+		tplID:       tplID,
+		accessToken: accessToken,
+	}
 }

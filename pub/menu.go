@@ -6,13 +6,12 @@ import (
 	"fmt"
 
 	"github.com/iiinsomnia/gochat/utils"
+	"github.com/tidwall/gjson"
 )
 
-type menuReply struct {
+type MenuList struct {
 	DefaultMenu     *DefaultMenu       `json:"menu"`
 	ConditionalMenu []*ConditionalMenu `json:"conditionalmenu"`
-	ErrCode         int                `json:"errcode"`
-	ErrMsg          string             `json:"errmsg"`
 }
 
 type DefaultMenu struct {
@@ -47,26 +46,10 @@ type MenuMatchRule struct {
 }
 
 type Menu struct {
-	accessToken string
-	buttons     []Button
-	matchRule   *MenuMatchRule
-	reply       *menuReply
 }
 
-func (m *Menu) SetButtons(btns ...Button) *Menu {
-	m.buttons = btns
-
-	return m
-}
-
-func (m *Menu) SetMatchRule(rule *MenuMatchRule) *Menu {
-	m.matchRule = rule
-
-	return m
-}
-
-func (m *Menu) Create() error {
-	body := map[string][]Button{"button": m.buttons}
+func (m *Menu) Create(accessToken string, btns ...Button) error {
+	body := utils.X{"button": btns}
 
 	b, err := json.Marshal(body)
 
@@ -74,79 +57,84 @@ func (m *Menu) Create() error {
 		return err
 	}
 
-	url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s", m.accessToken)
-
-	if m.matchRule != nil {
-		url = fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token=%s", m.accessToken)
-	}
-
-	resp, err := utils.HTTPPost(url, b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err
 	}
 
-	reply := new(menuReply)
+	r := gjson.ParseBytes(resp)
 
-	if err := json.Unmarshal(resp, reply); err != nil {
-		return err
-	}
-
-	if reply.ErrCode != 0 {
-		return errors.New(reply.ErrMsg)
+	if r.Get("errcode").Int() != 0 {
+		return errors.New(r.Get("errmsg").String())
 	}
 
 	return nil
 }
 
-func (m *Menu) Get() error {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/get?access_token=%s", m.accessToken))
+func (m *Menu) CreateConditional(accessToken string, matchRule *MenuMatchRule, btns ...Button) error {
+	body := utils.X{
+		"button":    btns,
+		"matchrule": matchRule,
+	}
+
+	b, err := json.Marshal(body)
 
 	if err != nil {
 		return err
 	}
 
-	reply := new(menuReply)
-
-	if err := json.Unmarshal(resp, reply); err != nil {
-		return err
-	}
-
-	if reply.ErrCode != 0 {
-		return errors.New(reply.ErrMsg)
-	}
-
-	m.reply = reply
-
-	return nil
-}
-
-func (m *Menu) Delete() error {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s", m.accessToken))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err
 	}
 
-	reply := new(menuReply)
+	r := gjson.ParseBytes(resp)
 
-	if err := json.Unmarshal(resp, reply); err != nil {
-		return err
-	}
-
-	if reply.ErrCode != 0 {
-		return errors.New(reply.ErrMsg)
+	if r.Get("errcode").Int() != 0 {
+		return errors.New(r.Get("errmsg").String())
 	}
 
 	return nil
 }
 
-func (m *Menu) DefaultMenu() *DefaultMenu {
-	return m.reply.DefaultMenu
+func (m *Menu) GetList(accessToken string) (*MenuList, error) {
+	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/get?access_token=%s", accessToken))
+
+	if err != nil {
+		return nil, err
+	}
+
+	r := gjson.ParseBytes(resp)
+
+	if r.Get("errcode").Int() != 0 {
+		return nil, errors.New(r.Get("errmsg").String())
+	}
+
+	reply := new(MenuList)
+
+	if err := json.Unmarshal(resp, reply); err != nil {
+		return nil, err
+	}
+
+	return reply, nil
 }
 
-func (m *Menu) ConditionalMenu() []*ConditionalMenu {
-	return m.reply.ConditionalMenu
+func (m *Menu) Delete(accessToken string) error {
+	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s", accessToken))
+
+	if err != nil {
+		return err
+	}
+
+	r := gjson.ParseBytes(resp)
+
+	if r.Get("errcode").Int() != 0 {
+		return errors.New(r.Get("errmsg").String())
+	}
+
+	return nil
 }
 
 type Button interface {

@@ -113,8 +113,8 @@ func (s *Subscriber) BatchGet(openid ...string) ([]*SubscriberInfo, error) {
 	return reply["user_info_list"], nil
 }
 
-// GetSubscriberList 获取微信公众号订阅者列表
-func (s *Subscriber) GetSubscriberList(nextOpenID ...string) (*SubscriberList, error) {
+// GetList 获取微信公众号订阅者列表
+func (s *Subscriber) GetList(nextOpenID ...string) (*SubscriberList, error) {
 	url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s", s.accessToken)
 
 	if len(nextOpenID) > 0 {
