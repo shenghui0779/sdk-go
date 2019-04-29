@@ -72,7 +72,9 @@ func WithWXAQRIsHyaline(b bool) QRCodeOption {
 }
 
 // QRCode 小程序二维码
-type QRCode struct{}
+type QRCode struct {
+	client *utils.HTTPClient
+}
 
 // Create 数量有限
 func (q *QRCode) Create(accessToken, path string, options ...QRCodeOption) ([]byte, error) {
@@ -96,7 +98,7 @@ func (q *QRCode) Create(accessToken, path string, options ...QRCodeOption) ([]by
 		return nil, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := q.client.Post(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -145,7 +147,7 @@ func (q *QRCode) Get(accessToken, path string, options ...QRCodeOption) ([]byte,
 		return nil, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacode?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := q.client.Post(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacode?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -198,7 +200,7 @@ func (q *QRCode) GetUnlimit(accessToken, scene string, options ...QRCodeOption) 
 		return nil, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := q.client.Post(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err

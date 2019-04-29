@@ -25,6 +25,7 @@ type Order struct {
 	appid  string
 	mchid  string
 	apikey string
+	client *utils.HTTPClient
 	result utils.WXML
 }
 
@@ -90,7 +91,7 @@ func (o *Order) Close(outTradeNO string) error {
 func (o *Order) do(url string, body utils.WXML) error {
 	body["sign"] = utils.PaySign(body, o.apikey)
 
-	resp, err := utils.HTTPPostXML(url, body)
+	resp, err := o.client.PostXML(url, body)
 
 	if err != nil {
 		return err

@@ -9,49 +9,39 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+type TplMsgBody map[string]map[string]string
+
 // TplMsgData 公众号模板消息数据
-type TplMsgData map[string]map[string]string
+type TplMsgData struct {
+	TplID       string
+	OpenID      string
+	RedirectURL string
+	MPAppID     string
+	MPPagePath  string
+	Body        TplMsgBody
+}
 
 // TplMsg 公众号模板消息
 type TplMsg struct {
-	tplID       string
-	accessToken string
-	redirectURL string
-	mpAppID     string
-	mpPagePath  string
-}
-
-// SetRedirectURL 设置跳转URL
-func (m *TplMsg) SetRedirectURL(url string) {
-	m.redirectURL = url
-
-	return
-}
-
-// SetMPPath 设置小程序跳转路径
-func (m *TplMsg) SetMPPath(appid, path string) {
-	m.mpAppID = appid
-	m.mpPagePath = path
-
-	return
+	client *utils.HTTPClient
 }
 
 // Send 发送模板消息
-func (m *TplMsg) Send(openid string, data TplMsgData) (int64, error) {
+func (t *TplMsg) Send(accessToken string, data *TplMsgData) (int64, error) {
 	body := utils.X{
-		"touser":      openid,
-		"template_id": m.tplID,
+		"touser":      data.OpenID,
+		"template_id": data.TplID,
 		"data":        data,
 	}
 
-	if m.redirectURL != "" {
-		body["url"] = m.redirectURL
+	if data.RedirectURL != "" {
+		body["url"] = data.RedirectURL
 	}
 
-	if m.mpPagePath != "" {
+	if data.MPAppID != "" {
 		body["miniprogram"] = map[string]string{
-			"appid":    m.mpAppID,
-			"pagepath": m.mpPagePath,
+			"appid":    data.MPAppID,
+			"pagepath": data.MPPagePath,
 		}
 	}
 
@@ -61,7 +51,7 @@ func (m *TplMsg) Send(openid string, data TplMsgData) (int64, error) {
 		return 0, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", m.accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := t.client.Post(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return 0, err
@@ -74,12 +64,4 @@ func (m *TplMsg) Send(openid string, data TplMsgData) (int64, error) {
 	}
 
 	return r.Get("msgid").Int(), nil
-}
-
-// NewTplMsg returns new wxpub tpl msg
-func NewTplMsg(tplID, accessToken string) *TplMsg {
-	return &TplMsg{
-		tplID:       tplID,
-		accessToken: accessToken,
-	}
 }

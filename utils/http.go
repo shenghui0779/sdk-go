@@ -478,8 +478,8 @@ func (h *HTTPClient) PostXML(url string, body WXML, options ...HTTPRequestOption
 	return wxml, nil
 }
 
-// defaultHTTPClient default http client
-var defaultHTTPClient = &HTTPClient{
+// DefaultHTTPClient default http client
+var DefaultHTTPClient = &HTTPClient{
 	client: &http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
@@ -543,21 +543,6 @@ func NewHTTPClient(options ...HTTPClientOption) (*HTTPClient, error) {
 	}
 
 	return c, nil
-}
-
-// HTTPGet http get request
-func HTTPGet(url string, options ...HTTPRequestOption) ([]byte, error) {
-	return defaultHTTPClient.Get(url, options...)
-}
-
-// HTTPPost http post request
-func HTTPPost(url string, body []byte, options ...HTTPRequestOption) ([]byte, error) {
-	return defaultHTTPClient.Post(url, body, options...)
-}
-
-// HTTPPostXML http xml post request
-func HTTPPostXML(url string, body WXML, options ...HTTPRequestOption) (WXML, error) {
-	return defaultHTTPClient.PostXML(url, body, options...)
 }
 
 // FormatMap2XML format map to xml

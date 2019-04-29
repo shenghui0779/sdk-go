@@ -19,11 +19,12 @@ type AccessToken struct {
 type CgiBin struct {
 	appid     string
 	appsecret string
+	client    *utils.HTTPClient
 }
 
 // GetAccessToken 获取普通AccessToken
 func (p *CgiBin) GetAccessToken() (*AccessToken, error) {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", p.appid, p.appsecret))
+	resp, err := p.client.Get(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", p.appid, p.appsecret))
 
 	if err != nil {
 		return nil, err

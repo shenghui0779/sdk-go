@@ -20,11 +20,12 @@ type AuthSession struct {
 type Sns struct {
 	appid     string
 	appsecret string
+	client    *utils.HTTPClient
 }
 
 // Code2Session 获取小程序授权SessionKey
 func (s *Sns) Code2Session(code string) (*AuthSession, error) {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", s.appid, s.appsecret, code))
+	resp, err := s.client.Get(fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", s.appid, s.appsecret, code))
 
 	if err != nil {
 		return nil, err

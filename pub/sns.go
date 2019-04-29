@@ -35,11 +35,12 @@ type User struct {
 type Sns struct {
 	appid     string
 	appsecret string
+	client    *utils.HTTPClient
 }
 
 // Code2Token 获取公众号授权AccessToken
 func (s *Sns) Code2Token(code string) (*AuthToken, error) {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code", s.appid, s.appsecret, code))
+	resp, err := s.client.Get(fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code", s.appid, s.appsecret, code))
 
 	if err != nil {
 		return nil, err
@@ -64,7 +65,7 @@ func (s *Sns) Code2Token(code string) (*AuthToken, error) {
 func (s *Sns) CheckAccessToken(accessToken, openid string) bool {
 	url := fmt.Sprintf("https://api.weixin.qq.com/sns/auth?access_token=%s&openid=%s", accessToken, openid)
 
-	resp, err := utils.HTTPGet(url)
+	resp, err := s.client.Get(url)
 
 	if err != nil {
 		return false
@@ -79,7 +80,7 @@ func (s *Sns) CheckAccessToken(accessToken, openid string) bool {
 
 // RefreshAccessToken 刷新授权AccessToken
 func (s *Sns) RefreshAccessToken(refreshToken string) (*AuthToken, error) {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s", s.appid, refreshToken))
+	resp, err := s.client.Get(fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s", s.appid, refreshToken))
 
 	if err != nil {
 		return nil, err

@@ -46,6 +46,7 @@ type MenuMatchRule struct {
 }
 
 type Menu struct {
+	client *utils.HTTPClient
 }
 
 func (m *Menu) Create(accessToken string, btns ...Button) error {
@@ -57,7 +58,7 @@ func (m *Menu) Create(accessToken string, btns ...Button) error {
 		return err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := m.client.Post(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err
@@ -84,7 +85,7 @@ func (m *Menu) CreateConditional(accessToken string, matchRule *MenuMatchRule, b
 		return err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := m.client.Post(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err
@@ -100,7 +101,7 @@ func (m *Menu) CreateConditional(accessToken string, matchRule *MenuMatchRule, b
 }
 
 func (m *Menu) GetList(accessToken string) (*MenuList, error) {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/get?access_token=%s", accessToken))
+	resp, err := m.client.Get(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/get?access_token=%s", accessToken))
 
 	if err != nil {
 		return nil, err
@@ -122,7 +123,7 @@ func (m *Menu) GetList(accessToken string) (*MenuList, error) {
 }
 
 func (m *Menu) Delete(accessToken string) error {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s", accessToken))
+	resp, err := m.client.Get(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s", accessToken))
 
 	if err != nil {
 		return err

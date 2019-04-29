@@ -23,6 +23,7 @@ type Refund struct {
 	appid     string
 	mchid     string
 	apikey    string
+	client    *utils.HTTPClient
 	sslClient *utils.HTTPClient
 	result    utils.WXML
 }
@@ -136,7 +137,7 @@ func (r *Refund) QueryByOutTradeNO(outTradeNO string, offset ...int) error {
 func (r *Refund) do(url string, body utils.WXML) error {
 	body["sign"] = utils.PaySign(body, r.apikey)
 
-	resp, err := utils.HTTPPostXML(url, body)
+	resp, err := r.client.PostXML(url, body)
 
 	if err != nil {
 		return err

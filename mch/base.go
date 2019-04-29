@@ -7,29 +7,41 @@ type WXMch struct {
 	AppID     string
 	MchID     string
 	ApiKey    string
+	client    *utils.HTTPClient
 	sslClient *utils.HTTPClient
 }
 
-// SetSSLClient set wxmch ssl client
+// SetHTTPClient set wxmch http client
+func (wx *WXMch) SetHTTPClient(c *utils.HTTPClient) {
+	wx.client = c
+}
+
+// SetSSLClient set wxmch http ssl client
 func (wx *WXMch) SetSSLClient(c *utils.HTTPClient) {
 	wx.sslClient = c
 }
 
 // Order returns new order
 func (wx *WXMch) Order() *Order {
-	return &Order{
-		appid:  wx.AppID,
-		mchid:  wx.MchID,
-		apikey: wx.ApiKey,
-	}
+	order := new(Order)
+
+	order.appid = wx.AppID
+	order.mchid = wx.MchID
+	order.apikey = wx.ApiKey
+	order.client = wx.client
+
+	return order
 }
 
 // Refund returns new refund
 func (wx *WXMch) Refund() *Refund {
-	return &Refund{
-		appid:     wx.AppID,
-		mchid:     wx.MchID,
-		apikey:    wx.ApiKey,
-		sslClient: wx.sslClient,
-	}
+	refund := new(Refund)
+
+	refund.appid = wx.AppID
+	refund.mchid = wx.MchID
+	refund.apikey = wx.ApiKey
+	refund.client = wx.client
+	refund.sslClient = wx.sslClient
+
+	return refund
 }
