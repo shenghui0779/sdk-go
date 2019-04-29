@@ -10,7 +10,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type wxaqrcodeOptions struct {
+type qrcodeOptions struct {
 	page      string
 	width     int
 	autoColor bool
@@ -18,67 +18,65 @@ type wxaqrcodeOptions struct {
 	isHyaline bool
 }
 
-// WXAQRCodeOption configures how we set up the wxa_qrcode
-type WXAQRCodeOption interface {
-	apply(options *wxaqrcodeOptions)
+// QRCodeOption configures how we set up the wxa_qrcode
+type QRCodeOption interface {
+	apply(options *qrcodeOptions)
 }
 
 // funcWXAQRCodeOption implements wxa_qrcode option
 type funcWXAQRCodeOption struct {
-	f func(options *wxaqrcodeOptions)
+	f func(options *qrcodeOptions)
 }
 
-func (fo *funcWXAQRCodeOption) apply(o *wxaqrcodeOptions) {
+func (fo *funcWXAQRCodeOption) apply(o *qrcodeOptions) {
 	fo.f(o)
 }
 
-func newFuncWXAQRCodeOption(f func(options *wxaqrcodeOptions)) *funcWXAQRCodeOption {
+func newFuncWXAQRCodeOption(f func(options *qrcodeOptions)) *funcWXAQRCodeOption {
 	return &funcWXAQRCodeOption{f: f}
 }
 
 // WithWXAQRPage specifies the `page` to wxa_qrcode.
-func WithWXAQRPage(s string) WXAQRCodeOption {
-	return newFuncWXAQRCodeOption(func(o *wxaqrcodeOptions) {
+func WithWXAQRPage(s string) QRCodeOption {
+	return newFuncWXAQRCodeOption(func(o *qrcodeOptions) {
 		o.page = s
 	})
 }
 
 // WithWXAQRWidth specifies the `width` to wxa_qrcode.
-func WithWXAQRWidth(w int) WXAQRCodeOption {
-	return newFuncWXAQRCodeOption(func(o *wxaqrcodeOptions) {
+func WithWXAQRWidth(w int) QRCodeOption {
+	return newFuncWXAQRCodeOption(func(o *qrcodeOptions) {
 		o.width = w
 	})
 }
 
 // WithWXAQRAutoColor specifies the `auto_color` to wxa_qrcode.
-func WithWXAQRAutoColor(b bool) WXAQRCodeOption {
-	return newFuncWXAQRCodeOption(func(o *wxaqrcodeOptions) {
+func WithWXAQRAutoColor(b bool) QRCodeOption {
+	return newFuncWXAQRCodeOption(func(o *qrcodeOptions) {
 		o.autoColor = b
 	})
 }
 
 // WithWXAQRLineColor specifies the `line_color` to wxa_qrcode.
-func WithWXAQRLineColor(m map[string]int) WXAQRCodeOption {
-	return newFuncWXAQRCodeOption(func(o *wxaqrcodeOptions) {
+func WithWXAQRLineColor(m map[string]int) QRCodeOption {
+	return newFuncWXAQRCodeOption(func(o *qrcodeOptions) {
 		o.lineColor = m
 	})
 }
 
 // WithWXAQRIsHyaline specifies the `is_hyaline` to wxa_qrcode.
-func WithWXAQRIsHyaline(b bool) WXAQRCodeOption {
-	return newFuncWXAQRCodeOption(func(o *wxaqrcodeOptions) {
+func WithWXAQRIsHyaline(b bool) QRCodeOption {
+	return newFuncWXAQRCodeOption(func(o *qrcodeOptions) {
 		o.isHyaline = b
 	})
 }
 
-// WXAQRCode 小程序二维码
-type WXAQRCode struct {
-	accessToken string
-}
+// QRCode 小程序二维码
+type QRCode struct{}
 
-// CreateWXQRACode 数量有限
-func (q *WXAQRCode) CreateWXAQRCode(path string, options ...WXAQRCodeOption) ([]byte, error) {
-	o := new(wxaqrcodeOptions)
+// Create 数量有限
+func (q *QRCode) Create(accessToken, path string, options ...QRCodeOption) ([]byte, error) {
+	o := new(qrcodeOptions)
 
 	if len(options) > 0 {
 		for _, option := range options {
@@ -98,7 +96,7 @@ func (q *WXAQRCode) CreateWXAQRCode(path string, options ...WXAQRCodeOption) ([]
 		return nil, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=%s", q.accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -113,9 +111,9 @@ func (q *WXAQRCode) CreateWXAQRCode(path string, options ...WXAQRCodeOption) ([]
 	return resp, nil
 }
 
-// GetWXACode 数量有限
-func (q *WXAQRCode) GetWXACode(path string, options ...WXAQRCodeOption) ([]byte, error) {
-	o := new(wxaqrcodeOptions)
+// Get 数量有限
+func (q *QRCode) Get(accessToken, path string, options ...QRCodeOption) ([]byte, error) {
+	o := new(qrcodeOptions)
 
 	if len(options) > 0 {
 		for _, option := range options {
@@ -147,7 +145,7 @@ func (q *WXAQRCode) GetWXACode(path string, options ...WXAQRCodeOption) ([]byte,
 		return nil, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacode?access_token=%s", q.accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacode?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -162,9 +160,9 @@ func (q *WXAQRCode) GetWXACode(path string, options ...WXAQRCodeOption) ([]byte,
 	return resp, nil
 }
 
-// GetWXACodeUnlimit 数量不限
-func (q *WXAQRCode) GetWXACodeUnlimit(scene string, options ...WXAQRCodeOption) ([]byte, error) {
-	o := new(wxaqrcodeOptions)
+// GetUnlimit 数量不限
+func (q *QRCode) GetUnlimit(accessToken, scene string, options ...QRCodeOption) ([]byte, error) {
+	o := new(qrcodeOptions)
 
 	if len(options) > 0 {
 		for _, option := range options {
@@ -200,7 +198,7 @@ func (q *WXAQRCode) GetWXACodeUnlimit(scene string, options ...WXAQRCodeOption) 
 		return nil, err
 	}
 
-	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s", q.accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := utils.HTTPPost(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -213,11 +211,6 @@ func (q *WXAQRCode) GetWXACodeUnlimit(scene string, options ...WXAQRCodeOption) 
 	}
 
 	return resp, nil
-}
-
-// NewWXAQRCode returns new wxaqrcode
-func NewWXAQRCode(accessToken string) *WXAQRCode {
-	return &WXAQRCode{accessToken: accessToken}
 }
 
 // MarshalWithNoEscapeHTML marshal with no escape HTML

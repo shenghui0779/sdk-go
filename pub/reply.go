@@ -166,7 +166,7 @@ func (r *Reply) build(encrypt string) *ReplyMsg {
 }
 
 // Text build wxpub text reply msg
-func (r *Reply) Text(openid, content string) error {
+func (r *Reply) Text(openid, content string) (*ReplyMsg, error) {
 	m := &TextReplyMsg{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
@@ -181,23 +181,21 @@ func (r *Reply) Text(openid, content string) error {
 	b, err := xml.Marshal(m)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// 消息加密
 	cipherText, err := r.encrypt(b)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	r.msg = r.build(base64.StdEncoding.EncodeToString(cipherText))
-
-	return nil
+	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
 }
 
 // Image build wxpub image reply msg
-func (r *Reply) Image(openid, mediaID string) error {
+func (r *Reply) Image(openid, mediaID string) (*ReplyMsg, error) {
 	m := &ImageReplyMsg{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
@@ -212,23 +210,21 @@ func (r *Reply) Image(openid, mediaID string) error {
 	b, err := xml.Marshal(m)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// 消息加密
 	cipherText, err := r.encrypt(b)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	r.msg = r.build(base64.StdEncoding.EncodeToString(cipherText))
-
-	return nil
+	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
 }
 
 // Voice build wxpub voice reply msg
-func (r *Reply) Voice(openid, mediaID string) error {
+func (r *Reply) Voice(openid, mediaID string) (*ReplyMsg, error) {
 	m := &VoiceReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
@@ -243,23 +239,21 @@ func (r *Reply) Voice(openid, mediaID string) error {
 	b, err := xml.Marshal(m)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// 消息加密
 	cipherText, err := r.encrypt(b)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	r.msg = r.build(base64.StdEncoding.EncodeToString(cipherText))
-
-	return nil
+	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
 }
 
 // Video build wxpub video reply msg
-func (r *Reply) Video(openid, mediaID, title, desc string) error {
+func (r *Reply) Video(openid, mediaID, title, desc string) (*ReplyMsg, error) {
 	m := &VideoReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
@@ -276,23 +270,21 @@ func (r *Reply) Video(openid, mediaID, title, desc string) error {
 	b, err := xml.Marshal(m)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// 消息加密
 	cipherText, err := r.encrypt(b)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	r.msg = r.build(base64.StdEncoding.EncodeToString(cipherText))
-
-	return nil
+	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
 }
 
 // Music build wxpub music reply msg
-func (r *Reply) Music(openid, mediaID, title, desc, url, HQUrl string) error {
+func (r *Reply) Music(openid, mediaID, title, desc, url, HQUrl string) (*ReplyMsg, error) {
 	m := &MusicReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
@@ -311,23 +303,21 @@ func (r *Reply) Music(openid, mediaID, title, desc, url, HQUrl string) error {
 	b, err := xml.Marshal(m)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// 消息加密
 	cipherText, err := r.encrypt(b)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	r.msg = r.build(base64.StdEncoding.EncodeToString(cipherText))
-
-	return nil
+	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
 }
 
 // Articles build wxpub articles reply msg
-func (r *Reply) Articles(openid string, count int, articles ...*Article) error {
+func (r *Reply) Articles(openid string, count int, articles ...*Article) (*ReplyMsg, error) {
 	m := &ArticlesReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
@@ -343,23 +333,21 @@ func (r *Reply) Articles(openid string, count int, articles ...*Article) error {
 	b, err := xml.Marshal(m)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// 消息加密
 	cipherText, err := r.encrypt(b)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	r.msg = r.build(base64.StdEncoding.EncodeToString(cipherText))
-
-	return nil
+	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
 }
 
 // Transfer2KF transfer msg to wxpub kf
-func (r *Reply) Transfer2KF(openid string, kfAccount ...string) error {
+func (r *Reply) Transfer2KF(openid string, kfAccount ...string) (*ReplyMsg, error) {
 	m := &Transfer2KF{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
@@ -376,22 +364,15 @@ func (r *Reply) Transfer2KF(openid string, kfAccount ...string) error {
 	b, err := xml.Marshal(m)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// 消息加密
 	cipherText, err := r.encrypt(b)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	r.msg = r.build(base64.StdEncoding.EncodeToString(cipherText))
-
-	return nil
-}
-
-// Msg returns reply msg
-func (r *Reply) Msg() *ReplyMsg {
-	return r.msg
+	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
 }

@@ -9,14 +9,13 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type snsReply struct {
+// AuthToken 公众号授权Token
+type AuthToken struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 	ExpiresIn    int64  `json:"expires_in"`
 	OpenID       string `json:"openid"`
 	Scope        string `json:"scope"`
-	ErrCode      int    `json:"errcode"`
-	ErrMsg       string `json:"errmsg"`
 }
 
 // User 微信用户信息
@@ -36,55 +35,34 @@ type User struct {
 type Sns struct {
 	appid     string
 	appsecret string
-	reply     *snsReply
 }
 
 // Code2Token 获取公众号授权AccessToken
-func (s *Sns) Code2Token(code string) error {
+func (s *Sns) Code2Token(code string) (*AuthToken, error) {
 	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code", s.appid, s.appsecret, code))
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	reply := new(snsReply)
+	r := gjson.ParseBytes(resp)
+
+	if r.Get("errcode").Int() != 0 {
+		return nil, errors.New(r.Get("errmsg").String())
+	}
+
+	reply := new(AuthToken)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
-		return err
+		return nil, err
 	}
 
-	if reply.ErrCode != 0 {
-		return errors.New(reply.ErrMsg)
-	}
-
-	s.reply = reply
-
-	return nil
-}
-
-// AccessToken returns access_token
-func (s *Sns) AccessToken() string {
-	return s.reply.AccessToken
-}
-
-// RefreshToken returns refresh_token
-func (s *Sns) RefreshToken() string {
-	return s.reply.RefreshToken
-}
-
-// ExpiresIn returns expires_in
-func (s *Sns) ExpiresIn() int64 {
-	return s.reply.ExpiresIn
-}
-
-// OpenID returns openid
-func (s *Sns) OpenID() string {
-	return s.reply.OpenID
+	return reply, nil
 }
 
 // CheckAccessToken 校验授权AccessToken是否有效
-func (s *Sns) CheckAccessToken() bool {
-	url := fmt.Sprintf("https://api.weixin.qq.com/sns/auth?access_token=%s&openid=%s", s.reply.AccessToken, s.reply.OpenID)
+func (s *Sns) CheckAccessToken(accessToken, openid string) bool {
+	url := fmt.Sprintf("https://api.weixin.qq.com/sns/auth?access_token=%s&openid=%s", accessToken, openid)
 
 	resp, err := utils.HTTPGet(url)
 
@@ -100,31 +78,31 @@ func (s *Sns) CheckAccessToken() bool {
 }
 
 // RefreshAccessToken 刷新授权AccessToken
-func (s *Sns) RefreshAccessToken() error {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s", s.appid, s.reply.RefreshToken))
+func (s *Sns) RefreshAccessToken(refreshToken string) (*AuthToken, error) {
+	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s", s.appid, refreshToken))
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	reply := new(snsReply)
+	r := gjson.ParseBytes(resp)
+
+	if r.Get("errcode").Int() != 0 {
+		return nil, errors.New(r.Get("errmsg").String())
+	}
+
+	reply := new(AuthToken)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
-		return err
+		return nil, err
 	}
 
-	if reply.ErrCode != 0 {
-		return errors.New(reply.ErrMsg)
-	}
-
-	s.reply = reply
-
-	return nil
+	return reply, nil
 }
 
 // GetUserInfo 获取微信用户信息
-func (s *Sns) GetUserInfo() (*User, error) {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN", s.reply.AccessToken, s.reply.OpenID))
+func (s *Sns) GetUserInfo(accessToken, openid string) (*User, error) {
+	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN", accessToken, openid))
 
 	if err != nil {
 		return nil, err

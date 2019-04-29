@@ -28,3 +28,8 @@ func (wx *WXMP) BizDataCrypt() *BizDataCrypt {
 		appid: wx.AppID,
 	}
 }
+
+// QRCode returns new qrcode
+func (wx *WXMP) QRCode() *QRCode {
+	return new(QRCode)
+}

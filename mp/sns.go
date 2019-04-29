@@ -6,57 +6,41 @@ import (
 	"fmt"
 
 	"github.com/iiinsomnia/gochat/utils"
+	"github.com/tidwall/gjson"
 )
+
+// AuthSession 小程序授权Session
+type AuthSession struct {
+	SessionKey string `json:"session_key"`
+	OpenID     string `json:"openid"`
+	UnionID    string `json:"unionid"`
+}
 
 // Sns sns
 type Sns struct {
 	appid     string
 	appsecret string
-	reply     *snsReply
-}
-
-type snsReply struct {
-	SessionKey string `json:"session_key"`
-	OpenID     string `json:"openid"`
-	UnionID    string `json:"unionid"`
-	ErrCode    int    `json:"errcode"`
-	ErrMsg     string `json:"errmsg"`
 }
 
 // Code2Session 获取小程序授权SessionKey
-func (s *Sns) Code2Session(code string) error {
+func (s *Sns) Code2Session(code string) (*AuthSession, error) {
 	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", s.appid, s.appsecret, code))
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	reply := new(snsReply)
+	r := gjson.ParseBytes(resp)
+
+	if r.Get("errcode").Int() != 0 {
+		return nil, errors.New(r.Get("errmsg").String())
+	}
+
+	reply := new(AuthSession)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
-		return err
+		return nil, err
 	}
 
-	if reply.ErrCode != 0 {
-		return errors.New(reply.ErrMsg)
-	}
-
-	s.reply = reply
-
-	return nil
-}
-
-// SessionKey returns session_key
-func (s *Sns) SessionKey() string {
-	return s.reply.SessionKey
-}
-
-// OpenID returns openid
-func (s *Sns) OpenID() string {
-	return s.reply.OpenID
-}
-
-// UnionID returns unionid
-func (s *Sns) UnionID() string {
-	return s.reply.UnionID
+	return reply, nil
 }

@@ -6,80 +6,69 @@ import (
 	"fmt"
 
 	"github.com/iiinsomnia/gochat/utils"
+	"github.com/tidwall/gjson"
 )
+
+// AccessToken wxpub access_token
+type AccessToken struct {
+	Token     string `json:"access_token"`
+	ExpiresIn int64  `json:"expires_in"`
+}
+
+// JSAPITicket wxpub js api ticket
+type JSAPITicket struct {
+	Ticket    string `json:"ticket"`
+	ExpiresIn int64  `json:"expires_in"`
+}
 
 // CgiBin cgi-bin
 type CgiBin struct {
 	appid     string
 	appsecret string
-	reply     *cgiBinReply
-}
-
-type cgiBinReply struct {
-	AccessToken string `json:"access_token"`
-	Ticket      string `json:"ticket"`
-	ExpiresIn   int64  `json:"expires_in"`
-	ErrCode     int    `json:"errcode"`
-	ErrMsg      string `json:"errmsg"`
 }
 
 // GetAccessToken 获取普通AccessToken
-func (p *CgiBin) GetAccessToken() error {
+func (p *CgiBin) GetAccessToken() (*AccessToken, error) {
 	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", p.appid, p.appsecret))
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	reply := new(cgiBinReply)
+	r := gjson.ParseBytes(resp)
+
+	if r.Get("errcode").Int() != 0 {
+		return nil, errors.New(r.Get("errmsg").String())
+	}
+
+	reply := new(AccessToken)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
-		return err
+		return nil, err
 	}
 
-	if reply.ErrCode != 0 {
-		return errors.New(reply.ErrMsg)
-	}
-
-	p.reply = reply
-
-	return nil
+	return reply, nil
 }
 
 // GetTicket 获取 JSAPI ticket
-func (p *CgiBin) GetTicket(accessToken string) error {
+func (p *CgiBin) GetTicket(accessToken string) (*JSAPITicket, error) {
 	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi", accessToken))
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	reply := new(cgiBinReply)
+	r := gjson.ParseBytes(resp)
+
+	if r.Get("errcode").Int() != 0 {
+		return nil, errors.New(r.Get("errmsg").String())
+	}
+
+	reply := new(JSAPITicket)
 
 	if err := json.Unmarshal(resp, reply); err != nil {
-		return err
+		return nil, err
 	}
 
-	if reply.ErrCode != 0 {
-		return errors.New(reply.ErrMsg)
-	}
-
-	p.reply = reply
-
-	return nil
-}
-
-// AccessToken returns access_token
-func (p *CgiBin) AccessToken() string {
-	return p.reply.AccessToken
-}
-
-// Ticket returns ticket
-func (p *CgiBin) Ticket() string {
-	return p.reply.Ticket
-}
-
-// ExpiresIn returns expires_in
-func (p *CgiBin) ExpiresIn() int64 {
-	return p.reply.ExpiresIn
+	return reply, nil
 }
