@@ -26,7 +26,7 @@ go get github.com/iiinsomnia/gochat
 
 - 支持 Go1.11+
 - 注意：因 `access_token` 每日获取次数有限且含有效期，故服务端应妥善保存 `access_token` 并定时刷新
-- 配合 [yiigo](https://github.com/iiinsomnia/yiigo) 使用更方便
+- 配合 [yiigo](https://github.com/iiinsomnia/yiigo) 使用，可以更方便的处理 `MySQL` 与 `Redis` 等操作
 
 **Enjoy 😊**
 
