@@ -71,8 +71,8 @@ func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.
 		"sign_type":     "MD5",
 		"out_trade_no":  outTradeNO,
 		"out_refund_no": data.OutRefundNO,
-		"total_fee":     data.TotalFee,
-		"refund_fee":    data.RefundFee,
+		"total_fee":     strconv.Itoa(data.TotalFee),
+		"refund_fee":    strconv.Itoa(data.RefundFee),
 	}
 
 	if data.RefundFeeType != "" {
