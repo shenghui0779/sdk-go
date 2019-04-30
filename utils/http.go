@@ -4,15 +4,12 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
-	"encoding/json"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
-	"os"
 	"path/filepath"
 	"sync"
 	"time"
@@ -21,16 +18,7 @@ import (
 // defaultHTTPTimeout default http request timeout
 const defaultHTTPTimeout = 10 * time.Second
 
-// ErrCookieFileNotFound cookie file not found error
-var ErrCookieFileNotFound = errors.New("cookie file not found")
-
-// ErrXMLWriterNil error for xml writer nil
-var ErrXMLWriterNil = errors.New("nil xml writer")
-
-// ErrXMLReaderNil error for xml reader nil
-var ErrXMLReaderNil = errors.New("nil xml reader")
-
-// WXML 微信返回结果
+// WXML is a convenient alias for a map[string]interface{}
 type WXML map[string]string
 
 var bufferPool = sync.Pool{
@@ -197,10 +185,6 @@ func WithHTTPExpectContinueTimeout(d time.Duration) HTTPClientOption {
 // httpRequestOptions http request options
 type httpRequestOptions struct {
 	headers          map[string]string
-	cookieFile       string
-	withCookies      bool
-	cookieSave       bool
-	cookieReplace    bool
 	disableKeepAlive bool
 	timeout          time.Duration
 }
@@ -227,48 +211,6 @@ func newFuncHTTPRequestOption(f func(*httpRequestOptions) error) *funcHTTPReques
 func WithRequestHeader(key, value string) HTTPRequestOption {
 	return newFuncHTTPRequestOption(func(o *httpRequestOptions) error {
 		o.headers[key] = value
-
-		return nil
-	})
-}
-
-// WithRequestCookieFile specifies the file which to save http response cookies.
-func WithRequestCookieFile(file string) HTTPRequestOption {
-	return newFuncHTTPRequestOption(func(o *httpRequestOptions) error {
-		path, err := filepath.Abs(file)
-
-		if err != nil {
-			return err
-		}
-
-		o.cookieFile = path
-
-		return mkCookieFile(path)
-	})
-}
-
-// WithRequestCookies specifies http requested with cookies.
-func WithRequestCookies(b bool) HTTPRequestOption {
-	return newFuncHTTPRequestOption(func(o *httpRequestOptions) error {
-		o.withCookies = b
-
-		return nil
-	})
-}
-
-// WithRequestCookieSave specifies save the http response cookies.
-func WithRequestCookieSave(b bool) HTTPRequestOption {
-	return newFuncHTTPRequestOption(func(o *httpRequestOptions) error {
-		o.cookieSave = b
-
-		return nil
-	})
-}
-
-// WithRequestCookieReplace specifies replace the old http response cookies.
-func WithRequestCookieReplace(b bool) HTTPRequestOption {
-	return newFuncHTTPRequestOption(func(o *httpRequestOptions) error {
-		o.cookieReplace = b
 
 		return nil
 	})
@@ -326,18 +268,6 @@ func (h *HTTPClient) Get(url string, options ...HTTPRequestOption) ([]byte, erro
 		}
 	}
 
-	if o.withCookies {
-		cookies, err := getCookies(o.cookieFile)
-
-		if err != nil {
-			return nil, err
-		}
-
-		for _, c := range cookies {
-			req.AddCookie(c)
-		}
-	}
-
 	if o.disableKeepAlive {
 		req.Close = true
 	}
@@ -353,12 +283,6 @@ func (h *HTTPClient) Get(url string, options ...HTTPRequestOption) ([]byte, erro
 	}
 
 	defer resp.Body.Close()
-
-	if o.cookieSave {
-		if err := saveCookie(resp.Cookies(), o.cookieFile, o.cookieReplace); err != nil {
-			return nil, err
-		}
-	}
 
 	if resp.StatusCode != http.StatusOK {
 		io.Copy(ioutil.Discard, resp.Body)
@@ -402,18 +326,6 @@ func (h *HTTPClient) Post(url string, body []byte, options ...HTTPRequestOption)
 		}
 	}
 
-	if o.withCookies {
-		cookies, err := getCookies(o.cookieFile)
-
-		if err != nil {
-			return nil, err
-		}
-
-		for _, c := range cookies {
-			req.AddCookie(c)
-		}
-	}
-
 	if o.disableKeepAlive {
 		req.Close = true
 	}
@@ -429,12 +341,6 @@ func (h *HTTPClient) Post(url string, body []byte, options ...HTTPRequestOption)
 	}
 
 	defer resp.Body.Close()
-
-	if o.cookieSave {
-		if err := saveCookie(resp.Cookies(), o.cookieFile, o.cookieReplace); err != nil {
-			return nil, err
-		}
-	}
 
 	if resp.StatusCode != http.StatusOK {
 		io.Copy(ioutil.Discard, resp.Body)
@@ -547,12 +453,6 @@ func NewHTTPClient(options ...HTTPClientOption) (*HTTPClient, error) {
 
 // FormatMap2XML format map to xml
 func FormatMap2XML(xmlWriter io.Writer, m WXML) (err error) {
-	if xmlWriter == nil {
-		err = ErrXMLWriterNil
-
-		return
-	}
-
 	if _, err = io.WriteString(xmlWriter, "<xml>"); err != nil {
 		return
 	}
@@ -580,12 +480,6 @@ func FormatMap2XML(xmlWriter io.Writer, m WXML) (err error) {
 
 // ParseXML2Map parse xml to map
 func ParseXML2Map(xmlReader io.Reader) (m WXML, err error) {
-	if xmlReader == nil {
-		err = ErrXMLReaderNil
-
-		return
-	}
-
 	m = make(WXML)
 
 	var (
@@ -638,90 +532,4 @@ func ParseXML2Map(xmlReader io.Reader) (m WXML, err error) {
 			depth--
 		}
 	}
-}
-
-// mkCookieFile create cookie file
-func mkCookieFile(path string) error {
-	dir := filepath.Dir(path)
-
-	// make dir if not exsit
-	if _, err := os.Stat(dir); err != nil && os.IsNotExist(err) {
-		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-			return err
-		}
-	}
-
-	// create file if not exsit
-	if _, err := os.Stat(path); err != nil && os.IsNotExist(err) {
-		if _, err := os.Create(path); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// getCookie get http saved cookies
-func getCookies(cookieFile string) ([]*http.Cookie, error) {
-	if cookieFile == "" {
-		return nil, ErrCookieFileNotFound
-	}
-
-	cookieM := make(map[string]*http.Cookie)
-	content, err := ioutil.ReadFile(cookieFile)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if err := json.Unmarshal(content, &cookieM); err != nil {
-		return nil, err
-	}
-
-	cookies := make([]*http.Cookie, 0, len(cookieM))
-
-	for _, v := range cookieM {
-		cookies = append(cookies, v)
-	}
-
-	return cookies, nil
-}
-
-// saveCookie save http cookies
-func saveCookie(cookies []*http.Cookie, cookieFile string, replace bool) error {
-	if len(cookies) == 0 {
-		return nil
-	}
-
-	if cookieFile == "" {
-		return ErrCookieFileNotFound
-	}
-
-	cookieM := make(map[string]*http.Cookie)
-
-	if !replace {
-		content, err := ioutil.ReadFile(cookieFile)
-
-		if err != nil {
-			return err
-		}
-
-		if len(content) > 0 {
-			if err := json.Unmarshal(content, &cookieM); err != nil {
-				return err
-			}
-		}
-	}
-
-	for _, c := range cookies {
-		cookieM[c.Name] = c
-	}
-
-	b, err := json.Marshal(cookieM)
-
-	if err != nil {
-		return err
-	}
-
-	return ioutil.WriteFile(cookieFile, b, os.ModePerm)
 }
