@@ -5,17 +5,11 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/xml"
-	"errors"
-	"fmt"
 	"math/rand"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
 )
-
-// ErrIllegaAppID appid illegal
-var ErrIllegaAppID = errors.New("appid is not match")
 
 // X is a convenient alias for a map[string]interface{}.
 type X map[string]interface{}
@@ -51,36 +45,6 @@ func SHA1(s string) string {
 	h.Write([]byte(s))
 
 	return hex.EncodeToString(h.Sum(nil))
-}
-
-// PaySign 生成签名
-func PaySign(m WXML, apikey string) string {
-	l := len(m)
-
-	ks := make([]string, 0, l)
-	kvs := make([]string, 0, l)
-
-	for k := range m {
-		if k == "sign" {
-			continue
-		}
-
-		ks = append(ks, k)
-	}
-
-	sort.Strings(ks)
-
-	for _, k := range ks {
-		if v, ok := m[k]; ok && v != "" {
-			kvs = append(kvs, fmt.Sprintf("%s=%s", k, v))
-		}
-	}
-
-	kvs = append(kvs, fmt.Sprintf("key=%s", apikey))
-
-	signature := MD5(strings.Join(kvs, "&"))
-
-	return strings.ToUpper(signature)
 }
 
 // EncodeUint32ToBytes 把整数 uint32 格式化成 4 字节的网络字节序

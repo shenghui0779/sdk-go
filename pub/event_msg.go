@@ -3,6 +3,7 @@ package pub
 import (
 	"encoding/base64"
 	"encoding/xml"
+	"fmt"
 
 	"github.com/iiinsomnia/gochat/utils"
 )
@@ -63,8 +64,8 @@ func (c *MsgChiper) Decrypt(encrypt string) (*EventMsg, error) {
 	appidOffset := len(plainText) - len([]byte(c.appid))
 
 	// 校验APPID
-	if string(plainText[appidOffset:]) != c.appid {
-		return nil, utils.ErrIllegaAppID
+	if appid := string(plainText[appidOffset:]); appid != c.appid {
+		return nil, fmt.Errorf("wxpub event_msg appid mismatch, want: %s, got: %s", c.appid, appid)
 	}
 
 	m := new(EventMsg)

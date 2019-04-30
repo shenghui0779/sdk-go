@@ -1,9 +1,7 @@
 package pub
 
 import (
-	"crypto/sha1"
 	"encoding/base64"
-	"encoding/hex"
 	"encoding/xml"
 	"sort"
 	"strconv"
@@ -152,12 +150,9 @@ func (r *Reply) build(encrypt string) *ReplyMsg {
 
 	sort.Strings(signItems)
 
-	h := sha1.New()
-	h.Write([]byte(strings.Join(signItems, "")))
-
 	msg := &ReplyMsg{
 		Encrypt:      utils.CDATA(encrypt),
-		MsgSignature: utils.CDATA(hex.EncodeToString(h.Sum(nil))),
+		MsgSignature: utils.CDATA(utils.SHA1(strings.Join(signItems, ""))),
 		TimeStamp:    now,
 		Nonce:        utils.CDATA(nonce),
 	}

@@ -3,6 +3,7 @@ package mp
 import (
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 
 	"github.com/iiinsomnia/gochat/utils"
 )
@@ -81,7 +82,7 @@ func (b *BizDataCrypt) GetUserData() (*UserData, error) {
 	}
 
 	if userData.WaterMark.AppID != b.appid {
-		return nil, utils.ErrIllegaAppID
+		return nil, fmt.Errorf("wxmp user bizdata appid mismatch, want: %s, got: %s", b.appid, userData.WaterMark.AppID)
 	}
 
 	return userData, nil
@@ -96,7 +97,7 @@ func (b *BizDataCrypt) GetPhoneData() (*PhoneData, error) {
 	}
 
 	if phoneData.WaterMark.AppID != b.appid {
-		return nil, utils.ErrIllegaAppID
+		return nil, fmt.Errorf("wxmp phone bizdata appid mismatch, want: %s, got: %s", b.appid, phoneData.WaterMark.AppID)
 	}
 
 	return phoneData, nil
