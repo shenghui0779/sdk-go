@@ -8,7 +8,7 @@ import (
 	"github.com/iiinsomnia/gochat/utils"
 )
 
-// Refund 退款数据
+// RefundData 退款数据
 type RefundData struct {
 	// 必填参数
 	OutRefundNO string // 商户系统内部的退款单号，商户系统内部唯一，同一退款单号多次请求只退一笔
