@@ -18,7 +18,7 @@ import (
 // defaultHTTPTimeout default http request timeout
 const defaultHTTPTimeout = 10 * time.Second
 
-// WXML is a convenient alias for a map[string]interface{}
+// WXML deal with xml for wechat
 type WXML map[string]string
 
 var bufferPool = sync.Pool{
