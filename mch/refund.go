@@ -180,7 +180,7 @@ func (r *Refund) do(url string, body utils.WXML) (utils.WXML, error) {
 	}
 
 	if signature := Sign(resp, r.apikey); signature != resp["sign"] {
-		return nil, fmt.Errorf("refund resp signature verified error, want: %s, got: %s", signature, resp["sign"])
+		return nil, fmt.Errorf("refund resp signature verified failed, want: %s, got: %s", signature, resp["sign"])
 	}
 
 	if resp["appid"] != r.appid {
@@ -212,7 +212,7 @@ func (r *Refund) doSSL(url string, body utils.WXML) (utils.WXML, error) {
 	}
 
 	if signature := Sign(resp, r.apikey); signature != resp["sign"] {
-		return nil, fmt.Errorf("refund resp signature verified error, want: %s, got: %s", signature, resp["sign"])
+		return nil, fmt.Errorf("refund resp signature verified failed, want: %s, got: %s", signature, resp["sign"])
 	}
 
 	if resp["appid"] != r.appid {
