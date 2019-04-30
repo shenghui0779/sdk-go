@@ -23,14 +23,14 @@ type ReplyHeader struct {
 }
 
 // TextReply 公众号文本回复
-type TextReplyMsg struct {
+type TextReply struct {
 	XMLName xml.Name `xml:"xml"`
 	ReplyHeader
 	Content utils.CDATA `xml:"Content"`
 }
 
 // ImageReply 公众号图片回复
-type ImageReplyMsg struct {
+type ImageReply struct {
 	XMLName xml.Name `xml:"xml"`
 	ReplyHeader
 	Image struct {
@@ -99,7 +99,7 @@ type Transfer2KF struct {
 	TransInfo *TransInfo `xml:"TransInfo,omitempty"`
 }
 
-// WXReply 公众号回复
+// ReplyMsg 公众号回复消息
 type ReplyMsg struct {
 	XMLName      xml.Name    `xml:"xml"`
 	Encrypt      utils.CDATA `xml:"Encrypt"`
@@ -108,6 +108,7 @@ type ReplyMsg struct {
 	Nonce        utils.CDATA `xml:"Nonce"`
 }
 
+// Reply 公众号回复
 type Reply struct {
 	accountID      string
 	appid          string
@@ -162,7 +163,7 @@ func (r *Reply) build(encrypt string) *ReplyMsg {
 
 // Text build wxpub text reply msg
 func (r *Reply) Text(openid, content string) (*ReplyMsg, error) {
-	m := &TextReplyMsg{
+	m := &TextReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
 			FromUserName: utils.CDATA(r.accountID),
@@ -191,7 +192,7 @@ func (r *Reply) Text(openid, content string) (*ReplyMsg, error) {
 
 // Image build wxpub image reply msg
 func (r *Reply) Image(openid, mediaID string) (*ReplyMsg, error) {
-	m := &ImageReplyMsg{
+	m := &ImageReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
 			FromUserName: utils.CDATA(r.accountID),

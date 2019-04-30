@@ -28,7 +28,7 @@ type CgiBin struct {
 	client    *utils.HTTPClient
 }
 
-// GetAccessToken 获取普通AccessToken
+// GetAccessToken returns access_token
 func (c *CgiBin) GetAccessToken() (*AccessToken, error) {
 	resp, err := c.client.Get(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", c.appid, c.appsecret))
 
@@ -51,7 +51,7 @@ func (c *CgiBin) GetAccessToken() (*AccessToken, error) {
 	return reply, nil
 }
 
-// GetTicket 获取 JSAPI ticket
+// GetTicket returns jsapi ticket
 func (c *CgiBin) GetTicket(accessToken string) (*JSAPITicket, error) {
 	resp, err := c.client.Get(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi", accessToken))
 

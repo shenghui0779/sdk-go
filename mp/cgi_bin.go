@@ -22,7 +22,7 @@ type CgiBin struct {
 	client    *utils.HTTPClient
 }
 
-// GetAccessToken 获取普通AccessToken
+// GetAccessToken returns access_token
 func (p *CgiBin) GetAccessToken() (*AccessToken, error) {
 	resp, err := p.client.Get(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", p.appid, p.appsecret))
 

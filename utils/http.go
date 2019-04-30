@@ -21,8 +21,8 @@ import (
 // defaultHTTPTimeout default http request timeout
 const defaultHTTPTimeout = 10 * time.Second
 
-// errCookieFileNotFound cookie file not found error
-var errCookieFileNotFound = errors.New("cookie file not found")
+// ErrCookieFileNotFound cookie file not found error
+var ErrCookieFileNotFound = errors.New("cookie file not found")
 
 // ErrXMLWriterNil error for xml writer nil
 var ErrXMLWriterNil = errors.New("nil xml writer")
@@ -664,7 +664,7 @@ func mkCookieFile(path string) error {
 // getCookie get http saved cookies
 func getCookies(cookieFile string) ([]*http.Cookie, error) {
 	if cookieFile == "" {
-		return nil, errCookieFileNotFound
+		return nil, ErrCookieFileNotFound
 	}
 
 	cookieM := make(map[string]*http.Cookie)
@@ -694,7 +694,7 @@ func saveCookie(cookies []*http.Cookie, cookieFile string, replace bool) error {
 	}
 
 	if cookieFile == "" {
-		return errCookieFileNotFound
+		return ErrCookieFileNotFound
 	}
 
 	cookieM := make(map[string]*http.Cookie)

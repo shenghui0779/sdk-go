@@ -185,9 +185,10 @@ func (b *mpButton) AddSubButton(btn ...Button) {}
 
 // mediaButton 媒体素材按钮
 type mediaButton struct {
-	Type    string `json:"type"`
-	Name    string `json:"name"`
-	MediaID string `json:"media_id"`
+	Type      string   `json:"type"`
+	Name      string   `json:"name"`
+	MediaID   string   `json:"media_id"`
+	SubButton []Button `json:"sub_button"`
 }
 
 func (b *mediaButton) AddSubButton(btn ...Button) {}
