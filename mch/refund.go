@@ -12,8 +12,8 @@ import (
 type RefundData struct {
 	// 必填参数
 	OutRefundNO string // 商户系统内部的退款单号，商户系统内部唯一，同一退款单号多次请求只退一笔
-	TotalFee    string // 订单总金额，单位为分，只能为整数，详见支付金额
-	RefundFee   string // 退款总金额，订单总金额，单位为分，只能为整数，详见支付金额
+	TotalFee    int    // 订单总金额，单位为分，只能为整数，详见支付金额
+	RefundFee   int    // 退款总金额，订单总金额，单位为分，只能为整数，详见支付金额
 	// 选填参数
 	RefundFeeType string // 货币类型，符合ISO 4217标准的三位字母代码，默认人民币：CNY，其他值列表详见货币类型
 	RefundDesc    string // 若商户传入，会在下发给用户的退款消息中体现退款原因
@@ -39,8 +39,8 @@ func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (
 		"sign_type":      "MD5",
 		"transaction_id": transactionID,
 		"out_refund_no":  data.OutRefundNO,
-		"total_fee":      data.TotalFee,
-		"refund_fee":     data.RefundFee,
+		"total_fee":      strconv.Itoa(data.TotalFee),
+		"refund_fee":     strconv.Itoa(data.RefundFee),
 	}
 
 	if data.RefundFeeType != "" {
