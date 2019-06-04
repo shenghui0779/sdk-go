@@ -107,7 +107,7 @@ func WithHTTPIdleConnTimeout(d time.Duration) HTTPClientOption {
 	})
 }
 
-// WithHTTPTLSConfig specifies the TLS Config to http client.
+// WithHTTPTLSConfig specifies the `TLSClientConfig` to http client.
 func WithHTTPTLSConfig(c *tls.Config) HTTPClientOption {
 	return newFuncHTTPOption(func(o *httpClientOptions) {
 		o.tlsConfig = c
