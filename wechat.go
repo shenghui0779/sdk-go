@@ -1,6 +1,8 @@
 package gochat
 
 import (
+	"crypto/tls"
+
 	"github.com/iiinsomnia/gochat/mch"
 	"github.com/iiinsomnia/gochat/mp"
 	"github.com/iiinsomnia/gochat/pub"
@@ -8,7 +10,7 @@ import (
 )
 
 // NewWXMch 微信商户
-func NewWXMch(appid, mchid, apikey, sslCertFile, sslkeyFile string) *mch.WXMch {
+func NewWXMch(appid, mchid, apikey string, cert tls.Certificate) *mch.WXMch {
 	wxmch := &mch.WXMch{
 		AppID:  appid,
 		MchID:  mchid,
@@ -17,14 +19,9 @@ func NewWXMch(appid, mchid, apikey, sslCertFile, sslkeyFile string) *mch.WXMch {
 
 	wxmch.SetHTTPClient(utils.DefaultHTTPClient)
 
-	// SSL Client
-	c, err := utils.NewHTTPClient(utils.WithHTTPSSLCertFile(sslCertFile, sslkeyFile))
+	tlsConfig := &tls.Config{Certificates: []tls.Certificate{cert}}
 
-	if err != nil {
-		wxmch.SetSSLClient(utils.DefaultHTTPClient)
-	} else {
-		wxmch.SetSSLClient(c)
-	}
+	wxmch.SetSSLClient(utils.NewHTTPClient(utils.WithHTTPTLSConfig(tlsConfig)))
 
 	return wxmch
 }
