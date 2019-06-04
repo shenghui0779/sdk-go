@@ -131,9 +131,10 @@ func WithHTTPExpectContinueTimeout(d time.Duration) HTTPClientOption {
 
 // httpRequestOptions http request options
 type httpRequestOptions struct {
-	headers          map[string]string
-	disableKeepAlive bool
-	timeout          time.Duration
+	headers map[string]string
+	cookies []*http.Cookie
+	close   bool
+	timeout time.Duration
 }
 
 // HTTPRequestOption configures how we set up the http request
@@ -161,12 +162,19 @@ func WithRequestHeader(key, value string) HTTPRequestOption {
 	})
 }
 
-// WithRequestDisableKeepAlive specifies close the connection after
+// WithRequestCookies specifies the cookies to http request.
+func WithRequestCookies(cookies ...*http.Cookie) HTTPRequestOption {
+	return newFuncHTTPRequestOption(func(o *httpRequestOptions) {
+		o.cookies = cookies
+	})
+}
+
+// WithRequestClose specifies close the connection after
 // replying to this request (for servers) or after sending this
 // request and reading its response (for clients).
-func WithRequestDisableKeepAlive(b bool) HTTPRequestOption {
+func WithRequestClose(b bool) HTTPRequestOption {
 	return newFuncHTTPRequestOption(func(o *httpRequestOptions) {
-		o.disableKeepAlive = b
+		o.close = b
 	})
 }
 
@@ -207,7 +215,13 @@ func (h *HTTPClient) Get(url string, options ...HTTPRequestOption) ([]byte, erro
 		}
 	}
 
-	if o.disableKeepAlive {
+	if len(o.cookies) > 0 {
+		for _, v := range o.cookies {
+			req.AddCookie(v)
+		}
+	}
+
+	if o.close {
 		req.Close = true
 	}
 
@@ -263,7 +277,13 @@ func (h *HTTPClient) Post(url string, body []byte, options ...HTTPRequestOption)
 		}
 	}
 
-	if o.disableKeepAlive {
+	if len(o.cookies) > 0 {
+		for _, v := range o.cookies {
+			req.AddCookie(v)
+		}
+	}
+
+	if o.close {
 		req.Close = true
 	}
 
