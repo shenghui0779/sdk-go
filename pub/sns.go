@@ -103,7 +103,7 @@ func (s *Sns) RefreshAccessToken(refreshToken string) (*AuthToken, error) {
 
 // GetUserInfo 获取微信用户信息
 func (s *Sns) GetUserInfo(accessToken, openid string) (*User, error) {
-	resp, err := utils.HTTPGet(fmt.Sprintf("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN", accessToken, openid))
+	resp, err := s.client.Get(fmt.Sprintf("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN", accessToken, openid))
 
 	if err != nil {
 		return nil, err
