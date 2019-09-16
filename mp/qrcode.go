@@ -6,7 +6,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
+
 	"github.com/tidwall/gjson"
 )
 
@@ -98,7 +100,7 @@ func (q *QRCode) Create(accessToken, path string, options ...QRCodeOption) ([]by
 		return nil, err
 	}
 
-	resp, err := q.client.Post(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := q.client.Post(fmt.Sprintf("%s?access_token=%s", consts.MPQRCodeCreateURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -147,7 +149,7 @@ func (q *QRCode) Get(accessToken, path string, options ...QRCodeOption) ([]byte,
 		return nil, err
 	}
 
-	resp, err := q.client.Post(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacode?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := q.client.Post(fmt.Sprintf("%s?access_token=%s", consts.MPQRCodeGetURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -200,7 +202,7 @@ func (q *QRCode) GetUnlimit(accessToken, scene string, options ...QRCodeOption) 
 		return nil, err
 	}
 
-	resp, err := q.client.Post(fmt.Sprintf("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := q.client.Post(fmt.Sprintf("%s?access_token=%s", consts.MPQRCodeGetUnlimitURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err

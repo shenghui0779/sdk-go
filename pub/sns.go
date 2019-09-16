@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/iiinsomnia/gochat/utils"
+
 	"github.com/tidwall/gjson"
 )
 
@@ -40,7 +41,7 @@ type Sns struct {
 
 // Code2Token 获取公众号授权AccessToken
 func (s *Sns) Code2Token(code string) (*AuthToken, error) {
-	resp, err := s.client.Get(fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code", s.appid, s.appsecret, code))
+	resp, err := s.client.Get(fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", consts.PubSnsCode2Token, s.appid, s.appsecret, code))
 
 	if err != nil {
 		return nil, err
@@ -63,7 +64,7 @@ func (s *Sns) Code2Token(code string) (*AuthToken, error) {
 
 // CheckAccessToken 校验授权AccessToken是否有效
 func (s *Sns) CheckAccessToken(accessToken, openid string) bool {
-	url := fmt.Sprintf("https://api.weixin.qq.com/sns/auth?access_token=%s&openid=%s", accessToken, openid)
+	url := fmt.Sprintf("%s=%s&openid=%s", consts.PubSnsCheckAccessTokenURL, accessToken, openid)
 
 	resp, err := s.client.Get(url)
 
@@ -80,7 +81,7 @@ func (s *Sns) CheckAccessToken(accessToken, openid string) bool {
 
 // RefreshAccessToken 刷新授权AccessToken
 func (s *Sns) RefreshAccessToken(refreshToken string) (*AuthToken, error) {
-	resp, err := s.client.Get(fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s", s.appid, refreshToken))
+	resp, err := s.client.Get(fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", consts.PubSnsRefreshAccessTokenURL, s.appid, refreshToken))
 
 	if err != nil {
 		return nil, err
@@ -103,7 +104,7 @@ func (s *Sns) RefreshAccessToken(refreshToken string) (*AuthToken, error) {
 
 // GetUserInfo 获取微信用户信息
 func (s *Sns) GetUserInfo(accessToken, openid string) (*User, error) {
-	resp, err := s.client.Get(fmt.Sprintf("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN", accessToken, openid))
+	resp, err := s.client.Get(fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", consts.PubSnsUserInfoURL, accessToken, openid))
 
 	if err != nil {
 		return nil, err

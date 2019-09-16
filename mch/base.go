@@ -45,3 +45,15 @@ func (wx *WXMch) Refund() *Refund {
 
 	return refund
 }
+
+// Pappay returns new pappay
+func (wx *WXMch) Pappay() *Pappay {
+	pappay := new(Pappay)
+
+	pappay.appid = wx.AppID
+	pappay.mchid = wx.MchID
+	pappay.apikey = wx.ApiKey
+	pappay.client = wx.client
+
+	return pappay
+}

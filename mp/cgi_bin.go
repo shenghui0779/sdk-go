@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
+
 	"github.com/tidwall/gjson"
 )
 
@@ -24,7 +26,7 @@ type CgiBin struct {
 
 // GetAccessToken returns access_token
 func (p *CgiBin) GetAccessToken() (*AccessToken, error) {
-	resp, err := p.client.Get(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", p.appid, p.appsecret))
+	resp, err := p.client.Get(fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", consts.MPAccessTokenURL, p.appid, p.appsecret))
 
 	if err != nil {
 		return nil, err

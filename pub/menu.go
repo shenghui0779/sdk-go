@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
+
 	"github.com/tidwall/gjson"
 )
 
@@ -15,17 +17,17 @@ type MenuList struct {
 }
 
 type DefaultMenu struct {
-	Button []*menuButton `json:"button"`
+	Button []*MenuButton `json:"button"`
 	MenuID int64         `json:"menuid"`
 }
 
 type ConditionalMenu struct {
-	Button    []*menuButton  `json:"button"`
+	Button    []*MenuButton  `json:"button"`
 	MenuID    int64          `json:"menuid"`
 	MatchRule *MenuMatchRule `json:"matchrule"`
 }
 
-type menuButton struct {
+type MenuButton struct {
 	Type      string        `json:"type"`
 	Name      string        `json:"name"`
 	Key       string        `json:"key,omitempty"`
@@ -33,7 +35,7 @@ type menuButton struct {
 	AppID     string        `json:"appid,omitempty"`
 	PagePath  string        `json:"page_path,omitempty"`
 	MediaID   string        `json:"media_id,omitempty"`
-	SubButton []*menuButton `json:"sub_button,omitempty"`
+	SubButton []*MenuButton `json:"sub_button,omitempty"`
 }
 
 type MenuMatchRule struct {
@@ -45,10 +47,12 @@ type MenuMatchRule struct {
 	ClientPlatformType int    `json:"client_platform_type"`
 }
 
+// Menu 公众号菜单
 type Menu struct {
 	client *utils.HTTPClient
 }
 
+// Create 创建自定义菜单
 func (m *Menu) Create(accessToken string, btns ...Button) error {
 	body := utils.X{"button": btns}
 
@@ -58,7 +62,7 @@ func (m *Menu) Create(accessToken string, btns ...Button) error {
 		return err
 	}
 
-	resp, err := m.client.Post(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", consts.PubMenuCreateURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err
@@ -73,6 +77,7 @@ func (m *Menu) Create(accessToken string, btns ...Button) error {
 	return nil
 }
 
+// CreateConditional 创建个性化菜单
 func (m *Menu) CreateConditional(accessToken string, matchRule *MenuMatchRule, btns ...Button) error {
 	body := utils.X{
 		"button":    btns,
@@ -85,7 +90,7 @@ func (m *Menu) CreateConditional(accessToken string, matchRule *MenuMatchRule, b
 		return err
 	}
 
-	resp, err := m.client.Post(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token=%s", accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", consts.PubMenuAddConditionalURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err
@@ -100,8 +105,9 @@ func (m *Menu) CreateConditional(accessToken string, matchRule *MenuMatchRule, b
 	return nil
 }
 
+// GetList 查询自定义菜单
 func (m *Menu) GetList(accessToken string) (*MenuList, error) {
-	resp, err := m.client.Get(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/get?access_token=%s", accessToken))
+	resp, err := m.client.Get(fmt.Sprintf("%s?access_token=%s", consts.PubMenuListURL, accessToken))
 
 	if err != nil {
 		return nil, err
@@ -122,8 +128,9 @@ func (m *Menu) GetList(accessToken string) (*MenuList, error) {
 	return reply, nil
 }
 
+// Delete 删除自定义菜单
 func (m *Menu) Delete(accessToken string) error {
-	resp, err := m.client.Get(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s", accessToken))
+	resp, err := m.client.Get(fmt.Sprintf("%s?access_token=%s", consts.PubMenuDeleteURL, accessToken))
 
 	if err != nil {
 		return err
@@ -138,6 +145,34 @@ func (m *Menu) Delete(accessToken string) error {
 	return nil
 }
 
+// DeleteConditional 删除个性化菜单
+func (m *Menu) DeleteConditional(accessToken, menuID string) error {
+	body := utils.X{
+		"menuid": menuID,
+	}
+
+	b, err := json.Marshal(body)
+
+	if err != nil {
+		return err
+	}
+
+	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", consts.PubMenuDeleteConditionalURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+
+	if err != nil {
+		return err
+	}
+
+	r := gjson.ParseBytes(resp)
+
+	if r.Get("errcode").Int() != 0 {
+		return errors.New(r.Get("errmsg").String())
+	}
+
+	return nil
+}
+
+// Button 菜单按钮
 type Button interface {
 	AddSubButton(btn ...Button)
 }

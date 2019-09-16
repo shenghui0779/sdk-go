@@ -3,6 +3,7 @@ package mch
 import (
 	"encoding/xml"
 
+	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
 )
 
@@ -16,7 +17,7 @@ type Reply struct {
 // ReplyOK 回复成功
 func ReplyOK() *Reply {
 	return &Reply{
-		ReturnCode: "SUCCESS",
+		ReturnCode: consts.MchReplySuccess,
 		ReturnMsg:  "OK",
 	}
 }
@@ -24,7 +25,7 @@ func ReplyOK() *Reply {
 // ReplyFail 回复失败
 func ReplyFail(msg string) *Reply {
 	return &Reply{
-		ReturnCode: "FAIL",
+		ReturnCode: consts.MchReplyFailed,
 		ReturnMsg:  utils.CDATA(msg),
 	}
 }

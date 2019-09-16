@@ -327,6 +327,24 @@ func (h *HTTPClient) Post(url string, body []byte, options ...HTTPRequestOption)
 	return b, nil
 }
 
+// GetXML http xml get request
+func (h *HTTPClient) GetXML(url string, options ...HTTPRequestOption) (WXML, error) {
+	resp, err := h.Get(url, options...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	wxml, err := ParseXML2Map(bytes.NewReader(resp))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return wxml, nil
+}
+
+// PostXML http xml post request
 func (h *HTTPClient) PostXML(url string, body WXML, options ...HTTPRequestOption) (WXML, error) {
 	buf := bufferPool.Get().(*bytes.Buffer)
 	buf.Reset()

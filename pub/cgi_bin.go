@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
+
 	"github.com/tidwall/gjson"
 )
 
@@ -30,7 +32,7 @@ type CgiBin struct {
 
 // GetAccessToken returns access_token
 func (c *CgiBin) GetAccessToken() (*AccessToken, error) {
-	resp, err := c.client.Get(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", c.appid, c.appsecret))
+	resp, err := c.client.Get(fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", consts.PubCgiBinAccessTokenURL, c.appid, c.appsecret))
 
 	if err != nil {
 		return nil, err
@@ -53,7 +55,7 @@ func (c *CgiBin) GetAccessToken() (*AccessToken, error) {
 
 // GetTicket returns jsapi ticket
 func (c *CgiBin) GetTicket(accessToken string) (*JSAPITicket, error) {
-	resp, err := c.client.Get(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi", accessToken))
+	resp, err := c.client.Get(fmt.Sprintf("%s?access_token=%s&type=jsapi", consts.PubCgiBinTicketURL, accessToken))
 
 	if err != nil {
 		return nil, err

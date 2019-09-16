@@ -2,38 +2,36 @@ package mch
 
 import (
 	"fmt"
-	"sort"
+	"net/url"
 	"strings"
 
 	"github.com/iiinsomnia/gochat/utils"
 )
 
-// Sign 生成签名
-func Sign(m utils.WXML, apikey string) string {
-	l := len(m)
+// SignWithMD5 生成MD5签名
+func SignWithMD5(m utils.WXML, apikey string) string {
+	signature := utils.MD5(buildSignStr(m, apikey))
 
-	ks := make([]string, 0, l)
-	kvs := make([]string, 0, l)
+	return strings.ToUpper(signature)
+}
 
-	for k := range m {
-		if k == "sign" {
+// SignWithHMacSHA256 生成HMAC-SHA256签名
+func SignWithHMacSHA256(m utils.WXML, apikey string) string {
+	signature := utils.HMAC("sha256", buildSignStr(m, apikey), apikey)
+
+	return strings.ToUpper(signature)
+}
+
+func buildSignStr(m utils.WXML, apikey string) string {
+	query := url.Values{}
+
+	for k, v := range m {
+		if k == "sign" || v == "" {
 			continue
 		}
 
-		ks = append(ks, k)
+		query.Add(k, v)
 	}
 
-	sort.Strings(ks)
-
-	for _, k := range ks {
-		if v, ok := m[k]; ok && v != "" {
-			kvs = append(kvs, fmt.Sprintf("%s=%s", k, v))
-		}
-	}
-
-	kvs = append(kvs, fmt.Sprintf("key=%s", apikey))
-
-	signature := utils.MD5(strings.Join(kvs, "&"))
-
-	return strings.ToUpper(signature)
+	return fmt.Sprintf("%s&key=%s", query.Encode(), apikey)
 }
