@@ -4,8 +4,7 @@ package mch
 const (
 	TradeAPP    = "APP"
 	TradeJSAPI  = "JSAPI"
-	TradeMP     = "JSAPI"
-	TradeH5     = "MWEB"
+	TradeMWEB   = "MWEB"
 	TradeNative = "NATIVE"
 	TradePAP    = "PAP"
 )
