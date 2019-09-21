@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
 
 	"github.com/tidwall/gjson"
@@ -27,7 +26,7 @@ type Sns struct {
 
 // Code2Session 获取小程序授权SessionKey
 func (s *Sns) Code2Session(code string) (*AuthSession, error) {
-	resp, err := s.client.Get(fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", consts.MPCode2SessionURL, s.appid, s.appsecret, code))
+	resp, err := s.client.Get(fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", Code2SessionURL, s.appid, s.appsecret, code))
 
 	if err != nil {
 		return nil, err

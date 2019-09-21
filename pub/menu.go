@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
 
 	"github.com/tidwall/gjson"
@@ -62,7 +61,7 @@ func (m *Menu) Create(accessToken string, btns ...Button) error {
 		return err
 	}
 
-	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", consts.PubMenuCreateURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", MenuCreateURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err
@@ -90,7 +89,7 @@ func (m *Menu) CreateConditional(accessToken string, matchRule *MenuMatchRule, b
 		return err
 	}
 
-	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", consts.PubMenuAddConditionalURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", MenuAddConditionalURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err
@@ -107,7 +106,7 @@ func (m *Menu) CreateConditional(accessToken string, matchRule *MenuMatchRule, b
 
 // GetList 查询自定义菜单
 func (m *Menu) GetList(accessToken string) (*MenuList, error) {
-	resp, err := m.client.Get(fmt.Sprintf("%s?access_token=%s", consts.PubMenuListURL, accessToken))
+	resp, err := m.client.Get(fmt.Sprintf("%s?access_token=%s", MenuListURL, accessToken))
 
 	if err != nil {
 		return nil, err
@@ -130,7 +129,7 @@ func (m *Menu) GetList(accessToken string) (*MenuList, error) {
 
 // Delete 删除自定义菜单
 func (m *Menu) Delete(accessToken string) error {
-	resp, err := m.client.Get(fmt.Sprintf("%s?access_token=%s", consts.PubMenuDeleteURL, accessToken))
+	resp, err := m.client.Get(fmt.Sprintf("%s?access_token=%s", MenuDeleteURL, accessToken))
 
 	if err != nil {
 		return err
@@ -157,7 +156,7 @@ func (m *Menu) DeleteConditional(accessToken, menuID string) error {
 		return err
 	}
 
-	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", consts.PubMenuDeleteConditionalURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", MenuDeleteConditionalURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err

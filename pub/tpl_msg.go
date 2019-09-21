@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
 
 	"github.com/tidwall/gjson"
@@ -53,7 +52,7 @@ func (t *TplMsg) Send(accessToken string, data *TplMsgData) (int64, error) {
 		return 0, err
 	}
 
-	resp, err := t.client.Post(fmt.Sprintf("%s?access_token=%s", consts.PubTplMsgSendURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := t.client.Post(fmt.Sprintf("%s?access_token=%s", TplMsgSendURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return 0, err

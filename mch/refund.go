@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
 )
 
@@ -37,7 +36,7 @@ func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (
 		"appid":          r.appid,
 		"mch_id":         r.mchid,
 		"nonce_str":      utils.NonceStr(),
-		"sign_type":      consts.MchSignMD5,
+		"sign_type":      SignMD5,
 		"transaction_id": transactionID,
 		"out_refund_no":  data.OutRefundNO,
 		"total_fee":      strconv.Itoa(data.TotalFee),
@@ -60,7 +59,7 @@ func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (
 		body["notify_url"] = data.NotifyURL
 	}
 
-	return r.doSSL(consts.MchRefundApplyURL, body)
+	return r.doSSL(RefundApplyURL, body)
 }
 
 // RefundByOutTradeNO 根据微信订单号退款
@@ -69,7 +68,7 @@ func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.
 		"appid":         r.appid,
 		"mch_id":        r.mchid,
 		"nonce_str":     utils.NonceStr(),
-		"sign_type":     consts.MchSignMD5,
+		"sign_type":     SignMD5,
 		"out_trade_no":  outTradeNO,
 		"out_refund_no": data.OutRefundNO,
 		"total_fee":     strconv.Itoa(data.TotalFee),
@@ -92,7 +91,7 @@ func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.
 		body["notify_url"] = data.NotifyURL
 	}
 
-	return r.doSSL(consts.MchRefundApplyURL, body)
+	return r.doSSL(RefundApplyURL, body)
 }
 
 // QueryByRefundID 根据微信退款单号查询
@@ -102,14 +101,14 @@ func (r *Refund) QueryByRefundID(refundID string, offset ...int) (utils.WXML, er
 		"mch_id":    r.mchid,
 		"refund_id": refundID,
 		"nonce_str": utils.NonceStr(),
-		"sign_type": consts.MchSignMD5,
+		"sign_type": SignMD5,
 	}
 
 	if len(offset) > 0 {
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	return r.do(consts.MchRefundQueryURL, body)
+	return r.do(RefundQueryURL, body)
 }
 
 // QueryByOutRefundNO 根据商户退款单号查询
@@ -119,14 +118,14 @@ func (r *Refund) QueryByOutRefundNO(outRefundNO string, offset ...int) (utils.WX
 		"mch_id":        r.mchid,
 		"out_refund_no": outRefundNO,
 		"nonce_str":     utils.NonceStr(),
-		"sign_type":     consts.MchSignMD5,
+		"sign_type":     SignMD5,
 	}
 
 	if len(offset) > 0 {
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	return r.do(consts.MchRefundQueryURL, body)
+	return r.do(RefundQueryURL, body)
 }
 
 // QueryByTransactionID 根据微信订单号查询
@@ -136,14 +135,14 @@ func (r *Refund) QueryByTransactionID(transactionID string, offset ...int) (util
 		"mch_id":         r.mchid,
 		"transaction_id": transactionID,
 		"nonce_str":      utils.NonceStr(),
-		"sign_type":      consts.MchSignMD5,
+		"sign_type":      SignMD5,
 	}
 
 	if len(offset) > 0 {
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	return r.do(consts.MchRefundQueryURL, body)
+	return r.do(RefundQueryURL, body)
 }
 
 // QueryByOutTradeNO 根据商户订单号查询
@@ -160,7 +159,7 @@ func (r *Refund) QueryByOutTradeNO(outTradeNO string, offset ...int) (utils.WXML
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	return r.do(consts.MchRefundQueryURL, body)
+	return r.do(RefundQueryURL, body)
 }
 
 func (r *Refund) do(url string, body utils.WXML) (utils.WXML, error) {
@@ -172,11 +171,11 @@ func (r *Refund) do(url string, body utils.WXML) (utils.WXML, error) {
 		return nil, err
 	}
 
-	if resp["return_code"] != consts.MchReplySuccess {
+	if resp["return_code"] != ReplySuccess {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if resp["result_code"] != consts.MchReplySuccess {
+	if resp["result_code"] != ReplySuccess {
 		return nil, errors.New(resp["err_code_des"])
 	}
 
@@ -204,11 +203,11 @@ func (r *Refund) doSSL(url string, body utils.WXML) (utils.WXML, error) {
 		return nil, err
 	}
 
-	if resp["return_code"] != consts.MchReplySuccess {
+	if resp["return_code"] != ReplySuccess {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if resp["result_code"] != consts.MchReplySuccess {
+	if resp["result_code"] != ReplySuccess {
 		return nil, errors.New(resp["err_code_des"])
 	}
 

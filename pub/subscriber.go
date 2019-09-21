@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
 
 	"github.com/tidwall/gjson"
@@ -50,7 +49,7 @@ type SubscriberList struct {
 
 // GetSubscriberInfo 获取微信公众号订阅者信息
 func (s *Subscriber) Get(accessToken, openid string) (*SubscriberInfo, error) {
-	resp, err := s.client.Get(fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", consts.PubSubscriberGetURL, accessToken, openid))
+	resp, err := s.client.Get(fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", SubscriberGetURL, accessToken, openid))
 
 	if err != nil {
 		return nil, err
@@ -94,7 +93,7 @@ func (s *Subscriber) BatchGet(accessToken string, openid ...string) ([]*Subscrib
 		return nil, err
 	}
 
-	resp, err := s.client.Post(fmt.Sprintf("%s?access_token=%s", consts.PubSubscriberBatchGetURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := s.client.Post(fmt.Sprintf("%s?access_token=%s", SubscriberBatchGetURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -117,10 +116,10 @@ func (s *Subscriber) BatchGet(accessToken string, openid ...string) ([]*Subscrib
 
 // GetList 获取微信公众号订阅者列表
 func (s *Subscriber) GetList(accessToken string, nextOpenID ...string) (*SubscriberList, error) {
-	url := fmt.Sprintf("%s?access_token=%s", consts.PubSubscriberListURL, accessToken)
+	url := fmt.Sprintf("%s?access_token=%s", SubscriberListURL, accessToken)
 
 	if len(nextOpenID) > 0 {
-		url = fmt.Sprintf("%s?access_token=%s&next_openid=%s", consts.PubSubscriberListURL, accessToken, nextOpenID[0])
+		url = fmt.Sprintf("%s?access_token=%s&next_openid=%s", SubscriberListURL, accessToken, nextOpenID[0])
 	}
 
 	resp, err := s.client.Get(url)

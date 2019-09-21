@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
 
 	"github.com/tidwall/gjson"
@@ -42,7 +41,7 @@ type Sns struct {
 
 // Code2Token 获取公众号授权AccessToken
 func (s *Sns) Code2Token(code string) (*AuthToken, error) {
-	resp, err := s.client.Get(fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", consts.PubSnsCode2Token, s.appid, s.appsecret, code))
+	resp, err := s.client.Get(fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", SnsCode2Token, s.appid, s.appsecret, code))
 
 	if err != nil {
 		return nil, err
@@ -65,7 +64,7 @@ func (s *Sns) Code2Token(code string) (*AuthToken, error) {
 
 // CheckAccessToken 校验授权AccessToken是否有效
 func (s *Sns) CheckAccessToken(accessToken, openid string) bool {
-	url := fmt.Sprintf("%s=%s&openid=%s", consts.PubSnsCheckAccessTokenURL, accessToken, openid)
+	url := fmt.Sprintf("%s=%s&openid=%s", SnsCheckAccessTokenURL, accessToken, openid)
 
 	resp, err := s.client.Get(url)
 
@@ -82,7 +81,7 @@ func (s *Sns) CheckAccessToken(accessToken, openid string) bool {
 
 // RefreshAccessToken 刷新授权AccessToken
 func (s *Sns) RefreshAccessToken(refreshToken string) (*AuthToken, error) {
-	resp, err := s.client.Get(fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", consts.PubSnsRefreshAccessTokenURL, s.appid, refreshToken))
+	resp, err := s.client.Get(fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", SnsRefreshAccessTokenURL, s.appid, refreshToken))
 
 	if err != nil {
 		return nil, err
@@ -105,7 +104,7 @@ func (s *Sns) RefreshAccessToken(refreshToken string) (*AuthToken, error) {
 
 // GetUserInfo 获取微信用户信息
 func (s *Sns) GetUserInfo(accessToken, openid string) (*User, error) {
-	resp, err := s.client.Get(fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", consts.PubSnsUserInfoURL, accessToken, openid))
+	resp, err := s.client.Get(fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", SnsUserInfoURL, accessToken, openid))
 
 	if err != nil {
 		return nil, err

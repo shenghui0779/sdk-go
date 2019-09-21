@@ -4,9 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"time"
 
-	"github.com/iiinsomnia/gochat/consts"
 	"github.com/iiinsomnia/gochat/utils"
 )
 
@@ -48,7 +46,7 @@ func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 		"appid":            o.appid,
 		"mch_id":           o.mchid,
 		"nonce_str":        utils.NonceStr(),
-		"sign_type":        consts.MchSignMD5,
+		"sign_type":        SignMD5,
 		"fee_type":         "CNY",
 		"trade_type":       order.TradeType,
 		"notify_url":       order.NotifyURL,
@@ -106,7 +104,7 @@ func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 		body["scene_info"] = order.SceneInfo
 	}
 
-	return o.do(consts.MchOrderUnifyURL, body)
+	return o.do(OrderUnifyURL, body)
 }
 
 // QueryByTransactionID 根据微信订单号查询
@@ -116,10 +114,10 @@ func (o *Order) QueryByTransactionID(transactionID string) (utils.WXML, error) {
 		"mch_id":         o.mchid,
 		"transaction_id": transactionID,
 		"nonce_str":      utils.NonceStr(),
-		"sign_type":      consts.MchSignMD5,
+		"sign_type":      SignMD5,
 	}
 
-	return o.do(consts.MchOrderQueryURL, body)
+	return o.do(OrderQueryURL, body)
 }
 
 // QueryByOutTradeNO 根据商户订单号查询
@@ -129,10 +127,10 @@ func (o *Order) QueryByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 		"mch_id":       o.mchid,
 		"out_trade_no": outTradeNO,
 		"nonce_str":    utils.NonceStr(),
-		"sign_type":    consts.MchSignMD5,
+		"sign_type":    SignMD5,
 	}
 
-	return o.do(consts.MchOrderQueryURL, body)
+	return o.do(OrderQueryURL, body)
 }
 
 // Close 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
@@ -142,10 +140,10 @@ func (o *Order) Close(outTradeNO string) (utils.WXML, error) {
 		"mch_id":       o.mchid,
 		"out_trade_no": outTradeNO,
 		"nonce_str":    utils.NonceStr(),
-		"sign_type":    consts.MchSignMD5,
+		"sign_type":    SignMD5,
 	}
 
-	return o.do(consts.MchOrderCloseURL, body)
+	return o.do(OrderCloseURL, body)
 }
 
 func (o *Order) do(url string, body utils.WXML) (utils.WXML, error) {
@@ -157,11 +155,11 @@ func (o *Order) do(url string, body utils.WXML) (utils.WXML, error) {
 		return nil, err
 	}
 
-	if resp["return_code"] != consts.MchReplySuccess {
+	if resp["return_code"] != ReplySuccess {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if resp["result_code"] != consts.MchReplySuccess {
+	if resp["result_code"] != ReplySuccess {
 		return nil, errors.New(resp["err_code_des"])
 	}
 
@@ -178,35 +176,4 @@ func (o *Order) do(url string, body utils.WXML) (utils.WXML, error) {
 	}
 
 	return resp, nil
-}
-
-// JSAPI 用于JS拉起支付
-func (o *Order) JSAPI(prepayID string) utils.WXML {
-	ch := utils.WXML{
-		"appId":     o.appid,
-		"nonceStr":  utils.NonceStr(),
-		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
-		"signType":  consts.MchSignMD5,
-		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
-	}
-
-	ch["paySign"] = SignWithMD5(ch, o.apikey)
-
-	return ch
-}
-
-// APPAPI 用于APP拉起支付
-func (o *Order) APPAPI(prepayID string) utils.WXML {
-	ch := utils.WXML{
-		"appid":     o.appid,
-		"partnerid": o.mchid,
-		"prepayid":  prepayID,
-		"package":   "Sign=WXPay",
-		"noncestr":  utils.NonceStr(),
-		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
-	}
-
-	ch["sign"] = SignWithMD5(ch, o.apikey)
-
-	return ch
 }
