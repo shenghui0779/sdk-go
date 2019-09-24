@@ -1,8 +1,6 @@
 package mch
 
 import (
-	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/iiinsomnia/gochat/utils"
@@ -23,18 +21,14 @@ type RefundData struct {
 
 // Refund 退款操作
 type Refund struct {
-	appid     string
-	mchid     string
-	apikey    string
-	client    *utils.HTTPClient
-	sslClient *utils.HTTPClient
+	*WXMch
 }
 
 // RefundByTransactionID 根据微信订单号退款
 func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":          r.appid,
-		"mch_id":         r.mchid,
+		"appid":          r.AppID,
+		"mch_id":         r.MchID,
 		"nonce_str":      utils.NonceStr(),
 		"sign_type":      SignMD5,
 		"transaction_id": transactionID,
@@ -59,14 +53,26 @@ func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (
 		body["notify_url"] = data.NotifyURL
 	}
 
-	return r.doSSL(RefundApplyURL, body)
+	body["sign"] = SignWithMD5(body, r.AppKey)
+
+	resp, err := r.SSLClient.PostXML(RefundApplyURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // RefundByOutTradeNO 根据微信订单号退款
 func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":         r.appid,
-		"mch_id":        r.mchid,
+		"appid":         r.AppID,
+		"mch_id":        r.MchID,
 		"nonce_str":     utils.NonceStr(),
 		"sign_type":     SignMD5,
 		"out_trade_no":  outTradeNO,
@@ -91,14 +97,26 @@ func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.
 		body["notify_url"] = data.NotifyURL
 	}
 
-	return r.doSSL(RefundApplyURL, body)
+	body["sign"] = SignWithMD5(body, r.AppKey)
+
+	resp, err := r.SSLClient.PostXML(RefundApplyURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // QueryByRefundID 根据微信退款单号查询
 func (r *Refund) QueryByRefundID(refundID string, offset ...int) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":     r.appid,
-		"mch_id":    r.mchid,
+		"appid":     r.AppID,
+		"mch_id":    r.MchID,
 		"refund_id": refundID,
 		"nonce_str": utils.NonceStr(),
 		"sign_type": SignMD5,
@@ -108,14 +126,26 @@ func (r *Refund) QueryByRefundID(refundID string, offset ...int) (utils.WXML, er
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	return r.do(RefundQueryURL, body)
+	body["sign"] = SignWithMD5(body, r.AppKey)
+
+	resp, err := r.Client.PostXML(RefundQueryURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // QueryByOutRefundNO 根据商户退款单号查询
 func (r *Refund) QueryByOutRefundNO(outRefundNO string, offset ...int) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":         r.appid,
-		"mch_id":        r.mchid,
+		"appid":         r.AppID,
+		"mch_id":        r.MchID,
 		"out_refund_no": outRefundNO,
 		"nonce_str":     utils.NonceStr(),
 		"sign_type":     SignMD5,
@@ -125,14 +155,26 @@ func (r *Refund) QueryByOutRefundNO(outRefundNO string, offset ...int) (utils.WX
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	return r.do(RefundQueryURL, body)
+	body["sign"] = SignWithMD5(body, r.AppKey)
+
+	resp, err := r.Client.PostXML(RefundQueryURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // QueryByTransactionID 根据微信订单号查询
 func (r *Refund) QueryByTransactionID(transactionID string, offset ...int) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":          r.appid,
-		"mch_id":         r.mchid,
+		"appid":          r.AppID,
+		"mch_id":         r.MchID,
 		"transaction_id": transactionID,
 		"nonce_str":      utils.NonceStr(),
 		"sign_type":      SignMD5,
@@ -142,14 +184,26 @@ func (r *Refund) QueryByTransactionID(transactionID string, offset ...int) (util
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	return r.do(RefundQueryURL, body)
+	body["sign"] = SignWithMD5(body, r.AppKey)
+
+	resp, err := r.Client.PostXML(RefundQueryURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // QueryByOutTradeNO 根据商户订单号查询
 func (r *Refund) QueryByOutTradeNO(outTradeNO string, offset ...int) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":        r.appid,
-		"mch_id":       r.mchid,
+		"appid":        r.AppID,
+		"mch_id":       r.MchID,
 		"out_trade_no": outTradeNO,
 		"nonce_str":    utils.NonceStr(),
 		"sign_type":    "MD5",
@@ -159,68 +213,16 @@ func (r *Refund) QueryByOutTradeNO(outTradeNO string, offset ...int) (utils.WXML
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	return r.do(RefundQueryURL, body)
-}
+	body["sign"] = SignWithMD5(body, r.AppKey)
 
-func (r *Refund) do(url string, body utils.WXML) (utils.WXML, error) {
-	body["sign"] = SignWithMD5(body, r.apikey)
-
-	resp, err := r.client.PostXML(url, body)
+	resp, err := r.Client.PostXML(RefundQueryURL, body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if resp["return_code"] != ReplySuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if resp["result_code"] != ReplySuccess {
-		return nil, errors.New(resp["err_code_des"])
-	}
-
-	if signature := SignWithMD5(resp, r.apikey); signature != resp["sign"] {
-		return nil, fmt.Errorf("refund resp signature verified failed, want: %s, got: %s", signature, resp["sign"])
-	}
-
-	if resp["appid"] != r.appid {
-		return nil, fmt.Errorf("refund resp appid mismatch, want: %s, got: %s", r.appid, resp["appid"])
-	}
-
-	if resp["mch_id"] != r.mchid {
-		return nil, fmt.Errorf("refund resp mchid mismatch, want: %s, got: %s", r.mchid, resp["mch_id"])
-	}
-
-	return resp, nil
-}
-
-func (r *Refund) doSSL(url string, body utils.WXML) (utils.WXML, error) {
-	body["sign"] = SignWithMD5(body, r.apikey)
-
-	resp, err := r.sslClient.PostXML(url, body)
-
-	if err != nil {
+	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
 		return nil, err
-	}
-
-	if resp["return_code"] != ReplySuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if resp["result_code"] != ReplySuccess {
-		return nil, errors.New(resp["err_code_des"])
-	}
-
-	if signature := SignWithMD5(resp, r.apikey); signature != resp["sign"] {
-		return nil, fmt.Errorf("refund resp signature verified failed, want: %s, got: %s", signature, resp["sign"])
-	}
-
-	if resp["appid"] != r.appid {
-		return nil, fmt.Errorf("refund resp appid mismatch, want: %s, got: %s", r.appid, resp["appid"])
-	}
-
-	if resp["mch_id"] != r.mchid {
-		return nil, fmt.Errorf("refund resp mchid mismatch, want: %s, got: %s", r.mchid, resp["mch_id"])
 	}
 
 	return resp, nil

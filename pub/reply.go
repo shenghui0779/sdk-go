@@ -110,15 +110,12 @@ type ReplyMsg struct {
 
 // Reply 公众号回复
 type Reply struct {
-	accountID      string
-	appid          string
-	signToken      string
-	encodingAESKey string
-	msg            *ReplyMsg
+	*WXPub
+	msg *ReplyMsg
 }
 
 func (r *Reply) encrypt(data []byte) ([]byte, error) {
-	key, err := base64.StdEncoding.DecodeString(r.encodingAESKey + "=")
+	key, err := base64.StdEncoding.DecodeString(r.EncodingAESKey + "=")
 
 	if err != nil {
 		return nil, err
@@ -127,12 +124,12 @@ func (r *Reply) encrypt(data []byte) ([]byte, error) {
 	contentLen := len(data)
 	appidOffset := 20 + contentLen
 
-	plainText := make([]byte, appidOffset+len(r.appid))
+	plainText := make([]byte, appidOffset+len(r.AppID))
 
 	copy(plainText[:16], utils.RandomStr(16))
 	copy(plainText[16:20], utils.EncodeUint32ToBytes(uint32(contentLen)))
 	copy(plainText[20:], data)
-	copy(plainText[appidOffset:], r.appid)
+	copy(plainText[appidOffset:], r.AppID)
 
 	cipherText, err := utils.AESCBCEncrypt(plainText, key)
 
@@ -147,7 +144,7 @@ func (r *Reply) build(encrypt string) *ReplyMsg {
 	now := time.Now().Unix()
 	nonce := utils.NonceStr()
 
-	signItems := []string{r.signToken, strconv.FormatInt(now, 10), nonce, encrypt}
+	signItems := []string{r.SignToken, strconv.FormatInt(now, 10), nonce, encrypt}
 
 	sort.Strings(signItems)
 
@@ -166,7 +163,7 @@ func (r *Reply) Text(openid, content string) (*ReplyMsg, error) {
 	m := &TextReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.accountID),
+			FromUserName: utils.CDATA(r.AccountID),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -195,7 +192,7 @@ func (r *Reply) Image(openid, mediaID string) (*ReplyMsg, error) {
 	m := &ImageReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.accountID),
+			FromUserName: utils.CDATA(r.AccountID),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -224,7 +221,7 @@ func (r *Reply) Voice(openid, mediaID string) (*ReplyMsg, error) {
 	m := &VoiceReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.accountID),
+			FromUserName: utils.CDATA(r.AccountID),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -253,7 +250,7 @@ func (r *Reply) Video(openid, mediaID, title, desc string) (*ReplyMsg, error) {
 	m := &VideoReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.accountID),
+			FromUserName: utils.CDATA(r.AccountID),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -284,7 +281,7 @@ func (r *Reply) Music(openid, mediaID, title, desc, url, HQUrl string) (*ReplyMs
 	m := &MusicReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.accountID),
+			FromUserName: utils.CDATA(r.AccountID),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -317,7 +314,7 @@ func (r *Reply) Articles(openid string, count int, articles ...*Article) (*Reply
 	m := &ArticlesReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.accountID),
+			FromUserName: utils.CDATA(r.AccountID),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -347,7 +344,7 @@ func (r *Reply) Transfer2KF(openid string, kfAccount ...string) (*ReplyMsg, erro
 	m := &Transfer2KF{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.accountID),
+			FromUserName: utils.CDATA(r.AccountID),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("transfer_customer_service"),
 		},

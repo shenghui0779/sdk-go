@@ -37,13 +37,12 @@ type EventMsg struct {
 }
 
 type MsgChiper struct {
-	appid          string
-	encodingAESKey string
+	*WXPub
 }
 
 // Decrypt 消息解密，参考微信[加密解密技术方案](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318482&token=&lang=zh_CN)
 func (c *MsgChiper) Decrypt(encrypt string) (*EventMsg, error) {
-	key, err := base64.StdEncoding.DecodeString(c.encodingAESKey + "=")
+	key, err := base64.StdEncoding.DecodeString(c.EncodingAESKey + "=")
 
 	if err != nil {
 		return nil, err
@@ -61,11 +60,11 @@ func (c *MsgChiper) Decrypt(encrypt string) (*EventMsg, error) {
 		return nil, err
 	}
 
-	appidOffset := len(plainText) - len([]byte(c.appid))
+	appidOffset := len(plainText) - len([]byte(c.AppID))
 
 	// 校验APPID
-	if appid := string(plainText[appidOffset:]); appid != c.appid {
-		return nil, fmt.Errorf("wxpub event_msg appid mismatch, want: %s, got: %s", c.appid, appid)
+	if appid := string(plainText[appidOffset:]); appid != c.AppID {
+		return nil, fmt.Errorf("wxpub event_msg appid mismatch, want: %s, got: %s", c.AppID, appid)
 	}
 
 	m := new(EventMsg)

@@ -9,81 +9,40 @@ type WXPub struct {
 	AppSecret      string
 	SignToken      string
 	EncodingAESKey string
-	client         *utils.HTTPClient
-}
-
-// SetHTTPClient set wxpub http client
-func (wx *WXPub) SetHTTPClient(c *utils.HTTPClient) {
-	wx.client = c
+	Client         *utils.HTTPClient
 }
 
 // Sns returns new sns
 func (wx *WXPub) Sns() *Sns {
-	sns := new(Sns)
-
-	sns.appid = wx.AppID
-	sns.appsecret = wx.AppSecret
-	sns.client = wx.client
-
-	return sns
+	return &Sns{wx}
 }
 
 // CgiBin returns new cgi-bin
 func (wx *WXPub) CgiBin() *CgiBin {
-	cgibin := new(CgiBin)
-
-	cgibin.appid = wx.AppID
-	cgibin.appsecret = wx.AppSecret
-	cgibin.client = wx.client
-
-	return cgibin
+	return &CgiBin{wx}
 }
 
 // MsgChiper returns new msg chiper
 func (wx *WXPub) MsgChiper() *MsgChiper {
-	chiper := new(MsgChiper)
-
-	chiper.appid = wx.AppID
-	chiper.encodingAESKey = wx.EncodingAESKey
-
-	return chiper
+	return &MsgChiper{wx}
 }
 
 // Menu returns new menu
 func (wx *WXPub) Menu() *Menu {
-	menu := new(Menu)
-
-	menu.client = wx.client
-
-	return menu
+	return &Menu{wx}
 }
 
 // Subscriber returns new subscriber
 func (wx *WXPub) Subscriber() *Subscriber {
-	subscriber := new(Subscriber)
-
-	subscriber.client = wx.client
-
-	return subscriber
+	return &Subscriber{wx}
 }
 
 // TplMsg returns new tpl msg
 func (wx *WXPub) TplMsg() *TplMsg {
-	msg := new(TplMsg)
-
-	msg.client = wx.client
-
-	return msg
+	return &TplMsg{wx}
 }
 
 // Reply returns new reply
 func (wx *WXPub) Reply() *Reply {
-	reply := new(Reply)
-
-	reply.accountID = wx.AccountID
-	reply.appid = wx.AppID
-	reply.signToken = wx.SignToken
-	reply.encodingAESKey = wx.EncodingAESKey
-
-	return reply
+	return &Reply{WXPub: wx}
 }

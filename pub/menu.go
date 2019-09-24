@@ -48,7 +48,7 @@ type MenuMatchRule struct {
 
 // Menu 公众号菜单
 type Menu struct {
-	client *utils.HTTPClient
+	*WXPub
 }
 
 // Create 创建自定义菜单
@@ -61,7 +61,7 @@ func (m *Menu) Create(accessToken string, btns ...Button) error {
 		return err
 	}
 
-	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", MenuCreateURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := m.Client.Post(fmt.Sprintf("%s?access_token=%s", MenuCreateURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err
@@ -89,7 +89,7 @@ func (m *Menu) CreateConditional(accessToken string, matchRule *MenuMatchRule, b
 		return err
 	}
 
-	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", MenuAddConditionalURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := m.Client.Post(fmt.Sprintf("%s?access_token=%s", MenuAddConditionalURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err
@@ -106,7 +106,7 @@ func (m *Menu) CreateConditional(accessToken string, matchRule *MenuMatchRule, b
 
 // GetList 查询自定义菜单
 func (m *Menu) GetList(accessToken string) (*MenuList, error) {
-	resp, err := m.client.Get(fmt.Sprintf("%s?access_token=%s", MenuListURL, accessToken))
+	resp, err := m.Client.Get(fmt.Sprintf("%s?access_token=%s", MenuListURL, accessToken))
 
 	if err != nil {
 		return nil, err
@@ -129,7 +129,7 @@ func (m *Menu) GetList(accessToken string) (*MenuList, error) {
 
 // Delete 删除自定义菜单
 func (m *Menu) Delete(accessToken string) error {
-	resp, err := m.client.Get(fmt.Sprintf("%s?access_token=%s", MenuDeleteURL, accessToken))
+	resp, err := m.Client.Get(fmt.Sprintf("%s?access_token=%s", MenuDeleteURL, accessToken))
 
 	if err != nil {
 		return err
@@ -156,7 +156,7 @@ func (m *Menu) DeleteConditional(accessToken, menuID string) error {
 		return err
 	}
 
-	resp, err := m.client.Post(fmt.Sprintf("%s?access_token=%s", MenuDeleteConditionalURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := m.Client.Post(fmt.Sprintf("%s?access_token=%s", MenuDeleteConditionalURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return err

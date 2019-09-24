@@ -2,7 +2,7 @@ package mch
 
 import (
 	"fmt"
-	"net/url"
+	"sort"
 	"strings"
 
 	"github.com/iiinsomnia/gochat/utils"
@@ -22,16 +22,30 @@ func SignWithHMacSHA256(m utils.WXML, apikey string) string {
 	return strings.ToUpper(signature)
 }
 
+// Sign 生成签名
 func buildSignStr(m utils.WXML, apikey string) string {
-	query := url.Values{}
+	l := len(m)
 
-	for k, v := range m {
-		if k == "sign" || v == "" {
+	ks := make([]string, 0, l)
+	kvs := make([]string, 0, l)
+
+	for k := range m {
+		if k == "sign" {
 			continue
 		}
 
-		query.Add(k, v)
+		ks = append(ks, k)
 	}
 
-	return fmt.Sprintf("%s&key=%s", query.Encode(), apikey)
+	sort.Strings(ks)
+
+	for _, k := range ks {
+		if v, ok := m[k]; ok && v != "" {
+			kvs = append(kvs, fmt.Sprintf("%s=%s", k, v))
+		}
+	}
+
+	kvs = append(kvs, fmt.Sprintf("key=%s", apikey))
+
+	return strings.Join(kvs, "&")
 }

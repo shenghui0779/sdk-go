@@ -14,14 +14,13 @@ func NewWXMch(appid, mchid, apikey string, cert tls.Certificate) *mch.WXMch {
 	wxmch := &mch.WXMch{
 		AppID:  appid,
 		MchID:  mchid,
-		ApiKey: apikey,
+		AppKey: apikey,
+		Client: utils.DefaultHTTPClient,
 	}
-
-	wxmch.SetHTTPClient(utils.DefaultHTTPClient)
 
 	tlsConfig := &tls.Config{Certificates: []tls.Certificate{cert}}
 
-	wxmch.SetSSLClient(utils.NewHTTPClient(utils.WithHTTPTLSConfig(tlsConfig)))
+	wxmch.SSLClient = utils.NewHTTPClient(utils.WithHTTPTLSConfig(tlsConfig))
 
 	return wxmch
 }
@@ -34,9 +33,8 @@ func NewWXPub(accountid, appid, appsecret, signToken, encodingAESKey string) *pu
 		AppSecret:      appsecret,
 		SignToken:      signToken,
 		EncodingAESKey: encodingAESKey,
+		Client:         utils.DefaultHTTPClient,
 	}
-
-	wxpub.SetHTTPClient(utils.DefaultHTTPClient)
 
 	return wxpub
 }
@@ -46,9 +44,8 @@ func NewWXMP(appid, appsecret string) *mp.WXMP {
 	wxmp := &mp.WXMP{
 		AppID:     appid,
 		AppSecret: appsecret,
+		Client:    utils.DefaultHTTPClient,
 	}
-
-	wxmp.SetHTTPClient(utils.DefaultHTTPClient)
 
 	return wxmp
 }

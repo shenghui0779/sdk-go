@@ -1,8 +1,6 @@
 package mch
 
 import (
-	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/iiinsomnia/gochat/utils"
@@ -34,26 +32,23 @@ type UnifiedOrder struct {
 
 // Order 订单操作
 type Order struct {
-	appid  string
-	mchid  string
-	apikey string
-	client *utils.HTTPClient
+	*WXMch
 }
 
 // Unify 统一下单
 func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":            o.appid,
-		"mch_id":           o.mchid,
+		"appid":            o.AppID,
+		"mch_id":           o.MchID,
 		"nonce_str":        utils.NonceStr(),
 		"sign_type":        SignMD5,
 		"fee_type":         "CNY",
 		"trade_type":       order.TradeType,
-		"notify_url":       order.NotifyURL,
 		"body":             order.Body,
 		"out_trade_no":     order.OutTradeNO,
 		"total_fee":        strconv.Itoa(order.TotalFee),
 		"spbill_create_ip": order.SpbillCreateIP,
+		"notify_url":       order.NotifyURL,
 	}
 
 	if order.DeviceInfo != "" {
@@ -104,75 +99,91 @@ func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 		body["scene_info"] = order.SceneInfo
 	}
 
-	return o.do(OrderUnifyURL, body)
-}
+	body["sign"] = SignWithMD5(body, o.AppKey)
 
-// QueryByTransactionID 根据微信订单号查询
-func (o *Order) QueryByTransactionID(transactionID string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":          o.appid,
-		"mch_id":         o.mchid,
-		"transaction_id": transactionID,
-		"nonce_str":      utils.NonceStr(),
-		"sign_type":      SignMD5,
-	}
-
-	return o.do(OrderQueryURL, body)
-}
-
-// QueryByOutTradeNO 根据商户订单号查询
-func (o *Order) QueryByOutTradeNO(outTradeNO string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":        o.appid,
-		"mch_id":       o.mchid,
-		"out_trade_no": outTradeNO,
-		"nonce_str":    utils.NonceStr(),
-		"sign_type":    SignMD5,
-	}
-
-	return o.do(OrderQueryURL, body)
-}
-
-// Close 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
-func (o *Order) Close(outTradeNO string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":        o.appid,
-		"mch_id":       o.mchid,
-		"out_trade_no": outTradeNO,
-		"nonce_str":    utils.NonceStr(),
-		"sign_type":    SignMD5,
-	}
-
-	return o.do(OrderCloseURL, body)
-}
-
-func (o *Order) do(url string, body utils.WXML) (utils.WXML, error) {
-	body["sign"] = SignWithMD5(body, o.apikey)
-
-	resp, err := o.client.PostXML(url, body)
+	resp, err := o.Client.PostXML(OrderUnifyURL, body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if resp["return_code"] != ReplySuccess {
-		return nil, errors.New(resp["return_msg"])
+	if err := o.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
 	}
 
-	if resp["result_code"] != ReplySuccess {
-		return nil, errors.New(resp["err_code_des"])
+	return resp, nil
+}
+
+// QueryByTransactionID 根据微信订单号查询
+func (o *Order) QueryByTransactionID(transactionID string) (utils.WXML, error) {
+	body := utils.WXML{
+		"appid":          o.AppID,
+		"mch_id":         o.MchID,
+		"transaction_id": transactionID,
+		"nonce_str":      utils.NonceStr(),
+		"sign_type":      SignMD5,
 	}
 
-	if signature := SignWithMD5(resp, o.apikey); signature != resp["sign"] {
-		return nil, fmt.Errorf("order resp signature verified failed, want: %s, got: %s", signature, resp["sign"])
+	body["sign"] = SignWithMD5(body, o.AppKey)
+
+	resp, err := o.Client.PostXML(OrderQueryURL, body)
+
+	if err != nil {
+		return nil, err
 	}
 
-	if resp["appid"] != o.appid {
-		return nil, fmt.Errorf("order resp appid mismatch, want: %s, got: %s", o.appid, resp["appid"])
+	if err := o.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
 	}
 
-	if resp["mch_id"] != o.mchid {
-		return nil, fmt.Errorf("order resp mchid mismatch, want: %s, got: %s", o.mchid, resp["mch_id"])
+	return resp, nil
+}
+
+// QueryByOutTradeNO 根据商户订单号查询
+func (o *Order) QueryByOutTradeNO(outTradeNO string) (utils.WXML, error) {
+	body := utils.WXML{
+		"appid":        o.AppID,
+		"mch_id":       o.MchID,
+		"out_trade_no": outTradeNO,
+		"nonce_str":    utils.NonceStr(),
+		"sign_type":    SignMD5,
+	}
+
+	body["sign"] = SignWithMD5(body, o.AppKey)
+
+	resp, err := o.Client.PostXML(OrderQueryURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := o.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+// Close 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
+func (o *Order) Close(outTradeNO string) (utils.WXML, error) {
+	body := utils.WXML{
+		"appid":        o.AppID,
+		"mch_id":       o.MchID,
+		"out_trade_no": outTradeNO,
+		"nonce_str":    utils.NonceStr(),
+		"sign_type":    SignMD5,
+	}
+
+	body["sign"] = SignWithMD5(body, o.AppKey)
+
+	resp, err := o.Client.PostXML(OrderCloseURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := o.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
 	}
 
 	return resp, nil

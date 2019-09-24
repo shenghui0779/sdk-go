@@ -1,9 +1,6 @@
 package mch
 
 import (
-	"errors"
-	"fmt"
-	"net/url"
 	"strconv"
 	"time"
 
@@ -71,17 +68,14 @@ type PappayApply struct {
 }
 
 type Pappay struct {
-	appid  string
-	mchid  string
-	apikey string
-	client *utils.HTTPClient
+	*WXMch
 }
 
 // APPEntrust APP纯签约
 func (p *Pappay) APPEntrust(e *Entrust) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":                    p.appid,
-		"mch_id":                   p.mchid,
+		"appid":                    p.AppID,
+		"mch_id":                   p.MchID,
 		"plan_id":                  e.PlanID,
 		"contract_code":            e.ContractCode,
 		"request_serial":           strconv.FormatInt(e.RequestSerial, 10),
@@ -96,14 +90,26 @@ func (p *Pappay) APPEntrust(e *Entrust) (utils.WXML, error) {
 		body["return_app"] = "Y"
 	}
 
-	return p.doPost(PappayAPPEntrustURL, body, SignMD5)
+	body["sign"] = SignWithMD5(body, p.AppKey)
+
+	resp, err := p.Client.PostXML(PappayAPPEntrustURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // PubEntrust 公众号纯签约
 func (p *Pappay) PubEntrust(e *Entrust) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":                    p.appid,
-		"mch_id":                   p.mchid,
+		"appid":                    p.AppID,
+		"mch_id":                   p.MchID,
 		"plan_id":                  e.PlanID,
 		"contract_code":            e.ContractCode,
 		"request_serial":           strconv.FormatInt(e.RequestSerial, 10),
@@ -117,14 +123,26 @@ func (p *Pappay) PubEntrust(e *Entrust) (utils.WXML, error) {
 		body["return_web"] = "1"
 	}
 
-	return p.doGet(PappayPubEntrustURL, body, SignMD5)
+	body["sign"] = SignWithMD5(body, p.AppKey)
+
+	resp, err := p.Client.PostXML(PappayPubEntrustURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // MPEntrust 小程序纯签约，返回小程序所需的 extraData 数据
 func (p *Pappay) MPEntrust(e *Entrust) utils.WXML {
 	extraData := utils.WXML{
-		"appid":                    p.appid,
-		"mch_id":                   p.mchid,
+		"appid":                    p.AppID,
+		"mch_id":                   p.MchID,
 		"plan_id":                  e.PlanID,
 		"contract_code":            e.ContractCode,
 		"request_serial":           strconv.FormatInt(e.RequestSerial, 10),
@@ -137,7 +155,7 @@ func (p *Pappay) MPEntrust(e *Entrust) utils.WXML {
 		extraData["outerid"] = strconv.FormatInt(e.OuterID, 10)
 	}
 
-	extraData["sign"] = SignWithMD5(extraData, p.apikey)
+	extraData["sign"] = SignWithMD5(extraData, p.AppKey)
 
 	return extraData
 }
@@ -145,8 +163,8 @@ func (p *Pappay) MPEntrust(e *Entrust) utils.WXML {
 // H5Entrust H5纯签约
 func (p *Pappay) H5Entrust(e *Entrust) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":                    p.appid,
-		"mch_id":                   p.mchid,
+		"appid":                    p.AppID,
+		"mch_id":                   p.MchID,
 		"plan_id":                  e.PlanID,
 		"contract_code":            e.ContractCode,
 		"request_serial":           strconv.FormatInt(e.RequestSerial, 10),
@@ -161,15 +179,27 @@ func (p *Pappay) H5Entrust(e *Entrust) (utils.WXML, error) {
 		body["return_appid"] = e.ReturnAPPID
 	}
 
-	return p.doGet(PappayH5EntrustURL, body, SignHMacSHA256)
+	body["sign"] = SignWithHMacSHA256(body, p.AppKey)
+
+	resp, err := p.Client.GetXML(PappayH5EntrustURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := p.VerifyWXReply(resp, SignHMacSHA256); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func (p *Pappay) ContractOrder(order *ContractOrder) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":                    p.appid,
-		"mch_id":                   p.mchid,
-		"contract_appid":           p.appid,
-		"contract_mchid":           p.mchid,
+		"appid":                    p.AppID,
+		"mch_id":                   p.MchID,
+		"contract_appid":           p.AppID,
+		"contract_mchid":           p.MchID,
 		"nonce_str":                utils.NonceStr(),
 		"fee_type":                 "CNY",
 		"trade_type":               order.TradeType,
@@ -225,39 +255,75 @@ func (p *Pappay) ContractOrder(order *ContractOrder) (utils.WXML, error) {
 		body["openid"] = order.OpenID
 	}
 
-	return p.doPost(PappayContractOrderURL, body, SignMD5)
+	body["sign"] = SignWithMD5(body, p.AppKey)
+
+	resp, err := p.Client.PostXML(PappayContractOrderURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // QueryContractByID 根据微信返回的委托代扣协议id查询签约关系
 func (p *Pappay) QueryContractByID(contractID string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":       p.appid,
-		"mch_id":      p.mchid,
+		"appid":       p.AppID,
+		"mch_id":      p.MchID,
 		"contract_id": contractID,
 		"version":     "1.0",
 	}
 
-	return p.doPost(PappayContractQueryURL, body, SignMD5)
+	body["sign"] = SignWithMD5(body, p.AppKey)
+
+	resp, err := p.Client.PostXML(PappayContractQueryURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // QueryContractByCode 根据签约协议号查询签约关系，需要商户平台配置的代扣模版id
 func (p *Pappay) QueryContractByCode(planID, contractCode string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":         p.appid,
-		"mch_id":        p.mchid,
+		"appid":         p.AppID,
+		"mch_id":        p.MchID,
 		"plan_id":       planID,
 		"contract_code": contractCode,
 		"version":       "1.0",
 	}
 
-	return p.doPost(PappayContractQueryURL, body, SignMD5)
+	body["sign"] = SignWithMD5(body, p.AppKey)
+
+	resp, err := p.Client.PostXML(PappayContractQueryURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // PayApply 申请扣款
 func (p *Pappay) PayApply(apply *PappayApply) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":            p.appid,
-		"mch_id":           p.mchid,
+		"appid":            p.AppID,
+		"mch_id":           p.MchID,
 		"nonce_str":        utils.NonceStr(),
 		"fee_type":         "CNY",
 		"trade_type":       "PAP",
@@ -289,158 +355,116 @@ func (p *Pappay) PayApply(apply *PappayApply) (utils.WXML, error) {
 		body["receipt"] = "Y"
 	}
 
-	return p.doPost(PappayPayApplyURL, body, SignMD5)
+	body["sign"] = SignWithMD5(body, p.AppKey)
+
+	resp, err := p.Client.PostXML(PappayPayApplyURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // DeleteContractByID 根据微信返回的委托代扣协议id解约
 func (p *Pappay) DeleteContractByID(contractID, remark string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":                       p.appid,
-		"mch_id":                      p.mchid,
+		"appid":                       p.AppID,
+		"mch_id":                      p.MchID,
 		"contract_id":                 contractID,
 		"version":                     "1.0",
 		"contract_termination_remark": remark,
 	}
 
-	return p.doPost(PappayContractDeleteURL, body, SignMD5)
+	body["sign"] = SignWithMD5(body, p.AppKey)
+
+	resp, err := p.Client.PostXML(PappayContractDeleteURL, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 // DeleteContractByCode 根据签约协议号解约，需要商户平台配置的代扣模版id
 func (p *Pappay) DeleteContractByCode(planID, contractCode, remark string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":                       p.appid,
-		"mch_id":                      p.mchid,
+		"appid":                       p.AppID,
+		"mch_id":                      p.MchID,
 		"plan_id":                     planID,
 		"contract_code":               contractCode,
 		"version":                     "1.0",
 		"contract_termination_remark": remark,
 	}
 
-	return p.doPost(PappayContractDeleteURL, body, SignMD5)
-}
+	body["sign"] = SignWithMD5(body, p.AppKey)
 
-// QueryOrderByTransactionID 根据微信订单号查询
-func (p *Pappay) QueryOrderByTransactionID(transactionID string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":          p.appid,
-		"mch_id":         p.mchid,
-		"transaction_id": transactionID,
-		"nonce_str":      utils.NonceStr(),
-	}
-
-	return p.doPost(PappayOrderQueryURL, body, SignMD5)
-}
-
-// QueryOrderByOutTradeNO 根据商户订单号查询
-func (p *Pappay) QueryOrderByOutTradeNO(outTradeNO string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":        p.appid,
-		"mch_id":       p.mchid,
-		"out_trade_no": outTradeNO,
-		"nonce_str":    utils.NonceStr(),
-		"sign_type":    "MD5",
-	}
-
-	return p.doPost(PappayOrderQueryURL, body, SignMD5)
-}
-
-func (p *Pappay) doGet(uri string, body utils.WXML, signType string) (utils.WXML, error) {
-	switch signType {
-	case SignMD5:
-		body["sign"] = SignWithMD5(body, p.apikey)
-	case SignHMacSHA256:
-		body["sign"] = SignWithHMacSHA256(body, p.apikey)
-	}
-
-	query := url.Values{}
-
-	for k, v := range body {
-		if k == "sign" || v == "" {
-			continue
-		}
-
-		query.Add(k, v)
-	}
-
-	resp, err := p.client.GetXML(fmt.Sprintf("%s?%s", uri, query.Encode()))
+	resp, err := p.Client.PostXML(PappayContractDeleteURL, body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if resp["return_code"] != ReplySuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if resp["result_code"] != ReplySuccess {
-		return nil, errors.New(resp["err_code_des"])
-	}
-
-	signature := ""
-
-	switch signType {
-	case SignMD5:
-		signature = SignWithMD5(resp, p.apikey)
-	case SignHMacSHA256:
-		signature = SignWithHMacSHA256(resp, p.apikey)
-	}
-
-	if signature != resp["sign"] {
-		return nil, fmt.Errorf("pappay resp signature verified failed, want: %s, got: %s", signature, resp["sign"])
-	}
-
-	if resp["appid"] != p.appid {
-		return nil, fmt.Errorf("pappay resp appid mismatch, want: %s, got: %s", p.appid, resp["appid"])
-	}
-
-	if resp["mch_id"] != p.mchid {
-		return nil, fmt.Errorf("pappay resp mchid mismatch, want: %s, got: %s", p.mchid, resp["mch_id"])
+	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
 	}
 
 	return resp, nil
 }
 
-func (p *Pappay) doPost(url string, body utils.WXML, signType string) (utils.WXML, error) {
-	switch signType {
-	case SignMD5:
-		body["sign"] = SignWithMD5(body, p.apikey)
-	case SignHMacSHA256:
-		body["sign"] = SignWithHMacSHA256(body, p.apikey)
+// QueryOrderByTransactionID 根据微信订单号查询
+func (p *Pappay) QueryOrderByTransactionID(transactionID string) (utils.WXML, error) {
+	body := utils.WXML{
+		"appid":          p.AppID,
+		"mch_id":         p.MchID,
+		"transaction_id": transactionID,
+		"nonce_str":      utils.NonceStr(),
 	}
 
-	resp, err := p.client.PostXML(url, body)
+	body["sign"] = SignWithMD5(body, p.AppKey)
+
+	resp, err := p.Client.PostXML(PappayOrderQueryURL, body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if resp["return_code"] != ReplySuccess {
-		return nil, errors.New(resp["return_msg"])
+	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
 	}
 
-	if resp["result_code"] != ReplySuccess {
-		return nil, errors.New(resp["err_code_des"])
+	return resp, nil
+}
+
+// QueryOrderByOutTradeNO 根据商户订单号查询
+func (p *Pappay) QueryOrderByOutTradeNO(outTradeNO string) (utils.WXML, error) {
+	body := utils.WXML{
+		"appid":        p.AppID,
+		"mch_id":       p.MchID,
+		"out_trade_no": outTradeNO,
+		"nonce_str":    utils.NonceStr(),
+		"sign_type":    "MD5",
 	}
 
-	signature := ""
+	body["sign"] = SignWithMD5(body, p.AppKey)
 
-	switch signType {
-	case SignMD5:
-		signature = SignWithMD5(resp, p.apikey)
-	case SignHMacSHA256:
-		signature = SignWithHMacSHA256(resp, p.apikey)
+	resp, err := p.Client.PostXML(PappayOrderQueryURL, body)
+
+	if err != nil {
+		return nil, err
 	}
 
-	if signature != resp["sign"] {
-		return nil, fmt.Errorf("pappay resp signature verified failed, want: %s, got: %s", signature, resp["sign"])
-	}
-
-	if resp["appid"] != p.appid {
-		return nil, fmt.Errorf("pappay resp appid mismatch, want: %s, got: %s", p.appid, resp["appid"])
-	}
-
-	if resp["mch_id"] != p.mchid {
-		return nil, fmt.Errorf("pappay resp mchid mismatch, want: %s, got: %s", p.mchid, resp["mch_id"])
+	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+		return nil, err
 	}
 
 	return resp, nil

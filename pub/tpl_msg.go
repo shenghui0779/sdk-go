@@ -24,7 +24,7 @@ type TplMsgData struct {
 
 // TplMsg 公众号模板消息
 type TplMsg struct {
-	client *utils.HTTPClient
+	*WXPub
 }
 
 // Send 发送模板消息
@@ -52,7 +52,7 @@ func (t *TplMsg) Send(accessToken string, data *TplMsgData) (int64, error) {
 		return 0, err
 	}
 
-	resp, err := t.client.Post(fmt.Sprintf("%s?access_token=%s", TplMsgSendURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := t.Client.Post(fmt.Sprintf("%s?access_token=%s", TplMsgSendURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return 0, err

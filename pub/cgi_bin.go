@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/iiinsomnia/gochat/utils"
-
 	"github.com/tidwall/gjson"
 )
 
@@ -24,14 +22,12 @@ type JSAPITicket struct {
 
 // CgiBin cgi-bin
 type CgiBin struct {
-	appid     string
-	appsecret string
-	client    *utils.HTTPClient
+	*WXPub
 }
 
 // GetAccessToken returns access_token
 func (c *CgiBin) GetAccessToken() (*AccessToken, error) {
-	resp, err := c.client.Get(fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", CgiBinAccessTokenURL, c.appid, c.appsecret))
+	resp, err := c.Client.Get(fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", CgiBinAccessTokenURL, c.AppID, c.AppSecret))
 
 	if err != nil {
 		return nil, err
@@ -54,7 +50,7 @@ func (c *CgiBin) GetAccessToken() (*AccessToken, error) {
 
 // GetTicket returns jsapi ticket
 func (c *CgiBin) GetTicket(accessToken string) (*JSAPITicket, error) {
-	resp, err := c.client.Get(fmt.Sprintf("%s?access_token=%s&type=jsapi", CgiBinTicketURL, accessToken))
+	resp, err := c.Client.Get(fmt.Sprintf("%s?access_token=%s&type=jsapi", CgiBinTicketURL, accessToken))
 
 	if err != nil {
 		return nil, err

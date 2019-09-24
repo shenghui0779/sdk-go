@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/iiinsomnia/gochat/utils"
-
 	"github.com/tidwall/gjson"
+
+	"github.com/iiinsomnia/gochat/utils"
 )
 
 // MaxSubscriberListCount 公众号订阅者列表的最大数目
@@ -15,7 +15,7 @@ const MaxSubscriberListCount = 10000
 
 // Subscriber 微信公众号订阅者
 type Subscriber struct {
-	client *utils.HTTPClient
+	*WXPub
 }
 
 // SubscriberInfo 微信公众号订阅者信息
@@ -49,7 +49,7 @@ type SubscriberList struct {
 
 // GetSubscriberInfo 获取微信公众号订阅者信息
 func (s *Subscriber) Get(accessToken, openid string) (*SubscriberInfo, error) {
-	resp, err := s.client.Get(fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", SubscriberGetURL, accessToken, openid))
+	resp, err := s.Client.Get(fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", SubscriberGetURL, accessToken, openid))
 
 	if err != nil {
 		return nil, err
@@ -93,7 +93,7 @@ func (s *Subscriber) BatchGet(accessToken string, openid ...string) ([]*Subscrib
 		return nil, err
 	}
 
-	resp, err := s.client.Post(fmt.Sprintf("%s?access_token=%s", SubscriberBatchGetURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	resp, err := s.Client.Post(fmt.Sprintf("%s?access_token=%s", SubscriberBatchGetURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
 	if err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (s *Subscriber) GetList(accessToken string, nextOpenID ...string) (*Subscri
 		url = fmt.Sprintf("%s?access_token=%s&next_openid=%s", SubscriberListURL, accessToken, nextOpenID[0])
 	}
 
-	resp, err := s.client.Get(url)
+	resp, err := s.Client.Get(url)
 
 	if err != nil {
 		return nil, err

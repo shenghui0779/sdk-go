@@ -1,6 +1,7 @@
 package mch
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -12,56 +13,24 @@ import (
 type WXMch struct {
 	AppID     string
 	MchID     string
-	ApiKey    string
-	client    *utils.HTTPClient
-	sslClient *utils.HTTPClient
-}
-
-// SetHTTPClient set wxmch http client
-func (wx *WXMch) SetHTTPClient(c *utils.HTTPClient) {
-	wx.client = c
-}
-
-// SetSSLClient set wxmch http ssl client
-func (wx *WXMch) SetSSLClient(c *utils.HTTPClient) {
-	wx.sslClient = c
+	AppKey    string
+	Client    *utils.HTTPClient
+	SSLClient *utils.HTTPClient
 }
 
 // Order returns new order
 func (wx *WXMch) Order() *Order {
-	order := new(Order)
-
-	order.appid = wx.AppID
-	order.mchid = wx.MchID
-	order.apikey = wx.ApiKey
-	order.client = wx.client
-
-	return order
+	return &Order{wx}
 }
 
 // Refund returns new refund
 func (wx *WXMch) Refund() *Refund {
-	refund := new(Refund)
-
-	refund.appid = wx.AppID
-	refund.mchid = wx.MchID
-	refund.apikey = wx.ApiKey
-	refund.client = wx.client
-	refund.sslClient = wx.sslClient
-
-	return refund
+	return &Refund{wx}
 }
 
 // Pappay returns new pappay
 func (wx *WXMch) Pappay() *Pappay {
-	pappay := new(Pappay)
-
-	pappay.appid = wx.AppID
-	pappay.mchid = wx.MchID
-	pappay.apikey = wx.ApiKey
-	pappay.client = wx.client
-
-	return pappay
+	return &Pappay{wx}
 }
 
 // APPAPI 用于APP拉起支付
@@ -75,7 +44,7 @@ func (wx *WXMch) APPAPI(prepayID string) utils.WXML {
 		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	ch["sign"] = SignWithMD5(ch, wx.ApiKey)
+	ch["sign"] = SignWithMD5(ch, wx.AppKey)
 
 	return ch
 }
@@ -90,7 +59,45 @@ func (wx *WXMch) JSAPI(prepayID string) utils.WXML {
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	ch["paySign"] = SignWithMD5(ch, wx.ApiKey)
+	ch["paySign"] = SignWithMD5(ch, wx.AppKey)
 
 	return ch
+}
+
+// VerifyWXReply 验证微信结果
+func (wx *WXMch) VerifyWXReply(reply utils.WXML, signType string) error {
+	if reply["return_code"] != ReplySuccess {
+		return errors.New(reply["return_msg"])
+	}
+
+	if reply["result_code"] != ReplySuccess {
+		return errors.New(reply["err_code_des"])
+	}
+
+	signature := ""
+
+	switch signType {
+	case SignMD5:
+		signature = SignWithMD5(reply, wx.AppKey)
+	case SignHMacSHA256:
+		signature = SignWithHMacSHA256(reply, wx.AppKey)
+	}
+
+	if signature != reply["sign"] {
+		return fmt.Errorf("signature verified failed, want: %s, got: %s", signature, reply["sign"])
+	}
+
+	if appid, ok := reply["appid"]; ok {
+		if appid != wx.AppID {
+			return fmt.Errorf("appid mismatch, want: %s, got: %s", wx.AppID, reply["appid"])
+		}
+	}
+
+	if mchid, ok := reply["mch_id"]; ok {
+		if mchid != wx.MchID {
+			return fmt.Errorf("mchid mismatch, want: %s, got: %s", wx.MchID, reply["mch_id"])
+		}
+	}
+
+	return nil
 }

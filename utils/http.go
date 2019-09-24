@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/url"
 	"sync"
 	"time"
 )
@@ -328,8 +329,14 @@ func (h *HTTPClient) Post(url string, body []byte, options ...HTTPRequestOption)
 }
 
 // GetXML http xml get request
-func (h *HTTPClient) GetXML(url string, options ...HTTPRequestOption) (WXML, error) {
-	resp, err := h.Get(url, options...)
+func (h *HTTPClient) GetXML(uri string, body WXML, options ...HTTPRequestOption) (WXML, error) {
+	query := url.Values{}
+
+	for k, v := range body {
+		query.Add(k, v)
+	}
+
+	resp, err := h.Get(fmt.Sprintf("%s?%s", uri, query.Encode()), options...)
 
 	if err != nil {
 		return nil, err
