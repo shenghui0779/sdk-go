@@ -66,14 +66,6 @@ func (wx *WXMch) JSAPI(prepayID string) utils.WXML {
 
 // VerifyWXReply 验证微信结果
 func (wx *WXMch) VerifyWXReply(reply utils.WXML, signType string) error {
-	if reply["return_code"] != ReplySuccess {
-		return errors.New(reply["return_msg"])
-	}
-
-	if reply["result_code"] != ReplySuccess {
-		return errors.New(reply["err_code_des"])
-	}
-
 	signature := ""
 
 	switch signType {

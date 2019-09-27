@@ -17,8 +17,39 @@ const (
 
 // 返回结果
 const (
-	ReplySuccess = "SUCCESS"
-	ReplyFailed  = "FAIL"
+	ResultSuccess = "SUCCESS"
+	ResultFail    = "FAIL"
+)
+
+const (
+	ContractAdd    = "ADD"
+	ContractDelete = "DELETE"
+)
+
+const (
+	TradeStateSuccess = "SUCCESS"    // 支付成功
+	TradeStateRefund  = "REFUND"     // 转入退款
+	TradeStateNotpay  = "NOTPAY"     // 未支付
+	TradeStateClosed  = "CLOSED"     // 已关闭
+	TradeStateRevoked = "REVOKED"    // 已撤销（刷卡支付）
+	TradeStatePaying  = "USERPAYING" // 用户支付中
+	TradeStateAccept  = "ACCEPT"     // 已接收，等待扣款
+	TradeStateError   = "PAYERROR"   // 支付失败
+	TradeStatePayFail = "PAY_FAIL"   // 支付失败(其他原因，如银行返回失败)
+)
+
+const (
+	ContractEntrustUndo = "1" // 未签约
+	ContractEntrustOK   = "0" // 已签约
+)
+
+const (
+	ContractDeleteUndo     = "0" // 未解约
+	ContractDeleteExpired  = "1" // 有效期过自动解约
+	ContractDeleteUser     = "2" // 用户主动解约
+	ContractDeleteAPI      = "3" // 商户API解约
+	ContractDeletePlatform = "4" // 商户平台解约
+	ContractDeleteLogout   = "5" // 注销
 )
 
 // URL - order

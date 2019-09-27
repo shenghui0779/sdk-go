@@ -1,6 +1,9 @@
 package mch
 
 import (
+	"errors"
+	"fmt"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -98,15 +101,23 @@ func (p *Pappay) APPEntrust(e *Entrust) (utils.WXML, error) {
 		return nil, err
 	}
 
+	if resp["return_code"] != ResultSuccess {
+		return nil, errors.New(resp["return_msg"])
+	}
+
 	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
 		return nil, err
+	}
+
+	if resp["result_code"] != ResultSuccess {
+		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
 }
 
 // PubEntrust 公众号纯签约
-func (p *Pappay) PubEntrust(e *Entrust) (utils.WXML, error) {
+func (p *Pappay) PubEntrust(e *Entrust) utils.WXML {
 	body := utils.WXML{
 		"appid":                    p.AppID,
 		"mch_id":                   p.MchID,
@@ -125,17 +136,13 @@ func (p *Pappay) PubEntrust(e *Entrust) (utils.WXML, error) {
 
 	body["sign"] = SignWithMD5(body, p.AppKey)
 
-	resp, err := p.Client.PostXML(PappayPubEntrustURL, body)
+	query := url.Values{}
 
-	if err != nil {
-		return nil, err
+	for k, v := range body {
+		query.Add(k, v)
 	}
 
-	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return utils.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayPubEntrustURL, query.Encode())}
 }
 
 // MPEntrust 小程序纯签约，返回小程序所需的 extraData 数据
@@ -161,7 +168,7 @@ func (p *Pappay) MPEntrust(e *Entrust) utils.WXML {
 }
 
 // H5Entrust H5纯签约
-func (p *Pappay) H5Entrust(e *Entrust) (utils.WXML, error) {
+func (p *Pappay) H5Entrust(e *Entrust) utils.WXML {
 	body := utils.WXML{
 		"appid":                    p.AppID,
 		"mch_id":                   p.MchID,
@@ -181,17 +188,13 @@ func (p *Pappay) H5Entrust(e *Entrust) (utils.WXML, error) {
 
 	body["sign"] = SignWithHMacSHA256(body, p.AppKey)
 
-	resp, err := p.Client.GetXML(PappayH5EntrustURL, body)
+	query := url.Values{}
 
-	if err != nil {
-		return nil, err
+	for k, v := range body {
+		query.Add(k, v)
 	}
 
-	if err := p.VerifyWXReply(resp, SignHMacSHA256); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return utils.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayH5EntrustURL, query.Encode())}
 }
 
 func (p *Pappay) ContractOrder(order *ContractOrder) (utils.WXML, error) {
@@ -263,8 +266,20 @@ func (p *Pappay) ContractOrder(order *ContractOrder) (utils.WXML, error) {
 		return nil, err
 	}
 
+	if resp["return_code"] != ResultSuccess {
+		return nil, errors.New(resp["return_msg"])
+	}
+
 	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
 		return nil, err
+	}
+
+	if resp["result_code"] != ResultSuccess {
+		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
+	}
+
+	if resp["contract_result_code"] != ResultSuccess {
+		return nil, fmt.Errorf("constract_err_code: %s, constract_err_msg: %s", resp["contract_err_code"], resp["contract_err_code_des"])
 	}
 
 	return resp, nil
@@ -285,6 +300,14 @@ func (p *Pappay) QueryContractByID(contractID string) (utils.WXML, error) {
 
 	if err != nil {
 		return nil, err
+	}
+
+	if resp["return_code"] != ResultSuccess {
+		return nil, errors.New(resp["return_msg"])
+	}
+
+	if resp["result_code"] != ResultSuccess {
+		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
@@ -312,6 +335,14 @@ func (p *Pappay) QueryContractByCode(planID, contractCode string) (utils.WXML, e
 		return nil, err
 	}
 
+	if resp["return_code"] != ResultSuccess {
+		return nil, errors.New(resp["return_msg"])
+	}
+
+	if resp["result_code"] != ResultSuccess {
+		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
+	}
+
 	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
 		return nil, err
 	}
@@ -326,7 +357,7 @@ func (p *Pappay) PayApply(apply *PappayApply) (utils.WXML, error) {
 		"mch_id":           p.MchID,
 		"nonce_str":        utils.NonceStr(),
 		"fee_type":         "CNY",
-		"trade_type":       "PAP",
+		"trade_type":       TradePAP,
 		"notify_url":       apply.NotifyURL,
 		"body":             apply.Body,
 		"out_trade_no":     apply.OutTradeNO,
@@ -363,8 +394,16 @@ func (p *Pappay) PayApply(apply *PappayApply) (utils.WXML, error) {
 		return nil, err
 	}
 
+	if resp["return_code"] != ResultSuccess {
+		return nil, errors.New(resp["return_msg"])
+	}
+
 	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
 		return nil, err
+	}
+
+	if resp["result_code"] != ResultSuccess {
+		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -388,8 +427,16 @@ func (p *Pappay) DeleteContractByID(contractID, remark string) (utils.WXML, erro
 		return nil, err
 	}
 
+	if resp["return_code"] != ResultSuccess {
+		return nil, errors.New(resp["return_msg"])
+	}
+
 	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
 		return nil, err
+	}
+
+	if resp["result_code"] != ResultSuccess {
+		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -414,8 +461,16 @@ func (p *Pappay) DeleteContractByCode(planID, contractCode, remark string) (util
 		return nil, err
 	}
 
+	if resp["return_code"] != ResultSuccess {
+		return nil, errors.New(resp["return_msg"])
+	}
+
 	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
 		return nil, err
+	}
+
+	if resp["result_code"] != ResultSuccess {
+		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -438,8 +493,16 @@ func (p *Pappay) QueryOrderByTransactionID(transactionID string) (utils.WXML, er
 		return nil, err
 	}
 
+	if resp["return_code"] != ResultSuccess {
+		return nil, errors.New(resp["return_msg"])
+	}
+
 	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
 		return nil, err
+	}
+
+	if resp["result_code"] != ResultSuccess {
+		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -463,8 +526,16 @@ func (p *Pappay) QueryOrderByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 		return nil, err
 	}
 
+	if resp["return_code"] != ResultSuccess {
+		return nil, errors.New(resp["return_msg"])
+	}
+
 	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
 		return nil, err
+	}
+
+	if resp["result_code"] != ResultSuccess {
+		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil

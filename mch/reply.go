@@ -16,7 +16,7 @@ type Reply struct {
 // ReplyOK 回复成功
 func ReplyOK() *Reply {
 	return &Reply{
-		ReturnCode: ReplySuccess,
+		ReturnCode: ResultSuccess,
 		ReturnMsg:  "OK",
 	}
 }
@@ -24,7 +24,7 @@ func ReplyOK() *Reply {
 // ReplyFail 回复失败
 func ReplyFail(msg string) *Reply {
 	return &Reply{
-		ReturnCode: ReplyFailed,
+		ReturnCode: ResultFail,
 		ReturnMsg:  utils.CDATA(msg),
 	}
 }
