@@ -52,6 +52,16 @@ const (
 	ContractDeleteLogout   = "5" // 注销
 )
 
+const (
+	PappayErrAccount             = "ACCOUNTERROR"          // 用户帐号注销、银行卡异常或注销
+	PappaytErrContractNotExist   = "CONTRACT_NOT_EXIST"    // 用户签约协议已过期或已解约
+	PappayErrRuleLimit           = "RULELIMIT"             // 用户支付银行卡限额不足
+	PappayErrBank                = "BANKERROR"             // 用户支付银行暂时无法提供服务
+	PappayErrNotEnough           = "NOTENOUGH"             // 用户余额不足
+	PappayErrUserAccountAbnormal = "USER_ACCOUNT_ABNORMAL" // 扣款用户的微信账号异常导致
+	PappayErrUserNotExist        = "USER_NOT_EXIST"        // 扣款用户的微信账号已注销
+)
+
 // URL - order
 const (
 	OrderUnifyURL = "https://api.mch.weixin.qq.com/pay/unifiedorder"
