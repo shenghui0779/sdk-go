@@ -1,7 +1,6 @@
 package mch
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"time"
