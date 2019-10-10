@@ -2,7 +2,6 @@ package mch
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/iiinsomnia/gochat/utils"
@@ -113,12 +112,8 @@ func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := o.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := o.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -146,12 +141,8 @@ func (o *Order) QueryByTransactionID(transactionID string) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := o.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := o.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -179,12 +170,8 @@ func (o *Order) QueryByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := o.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := o.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -212,12 +199,8 @@ func (o *Order) Close(outTradeNO string) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := o.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := o.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil

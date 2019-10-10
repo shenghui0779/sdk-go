@@ -2,7 +2,6 @@ package mch
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/iiinsomnia/gochat/utils"
@@ -67,12 +66,8 @@ func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := r.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -119,12 +114,8 @@ func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := r.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -156,12 +147,8 @@ func (r *Refund) QueryByRefundID(refundID string, offset ...int) (utils.WXML, er
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := r.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -193,12 +180,8 @@ func (r *Refund) QueryByOutRefundNO(outRefundNO string, offset ...int) (utils.WX
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := r.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -230,12 +213,8 @@ func (r *Refund) QueryByTransactionID(transactionID string, offset ...int) (util
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := r.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -267,12 +246,8 @@ func (r *Refund) QueryByOutTradeNO(outTradeNO string, offset ...int) (utils.WXML
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := r.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil

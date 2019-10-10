@@ -64,18 +64,28 @@ func (wx *WXMch) JSAPI(prepayID string) utils.WXML {
 }
 
 // VerifyWXReply 验证微信结果
-func (wx *WXMch) VerifyWXReply(reply utils.WXML, signType string) error {
-	signature := ""
+func (wx *WXMch) VerifyWXReply(reply utils.WXML) error {
+	if wxsign, ok := reply["sign"]; ok {
+		signType := SignMD5
 
-	switch signType {
-	case SignMD5:
-		signature = SignWithMD5(reply, wx.AppKey)
-	case SignHMacSHA256:
-		signature = SignWithHMacSHA256(reply, wx.AppKey)
-	}
+		if v, ok := reply["sign_type"]; ok {
+			signType = v
+		}
 
-	if signature != reply["sign"] {
-		return fmt.Errorf("signature verified failed, want: %s, got: %s", signature, reply["sign"])
+		signature := ""
+
+		switch signType {
+		case SignMD5:
+			signature = SignWithMD5(reply, wx.AppKey)
+		case SignHMacSHA256:
+			signature = SignWithHMacSHA256(reply, wx.AppKey)
+		default:
+			return fmt.Errorf("invalid sign type: %s", signType)
+		}
+
+		if wxsign != signature {
+			return fmt.Errorf("signature verified failed, want: %s, got: %s", signature, wxsign)
+		}
 	}
 
 	if appid, ok := reply["appid"]; ok {

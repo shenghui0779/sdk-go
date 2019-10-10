@@ -19,11 +19,7 @@ const (
 const (
 	ResultSuccess = "SUCCESS"
 	ResultFail    = "FAIL"
-)
-
-const (
-	ContractAdd    = "ADD"
-	ContractDelete = "DELETE"
+	ResultNull    = "RESULT NULL" // 查询结果为空
 )
 
 const (
@@ -36,6 +32,23 @@ const (
 	TradeStateAccept  = "ACCEPT"     // 已接收，等待扣款
 	TradeStateError   = "PAYERROR"   // 支付失败
 	TradeStatePayFail = "PAY_FAIL"   // 支付失败(其他原因，如银行返回失败)
+)
+
+const (
+	RefundSuccess    = "SUCCESS"     // 退款成功
+	RefundClosed     = "REFUNDCLOSE" // 退款关闭
+	RefundProcessing = "PROCESSING"  // 退款处理中
+	RefundChange     = "CHANGE"      // 退款异常
+)
+
+const (
+	OrderNotExist  = "ORDERNOTEXIST"  // 订单不存在
+	RefundNotExist = "REFUNDNOTEXIST" // 退款不存在
+)
+
+const (
+	ContractAdd    = "ADD"    // 签约
+	ContractDelete = "DELETE" // 解约
 )
 
 const (
@@ -64,25 +77,25 @@ const (
 
 // URL - order
 const (
-	OrderUnifyURL = "https://api.mch.weixin.qq.com/pay/unifiedorder"
-	OrderQueryURL = "https://api.mch.weixin.qq.com/pay/orderquery"
-	OrderCloseURL = "https://api.mch.weixin.qq.com/pay/closeorder"
+	OrderUnifyURL = "https://api.mch.weixin.qq.com/pay/unifiedorder" // 统一下单
+	OrderQueryURL = "https://api.mch.weixin.qq.com/pay/orderquery"   // 订单查询
+	OrderCloseURL = "https://api.mch.weixin.qq.com/pay/closeorder"   // 订单关闭
 )
 
 // URL - refund
 const (
-	RefundApplyURL = "https://api.mch.weixin.qq.com/secapi/pay/refund"
-	RefundQueryURL = "https://api.mch.weixin.qq.com/pay/refundquery"
+	RefundApplyURL = "https://api.mch.weixin.qq.com/secapi/pay/refund" // 申请退款
+	RefundQueryURL = "https://api.mch.weixin.qq.com/pay/refundquery"   // 退款查询
 )
 
 // URL - pappay
 const (
-	PappayAPPEntrustURL     = "https://api.mch.weixin.qq.com/papay/preentrustweb"
-	PappayPubEntrustURL     = "https://api.mch.weixin.qq.com/papay/entrustweb"
-	PappayH5EntrustURL      = "https://api.mch.weixin.qq.com/papay/h5entrustweb"
-	PappayContractOrderURL  = "https://api.mch.weixin.qq.com/pay/contractorder"
-	PappayContractQueryURL  = "https://api.mch.weixin.qq.com/papay/querycontract"
-	PappayContractDeleteURL = "https://api.mch.weixin.qq.com/papay/deletecontract"
-	PappayPayApplyURL       = "https://api.mch.weixin.qq.com/pay/pappayapply"
-	PappayOrderQueryURL     = "https://api.mch.weixin.qq.com/pay/paporderquery"
+	PappayAPPEntrustURL     = "https://api.mch.weixin.qq.com/papay/preentrustweb"  // APP纯签约
+	PappayPubEntrustURL     = "https://api.mch.weixin.qq.com/papay/entrustweb"     // 公众号纯签约
+	PappayH5EntrustURL      = "https://api.mch.weixin.qq.com/papay/h5entrustweb"   // H5纯签约
+	PappayContractOrderURL  = "https://api.mch.weixin.qq.com/pay/contractorder"    // 支付中签约
+	PappayContractQueryURL  = "https://api.mch.weixin.qq.com/papay/querycontract"  // 签约查询
+	PappayContractDeleteURL = "https://api.mch.weixin.qq.com/papay/deletecontract" // 申请解约
+	PappayPayApplyURL       = "https://api.mch.weixin.qq.com/pay/pappayapply"      // 申请扣款
+	PappayOrderQueryURL     = "https://api.mch.weixin.qq.com/pay/paporderquery"    // 扣款查询
 )

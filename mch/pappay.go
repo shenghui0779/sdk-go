@@ -105,12 +105,8 @@ func (p *Pappay) APPEntrust(e *Entrust) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := p.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -270,16 +266,8 @@ func (p *Pappay) ContractOrder(order *ContractOrder) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := p.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
-	}
-
-	if resp["contract_result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("constract_err_code: %s, constract_err_msg: %s", resp["contract_err_code"], resp["contract_err_code_des"])
 	}
 
 	return resp, nil
@@ -306,11 +294,7 @@ func (p *Pappay) QueryContractByID(contractID string) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
-	}
-
-	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := p.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 
@@ -339,11 +323,7 @@ func (p *Pappay) QueryContractByCode(planID, contractCode string) (utils.WXML, e
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
-	}
-
-	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := p.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 
@@ -398,12 +378,8 @@ func (p *Pappay) PayApply(apply *PappayApply) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := p.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -431,12 +407,8 @@ func (p *Pappay) DeleteContractByID(contractID, remark string) (utils.WXML, erro
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := p.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -465,12 +437,8 @@ func (p *Pappay) DeleteContractByCode(planID, contractCode, remark string) (util
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := p.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -497,12 +465,8 @@ func (p *Pappay) QueryOrderByTransactionID(transactionID string) (utils.WXML, er
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := p.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
@@ -530,12 +494,8 @@ func (p *Pappay) QueryOrderByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := p.VerifyWXReply(resp, SignMD5); err != nil {
+	if err := p.VerifyWXReply(resp); err != nil {
 		return nil, err
-	}
-
-	if resp["result_code"] != ResultSuccess {
-		return nil, fmt.Errorf("err_code: %s, err_msg: %s", resp["err_code"], resp["err_code_des"])
 	}
 
 	return resp, nil
