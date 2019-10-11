@@ -21,7 +21,7 @@ const defaultHTTPTimeout = 10 * time.Second
 // WXML deal with xml for wechat
 type WXML map[string]string
 
-var bufferPool = sync.Pool{
+var bufPool = sync.Pool{
 	New: func() interface{} {
 		return bytes.NewBuffer(make([]byte, 0, 16<<10)) // 16KB
 	},
@@ -342,7 +342,7 @@ func (h *HTTPClient) GetXML(uri string, body WXML, options ...HTTPRequestOption)
 		return nil, err
 	}
 
-	wxml, err := ParseXML2Map(bytes.NewReader(resp))
+	wxml, err := ParseXML2Map(resp)
 
 	if err != nil {
 		return nil, err
@@ -353,24 +353,17 @@ func (h *HTTPClient) GetXML(uri string, body WXML, options ...HTTPRequestOption)
 
 // PostXML http xml post request
 func (h *HTTPClient) PostXML(url string, body WXML, options ...HTTPRequestOption) (WXML, error) {
-	buf := bufferPool.Get().(*bytes.Buffer)
-	buf.Reset()
-
-	defer bufferPool.Put(buf)
-
-	if err := FormatMap2XML(buf, body); err != nil {
-		return nil, err
-	}
+	b, err := FormatMap2XML(body)
 
 	options = append(options, WithRequestHeader("Content-Type", "text/xml; charset=utf-8"))
 
-	resp, err := h.Post(url, buf.Bytes(), options...)
+	resp, err := h.Post(url, b, options...)
 
 	if err != nil {
 		return nil, err
 	}
 
-	wxml, err := ParseXML2Map(bytes.NewReader(resp))
+	wxml, err := ParseXML2Map(resp)
 
 	if err != nil {
 		return nil, err
@@ -445,35 +438,42 @@ func NewHTTPClient(options ...HTTPClientOption) *HTTPClient {
 }
 
 // FormatMap2XML format map to xml
-func FormatMap2XML(xmlWriter io.Writer, m WXML) (err error) {
-	if _, err = io.WriteString(xmlWriter, "<xml>"); err != nil {
-		return
+func FormatMap2XML(m WXML) ([]byte, error) {
+	buf := bufPool.Get().(*bytes.Buffer)
+	buf.Reset()
+
+	defer bufPool.Put(buf)
+
+	if _, err := io.WriteString(buf, "<xml>"); err != nil {
+		return nil, err
 	}
 
 	for k, v := range m {
-		if _, err = io.WriteString(xmlWriter, fmt.Sprintf("<%s>", k)); err != nil {
-			return
+		if _, err := io.WriteString(buf, fmt.Sprintf("<%s>", k)); err != nil {
+			return nil, err
 		}
 
-		if err = xml.EscapeText(xmlWriter, []byte(v)); err != nil {
-			return
+		if err := xml.EscapeText(buf, []byte(v)); err != nil {
+			return nil, err
 		}
 
-		if _, err = io.WriteString(xmlWriter, fmt.Sprintf("</%s>", k)); err != nil {
-			return
+		if _, err := io.WriteString(buf, fmt.Sprintf("</%s>", k)); err != nil {
+			return nil, err
 		}
 	}
 
-	if _, err = io.WriteString(xmlWriter, "</xml>"); err != nil {
-		return
+	if _, err := io.WriteString(buf, "</xml>"); err != nil {
+		return nil, err
 	}
 
-	return
+	return buf.Bytes(), nil
 }
 
 // ParseXML2Map parse xml to map
-func ParseXML2Map(xmlReader io.Reader) (m WXML, err error) {
+func ParseXML2Map(b []byte) (m WXML, err error) {
 	m = make(WXML)
+
+	xmlReader := bytes.NewReader(b)
 
 	var (
 		d     = xml.NewDecoder(xmlReader)
