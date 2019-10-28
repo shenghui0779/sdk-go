@@ -5,7 +5,7 @@
 [![GitHub release](https://img.shields.io/github/release/iiinsomnia/gochat.svg)](https://github.com/iiinsomnia/gochat/releases/latest)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
-微信平台 Golang SDK
+这可能是目前最好的 微信  Golang SDK
 
 | 目录 | 对应         | 功能                                               |
 | ---- | ------------ | -------------------------------------------------- |
