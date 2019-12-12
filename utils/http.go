@@ -23,7 +23,7 @@ type WXML map[string]string
 
 var bufPool = sync.Pool{
 	New: func() interface{} {
-		return bytes.NewBuffer(make([]byte, 0, 16<<10)) // 16KB
+		return bytes.NewBuffer(make([]byte, 0, 4<<10)) // 4KB
 	},
 }
 
@@ -353,11 +353,11 @@ func (h *HTTPClient) GetXML(uri string, body WXML, options ...HTTPRequestOption)
 
 // PostXML http xml post request
 func (h *HTTPClient) PostXML(url string, body WXML, options ...HTTPRequestOption) (WXML, error) {
-	b, err := FormatMap2XML(body)
+	xmlStr, err := FormatMap2XML(body)
 
 	options = append(options, WithRequestHeader("Content-Type", "text/xml; charset=utf-8"))
 
-	resp, err := h.Post(url, b, options...)
+	resp, err := h.Post(url, []byte(xmlStr), options...)
 
 	if err != nil {
 		return nil, err
@@ -438,35 +438,35 @@ func NewHTTPClient(options ...HTTPClientOption) *HTTPClient {
 }
 
 // FormatMap2XML format map to xml
-func FormatMap2XML(m WXML) ([]byte, error) {
+func FormatMap2XML(m WXML) (string, error) {
 	buf := bufPool.Get().(*bytes.Buffer)
 	buf.Reset()
 
 	defer bufPool.Put(buf)
 
 	if _, err := io.WriteString(buf, "<xml>"); err != nil {
-		return nil, err
+		return "", err
 	}
 
 	for k, v := range m {
 		if _, err := io.WriteString(buf, fmt.Sprintf("<%s>", k)); err != nil {
-			return nil, err
+			return "", err
 		}
 
 		if err := xml.EscapeText(buf, []byte(v)); err != nil {
-			return nil, err
+			return "", err
 		}
 
 		if _, err := io.WriteString(buf, fmt.Sprintf("</%s>", k)); err != nil {
-			return nil, err
+			return "", err
 		}
 	}
 
 	if _, err := io.WriteString(buf, "</xml>"); err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return buf.Bytes(), nil
+	return buf.String(), nil
 }
 
 // ParseXML2Map parse xml to map
