@@ -93,7 +93,7 @@ func (q *QRCode) Create(accessToken, path string, options ...QRCodeOption) ([]by
 		body["width"] = o.width
 	}
 
-	s, err := MarshalWithNoEscapeHTML(body)
+	bodyStr, err := MarshalWithNoEscapeHTML(body)
 
 	if err != nil {
 		return nil, err
@@ -101,7 +101,7 @@ func (q *QRCode) Create(accessToken, path string, options ...QRCodeOption) ([]by
 
 	q.options = append(q.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
-	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeCreateURL, accessToken), []byte(s), q.options...)
+	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeCreateURL, accessToken), []byte(bodyStr), q.options...)
 
 	if err != nil {
 		return nil, err
@@ -144,7 +144,7 @@ func (q *QRCode) Get(accessToken, path string, options ...QRCodeOption) ([]byte,
 		body["is_hyaline"] = true
 	}
 
-	s, err := MarshalWithNoEscapeHTML(body)
+	bodyStr, err := MarshalWithNoEscapeHTML(body)
 
 	if err != nil {
 		return nil, err
@@ -152,7 +152,7 @@ func (q *QRCode) Get(accessToken, path string, options ...QRCodeOption) ([]byte,
 
 	q.options = append(q.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
-	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeGetURL, accessToken), []byte(s), q.options...)
+	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeGetURL, accessToken), []byte(bodyStr), q.options...)
 
 	if err != nil {
 		return nil, err
@@ -199,7 +199,7 @@ func (q *QRCode) GetUnlimit(accessToken, scene string, options ...QRCodeOption) 
 		body["is_hyaline"] = true
 	}
 
-	s, err := MarshalWithNoEscapeHTML(body)
+	bodyStr, err := MarshalWithNoEscapeHTML(body)
 
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func (q *QRCode) GetUnlimit(accessToken, scene string, options ...QRCodeOption) 
 
 	q.options = append(q.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
 
-	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeGetUnlimitURL, accessToken), []byte(s), q.options...)
+	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeGetUnlimitURL, accessToken), []byte(bodyStr), q.options...)
 
 	if err != nil {
 		return nil, err

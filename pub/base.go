@@ -59,8 +59,5 @@ func (wx *WXPub) TplMsg(options ...utils.HTTPRequestOption) *TplMsg {
 
 // Reply returns new reply
 func (wx *WXPub) Reply(options ...utils.HTTPRequestOption) *Reply {
-	return &Reply{
-		pub:     wx,
-		options: options,
-	}
+	return &Reply{pub: wx}
 }

@@ -110,9 +110,8 @@ type ReplyMsg struct {
 
 // Reply 公众号回复
 type Reply struct {
-	pub     *WXPub
-	msg     *ReplyMsg
-	options []utils.HTTPRequestOption
+	pub *WXPub
+	msg *ReplyMsg
 }
 
 func (r *Reply) encrypt(data []byte) ([]byte, error) {
