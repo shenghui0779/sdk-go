@@ -13,36 +13,54 @@ type WXPub struct {
 }
 
 // Sns returns new sns
-func (wx *WXPub) Sns() *Sns {
-	return &Sns{wx}
+func (wx *WXPub) Sns(options ...utils.HTTPRequestOption) *Sns {
+	return &Sns{
+		pub:     wx,
+		options: options,
+	}
 }
 
 // CgiBin returns new cgi-bin
-func (wx *WXPub) CgiBin() *CgiBin {
-	return &CgiBin{wx}
+func (wx *WXPub) CgiBin(options ...utils.HTTPRequestOption) *CgiBin {
+	return &CgiBin{
+		pub:     wx,
+		options: options,
+	}
 }
 
 // MsgChiper returns new msg chiper
 func (wx *WXPub) MsgChiper() *MsgChiper {
-	return &MsgChiper{wx}
+	return &MsgChiper{pub: wx}
 }
 
 // Menu returns new menu
-func (wx *WXPub) Menu() *Menu {
-	return &Menu{wx}
+func (wx *WXPub) Menu(options ...utils.HTTPRequestOption) *Menu {
+	return &Menu{
+		pub:     wx,
+		options: options,
+	}
 }
 
 // Subscriber returns new subscriber
-func (wx *WXPub) Subscriber() *Subscriber {
-	return &Subscriber{wx}
+func (wx *WXPub) Subscriber(options ...utils.HTTPRequestOption) *Subscriber {
+	return &Subscriber{
+		pub:     wx,
+		options: options,
+	}
 }
 
 // TplMsg returns new tpl msg
-func (wx *WXPub) TplMsg() *TplMsg {
-	return &TplMsg{wx}
+func (wx *WXPub) TplMsg(options ...utils.HTTPRequestOption) *TplMsg {
+	return &TplMsg{
+		pub:     wx,
+		options: options,
+	}
 }
 
 // Reply returns new reply
-func (wx *WXPub) Reply() *Reply {
-	return &Reply{WXPub: wx}
+func (wx *WXPub) Reply(options ...utils.HTTPRequestOption) *Reply {
+	return &Reply{
+		pub:     wx,
+		options: options,
+	}
 }

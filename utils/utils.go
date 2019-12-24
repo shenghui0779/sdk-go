@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"crypto/hmac"
 	"crypto/md5"
 	"crypto/sha1"
@@ -12,6 +13,7 @@ import (
 	"math/rand"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -27,6 +29,35 @@ func (c CDATA) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 		string `xml:",cdata"`
 	}{string(c)}, start)
 }
+
+// bufferPool type of buffer pool
+type bufferPool struct {
+	pool sync.Pool
+}
+
+// Get return a buffer
+func (p *bufferPool) Get() *bytes.Buffer {
+	buf := p.pool.Get().(*bytes.Buffer)
+	buf.Reset()
+
+	return buf
+}
+
+// Put put a buffer to pool
+func (p *bufferPool) Put(buf *bytes.Buffer) {
+	if buf == nil {
+		return
+	}
+
+	p.pool.Put(buf)
+}
+
+// BufPool buffer pool
+var BufPool = &bufferPool{pool: sync.Pool{
+	New: func() interface{} {
+		return bytes.NewBuffer(make([]byte, 0, 4<<10)) // 4kb
+	},
+}}
 
 // NonceStr 随机字符串
 func NonceStr() string {

@@ -22,14 +22,15 @@ type RefundData struct {
 
 // Refund 退款操作
 type Refund struct {
-	*WXMch
+	mch     *WXMch
+	options []utils.HTTPRequestOption
 }
 
 // RefundByTransactionID 根据微信订单号退款
 func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":          r.AppID,
-		"mch_id":         r.MchID,
+		"appid":          r.mch.AppID,
+		"mch_id":         r.mch.MchID,
 		"nonce_str":      utils.NonceStr(),
 		"sign_type":      SignMD5,
 		"transaction_id": transactionID,
@@ -54,9 +55,9 @@ func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (
 		body["notify_url"] = data.NotifyURL
 	}
 
-	body["sign"] = SignWithMD5(body, r.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.AppKey)
 
-	resp, err := r.SSLClient.PostXML(RefundApplyURL, body)
+	resp, err := r.mch.SSLClient.PostXML(RefundApplyURL, body, r.options...)
 
 	if err != nil {
 		return nil, err
@@ -66,7 +67,7 @@ func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp); err != nil {
+	if err := r.mch.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 
@@ -76,8 +77,8 @@ func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (
 // RefundByOutTradeNO 根据微信订单号退款
 func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":         r.AppID,
-		"mch_id":        r.MchID,
+		"appid":         r.mch.AppID,
+		"mch_id":        r.mch.MchID,
 		"nonce_str":     utils.NonceStr(),
 		"sign_type":     SignMD5,
 		"out_trade_no":  outTradeNO,
@@ -102,9 +103,9 @@ func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.
 		body["notify_url"] = data.NotifyURL
 	}
 
-	body["sign"] = SignWithMD5(body, r.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.AppKey)
 
-	resp, err := r.SSLClient.PostXML(RefundApplyURL, body)
+	resp, err := r.mch.SSLClient.PostXML(RefundApplyURL, body, r.options...)
 
 	if err != nil {
 		return nil, err
@@ -114,7 +115,7 @@ func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp); err != nil {
+	if err := r.mch.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 
@@ -124,8 +125,8 @@ func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.
 // QueryByRefundID 根据微信退款单号查询
 func (r *Refund) QueryByRefundID(refundID string, offset ...int) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":     r.AppID,
-		"mch_id":    r.MchID,
+		"appid":     r.mch.AppID,
+		"mch_id":    r.mch.MchID,
 		"refund_id": refundID,
 		"nonce_str": utils.NonceStr(),
 		"sign_type": SignMD5,
@@ -135,9 +136,9 @@ func (r *Refund) QueryByRefundID(refundID string, offset ...int) (utils.WXML, er
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	body["sign"] = SignWithMD5(body, r.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.AppKey)
 
-	resp, err := r.Client.PostXML(RefundQueryURL, body)
+	resp, err := r.mch.Client.PostXML(RefundQueryURL, body, r.options...)
 
 	if err != nil {
 		return nil, err
@@ -147,7 +148,7 @@ func (r *Refund) QueryByRefundID(refundID string, offset ...int) (utils.WXML, er
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp); err != nil {
+	if err := r.mch.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 
@@ -157,8 +158,8 @@ func (r *Refund) QueryByRefundID(refundID string, offset ...int) (utils.WXML, er
 // QueryByOutRefundNO 根据商户退款单号查询
 func (r *Refund) QueryByOutRefundNO(outRefundNO string, offset ...int) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":         r.AppID,
-		"mch_id":        r.MchID,
+		"appid":         r.mch.AppID,
+		"mch_id":        r.mch.MchID,
 		"out_refund_no": outRefundNO,
 		"nonce_str":     utils.NonceStr(),
 		"sign_type":     SignMD5,
@@ -168,9 +169,9 @@ func (r *Refund) QueryByOutRefundNO(outRefundNO string, offset ...int) (utils.WX
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	body["sign"] = SignWithMD5(body, r.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.AppKey)
 
-	resp, err := r.Client.PostXML(RefundQueryURL, body)
+	resp, err := r.mch.Client.PostXML(RefundQueryURL, body, r.options...)
 
 	if err != nil {
 		return nil, err
@@ -180,7 +181,7 @@ func (r *Refund) QueryByOutRefundNO(outRefundNO string, offset ...int) (utils.WX
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp); err != nil {
+	if err := r.mch.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 
@@ -190,8 +191,8 @@ func (r *Refund) QueryByOutRefundNO(outRefundNO string, offset ...int) (utils.WX
 // QueryByTransactionID 根据微信订单号查询
 func (r *Refund) QueryByTransactionID(transactionID string, offset ...int) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":          r.AppID,
-		"mch_id":         r.MchID,
+		"appid":          r.mch.AppID,
+		"mch_id":         r.mch.MchID,
 		"transaction_id": transactionID,
 		"nonce_str":      utils.NonceStr(),
 		"sign_type":      SignMD5,
@@ -201,9 +202,9 @@ func (r *Refund) QueryByTransactionID(transactionID string, offset ...int) (util
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	body["sign"] = SignWithMD5(body, r.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.AppKey)
 
-	resp, err := r.Client.PostXML(RefundQueryURL, body)
+	resp, err := r.mch.Client.PostXML(RefundQueryURL, body, r.options...)
 
 	if err != nil {
 		return nil, err
@@ -213,7 +214,7 @@ func (r *Refund) QueryByTransactionID(transactionID string, offset ...int) (util
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp); err != nil {
+	if err := r.mch.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 
@@ -223,8 +224,8 @@ func (r *Refund) QueryByTransactionID(transactionID string, offset ...int) (util
 // QueryByOutTradeNO 根据商户订单号查询
 func (r *Refund) QueryByOutTradeNO(outTradeNO string, offset ...int) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":        r.AppID,
-		"mch_id":       r.MchID,
+		"appid":        r.mch.AppID,
+		"mch_id":       r.mch.MchID,
 		"out_trade_no": outTradeNO,
 		"nonce_str":    utils.NonceStr(),
 		"sign_type":    "MD5",
@@ -234,9 +235,9 @@ func (r *Refund) QueryByOutTradeNO(outTradeNO string, offset ...int) (utils.WXML
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	body["sign"] = SignWithMD5(body, r.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.AppKey)
 
-	resp, err := r.Client.PostXML(RefundQueryURL, body)
+	resp, err := r.mch.Client.PostXML(RefundQueryURL, body, r.options...)
 
 	if err != nil {
 		return nil, err
@@ -246,7 +247,7 @@ func (r *Refund) QueryByOutTradeNO(outTradeNO string, offset ...int) (utils.WXML
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := r.VerifyWXReply(resp); err != nil {
+	if err := r.mch.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 

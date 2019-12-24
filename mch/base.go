@@ -18,18 +18,27 @@ type WXMch struct {
 }
 
 // Order returns new order
-func (wx *WXMch) Order() *Order {
-	return &Order{wx}
+func (wx *WXMch) Order(options ...utils.HTTPRequestOption) *Order {
+	return &Order{
+		mch:     wx,
+		options: options,
+	}
 }
 
 // Refund returns new refund
-func (wx *WXMch) Refund() *Refund {
-	return &Refund{wx}
+func (wx *WXMch) Refund(options ...utils.HTTPRequestOption) *Refund {
+	return &Refund{
+		mch:     wx,
+		options: options,
+	}
 }
 
 // Pappay returns new pappay
-func (wx *WXMch) Pappay() *Pappay {
-	return &Pappay{wx}
+func (wx *WXMch) Pappay(options ...utils.HTTPRequestOption) *Pappay {
+	return &Pappay{
+		mch:     wx,
+		options: options,
+	}
 }
 
 // APPAPI 用于APP拉起支付

@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"github.com/tidwall/gjson"
+
+	"github.com/iiinsomnia/gochat/utils"
 )
 
 // AuthToken 公众号授权Token
@@ -32,12 +34,13 @@ type User struct {
 
 // Sns sns
 type Sns struct {
-	*WXPub
+	pub     *WXPub
+	options []utils.HTTPRequestOption
 }
 
 // Code2Token 获取公众号授权AccessToken
 func (s *Sns) Code2Token(code string) (*AuthToken, error) {
-	resp, err := s.Client.Get(fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", SnsCode2Token, s.AppID, s.AppSecret, code))
+	resp, err := s.pub.Client.Get(fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", SnsCode2Token, s.pub.AppID, s.pub.AppSecret, code), s.options...)
 
 	if err != nil {
 		return nil, err
@@ -60,9 +63,7 @@ func (s *Sns) Code2Token(code string) (*AuthToken, error) {
 
 // CheckAccessToken 校验授权AccessToken是否有效
 func (s *Sns) CheckAccessToken(accessToken, openid string) bool {
-	url := fmt.Sprintf("%s=%s&openid=%s", SnsCheckAccessTokenURL, accessToken, openid)
-
-	resp, err := s.Client.Get(url)
+	resp, err := s.pub.Client.Get(fmt.Sprintf("%s=%s&openid=%s", SnsCheckAccessTokenURL, accessToken, openid), s.options...)
 
 	if err != nil {
 		return false
@@ -77,7 +78,7 @@ func (s *Sns) CheckAccessToken(accessToken, openid string) bool {
 
 // RefreshAccessToken 刷新授权AccessToken
 func (s *Sns) RefreshAccessToken(refreshToken string) (*AuthToken, error) {
-	resp, err := s.Client.Get(fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", SnsRefreshAccessTokenURL, s.AppID, refreshToken))
+	resp, err := s.pub.Client.Get(fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", SnsRefreshAccessTokenURL, s.pub.AppID, refreshToken), s.options...)
 
 	if err != nil {
 		return nil, err
@@ -100,7 +101,7 @@ func (s *Sns) RefreshAccessToken(refreshToken string) (*AuthToken, error) {
 
 // GetUserInfo 获取微信用户信息
 func (s *Sns) GetUserInfo(accessToken, openid string) (*User, error) {
-	resp, err := s.Client.Get(fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", SnsUserInfoURL, accessToken, openid))
+	resp, err := s.pub.Client.Get(fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", SnsUserInfoURL, accessToken, openid), s.options...)
 
 	if err != nil {
 		return nil, err

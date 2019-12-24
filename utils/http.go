@@ -11,7 +11,6 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"sync"
 	"time"
 )
 
@@ -20,12 +19,6 @@ const defaultHTTPTimeout = 10 * time.Second
 
 // WXML deal with xml for wechat
 type WXML map[string]string
-
-var bufPool = sync.Pool{
-	New: func() interface{} {
-		return bytes.NewBuffer(make([]byte, 0, 4<<10)) // 4KB
-	},
-}
 
 // httpClientOptions http client options
 type httpClientOptions struct {
@@ -439,10 +432,8 @@ func NewHTTPClient(options ...HTTPClientOption) *HTTPClient {
 
 // FormatMap2XML format map to xml
 func FormatMap2XML(m WXML) (string, error) {
-	buf := bufPool.Get().(*bytes.Buffer)
-	buf.Reset()
-
-	defer bufPool.Put(buf)
+	buf := BufPool.Get()
+	defer BufPool.Put(buf)
 
 	if _, err := io.WriteString(buf, "<xml>"); err != nil {
 		return "", err
