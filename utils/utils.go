@@ -36,20 +36,20 @@ type bufferPool struct {
 }
 
 // Get return a buffer
-func (p *bufferPool) Get() *bytes.Buffer {
-	buf := p.pool.Get().(*bytes.Buffer)
+func (b *bufferPool) Get() *bytes.Buffer {
+	buf := b.pool.Get().(*bytes.Buffer)
 	buf.Reset()
 
 	return buf
 }
 
 // Put put a buffer to pool
-func (p *bufferPool) Put(buf *bytes.Buffer) {
+func (b *bufferPool) Put(buf *bytes.Buffer) {
 	if buf == nil {
 		return
 	}
 
-	p.pool.Put(buf)
+	b.pool.Put(buf)
 }
 
 // BufPool buffer pool
