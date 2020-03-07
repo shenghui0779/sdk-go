@@ -1,7 +1,7 @@
 # gochat
 
 [![golang](https://img.shields.io/badge/Language-Go-green.svg?style=flat)](https://golang.org)
-[![GoDoc](https://godoc.org/github.com/iiinsomnia/gochat?status.svg)](https://godoc.org/github.com/iiinsomnia/gochat)
+[![GoDoc](https://godoc.org/github.com/iiinsomnia/gochat?status.svg)](https://pkg.go.dev/github.com/iiinsomnia/gochat)
 [![GitHub release](https://img.shields.io/github/release/iiinsomnia/gochat.svg)](https://github.com/iiinsomnia/gochat/releases/latest)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
