@@ -38,7 +38,7 @@ type WaterMark struct {
 
 // BizDataCrypt 数据解析
 type BizDataCrypt struct {
-	*WXMP
+	mp   *WXMP
 	data []byte
 }
 
@@ -81,8 +81,8 @@ func (b *BizDataCrypt) GetUserData() (*UserData, error) {
 		return nil, err
 	}
 
-	if userData.WaterMark.AppID != b.AppID {
-		return nil, fmt.Errorf("wxmp user bizdata appid mismatch, want: %s, got: %s", b.AppID, userData.WaterMark.AppID)
+	if userData.WaterMark.AppID != b.mp.AppID {
+		return nil, fmt.Errorf("wxmp user bizdata appid mismatch, want: %s, got: %s", b.mp.AppID, userData.WaterMark.AppID)
 	}
 
 	return userData, nil
@@ -96,8 +96,8 @@ func (b *BizDataCrypt) GetPhoneData() (*PhoneData, error) {
 		return nil, err
 	}
 
-	if phoneData.WaterMark.AppID != b.AppID {
-		return nil, fmt.Errorf("wxmp phone bizdata appid mismatch, want: %s, got: %s", b.AppID, phoneData.WaterMark.AppID)
+	if phoneData.WaterMark.AppID != b.mp.AppID {
+		return nil, fmt.Errorf("wxmp phone bizdata appid mismatch, want: %s, got: %s", b.mp.AppID, phoneData.WaterMark.AppID)
 	}
 
 	return phoneData, nil

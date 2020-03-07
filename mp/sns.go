@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"github.com/tidwall/gjson"
+
+	"github.com/iiinsomnia/gochat/utils"
 )
 
 // AuthSession 小程序授权Session
@@ -17,12 +19,13 @@ type AuthSession struct {
 
 // Sns sns
 type Sns struct {
-	*WXMP
+	mp      *WXMP
+	options []utils.HTTPRequestOption
 }
 
 // Code2Session 获取小程序授权SessionKey
 func (s *Sns) Code2Session(code string) (*AuthSession, error) {
-	resp, err := s.Client.Get(fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", Code2SessionURL, s.AppID, s.AppSecret, code))
+	resp, err := s.mp.Client.Get(fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", Code2SessionURL, s.mp.AppID, s.mp.AppSecret, code), s.options...)
 
 	if err != nil {
 		return nil, err

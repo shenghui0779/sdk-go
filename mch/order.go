@@ -33,14 +33,15 @@ type UnifiedOrder struct {
 
 // Order 订单操作
 type Order struct {
-	*WXMch
+	mch     *WXMch
+	options []utils.HTTPRequestOption
 }
 
 // Unify 统一下单
 func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":            o.AppID,
-		"mch_id":           o.MchID,
+		"appid":            o.mch.AppID,
+		"mch_id":           o.mch.MchID,
 		"nonce_str":        utils.NonceStr(),
 		"sign_type":        SignMD5,
 		"fee_type":         "CNY",
@@ -100,9 +101,9 @@ func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 		body["scene_info"] = order.SceneInfo
 	}
 
-	body["sign"] = SignWithMD5(body, o.AppKey)
+	body["sign"] = SignWithMD5(body, o.mch.AppKey)
 
-	resp, err := o.Client.PostXML(OrderUnifyURL, body)
+	resp, err := o.mch.Client.PostXML(OrderUnifyURL, body, o.options...)
 
 	if err != nil {
 		return nil, err
@@ -112,7 +113,7 @@ func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := o.VerifyWXReply(resp); err != nil {
+	if err := o.mch.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 
@@ -122,16 +123,16 @@ func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 // QueryByTransactionID 根据微信订单号查询
 func (o *Order) QueryByTransactionID(transactionID string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":          o.AppID,
-		"mch_id":         o.MchID,
+		"appid":          o.mch.AppID,
+		"mch_id":         o.mch.MchID,
 		"transaction_id": transactionID,
 		"nonce_str":      utils.NonceStr(),
 		"sign_type":      SignMD5,
 	}
 
-	body["sign"] = SignWithMD5(body, o.AppKey)
+	body["sign"] = SignWithMD5(body, o.mch.AppKey)
 
-	resp, err := o.Client.PostXML(OrderQueryURL, body)
+	resp, err := o.mch.Client.PostXML(OrderQueryURL, body, o.options...)
 
 	if err != nil {
 		return nil, err
@@ -141,7 +142,7 @@ func (o *Order) QueryByTransactionID(transactionID string) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := o.VerifyWXReply(resp); err != nil {
+	if err := o.mch.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 
@@ -151,16 +152,16 @@ func (o *Order) QueryByTransactionID(transactionID string) (utils.WXML, error) {
 // QueryByOutTradeNO 根据商户订单号查询
 func (o *Order) QueryByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":        o.AppID,
-		"mch_id":       o.MchID,
+		"appid":        o.mch.AppID,
+		"mch_id":       o.mch.MchID,
 		"out_trade_no": outTradeNO,
 		"nonce_str":    utils.NonceStr(),
 		"sign_type":    SignMD5,
 	}
 
-	body["sign"] = SignWithMD5(body, o.AppKey)
+	body["sign"] = SignWithMD5(body, o.mch.AppKey)
 
-	resp, err := o.Client.PostXML(OrderQueryURL, body)
+	resp, err := o.mch.Client.PostXML(OrderQueryURL, body, o.options...)
 
 	if err != nil {
 		return nil, err
@@ -170,7 +171,7 @@ func (o *Order) QueryByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := o.VerifyWXReply(resp); err != nil {
+	if err := o.mch.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 
@@ -180,16 +181,16 @@ func (o *Order) QueryByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 // Close 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
 func (o *Order) Close(outTradeNO string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":        o.AppID,
-		"mch_id":       o.MchID,
+		"appid":        o.mch.AppID,
+		"mch_id":       o.mch.MchID,
 		"out_trade_no": outTradeNO,
 		"nonce_str":    utils.NonceStr(),
 		"sign_type":    SignMD5,
 	}
 
-	body["sign"] = SignWithMD5(body, o.AppKey)
+	body["sign"] = SignWithMD5(body, o.mch.AppKey)
 
-	resp, err := o.Client.PostXML(OrderCloseURL, body)
+	resp, err := o.mch.Client.PostXML(OrderCloseURL, body, o.options...)
 
 	if err != nil {
 		return nil, err
@@ -199,7 +200,7 @@ func (o *Order) Close(outTradeNO string) (utils.WXML, error) {
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := o.VerifyWXReply(resp); err != nil {
+	if err := o.mch.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 

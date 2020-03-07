@@ -1,7 +1,6 @@
 package mp
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -74,7 +73,8 @@ func WithQRCodeIsHyaline(b bool) QRCodeOption {
 
 // QRCode 小程序二维码
 type QRCode struct {
-	*WXMP
+	mp      *WXMP
+	options []utils.HTTPRequestOption
 }
 
 // Create 数量有限
@@ -93,13 +93,15 @@ func (q *QRCode) Create(accessToken, path string, options ...QRCodeOption) ([]by
 		body["width"] = o.width
 	}
 
-	b, err := MarshalWithNoEscapeHTML(body)
+	bodyStr, err := MarshalWithNoEscapeHTML(body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := q.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeCreateURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	q.options = append(q.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+
+	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeCreateURL, accessToken), []byte(bodyStr), q.options...)
 
 	if err != nil {
 		return nil, err
@@ -142,13 +144,15 @@ func (q *QRCode) Get(accessToken, path string, options ...QRCodeOption) ([]byte,
 		body["is_hyaline"] = true
 	}
 
-	b, err := MarshalWithNoEscapeHTML(body)
+	bodyStr, err := MarshalWithNoEscapeHTML(body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := q.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeGetURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	q.options = append(q.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+
+	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeGetURL, accessToken), []byte(bodyStr), q.options...)
 
 	if err != nil {
 		return nil, err
@@ -195,13 +199,15 @@ func (q *QRCode) GetUnlimit(accessToken, scene string, options ...QRCodeOption) 
 		body["is_hyaline"] = true
 	}
 
-	b, err := MarshalWithNoEscapeHTML(body)
+	bodyStr, err := MarshalWithNoEscapeHTML(body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := q.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeGetUnlimitURL, accessToken), b, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	q.options = append(q.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+
+	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeGetUnlimitURL, accessToken), []byte(bodyStr), q.options...)
 
 	if err != nil {
 		return nil, err
@@ -217,15 +223,16 @@ func (q *QRCode) GetUnlimit(accessToken, scene string, options ...QRCodeOption) 
 }
 
 // MarshalWithNoEscapeHTML marshal with no escape HTML
-func MarshalWithNoEscapeHTML(v interface{}) ([]byte, error) {
-	buf := new(bytes.Buffer)
+func MarshalWithNoEscapeHTML(v interface{}) (string, error) {
+	buf := utils.BufPool.Get()
+	defer utils.BufPool.Put(buf)
 
 	jsonEncoder := json.NewEncoder(buf)
 	jsonEncoder.SetEscapeHTML(false)
 
 	if err := jsonEncoder.Encode(v); err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return buf.Bytes(), nil
+	return buf.String(), nil
 }

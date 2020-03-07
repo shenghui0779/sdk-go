@@ -10,21 +10,30 @@ type WXMP struct {
 }
 
 // Sns returns new sns
-func (wx *WXMP) Sns() *Sns {
-	return &Sns{wx}
+func (wx *WXMP) Sns(options ...utils.HTTPRequestOption) *Sns {
+	return &Sns{
+		mp:      wx,
+		options: options,
+	}
 }
 
 // CgiBin returns new cgi-bin
-func (wx *WXMP) CgiBin() *CgiBin {
-	return &CgiBin{wx}
+func (wx *WXMP) CgiBin(options ...utils.HTTPRequestOption) *CgiBin {
+	return &CgiBin{
+		mp:      wx,
+		options: options,
+	}
 }
 
 // BizDataCrypt returns new bizdatacrypt
-func (wx *WXMP) BizDataCrypt() *BizDataCrypt {
-	return &BizDataCrypt{WXMP: wx}
+func (wx *WXMP) BizDataCrypt(options ...utils.HTTPRequestOption) *BizDataCrypt {
+	return &BizDataCrypt{mp: wx}
 }
 
 // QRCode returns new qrcode
-func (wx *WXMP) QRCode() *QRCode {
-	return &QRCode{wx}
+func (wx *WXMP) QRCode(options ...utils.HTTPRequestOption) *QRCode {
+	return &QRCode{
+		mp:      wx,
+		options: options,
+	}
 }
