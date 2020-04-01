@@ -28,7 +28,7 @@ func (wx *WXPub) CgiBin(options ...utils.HTTPRequestOption) *CgiBin {
 	}
 }
 
-// MsgCrypt returns new event msg crypt
+// MsgCrypt returns new msg crypt
 func (wx *WXPub) MsgCrypt(cipherMsg string) *MsgCrypt {
 	return &MsgCrypt{
 		pub:        wx,
