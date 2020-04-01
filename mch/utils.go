@@ -17,7 +17,7 @@ func SignWithMD5(m utils.WXML, apikey string) string {
 
 // SignWithHMacSHA256 生成HMAC-SHA256签名
 func SignWithHMacSHA256(m utils.WXML, apikey string) string {
-	signature := utils.HMAC("sha256", buildSignStr(m, apikey), apikey)
+	signature := utils.HMAC(utils.AlgoSha256, buildSignStr(m, apikey), apikey)
 
 	return strings.ToUpper(signature)
 }

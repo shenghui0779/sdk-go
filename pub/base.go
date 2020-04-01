@@ -28,9 +28,12 @@ func (wx *WXPub) CgiBin(options ...utils.HTTPRequestOption) *CgiBin {
 	}
 }
 
-// MsgChiper returns new msg chiper
-func (wx *WXPub) MsgChiper() *MsgChiper {
-	return &MsgChiper{pub: wx}
+// MsgChiper returns new event msg crypt
+func (wx *WXPub) EventMsgCrypt(cipherMsg string) *MsgCrypt {
+	return &MsgCrypt{
+		pub:        wx,
+		cipherText: cipherMsg,
+	}
 }
 
 // Menu returns new menu
@@ -58,6 +61,9 @@ func (wx *WXPub) TplMsg(options ...utils.HTTPRequestOption) *TplMsg {
 }
 
 // Reply returns new reply
-func (wx *WXPub) Reply(options ...utils.HTTPRequestOption) *Reply {
-	return &Reply{pub: wx}
+func (wx *WXPub) Reply(openid string) *Reply {
+	return &Reply{
+		pub:    wx,
+		openid: openid,
+	}
 }

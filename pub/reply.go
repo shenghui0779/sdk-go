@@ -110,8 +110,198 @@ type ReplyMsg struct {
 
 // Reply 公众号回复
 type Reply struct {
-	pub *WXPub
-	msg *ReplyMsg
+	pub    *WXPub
+	openid string
+}
+
+// Text build wxpub text reply msg
+func (r *Reply) Text(content string) (*ReplyMsg, error) {
+	m := &TextReply{
+		ReplyHeader: ReplyHeader{
+			ToUserName:   utils.CDATA(r.openid),
+			FromUserName: utils.CDATA(r.pub.AccountID),
+			CreateTime:   time.Now().Unix(),
+			MsgType:      utils.CDATA("text"),
+		},
+	}
+
+	m.Content = utils.CDATA(content)
+
+	b, err := xml.Marshal(m)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.buildMsg(b)
+}
+
+// Image build wxpub image reply msg
+func (r *Reply) Image(mediaID string) (*ReplyMsg, error) {
+	m := &ImageReply{
+		ReplyHeader: ReplyHeader{
+			ToUserName:   utils.CDATA(r.openid),
+			FromUserName: utils.CDATA(r.pub.AccountID),
+			CreateTime:   time.Now().Unix(),
+			MsgType:      utils.CDATA("text"),
+		},
+	}
+
+	m.Image.MediaID = utils.CDATA(mediaID)
+
+	b, err := xml.Marshal(m)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.buildMsg(b)
+}
+
+// Voice build wxpub voice reply msg
+func (r *Reply) Voice(mediaID string) (*ReplyMsg, error) {
+	m := &VoiceReply{
+		ReplyHeader: ReplyHeader{
+			ToUserName:   utils.CDATA(r.openid),
+			FromUserName: utils.CDATA(r.pub.AccountID),
+			CreateTime:   time.Now().Unix(),
+			MsgType:      utils.CDATA("text"),
+		},
+	}
+
+	m.Voice.MediaID = utils.CDATA(mediaID)
+
+	b, err := xml.Marshal(m)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.buildMsg(b)
+}
+
+// Video build wxpub video reply msg
+func (r *Reply) Video(mediaID, title, desc string) (*ReplyMsg, error) {
+	m := &VideoReply{
+		ReplyHeader: ReplyHeader{
+			ToUserName:   utils.CDATA(r.openid),
+			FromUserName: utils.CDATA(r.pub.AccountID),
+			CreateTime:   time.Now().Unix(),
+			MsgType:      utils.CDATA("text"),
+		},
+	}
+
+	m.Video.MediaID = utils.CDATA(mediaID)
+	m.Video.Title = utils.CDATA(title)
+	m.Video.Description = utils.CDATA(desc)
+
+	b, err := xml.Marshal(m)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.buildMsg(b)
+}
+
+// Music build wxpub music reply msg
+func (r *Reply) Music(mediaID, title, desc, url, HQUrl string) (*ReplyMsg, error) {
+	m := &MusicReply{
+		ReplyHeader: ReplyHeader{
+			ToUserName:   utils.CDATA(r.openid),
+			FromUserName: utils.CDATA(r.pub.AccountID),
+			CreateTime:   time.Now().Unix(),
+			MsgType:      utils.CDATA("text"),
+		},
+	}
+
+	m.Music.Title = utils.CDATA(title)
+	m.Music.Description = utils.CDATA(desc)
+	m.Music.MusicURL = utils.CDATA(url)
+	m.Music.HQMusicURL = utils.CDATA(HQUrl)
+	m.Music.ThumbMediaID = utils.CDATA(mediaID)
+
+	b, err := xml.Marshal(m)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.buildMsg(b)
+}
+
+// Articles build wxpub articles reply msg
+func (r *Reply) Articles(count int, articles ...*Article) (*ReplyMsg, error) {
+	m := &ArticlesReply{
+		ReplyHeader: ReplyHeader{
+			ToUserName:   utils.CDATA(r.openid),
+			FromUserName: utils.CDATA(r.pub.AccountID),
+			CreateTime:   time.Now().Unix(),
+			MsgType:      utils.CDATA("text"),
+		},
+	}
+
+	m.ArticleCount = count
+	m.Articles = articles
+
+	b, err := xml.Marshal(m)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.buildMsg(b)
+}
+
+// Transfer2KF transfer msg to wxpub kf
+func (r *Reply) Transfer2KF(kfAccount ...string) (*ReplyMsg, error) {
+	m := &Transfer2KF{
+		ReplyHeader: ReplyHeader{
+			ToUserName:   utils.CDATA(r.openid),
+			FromUserName: utils.CDATA(r.pub.AccountID),
+			CreateTime:   time.Now().Unix(),
+			MsgType:      utils.CDATA("transfer_customer_service"),
+		},
+	}
+
+	if len(kfAccount) > 0 {
+		m.TransInfo = &TransInfo{KfAccount: utils.CDATA(kfAccount[0])}
+	}
+
+	b, err := xml.Marshal(m)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.buildMsg(b)
+}
+
+func (r *Reply) buildMsg(msgBody []byte) (*ReplyMsg, error) {
+	// 消息加密
+	cipherText, err := r.encrypt(msgBody)
+
+	if err != nil {
+		return nil, err
+	}
+
+	encrypt := base64.StdEncoding.EncodeToString(cipherText)
+
+	now := time.Now().Unix()
+	nonce := utils.NonceStr()
+
+	signItems := []string{r.pub.SignToken, strconv.FormatInt(now, 10), nonce, encrypt}
+
+	sort.Strings(signItems)
+
+	msg := &ReplyMsg{
+		Encrypt:      utils.CDATA(encrypt),
+		MsgSignature: utils.CDATA(utils.SHA1(strings.Join(signItems, ""))),
+		TimeStamp:    now,
+		Nonce:        utils.CDATA(nonce),
+	}
+
+	return msg, nil
 }
 
 func (r *Reply) encrypt(data []byte) ([]byte, error) {
@@ -138,234 +328,4 @@ func (r *Reply) encrypt(data []byte) ([]byte, error) {
 	}
 
 	return cipherText, nil
-}
-
-func (r *Reply) build(encrypt string) *ReplyMsg {
-	now := time.Now().Unix()
-	nonce := utils.NonceStr()
-
-	signItems := []string{r.pub.SignToken, strconv.FormatInt(now, 10), nonce, encrypt}
-
-	sort.Strings(signItems)
-
-	msg := &ReplyMsg{
-		Encrypt:      utils.CDATA(encrypt),
-		MsgSignature: utils.CDATA(utils.SHA1(strings.Join(signItems, ""))),
-		TimeStamp:    now,
-		Nonce:        utils.CDATA(nonce),
-	}
-
-	return msg
-}
-
-// Text build wxpub text reply msg
-func (r *Reply) Text(openid, content string) (*ReplyMsg, error) {
-	m := &TextReply{
-		ReplyHeader: ReplyHeader{
-			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
-			CreateTime:   time.Now().Unix(),
-			MsgType:      utils.CDATA("text"),
-		},
-	}
-
-	m.Content = utils.CDATA(content)
-
-	b, err := xml.Marshal(m)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// 消息加密
-	cipherText, err := r.encrypt(b)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
-}
-
-// Image build wxpub image reply msg
-func (r *Reply) Image(openid, mediaID string) (*ReplyMsg, error) {
-	m := &ImageReply{
-		ReplyHeader: ReplyHeader{
-			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
-			CreateTime:   time.Now().Unix(),
-			MsgType:      utils.CDATA("text"),
-		},
-	}
-
-	m.Image.MediaID = utils.CDATA(mediaID)
-
-	b, err := xml.Marshal(m)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// 消息加密
-	cipherText, err := r.encrypt(b)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
-}
-
-// Voice build wxpub voice reply msg
-func (r *Reply) Voice(openid, mediaID string) (*ReplyMsg, error) {
-	m := &VoiceReply{
-		ReplyHeader: ReplyHeader{
-			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
-			CreateTime:   time.Now().Unix(),
-			MsgType:      utils.CDATA("text"),
-		},
-	}
-
-	m.Voice.MediaID = utils.CDATA(mediaID)
-
-	b, err := xml.Marshal(m)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// 消息加密
-	cipherText, err := r.encrypt(b)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
-}
-
-// Video build wxpub video reply msg
-func (r *Reply) Video(openid, mediaID, title, desc string) (*ReplyMsg, error) {
-	m := &VideoReply{
-		ReplyHeader: ReplyHeader{
-			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
-			CreateTime:   time.Now().Unix(),
-			MsgType:      utils.CDATA("text"),
-		},
-	}
-
-	m.Video.MediaID = utils.CDATA(mediaID)
-	m.Video.Title = utils.CDATA(title)
-	m.Video.Description = utils.CDATA(desc)
-
-	b, err := xml.Marshal(m)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// 消息加密
-	cipherText, err := r.encrypt(b)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
-}
-
-// Music build wxpub music reply msg
-func (r *Reply) Music(openid, mediaID, title, desc, url, HQUrl string) (*ReplyMsg, error) {
-	m := &MusicReply{
-		ReplyHeader: ReplyHeader{
-			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
-			CreateTime:   time.Now().Unix(),
-			MsgType:      utils.CDATA("text"),
-		},
-	}
-
-	m.Music.Title = utils.CDATA(title)
-	m.Music.Description = utils.CDATA(desc)
-	m.Music.MusicURL = utils.CDATA(url)
-	m.Music.HQMusicURL = utils.CDATA(HQUrl)
-	m.Music.ThumbMediaID = utils.CDATA(mediaID)
-
-	b, err := xml.Marshal(m)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// 消息加密
-	cipherText, err := r.encrypt(b)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
-}
-
-// Articles build wxpub articles reply msg
-func (r *Reply) Articles(openid string, count int, articles ...*Article) (*ReplyMsg, error) {
-	m := &ArticlesReply{
-		ReplyHeader: ReplyHeader{
-			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
-			CreateTime:   time.Now().Unix(),
-			MsgType:      utils.CDATA("text"),
-		},
-	}
-
-	m.ArticleCount = count
-	m.Articles = articles
-
-	b, err := xml.Marshal(m)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// 消息加密
-	cipherText, err := r.encrypt(b)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
-}
-
-// Transfer2KF transfer msg to wxpub kf
-func (r *Reply) Transfer2KF(openid string, kfAccount ...string) (*ReplyMsg, error) {
-	m := &Transfer2KF{
-		ReplyHeader: ReplyHeader{
-			ToUserName:   utils.CDATA(openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
-			CreateTime:   time.Now().Unix(),
-			MsgType:      utils.CDATA("transfer_customer_service"),
-		},
-	}
-
-	if len(kfAccount) > 0 {
-		m.TransInfo = &TransInfo{KfAccount: utils.CDATA(kfAccount[0])}
-	}
-
-	b, err := xml.Marshal(m)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// 消息加密
-	cipherText, err := r.encrypt(b)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r.build(base64.StdEncoding.EncodeToString(cipherText)), nil
 }

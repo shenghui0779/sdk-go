@@ -37,7 +37,7 @@ type WaterMark struct {
 	AppID     string `json:"appid"`
 }
 
-// BizDataCrypt 数据解析
+// BizDataCrypt 小程序数据解析
 type BizDataCrypt struct {
 	mp            *WXMP
 	encryptedData string
