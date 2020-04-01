@@ -52,9 +52,9 @@ func (wx *WXPub) Subscriber(options ...utils.HTTPRequestOption) *Subscriber {
 	}
 }
 
-// TplMsg returns new tpl msg
-func (wx *WXPub) TplMsg(options ...utils.HTTPRequestOption) *TplMsg {
-	return &TplMsg{
+// Message returns new tpl msg
+func (wx *WXPub) Message(options ...utils.HTTPRequestOption) *Message {
+	return &Message{
 		pub:     wx,
 		options: options,
 	}

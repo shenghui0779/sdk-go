@@ -30,7 +30,7 @@ const (
 	SubscriberListURL     = "https://api.weixin.qq.com/cgi-bin/user/get"
 )
 
-// tpl-msg
+// msg
 const (
 	TplMsgSendURL = "https://api.weixin.qq.com/cgi-bin/message/template/send"
 )

@@ -35,6 +35,14 @@ func (wx *WXMP) BizDataCrypt(encryptedData, sessionKey, iv string) *BizDataCrypt
 	}
 }
 
+// Message returns new message
+func (wx *WXMP) Message(options ...utils.HTTPRequestOption) *Message {
+	return &Message{
+		mp:      wx,
+		options: options,
+	}
+}
+
 // QRCode returns new qrcode
 func (wx *WXMP) QRCode(options ...utils.HTTPRequestOption) *QRCode {
 	return &QRCode{
