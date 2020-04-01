@@ -3,6 +3,7 @@ package mp
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/iiinsomnia/gochat/utils"
@@ -38,25 +39,28 @@ type WaterMark struct {
 
 // BizDataCrypt 数据解析
 type BizDataCrypt struct {
-	mp   *WXMP
-	data []byte
+	mp            *WXMP
+	encryptedData string
+	sessionKey    string
+	iv            string
+	data          []byte
 }
 
 // Decrypt 数据解密
-func (b *BizDataCrypt) Decrypt(sessionKey, iv, bizData string) error {
-	aesKey, err := base64.StdEncoding.DecodeString(sessionKey)
+func (b *BizDataCrypt) Decrypt() error {
+	aesData, err := base64.StdEncoding.DecodeString(b.encryptedData)
 
 	if err != nil {
 		return err
 	}
 
-	aesIV, err := base64.StdEncoding.DecodeString(iv)
+	aesKey, err := base64.StdEncoding.DecodeString(b.sessionKey)
 
 	if err != nil {
 		return err
 	}
 
-	aesData, err := base64.StdEncoding.DecodeString(bizData)
+	aesIV, err := base64.StdEncoding.DecodeString(b.iv)
 
 	if err != nil {
 		return err
@@ -75,6 +79,10 @@ func (b *BizDataCrypt) Decrypt(sessionKey, iv, bizData string) error {
 
 // GetUserData 获取用户数据（需先解密）
 func (b *BizDataCrypt) GetUserData() (*UserData, error) {
+	if len(b.data) == 0 {
+		return nil, errors.New("empty data, check whether decrypted")
+	}
+
 	userData := new(UserData)
 
 	if err := json.Unmarshal(b.data, &userData); err != nil {
@@ -90,6 +98,10 @@ func (b *BizDataCrypt) GetUserData() (*UserData, error) {
 
 // GetPhoneData 获取用户手机号绑定数据（需先解密）
 func (b *BizDataCrypt) GetPhoneData() (*PhoneData, error) {
+	if len(b.data) == 0 {
+		return nil, errors.New("empty data, check whether decrypted")
+	}
+
 	phoneData := new(PhoneData)
 
 	if err := json.Unmarshal(b.data, &phoneData); err != nil {

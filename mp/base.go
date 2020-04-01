@@ -26,8 +26,13 @@ func (wx *WXMP) CgiBin(options ...utils.HTTPRequestOption) *CgiBin {
 }
 
 // BizDataCrypt returns new bizdatacrypt
-func (wx *WXMP) BizDataCrypt(options ...utils.HTTPRequestOption) *BizDataCrypt {
-	return &BizDataCrypt{mp: wx}
+func (wx *WXMP) BizDataCrypt(encryptedData, sessionKey, iv string) *BizDataCrypt {
+	return &BizDataCrypt{
+		mp:            wx,
+		encryptedData: encryptedData,
+		sessionKey:    sessionKey,
+		iv:            iv,
+	}
 }
 
 // QRCode returns new qrcode
