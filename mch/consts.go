@@ -1,5 +1,36 @@
 package mch
 
+// 错误
+const (
+	ErrParam  = ""
+	ErrSign   = ""
+	ErrXML    = ""
+	ErrCA     = ""
+	ErrOpenID = ""
+	ErrFatal  = ""
+	ErrSystem = ""
+)
+
+// 限制
+const (
+	LimitFreq    = ""
+	LimitAmount  = "AMOUNT_LIMIT" // 金额超限
+	LimitMoney   = ""
+	LimitSendNum = ""
+)
+
+// 其它
+const (
+	NoAuth                = "NO_AUTH"                  // 没有该接口权限
+	SendFailed            = "SEND_FAILED"              // 付款错误
+	NotEnough             = "NOTENOUGH"                // 余额不足
+	NameMismatch          = "NAME_MISMATCH"            // 姓名校验出错
+	ParamIsNotUT8         = "PARAM_IS_NOT_UTF8"        // 请求参数中包含非utf8编码字符
+	V2AccountSimpleBan    = "V2_ACCOUNT_SIMPLE_BAN"    // 无法给未实名用户付款
+	RecvAccountNotAllowed = "RECV_ACCOUNT_NOT_ALLOWED" // 收款账户不在收款账户列表
+	PayChannelNotAllowed  = "PAY_CHANNEL_NOT_ALLOWED"  // 本商户号未配置API发起能力
+)
+
 // 交易类型
 const (
 	TradeAPP    = "APP"
@@ -75,6 +106,13 @@ const (
 	PappayErrUserNotExist        = "USER_NOT_EXIST"        // 扣款用户的微信账号已注销
 )
 
+const (
+	TransferNoCheck    = "NO_CHECK"    // 不校验真实姓名
+	TransferForceCheck = "FORCE_CHECK" // 强校验真实姓名
+)
+
+const RSAPublicKeyURL = "https://fraud.mch.weixin.qq.com/risk/getpublickey"
+
 // URL - order
 const (
 	OrderUnifyURL = "https://api.mch.weixin.qq.com/pay/unifiedorder" // 统一下单
@@ -98,4 +136,12 @@ const (
 	PappayContractDeleteURL = "https://api.mch.weixin.qq.com/papay/deletecontract" // 申请解约
 	PappayPayApplyURL       = "https://api.mch.weixin.qq.com/pay/pappayapply"      // 申请扣款
 	PappayOrderQueryURL     = "https://api.mch.weixin.qq.com/pay/paporderquery"    // 扣款查询
+)
+
+// URL - transfer
+const (
+	TransferToBalanceURL          = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers" // 企业付款到零钱
+	TransferBalanceOrderQueryURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo"     // 企业付款到零钱订单查询
+	TransferToBankCardURL         = "https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank"                 // 企业付款到银行卡
+	TransferBankCardOrderQueryURL = "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank"               // 企业付款到银行卡订单查询
 )

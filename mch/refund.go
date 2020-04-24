@@ -55,7 +55,7 @@ func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (
 		body["notify_url"] = data.NotifyURL
 	}
 
-	body["sign"] = SignWithMD5(body, r.mch.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.ApiKey)
 
 	resp, err := r.mch.SSLClient.PostXML(RefundApplyURL, body, r.options...)
 
@@ -103,7 +103,7 @@ func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.
 		body["notify_url"] = data.NotifyURL
 	}
 
-	body["sign"] = SignWithMD5(body, r.mch.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.ApiKey)
 
 	resp, err := r.mch.SSLClient.PostXML(RefundApplyURL, body, r.options...)
 
@@ -136,7 +136,7 @@ func (r *Refund) QueryByRefundID(refundID string, offset ...int) (utils.WXML, er
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	body["sign"] = SignWithMD5(body, r.mch.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.ApiKey)
 
 	resp, err := r.mch.Client.PostXML(RefundQueryURL, body, r.options...)
 
@@ -169,7 +169,7 @@ func (r *Refund) QueryByOutRefundNO(outRefundNO string, offset ...int) (utils.WX
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	body["sign"] = SignWithMD5(body, r.mch.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.ApiKey)
 
 	resp, err := r.mch.Client.PostXML(RefundQueryURL, body, r.options...)
 
@@ -202,7 +202,7 @@ func (r *Refund) QueryByTransactionID(transactionID string, offset ...int) (util
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	body["sign"] = SignWithMD5(body, r.mch.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.ApiKey)
 
 	resp, err := r.mch.Client.PostXML(RefundQueryURL, body, r.options...)
 
@@ -235,7 +235,7 @@ func (r *Refund) QueryByOutTradeNO(outTradeNO string, offset ...int) (utils.WXML
 		body["offset"] = strconv.Itoa(offset[0])
 	}
 
-	body["sign"] = SignWithMD5(body, r.mch.AppKey)
+	body["sign"] = SignWithMD5(body, r.mch.ApiKey)
 
 	resp, err := r.mch.Client.PostXML(RefundQueryURL, body, r.options...)
 

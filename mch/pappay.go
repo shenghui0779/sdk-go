@@ -94,7 +94,7 @@ func (p *Pappay) APPEntrust(e *Entrust) (utils.WXML, error) {
 		body["return_app"] = "Y"
 	}
 
-	body["sign"] = SignWithMD5(body, p.mch.AppKey)
+	body["sign"] = SignWithMD5(body, p.mch.ApiKey)
 
 	resp, err := p.mch.Client.PostXML(PappayAPPEntrustURL, body, p.options...)
 
@@ -131,7 +131,7 @@ func (p *Pappay) PubEntrust(e *Entrust) utils.WXML {
 		body["return_web"] = "1"
 	}
 
-	body["sign"] = SignWithMD5(body, p.mch.AppKey)
+	body["sign"] = SignWithMD5(body, p.mch.ApiKey)
 
 	query := url.Values{}
 
@@ -159,7 +159,7 @@ func (p *Pappay) MPEntrust(e *Entrust) utils.WXML {
 		extraData["outerid"] = strconv.FormatInt(e.OuterID, 10)
 	}
 
-	extraData["sign"] = SignWithMD5(extraData, p.mch.AppKey)
+	extraData["sign"] = SignWithMD5(extraData, p.mch.ApiKey)
 
 	return extraData
 }
@@ -183,7 +183,7 @@ func (p *Pappay) H5Entrust(e *Entrust) utils.WXML {
 		body["return_appid"] = e.ReturnAPPID
 	}
 
-	body["sign"] = SignWithHMacSHA256(body, p.mch.AppKey)
+	body["sign"] = SignWithHMacSHA256(body, p.mch.ApiKey)
 
 	query := url.Values{}
 
@@ -255,7 +255,7 @@ func (p *Pappay) ContractOrder(order *ContractOrder) (utils.WXML, error) {
 		body["openid"] = order.OpenID
 	}
 
-	body["sign"] = SignWithMD5(body, p.mch.AppKey)
+	body["sign"] = SignWithMD5(body, p.mch.ApiKey)
 
 	resp, err := p.mch.Client.PostXML(PappayContractOrderURL, body, p.options...)
 
@@ -283,7 +283,7 @@ func (p *Pappay) QueryContractByID(contractID string) (utils.WXML, error) {
 		"version":     "1.0",
 	}
 
-	body["sign"] = SignWithMD5(body, p.mch.AppKey)
+	body["sign"] = SignWithMD5(body, p.mch.ApiKey)
 
 	resp, err := p.mch.Client.PostXML(PappayContractQueryURL, body, p.options...)
 
@@ -312,7 +312,7 @@ func (p *Pappay) QueryContractByCode(planID, contractCode string) (utils.WXML, e
 		"version":       "1.0",
 	}
 
-	body["sign"] = SignWithMD5(body, p.mch.AppKey)
+	body["sign"] = SignWithMD5(body, p.mch.ApiKey)
 
 	resp, err := p.mch.Client.PostXML(PappayContractQueryURL, body, p.options...)
 
@@ -367,7 +367,7 @@ func (p *Pappay) PayApply(apply *PappayApply) (utils.WXML, error) {
 		body["receipt"] = "Y"
 	}
 
-	body["sign"] = SignWithMD5(body, p.mch.AppKey)
+	body["sign"] = SignWithMD5(body, p.mch.ApiKey)
 
 	resp, err := p.mch.Client.PostXML(PappayPayApplyURL, body, p.options...)
 
@@ -396,7 +396,7 @@ func (p *Pappay) DeleteContractByID(contractID, remark string) (utils.WXML, erro
 		"contract_termination_remark": remark,
 	}
 
-	body["sign"] = SignWithMD5(body, p.mch.AppKey)
+	body["sign"] = SignWithMD5(body, p.mch.ApiKey)
 
 	resp, err := p.mch.Client.PostXML(PappayContractDeleteURL, body, p.options...)
 
@@ -426,7 +426,7 @@ func (p *Pappay) DeleteContractByCode(planID, contractCode, remark string) (util
 		"contract_termination_remark": remark,
 	}
 
-	body["sign"] = SignWithMD5(body, p.mch.AppKey)
+	body["sign"] = SignWithMD5(body, p.mch.ApiKey)
 
 	resp, err := p.mch.Client.PostXML(PappayContractDeleteURL, body, p.options...)
 
@@ -454,7 +454,7 @@ func (p *Pappay) QueryOrderByTransactionID(transactionID string) (utils.WXML, er
 		"nonce_str":      utils.NonceStr(),
 	}
 
-	body["sign"] = SignWithMD5(body, p.mch.AppKey)
+	body["sign"] = SignWithMD5(body, p.mch.ApiKey)
 
 	resp, err := p.mch.Client.PostXML(PappayOrderQueryURL, body, p.options...)
 
@@ -483,7 +483,7 @@ func (p *Pappay) QueryOrderByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 		"sign_type":    "MD5",
 	}
 
-	body["sign"] = SignWithMD5(body, p.mch.AppKey)
+	body["sign"] = SignWithMD5(body, p.mch.ApiKey)
 
 	resp, err := p.mch.Client.PostXML(PappayOrderQueryURL, body, p.options...)
 

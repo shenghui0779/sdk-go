@@ -101,7 +101,7 @@ func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 		body["scene_info"] = order.SceneInfo
 	}
 
-	body["sign"] = SignWithMD5(body, o.mch.AppKey)
+	body["sign"] = SignWithMD5(body, o.mch.ApiKey)
 
 	resp, err := o.mch.Client.PostXML(OrderUnifyURL, body, o.options...)
 
@@ -130,7 +130,7 @@ func (o *Order) QueryByTransactionID(transactionID string) (utils.WXML, error) {
 		"sign_type":      SignMD5,
 	}
 
-	body["sign"] = SignWithMD5(body, o.mch.AppKey)
+	body["sign"] = SignWithMD5(body, o.mch.ApiKey)
 
 	resp, err := o.mch.Client.PostXML(OrderQueryURL, body, o.options...)
 
@@ -159,7 +159,7 @@ func (o *Order) QueryByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 		"sign_type":    SignMD5,
 	}
 
-	body["sign"] = SignWithMD5(body, o.mch.AppKey)
+	body["sign"] = SignWithMD5(body, o.mch.ApiKey)
 
 	resp, err := o.mch.Client.PostXML(OrderQueryURL, body, o.options...)
 
@@ -188,7 +188,7 @@ func (o *Order) Close(outTradeNO string) (utils.WXML, error) {
 		"sign_type":    SignMD5,
 	}
 
-	body["sign"] = SignWithMD5(body, o.mch.AppKey)
+	body["sign"] = SignWithMD5(body, o.mch.ApiKey)
 
 	resp, err := o.mch.Client.PostXML(OrderCloseURL, body, o.options...)
 

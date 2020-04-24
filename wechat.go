@@ -10,11 +10,11 @@ import (
 )
 
 // NewWXMch 微信商户
-func NewWXMch(appid, mchid, appkey string, cert tls.Certificate) *mch.WXMch {
+func NewWXMch(appid, mchid, apikey string, cert tls.Certificate) *mch.WXMch {
 	wxmch := &mch.WXMch{
 		AppID:  appid,
 		MchID:  mchid,
-		AppKey: appkey,
+		ApiKey: apikey,
 		Client: utils.DefaultHTTPClient,
 	}
 

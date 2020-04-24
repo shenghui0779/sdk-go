@@ -4,6 +4,11 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"errors"
 )
 
 // AESCBCEncrypt AES CBC encrypt with PKCS#7 padding
@@ -71,4 +76,44 @@ func PKCS7UnPadding(plainText []byte, blockSize int) []byte {
 	}
 
 	return plainText[:(l - unpadding)]
+}
+
+// RSAEncrypt rsa encrypt with public key
+func RSAEncrypt(data, publicKey []byte) ([]byte, error) {
+	block, _ := pem.Decode(publicKey)
+
+	if block == nil {
+		return nil, errors.New("invalid rsa public key")
+	}
+
+	pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
+
+	if err != nil {
+		return nil, err
+	}
+
+	key, ok := pubKey.(*rsa.PublicKey)
+
+	if !ok {
+		return nil, errors.New("invalid rsa public key")
+	}
+
+	return rsa.EncryptPKCS1v15(rand.Reader, key, data)
+}
+
+// RSADecrypt rsa decrypt with private key
+func RSADecrypt(cipherText, privateKey []byte) ([]byte, error) {
+	block, _ := pem.Decode(privateKey)
+
+	if block == nil {
+		return nil, errors.New("invalid rsa private key")
+	}
+
+	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return rsa.DecryptPKCS1v15(rand.Reader, key, cipherText)
 }
