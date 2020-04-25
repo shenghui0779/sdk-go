@@ -1,36 +1,5 @@
 package mch
 
-// 错误
-const (
-	ErrParam  = ""
-	ErrSign   = ""
-	ErrXML    = ""
-	ErrCA     = ""
-	ErrOpenID = ""
-	ErrFatal  = ""
-	ErrSystem = ""
-)
-
-// 限制
-const (
-	LimitFreq    = ""
-	LimitAmount  = "AMOUNT_LIMIT" // 金额超限
-	LimitMoney   = ""
-	LimitSendNum = ""
-)
-
-// 其它
-const (
-	NoAuth                = "NO_AUTH"                  // 没有该接口权限
-	SendFailed            = "SEND_FAILED"              // 付款错误
-	NotEnough             = "NOTENOUGH"                // 余额不足
-	NameMismatch          = "NAME_MISMATCH"            // 姓名校验出错
-	ParamIsNotUT8         = "PARAM_IS_NOT_UTF8"        // 请求参数中包含非utf8编码字符
-	V2AccountSimpleBan    = "V2_ACCOUNT_SIMPLE_BAN"    // 无法给未实名用户付款
-	RecvAccountNotAllowed = "RECV_ACCOUNT_NOT_ALLOWED" // 收款账户不在收款账户列表
-	PayChannelNotAllowed  = "PAY_CHANNEL_NOT_ALLOWED"  // 本商户号未配置API发起能力
-)
-
 // 交易类型
 const (
 	TradeAPP    = "APP"
@@ -51,6 +20,7 @@ const (
 	ResultSuccess = "SUCCESS"
 	ResultFail    = "FAIL"
 	ResultNull    = "RESULT NULL" // 查询结果为空
+	SystemError   = "SYSTEMERROR" // 系统繁忙，请稍后再试
 )
 
 const (
@@ -94,16 +64,6 @@ const (
 	ContractDeleteAPI      = "3" // 商户API解约
 	ContractDeletePlatform = "4" // 商户平台解约
 	ContractDeleteLogout   = "5" // 注销
-)
-
-const (
-	PappayErrAccount             = "ACCOUNTERROR"          // 用户帐号注销、银行卡异常或注销
-	PappaytErrContractNotExist   = "CONTRACT_NOT_EXIST"    // 用户签约协议已过期或已解约
-	PappayErrRuleLimit           = "RULELIMIT"             // 用户支付银行卡限额不足
-	PappayErrBank                = "BANKERROR"             // 用户支付银行暂时无法提供服务
-	PappayErrNotEnough           = "NOTENOUGH"             // 用户余额不足
-	PappayErrUserAccountAbnormal = "USER_ACCOUNT_ABNORMAL" // 扣款用户的微信账号异常导致
-	PappayErrUserNotExist        = "USER_NOT_EXIST"        // 扣款用户的微信账号已注销
 )
 
 const (

@@ -42,6 +42,14 @@ func (wx *WXMch) Pappay(options ...utils.HTTPRequestOption) *Pappay {
 	}
 }
 
+// Transfer returns new transfer
+func (wx *WXMch) Transfer(options ...utils.HTTPRequestOption) *Transfer {
+	return &Transfer{
+		mch:     wx,
+		options: options,
+	}
+}
+
 // APPAPI 用于APP拉起支付
 func (wx *WXMch) APPAPI(prepayID string) utils.WXML {
 	ch := utils.WXML{
