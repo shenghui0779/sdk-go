@@ -50,6 +50,14 @@ func (wx *WXMch) Transfer(options ...utils.HTTPRequestOption) *Transfer {
 	}
 }
 
+// Redpack returns new redpack
+func (wx *WXMch) Redpack(options ...utils.HTTPRequestOption) *Redpack {
+	return &Redpack{
+		mch:     wx,
+		options: options,
+	}
+}
+
 // APPAPI 用于APP拉起支付
 func (wx *WXMch) APPAPI(prepayID string) utils.WXML {
 	ch := utils.WXML{

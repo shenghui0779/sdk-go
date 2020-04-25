@@ -71,6 +71,17 @@ const (
 	TransferForceCheck = "FORCE_CHECK" // 强校验真实姓名
 )
 
+const (
+	RedpackScene1 = "PRODUCT_1" // 商品促销
+	RedpackScene2 = "PRODUCT_2" // 抽奖
+	RedpackScene3 = "PRODUCT_3" // 虚拟物品兑奖
+	RedpackScene4 = "PRODUCT_4" // 企业内部福利
+	RedpackScene5 = "PRODUCT_5" // 渠道分润
+	RedpackScene6 = "PRODUCT_6" // 保险回馈
+	RedpackScene7 = "PRODUCT_7" // 彩票派奖
+	RedpackScene8 = "PRODUCT_8" // 税务刮奖
+)
+
 const RSAPublicKeyURL = "https://fraud.mch.weixin.qq.com/risk/getpublickey"
 
 // URL - order
@@ -104,4 +115,13 @@ const (
 	TransferBalanceOrderQueryURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo"     // 企业付款到零钱订单查询
 	TransferToBankCardURL         = "https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank"                 // 企业付款到银行卡
 	TransferBankCardOrderQueryURL = "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank"               // 企业付款到银行卡订单查询
+)
+
+// URL - redpack
+
+const (
+	RedpackNormalURL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack"
+	RedpackGroupURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack"
+	RedpackMinipURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendminiprogramhb"
+	RedpackQueryURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo"
 )
