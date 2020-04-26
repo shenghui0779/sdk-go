@@ -1,4 +1,4 @@
-// Package gochat 微信平台 Golang SDK
+// Package gochat 微信 SDK for Go
 //
 // /mch ---> 微信商户平台 ---> 统一下单、支付、退款、查询、委托代扣、企业付款、企业红包 等
 //
