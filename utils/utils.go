@@ -11,8 +11,6 @@ import (
 	"encoding/xml"
 	"hash"
 	"math/rand"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 )
@@ -72,9 +70,7 @@ var BufPool = &bufferPool{pool: sync.Pool{
 
 // NonceStr 随机字符串
 func NonceStr() string {
-	now := time.Now()
-
-	return strconv.FormatInt(now.Unix()+int64(now.Nanosecond()), 10)
+	return RandomStr(16)
 }
 
 // MD5 calculate the md5 hash of a string.
@@ -166,19 +162,20 @@ func DecodeBytesToUint32(b []byte) uint32 {
 	return uint32(b[0])<<24 | uint32(b[1])<<16 | uint32(b[2])<<8 | uint32(b[3])
 }
 
+var Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
+
+const pattern = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"
+
 // RandomStr 随机字符串
 func RandomStr(n int) string {
-	salt := make([]string, 0, n)
+	salt := make([]byte, 0, n)
 
-	pattern := "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"
 	l := len(pattern)
 
-	rand.Seed(time.Now().UnixNano())
-
 	for i := 0; i < n; i++ {
-		p := rand.Intn(l)
-		salt = append(salt, string(pattern[p]))
+		p := Rand.Intn(l)
+		salt = append(salt, pattern[p])
 	}
 
-	return strings.Join(salt, "")
+	return string(salt)
 }
