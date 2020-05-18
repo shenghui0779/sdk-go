@@ -74,7 +74,7 @@ func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (
 	return resp, nil
 }
 
-// RefundByOutTradeNO 根据微信订单号退款
+// RefundByOutTradeNO 根据商户订单号退款
 func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.WXML, error) {
 	body := utils.WXML{
 		"appid":         r.mch.AppID,
