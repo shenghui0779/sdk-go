@@ -194,6 +194,7 @@ func (p *Pappay) H5Entrust(e *Entrust) utils.WXML {
 	return utils.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayH5EntrustURL, query.Encode())}
 }
 
+// ContractOrder 支付中签约下单
 func (p *Pappay) ContractOrder(order *ContractOrder) (utils.WXML, error) {
 	body := utils.WXML{
 		"appid":                    p.mch.AppID,
