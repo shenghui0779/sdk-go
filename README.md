@@ -22,6 +22,7 @@ go get github.com/iiinsomnia/gochat
 ## 文档
 
 - [API Reference](https://pkg.go.dev/github.com/iiinsomnia/gochat)
+- [WiKi](https://github.com/iiinsomnia/gochat/wiki)
 
 ## 说明
 
