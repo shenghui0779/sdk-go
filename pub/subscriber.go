@@ -110,7 +110,7 @@ func (s *Subscriber) BatchGet(accessToken string, openid ...string) ([]*Subscrib
 
 	reply := make(map[string][]*SubscriberInfo)
 
-	if err := json.Unmarshal(resp, reply); err != nil {
+	if err := json.Unmarshal(resp, &reply); err != nil {
 		return nil, err
 	}
 

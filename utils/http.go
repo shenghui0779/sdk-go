@@ -113,7 +113,6 @@ func WithHTTPTLSConfig(c *tls.Config) HTTPClientOption {
 func WithHTTPTLSHandshakeTimeout(d time.Duration) HTTPClientOption {
 	return newFuncHTTPOption(func(o *httpClientOptions) {
 		o.tlsHandshakeTimeout = d
-
 	})
 }
 
@@ -461,8 +460,8 @@ func FormatMap2XML(m WXML) (string, error) {
 }
 
 // ParseXML2Map parse xml to map
-func ParseXML2Map(b []byte) (m WXML, err error) {
-	m = make(WXML)
+func ParseXML2Map(b []byte) (WXML, error) {
+	m := make(WXML)
 
 	xmlReader := bytes.NewReader(b)
 
@@ -472,6 +471,7 @@ func ParseXML2Map(b []byte) (m WXML, err error) {
 		depth = 0 // current xml.Token depth
 		key   string
 		buf   bytes.Buffer
+		err   error
 	)
 
 	for {
@@ -479,12 +479,10 @@ func ParseXML2Map(b []byte) (m WXML, err error) {
 
 		if err != nil {
 			if err == io.EOF {
-				err = nil
-
-				return
+				return m, nil
 			}
 
-			return
+			return nil, err
 		}
 
 		switch v := tk.(type) {
@@ -497,8 +495,7 @@ func ParseXML2Map(b []byte) (m WXML, err error) {
 				buf.Reset()
 			case 3:
 				if err = d.Skip(); err != nil {
-
-					return
+					return nil, err
 				}
 
 				depth--
