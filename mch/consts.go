@@ -118,7 +118,6 @@ const (
 )
 
 // URL - redpack
-
 const (
 	RedpackNormalURL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack"       // 普通红包
 	RedpackGroupURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack"  // 裂变红包
