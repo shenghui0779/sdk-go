@@ -200,7 +200,7 @@ type eventButton struct {
 	SubButton []Button `json:"sub_button"`
 }
 
-func (b *eventButton) AddSubButton(btn ...Button) {}
+func (b *eventButton) AddSubButton(_ ...Button) {}
 
 // viewButton 跳转链接按钮
 type viewButton struct {
@@ -210,7 +210,7 @@ type viewButton struct {
 	SubButton []Button `json:"sub_button"`
 }
 
-func (b *viewButton) AddSubButton(btn ...Button) {}
+func (b *viewButton) AddSubButton(_ ...Button) {}
 
 // mpButton 小程序跳转按钮
 type mpButton struct {
@@ -222,7 +222,7 @@ type mpButton struct {
 	SubButton []Button `json:"sub_button"`
 }
 
-func (b *mpButton) AddSubButton(btn ...Button) {}
+func (b *mpButton) AddSubButton(_ ...Button) {}
 
 // mediaButton 媒体素材按钮
 type mediaButton struct {
@@ -232,7 +232,7 @@ type mediaButton struct {
 	SubButton []Button `json:"sub_button"`
 }
 
-func (b *mediaButton) AddSubButton(btn ...Button) {}
+func (b *mediaButton) AddSubButton(_ ...Button) {}
 
 // GroupButton 组合按钮
 func GroupButton(name string) Button {
