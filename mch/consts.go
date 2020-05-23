@@ -120,8 +120,8 @@ const (
 // URL - redpack
 
 const (
-	RedpackNormalURL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack"
-	RedpackGroupURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack"
-	RedpackMinipURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendminiprogramhb"
-	RedpackQueryURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo"
+	RedpackNormalURL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack"       // 普通红包
+	RedpackGroupURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack"  // 裂变红包
+	RedpackMinipURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendminiprogramhb" // 小程序红包
+	RedpackQueryURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo"         // 红包查询
 )
