@@ -1,6 +1,6 @@
 package pub
 
-import "github.com/iiinsomnia/gochat/utils"
+import "github.com/shenghui0779/gochat/utils"
 
 // WXPub 微信公众号
 type WXPub struct {

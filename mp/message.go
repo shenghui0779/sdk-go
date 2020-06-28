@@ -7,8 +7,8 @@ import (
 
 	"github.com/tidwall/gjson"
 
-	"github.com/iiinsomnia/gochat/pub"
-	"github.com/iiinsomnia/gochat/utils"
+	"github.com/shenghui0779/gochat/pub"
+	"github.com/shenghui0779/gochat/utils"
 )
 
 // MsgBody 消息内容体

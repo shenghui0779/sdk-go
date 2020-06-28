@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/iiinsomnia/gochat/utils"
+	"github.com/shenghui0779/gochat/utils"
 )
 
 // RedpackData 红包发放数据

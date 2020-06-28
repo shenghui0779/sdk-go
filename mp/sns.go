@@ -7,7 +7,7 @@ import (
 
 	"github.com/tidwall/gjson"
 
-	"github.com/iiinsomnia/gochat/utils"
+	"github.com/shenghui0779/gochat/utils"
 )
 
 // AuthSession 小程序授权Session

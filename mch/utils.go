@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/iiinsomnia/gochat/utils"
+	"github.com/shenghui0779/gochat/utils"
 )
 
 // SignWithMD5 生成MD5签名

@@ -3,10 +3,10 @@ package gochat
 import (
 	"crypto/tls"
 
-	"github.com/iiinsomnia/gochat/mch"
-	"github.com/iiinsomnia/gochat/mp"
-	"github.com/iiinsomnia/gochat/pub"
-	"github.com/iiinsomnia/gochat/utils"
+	"github.com/shenghui0779/gochat/mch"
+	"github.com/shenghui0779/gochat/mp"
+	"github.com/shenghui0779/gochat/pub"
+	"github.com/shenghui0779/gochat/utils"
 )
 
 // NewWXMch 微信商户

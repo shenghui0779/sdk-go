@@ -1,6 +1,6 @@
 package mp
 
-import "github.com/iiinsomnia/gochat/utils"
+import "github.com/shenghui0779/gochat/utils"
 
 // WXMP 微信小程序
 type WXMP struct {

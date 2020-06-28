@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/iiinsomnia/gochat/utils"
+	"github.com/shenghui0779/gochat/utils"
 )
 
 // DefaultReply 公众号默认回复

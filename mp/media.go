@@ -7,7 +7,7 @@ import (
 
 	"github.com/tidwall/gjson"
 
-	"github.com/iiinsomnia/gochat/utils"
+	"github.com/shenghui0779/gochat/utils"
 )
 
 // UploadData 媒体上传数据

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/iiinsomnia/gochat/utils"
+	"github.com/shenghui0779/gochat/utils"
 )
 
 // Entrust 微信纯签约

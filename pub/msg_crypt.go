@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/iiinsomnia/gochat/utils"
+	"github.com/shenghui0779/gochat/utils"
 )
 
 // EventMsg 微信公众号事件消息

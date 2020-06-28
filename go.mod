@@ -1,4 +1,4 @@
-module github.com/iiinsomnia/gochat
+module github.com/shenghui0779/gochat
 
 go 1.12
 

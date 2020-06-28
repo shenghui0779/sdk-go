@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/iiinsomnia/gochat/utils"
+	"github.com/shenghui0779/gochat/utils"
 
 	"github.com/tidwall/gjson"
 )
