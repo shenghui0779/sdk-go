@@ -11,7 +11,7 @@ import (
 	"errors"
 )
 
-// AESCBCEncrypt AES CBC encrypt with PKCS#7 padding
+// AESCBCEncrypt aes-cbc encryption with PKCS#7 padding
 func AESCBCEncrypt(plainText, key []byte, iv ...byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 
@@ -33,7 +33,7 @@ func AESCBCEncrypt(plainText, key []byte, iv ...byte) ([]byte, error) {
 	return cipherText, nil
 }
 
-// AESCBCDecrypt AES CBC decrypt with PKCS#7 unpadding
+// AESCBCDecrypt aes-cbc decryption with PKCS#7 unpadding
 func AESCBCDecrypt(cipherText, key []byte, iv ...byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 
@@ -71,7 +71,7 @@ func PKCS7UnPadding(plainText []byte, blockSize int) []byte {
 	l := len(plainText)
 	unpadding := int(plainText[l-1])
 
-	if unpadding < 0 || unpadding > blockSize {
+	if unpadding < 1 || unpadding > blockSize {
 		unpadding = 0
 	}
 
@@ -83,7 +83,7 @@ func RSAEncrypt(data, publicKey []byte) ([]byte, error) {
 	block, _ := pem.Decode(publicKey)
 
 	if block == nil {
-		return nil, errors.New("invalid rsa public key")
+		return nil, errors.New("gochat: invalid rsa public key")
 	}
 
 	pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
@@ -95,7 +95,7 @@ func RSAEncrypt(data, publicKey []byte) ([]byte, error) {
 	key, ok := pubKey.(*rsa.PublicKey)
 
 	if !ok {
-		return nil, errors.New("invalid rsa public key")
+		return nil, errors.New("gochat: invalid rsa public key")
 	}
 
 	return rsa.EncryptPKCS1v15(rand.Reader, key, data)
@@ -106,7 +106,7 @@ func RSADecrypt(cipherText, privateKey []byte) ([]byte, error) {
 	block, _ := pem.Decode(privateKey)
 
 	if block == nil {
-		return nil, errors.New("invalid rsa private key")
+		return nil, errors.New("gochat: invalid rsa private key")
 	}
 
 	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
