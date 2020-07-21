@@ -80,7 +80,7 @@ func (b *BizDataCrypt) Decrypt() error {
 // GetUserData 获取用户数据（需先解密）
 func (b *BizDataCrypt) GetUserData() (*UserData, error) {
 	if len(b.data) == 0 {
-		return nil, errors.New("empty data, check whether decrypted")
+		return nil, errors.New("gochat: empty data, check whether decrypted")
 	}
 
 	userData := new(UserData)
@@ -90,7 +90,7 @@ func (b *BizDataCrypt) GetUserData() (*UserData, error) {
 	}
 
 	if userData.WaterMark.AppID != b.mp.AppID {
-		return nil, fmt.Errorf("wxmp user bizdata appid mismatch, want: %s, got: %s", b.mp.AppID, userData.WaterMark.AppID)
+		return nil, fmt.Errorf("gochat: wxmp user bizdata appid mismatch, want: %s, got: %s", b.mp.AppID, userData.WaterMark.AppID)
 	}
 
 	return userData, nil
@@ -99,7 +99,7 @@ func (b *BizDataCrypt) GetUserData() (*UserData, error) {
 // GetPhoneData 获取用户手机号绑定数据（需先解密）
 func (b *BizDataCrypt) GetPhoneData() (*PhoneData, error) {
 	if len(b.data) == 0 {
-		return nil, errors.New("empty data, check whether decrypted")
+		return nil, errors.New("gochat: empty data, check whether decrypted")
 	}
 
 	phoneData := new(PhoneData)
@@ -109,7 +109,7 @@ func (b *BizDataCrypt) GetPhoneData() (*PhoneData, error) {
 	}
 
 	if phoneData.WaterMark.AppID != b.mp.AppID {
-		return nil, fmt.Errorf("wxmp phone bizdata appid mismatch, want: %s, got: %s", b.mp.AppID, phoneData.WaterMark.AppID)
+		return nil, fmt.Errorf("gochat: wxmp phone bizdata appid mismatch, want: %s, got: %s", b.mp.AppID, phoneData.WaterMark.AppID)
 	}
 
 	return phoneData, nil

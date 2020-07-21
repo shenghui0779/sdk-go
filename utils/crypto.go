@@ -78,7 +78,7 @@ func PKCS7UnPadding(plainText []byte, blockSize int) []byte {
 	return plainText[:(l - unpadding)]
 }
 
-// RSAEncrypt rsa encrypt with public key
+// RSAEncrypt rsa encryption with public key
 func RSAEncrypt(data, publicKey []byte) ([]byte, error) {
 	block, _ := pem.Decode(publicKey)
 
@@ -101,7 +101,7 @@ func RSAEncrypt(data, publicKey []byte) ([]byte, error) {
 	return rsa.EncryptPKCS1v15(rand.Reader, key, data)
 }
 
-// RSADecrypt rsa decrypt with private key
+// RSADecrypt rsa decryption with private key
 func RSADecrypt(cipherText, privateKey []byte) ([]byte, error) {
 	block, _ := pem.Decode(privateKey)
 

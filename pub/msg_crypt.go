@@ -68,7 +68,7 @@ func (m *MsgCrypt) Decrypt() error {
 
 	// 校验 AppID
 	if appid := string(plainText[appidOffset:]); appid != m.pub.AppID {
-		return fmt.Errorf("wxpub msg appid mismatch, want: %s, got: %s", m.pub.AppID, appid)
+		return fmt.Errorf("gochat: wxpub msg appid mismatch, want: %s, got: %s", m.pub.AppID, appid)
 	}
 
 	m.body = plainText[20:appidOffset]
@@ -79,7 +79,7 @@ func (m *MsgCrypt) Decrypt() error {
 // EventMsg 获取事件消息
 func (m *MsgCrypt) EventMsg() (*EventMsg, error) {
 	if len(m.body) == 0 {
-		return nil, errors.New("empty msg, check whether decrypted")
+		return nil, errors.New("gochat: empty msg, check whether decrypted")
 	}
 
 	msg := new(EventMsg)
