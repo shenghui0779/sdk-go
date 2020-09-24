@@ -214,7 +214,7 @@ func (wx *WXMch) pkcs12ToPem(p12 []byte) (tls.Certificate, error) {
 	blocks, err := pkcs12.ToPEM(p12, wx.mchid)
 
 	if err != nil {
-		return err
+		return tls.Certificate{}, err
 	}
 
 	pemData := make([]byte, 0)
