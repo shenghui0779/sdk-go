@@ -1,92 +1,31 @@
 package utils
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAESCBCCrypt(t *testing.T) {
-	type args struct {
-		data []byte
-		key  []byte
-		iv   []byte
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
-	}{
-		{
-			name: "t1",
-			args: args{
-				data: []byte("IIInsomnia"),
-				key:  []byte("1234567890abcdef"),
-			},
-			want:    "IIInsomnia",
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			aesData, err := AESCBCEncrypt(tt.args.data, tt.args.key, tt.args.iv...)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("AESCBCEncrypt() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			got, err := AESCBCDecrypt(aesData, tt.args.key, tt.args.iv...)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("AESCBCDecrypt() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(string(got), tt.want) {
-				t.Errorf("AESCBCDecrypt() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	eb, err := AESCBCEncrypt([]byte("shenghui0779"), []byte("1234567890abcdef"))
+
+	assert.Nil(t, err)
+
+	db, err := AESCBCDecrypt(eb, []byte("1234567890abcdef"))
+
+	assert.Nil(t, err)
+	assert.Equal(t, "shenghui0779", string(db))
 }
 
 func TestRSACrypt(t *testing.T) {
-	type args struct {
-		data []byte
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
-	}{
-		{
-			name: "t1",
-			args: args{
-				data: []byte("IIInsomnia"),
-			},
-			want:    "IIInsomnia",
-			wantErr: false,
-		},
-	}
+	eb, err := RSAEncrypt([]byte("shenghui0779"), publicKey)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			rsaData, err := RSAEncrypt(tt.args.data, publicKey)
+	assert.Nil(t, err)
 
-			if (err != nil) != tt.wantErr {
-				t.Errorf("RSAEncrypt() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+	db, err := RSADecrypt(eb, privateKey)
 
-			got, err := RSADecrypt(rsaData, privateKey)
-
-			if (err != nil) != tt.wantErr {
-				t.Errorf("RSADecrypt() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-
-			if !reflect.DeepEqual(string(got), tt.want) {
-				t.Errorf("RSADecrypt() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, "shenghui0779", string(db))
 }
 
 var (

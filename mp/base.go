@@ -14,11 +14,11 @@ type WXMP struct {
 	client    *utils.WXClient
 }
 
-func New(appid, appsecret string, tlsInsecureSkipVerify bool) *WXMP {
+func New(appid, appsecret string) *WXMP {
 	return &WXMP{
 		appid:     appid,
 		appsecret: appsecret,
-		client:    utils.NewWXClient(utils.WithInsecureSkipVerify(tlsInsecureSkipVerify)),
+		client:    utils.NewWXClient(),
 	}
 }
 

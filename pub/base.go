@@ -17,14 +17,14 @@ type WXPub struct {
 	client         *utils.WXClient
 }
 
-func New(accountid, appid, appsecret, signToken, encodingAESKey string, tlsInsecureSkipVerify bool) *WXPub {
+func New(accountid, appid, appsecret, signToken, encodingAESKey string) *WXPub {
 	return &WXPub{
 		accountid:      accountid,
 		appid:          appid,
 		appsecret:      appsecret,
 		signToken:      signToken,
 		encodingAESKey: encodingAESKey,
-		client:         utils.NewWXClient(utils.WithInsecureSkipVerify(tlsInsecureSkipVerify)),
+		client:         utils.NewWXClient(),
 	}
 }
 
