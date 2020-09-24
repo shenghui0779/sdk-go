@@ -1,25 +1,83 @@
 package mch
 
 import (
+	"crypto/tls"
+	"encoding/base64"
+	"encoding/pem"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"strconv"
 	"time"
 
 	"github.com/shenghui0779/gochat/utils"
+	"golang.org/x/crypto/pkcs12"
 )
 
 // WXMch 微信商户
 type WXMch struct {
-	AppID     string
-	MchID     string
-	ApiKey    string
-	Client    *utils.HTTPClient
-	SSLClient *utils.HTTPClient
+	appid      string
+	mchid      string
+	apikey     string
+	tlsOptions []utils.TLSOption
+	client     *utils.WXClient
+	tlsClient  *utils.WXClient
+}
+
+func New(appid, mchid, apikey string, tlsInsecureSkipVerify bool) *WXMch {
+	mch := &WXMch{
+		appid:      appid,
+		mchid:      mchid,
+		apikey:     apikey,
+		tlsOptions: make([]utils.TLSOption, 0),
+	}
+
+	if tlsInsecureSkipVerify {
+		mch.tlsOptions = append(mch.tlsOptions, utils.WithInsecureSkipVerify(true))
+	}
+
+	mch.client = utils.NewWXClient(mch.tlsOptions...)
+	mch.tlsClient = utils.NewWXClient(mch.tlsOptions...)
+
+	return mch
+}
+
+// LoadP12CertFromFile load p12(pfx) cert from file
+func (wx *WXMch) LoadP12CertFromFile(path string) error {
+	p12, err := ioutil.ReadFile(path)
+
+	if err != nil {
+		return err
+	}
+
+	if err = wx.pkcs12ToPem(p12); err != nil {
+		return err
+	}
+
+	wx.tlsClient = utils.NewWXClient(wx.tlsOptions...)
+
+	return nil
+}
+
+// LoadP12CertFromBase64 load p12(pfx) cert from base64
+func (wx *WXMch) LoadP12CertFromBase64(cert string) error {
+	p12, err := base64.StdEncoding.DecodeString(cert)
+
+	if err != nil {
+		return err
+	}
+
+	if err = wx.pkcs12ToPem(p12); err != nil {
+		return err
+	}
+
+	wx.tlsClient = utils.NewWXClient(wx.tlsOptions...)
+
+	return nil
 }
 
 // Order returns new order
-func (wx *WXMch) Order(options ...utils.HTTPRequestOption) *Order {
+func (wx *WXMch) Order(options ...utils.RequestOption) *Order {
 	return &Order{
 		mch:     wx,
 		options: options,
@@ -27,7 +85,7 @@ func (wx *WXMch) Order(options ...utils.HTTPRequestOption) *Order {
 }
 
 // Refund returns new refund
-func (wx *WXMch) Refund(options ...utils.HTTPRequestOption) *Refund {
+func (wx *WXMch) Refund(options ...utils.RequestOption) *Refund {
 	return &Refund{
 		mch:     wx,
 		options: options,
@@ -35,7 +93,7 @@ func (wx *WXMch) Refund(options ...utils.HTTPRequestOption) *Refund {
 }
 
 // Pappay returns new pappay
-func (wx *WXMch) Pappay(options ...utils.HTTPRequestOption) *Pappay {
+func (wx *WXMch) Pappay(options ...utils.RequestOption) *Pappay {
 	return &Pappay{
 		mch:     wx,
 		options: options,
@@ -43,7 +101,7 @@ func (wx *WXMch) Pappay(options ...utils.HTTPRequestOption) *Pappay {
 }
 
 // Transfer returns new transfer
-func (wx *WXMch) Transfer(options ...utils.HTTPRequestOption) *Transfer {
+func (wx *WXMch) Transfer(options ...utils.RequestOption) *Transfer {
 	return &Transfer{
 		mch:     wx,
 		options: options,
@@ -51,7 +109,7 @@ func (wx *WXMch) Transfer(options ...utils.HTTPRequestOption) *Transfer {
 }
 
 // Redpack returns new redpack
-func (wx *WXMch) Redpack(options ...utils.HTTPRequestOption) *Redpack {
+func (wx *WXMch) Redpack(options ...utils.RequestOption) *Redpack {
 	return &Redpack{
 		mch:     wx,
 		options: options,
@@ -61,15 +119,15 @@ func (wx *WXMch) Redpack(options ...utils.HTTPRequestOption) *Redpack {
 // APPAPI 用于APP拉起支付
 func (wx *WXMch) APPAPI(prepayID string) utils.WXML {
 	ch := utils.WXML{
-		"appid":     wx.AppID,
-		"partnerid": wx.MchID,
+		"appid":     wx.appid,
+		"partnerid": wx.mchid,
 		"prepayid":  prepayID,
 		"package":   "Sign=WXPay",
 		"noncestr":  utils.NonceStr(),
 		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	ch["sign"] = SignWithMD5(ch, wx.ApiKey)
+	ch["sign"] = SignWithMD5(ch, wx.apikey)
 
 	return ch
 }
@@ -77,14 +135,14 @@ func (wx *WXMch) APPAPI(prepayID string) utils.WXML {
 // JSAPI 用于JS拉起支付
 func (wx *WXMch) JSAPI(prepayID string) utils.WXML {
 	ch := utils.WXML{
-		"appId":     wx.AppID,
+		"appId":     wx.appid,
 		"nonceStr":  utils.NonceStr(),
 		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
 		"signType":  SignMD5,
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	ch["paySign"] = SignWithMD5(ch, wx.ApiKey)
+	ch["paySign"] = SignWithMD5(ch, wx.apikey)
 
 	return ch
 }
@@ -102,9 +160,9 @@ func (wx *WXMch) VerifyWXReply(reply utils.WXML) error {
 
 		switch signType {
 		case SignMD5:
-			signature = SignWithMD5(reply, wx.ApiKey)
+			signature = SignWithMD5(reply, wx.apikey)
 		case SignHMacSHA256:
-			signature = SignWithHMacSHA256(reply, wx.ApiKey)
+			signature = SignWithHMacSHA256(reply, wx.apikey)
 		default:
 			return fmt.Errorf("invalid sign type: %s", signType)
 		}
@@ -115,14 +173,14 @@ func (wx *WXMch) VerifyWXReply(reply utils.WXML) error {
 	}
 
 	if appid, ok := reply["appid"]; ok {
-		if appid != wx.AppID {
-			return fmt.Errorf("appid mismatch, want: %s, got: %s", wx.AppID, reply["appid"])
+		if appid != wx.appid {
+			return fmt.Errorf("appid mismatch, want: %s, got: %s", wx.appid, reply["appid"])
 		}
 	}
 
 	if mchid, ok := reply["mch_id"]; ok {
-		if mchid != wx.MchID {
-			return fmt.Errorf("mchid mismatch, want: %s, got: %s", wx.MchID, reply["mch_id"])
+		if mchid != wx.mchid {
+			return fmt.Errorf("mchid mismatch, want: %s, got: %s", wx.mchid, reply["mch_id"])
 		}
 	}
 
@@ -130,16 +188,57 @@ func (wx *WXMch) VerifyWXReply(reply utils.WXML) error {
 }
 
 // RSAPublicKey 获取RSA加密公钥
-func (wx *WXMch) RSAPublicKey(options ...utils.HTTPRequestOption) ([]byte, error) {
+func (wx *WXMch) RSAPublicKey(options ...utils.RequestOption) ([]byte, error) {
 	body := utils.WXML{
-		"mch_id":    wx.MchID,
+		"mch_id":    wx.mchid,
 		"nonce_str": utils.NonceStr(),
 		"sign_type": SignMD5,
 	}
 
-	body["sign"] = SignWithMD5(body, wx.ApiKey)
+	resp, err := wx.tlsPost(TransferBalanceOrderQueryURL, body, options...)
 
-	resp, err := wx.SSLClient.PostXML(TransferBalanceOrderQueryURL, body, options...)
+	if err != nil {
+		return nil, err
+	}
+
+	pubKey, ok := resp["pub_key"]
+
+	if !ok {
+		return nil, errors.New("empty pub_key")
+	}
+
+	return []byte(pubKey), nil
+}
+
+func (wx *WXMch) pkcs12ToPem(p12 []byte) error {
+	blocks, err := pkcs12.ToPEM(p12, wx.mchid)
+
+	if err != nil {
+		return err
+	}
+
+	pemData := make([]byte, 0)
+
+	for _, b := range blocks {
+		pemData = append(pemData, pem.EncodeToMemory(b)...)
+	}
+
+	// then use PEM data for tls to construct tls certificate:
+	cert, err := tls.X509KeyPair(pemData, pemData)
+
+	if err != nil {
+		return err
+	}
+
+	wx.tlsOptions = append(wx.tlsOptions, utils.WithCertificates(cert))
+
+	return nil
+}
+
+func (wx *WXMch) post(reqURL string, body utils.WXML, options ...utils.RequestOption) (utils.WXML, error) {
+	body["sign"] = SignWithMD5(body, wx.apikey)
+
+	resp, err := wx.client.PostXML(reqURL, body, options...)
 
 	if err != nil {
 		return nil, err
@@ -153,11 +252,25 @@ func (wx *WXMch) RSAPublicKey(options ...utils.HTTPRequestOption) ([]byte, error
 		return nil, err
 	}
 
-	pubKey, ok := resp["pub_key"]
+	return resp, nil
+}
 
-	if !ok {
-		return nil, errors.New("empty pub_key")
+func (wx *WXMch) tlsPost(reqURL string, body utils.WXML, options ...utils.RequestOption) (utils.WXML, error) {
+	body["sign"] = SignWithMD5(body, wx.apikey)
+
+	resp, err := wx.tlsClient.PostXML(reqURL, body, options...)
+
+	if err != nil {
+		return nil, err
 	}
 
-	return []byte(pubKey), nil
+	if resp["return_code"] != ResultSuccess {
+		return nil, errors.New(resp["return_msg"])
+	}
+
+	if err := wx.VerifyWXReply(resp); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }

@@ -1,16 +1,29 @@
 package mp
 
-import "github.com/shenghui0779/gochat/utils"
+import (
+	"errors"
+
+	"github.com/shenghui0779/gochat/utils"
+	"github.com/tidwall/gjson"
+)
 
 // WXMP 微信小程序
 type WXMP struct {
-	AppID     string
-	AppSecret string
-	Client    *utils.HTTPClient
+	appid     string
+	appsecret string
+	client    *utils.WXClient
+}
+
+func New(appid, appsecret string, tlsInsecureSkipVerify bool) *WXMP {
+	return &WXMP{
+		appid:     appid,
+		appsecret: appsecret,
+		client:    utils.NewWXClient(utils.WithInsecureSkipVerify(tlsInsecureSkipVerify)),
+	}
 }
 
 // Sns returns new sns
-func (wx *WXMP) Sns(options ...utils.HTTPRequestOption) *Sns {
+func (wx *WXMP) Sns(options ...utils.RequestOption) *Sns {
 	return &Sns{
 		mp:      wx,
 		options: options,
@@ -18,7 +31,7 @@ func (wx *WXMP) Sns(options ...utils.HTTPRequestOption) *Sns {
 }
 
 // CgiBin returns new cgi-bin
-func (wx *WXMP) CgiBin(options ...utils.HTTPRequestOption) *CgiBin {
+func (wx *WXMP) CgiBin(options ...utils.RequestOption) *CgiBin {
 	return &CgiBin{
 		mp:      wx,
 		options: options,
@@ -36,7 +49,7 @@ func (wx *WXMP) BizDataCrypt(encryptedData, sessionKey, iv string) *BizDataCrypt
 }
 
 // Message returns new message
-func (wx *WXMP) Message(options ...utils.HTTPRequestOption) *Message {
+func (wx *WXMP) Message(options ...utils.RequestOption) *Message {
 	return &Message{
 		mp:      wx,
 		options: options,
@@ -44,9 +57,61 @@ func (wx *WXMP) Message(options ...utils.HTTPRequestOption) *Message {
 }
 
 // QRCode returns new qrcode
-func (wx *WXMP) QRCode(options ...utils.HTTPRequestOption) *QRCode {
+func (wx *WXMP) QRCode(options ...utils.RequestOption) *QRCode {
 	return &QRCode{
 		mp:      wx,
 		options: options,
 	}
+}
+
+func (wx *WXMP) get(reqURL string, options ...utils.RequestOption) ([]byte, error) {
+	resp, err := wx.client.Get(reqURL, options...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	r := gjson.ParseBytes(resp)
+
+	if r.Get("errcode").Int() != 0 {
+		return nil, errors.New(r.Get("errmsg").String())
+	}
+
+	return resp, nil
+}
+
+func (wx *WXMP) post(reqURL string, body []byte, options ...utils.RequestOption) ([]byte, error) {
+	options = append(options, utils.WithHeader("Content-Type", "application/json; charset=utf-8"))
+
+	resp, err := wx.client.Post(reqURL, body, options...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	r := gjson.ParseBytes(resp)
+
+	if r.Get("errcode").Int() != 0 {
+		return nil, errors.New(r.Get("errmsg").String())
+	}
+
+	return resp, nil
+}
+
+func (wx *WXMP) upload(reqURL string, body []byte, options ...utils.RequestOption) ([]byte, error) {
+	options = append(options, utils.WithHeader("Content-Type", "application/x-www-form-urlencoded"))
+
+	resp, err := wx.client.Post(reqURL, body, options...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	r := gjson.ParseBytes(resp)
+
+	if r.Get("errcode").Int() != 0 {
+		return nil, errors.New(r.Get("errmsg").String())
+	}
+
+	return resp, nil
 }

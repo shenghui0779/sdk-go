@@ -2,7 +2,6 @@ package mch
 
 import (
 	"encoding/base64"
-	"errors"
 	"strconv"
 
 	"github.com/shenghui0779/gochat/utils"
@@ -37,14 +36,14 @@ type TransferBankCardData struct {
 // Transfer 企业付款
 type Transfer struct {
 	mch     *WXMch
-	options []utils.HTTPRequestOption
+	options []utils.RequestOption
 }
 
 // ToBalance 付款到零钱
 func (t *Transfer) ToBalance(data *TransferBalanceData) (utils.WXML, error) {
 	body := utils.WXML{
-		"mch_appid":        t.mch.AppID,
-		"mchid":            t.mch.MchID,
+		"mch_appid":        t.mch.appid,
+		"mchid":            t.mch.mchid,
 		"nonce_str":        utils.NonceStr(),
 		"partner_trade_no": data.PartnerTradeNO,
 		"openid":           data.OpenID,
@@ -65,57 +64,25 @@ func (t *Transfer) ToBalance(data *TransferBalanceData) (utils.WXML, error) {
 		body["spbill_create_ip"] = data.SpbillCreateIP
 	}
 
-	body["sign"] = SignWithMD5(body, t.mch.ApiKey)
-
-	resp, err := t.mch.SSLClient.PostXML(TransferToBalanceURL, body, t.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := t.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return t.mch.tlsPost(TransferToBalanceURL, body, t.options...)
 }
 
 // QueryBalanceOrder 查询付款到零钱订单
 func (t *Transfer) QueryBalanceOrder(partnerTradeNO string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":            t.mch.AppID,
-		"mch_id":           t.mch.MchID,
+		"appid":            t.mch.appid,
+		"mch_id":           t.mch.mchid,
 		"partner_trade_no": partnerTradeNO,
 		"nonce_str":        utils.NonceStr(),
 	}
 
-	body["sign"] = SignWithMD5(body, t.mch.ApiKey)
-
-	resp, err := t.mch.Client.PostXML(TransferBalanceOrderQueryURL, body, t.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := t.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return t.mch.post(TransferBalanceOrderQueryURL, body, t.options...)
 }
 
 // ToBankCard 付款到银行卡
 func (t *Transfer) ToBankCard(data *TransferBankCardData, pubKey []byte) (utils.WXML, error) {
 	body := utils.WXML{
-		"mch_id":           t.mch.MchID,
+		"mch_id":           t.mch.mchid,
 		"nonce_str":        utils.NonceStr(),
 		"partner_trade_no": data.PartnerTradeNO,
 		"bank_code":        data.BankCode,
@@ -142,48 +109,16 @@ func (t *Transfer) ToBankCard(data *TransferBankCardData, pubKey []byte) (utils.
 		body["desc"] = data.Desc
 	}
 
-	body["sign"] = SignWithMD5(body, t.mch.ApiKey)
-
-	resp, err := t.mch.SSLClient.PostXML(TransferToBankCardURL, body, t.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := t.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return t.mch.tlsPost(TransferToBankCardURL, body, t.options...)
 }
 
 // QueryBankCardOrder 查询付款到银行卡订单
 func (t *Transfer) QueryBankCardOrder(partnerTradeNO string) (utils.WXML, error) {
 	body := utils.WXML{
-		"mch_id":           t.mch.MchID,
+		"mch_id":           t.mch.mchid,
 		"partner_trade_no": partnerTradeNO,
 		"nonce_str":        utils.NonceStr(),
 	}
 
-	body["sign"] = SignWithMD5(body, t.mch.ApiKey)
-
-	resp, err := t.mch.Client.PostXML(TransferBankCardOrderQueryURL, body, t.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := t.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return t.mch.post(TransferBankCardOrderQueryURL, body, t.options...)
 }

@@ -46,7 +46,7 @@ type MsgCrypt struct {
 
 // Decrypt 消息解密，参考微信[加密解密技术方案](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318482&token=&lang=zh_CN)
 func (m *MsgCrypt) Decrypt() error {
-	key, err := base64.StdEncoding.DecodeString(m.pub.EncodingAESKey + "=")
+	key, err := base64.StdEncoding.DecodeString(m.pub.encodingAESKey + "=")
 
 	if err != nil {
 		return err
@@ -64,11 +64,11 @@ func (m *MsgCrypt) Decrypt() error {
 		return err
 	}
 
-	appidOffset := len(plainText) - len([]byte(m.pub.AppID))
+	appidOffset := len(plainText) - len([]byte(m.pub.appid))
 
 	// 校验 AppID
-	if appid := string(plainText[appidOffset:]); appid != m.pub.AppID {
-		return fmt.Errorf("gochat: wxpub msg appid mismatch, want: %s, got: %s", m.pub.AppID, appid)
+	if appid := string(plainText[appidOffset:]); appid != m.pub.appid {
+		return fmt.Errorf("gochat: wxpub msg appid mismatch, want: %s, got: %s", m.pub.appid, appid)
 	}
 
 	m.body = plainText[20:appidOffset]

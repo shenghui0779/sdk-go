@@ -1,7 +1,6 @@
 package mch
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/shenghui0779/gochat/utils"
@@ -34,14 +33,14 @@ type UnifiedOrder struct {
 // Order 订单操作
 type Order struct {
 	mch     *WXMch
-	options []utils.HTTPRequestOption
+	options []utils.RequestOption
 }
 
 // Unify 统一下单
 func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":            o.mch.AppID,
-		"mch_id":           o.mch.MchID,
+		"appid":            o.mch.appid,
+		"mch_id":           o.mch.mchid,
 		"nonce_str":        utils.NonceStr(),
 		"sign_type":        SignMD5,
 		"fee_type":         "CNY",
@@ -101,108 +100,44 @@ func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 		body["scene_info"] = order.SceneInfo
 	}
 
-	body["sign"] = SignWithMD5(body, o.mch.ApiKey)
-
-	resp, err := o.mch.Client.PostXML(OrderUnifyURL, body, o.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := o.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return o.mch.post(OrderUnifyURL, body, o.options...)
 }
 
 // QueryByTransactionID 根据微信订单号查询
 func (o *Order) QueryByTransactionID(transactionID string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":          o.mch.AppID,
-		"mch_id":         o.mch.MchID,
+		"appid":          o.mch.appid,
+		"mch_id":         o.mch.mchid,
 		"transaction_id": transactionID,
 		"nonce_str":      utils.NonceStr(),
 		"sign_type":      SignMD5,
 	}
 
-	body["sign"] = SignWithMD5(body, o.mch.ApiKey)
-
-	resp, err := o.mch.Client.PostXML(OrderQueryURL, body, o.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := o.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return o.mch.post(OrderQueryURL, body, o.options...)
 }
 
 // QueryByOutTradeNO 根据商户订单号查询
 func (o *Order) QueryByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":        o.mch.AppID,
-		"mch_id":       o.mch.MchID,
+		"appid":        o.mch.appid,
+		"mch_id":       o.mch.mchid,
 		"out_trade_no": outTradeNO,
 		"nonce_str":    utils.NonceStr(),
 		"sign_type":    SignMD5,
 	}
 
-	body["sign"] = SignWithMD5(body, o.mch.ApiKey)
-
-	resp, err := o.mch.Client.PostXML(OrderQueryURL, body, o.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := o.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return o.mch.post(OrderQueryURL, body, o.options...)
 }
 
 // Close 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
 func (o *Order) Close(outTradeNO string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":        o.mch.AppID,
-		"mch_id":       o.mch.MchID,
+		"appid":        o.mch.appid,
+		"mch_id":       o.mch.mchid,
 		"out_trade_no": outTradeNO,
 		"nonce_str":    utils.NonceStr(),
 		"sign_type":    SignMD5,
 	}
 
-	body["sign"] = SignWithMD5(body, o.mch.ApiKey)
-
-	resp, err := o.mch.Client.PostXML(OrderCloseURL, body, o.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := o.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return o.mch.post(OrderCloseURL, body, o.options...)
 }
