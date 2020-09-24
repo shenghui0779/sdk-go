@@ -7,8 +7,8 @@ import (
 )
 
 // NewWXMch 微信商户
-func NewWXMch(appid, mchid, apikey string, tlsInsecureSkipVerify bool) *mch.WXMch {
-	return mch.New(appid, mchid, apikey, tlsInsecureSkipVerify)
+func NewWXMch(appid, mchid, apikey string) *mch.WXMch {
+	return mch.New(appid, mchid, apikey)
 }
 
 // NewWXPub 微信公众号

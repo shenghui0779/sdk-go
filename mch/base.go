@@ -24,7 +24,7 @@ type WXMch struct {
 	tlsClient  *utils.WXClient
 }
 
-func New(appid, mchid, apikey string, tlsInsecureSkipVerify bool) *WXMch {
+func New(appid, mchid, apikey string) *WXMch {
 	mch := &WXMch{
 		appid:      appid,
 		mchid:      mchid,
@@ -32,12 +32,8 @@ func New(appid, mchid, apikey string, tlsInsecureSkipVerify bool) *WXMch {
 		tlsOptions: make([]utils.TLSOption, 0),
 	}
 
-	if tlsInsecureSkipVerify {
-		mch.tlsOptions = append(mch.tlsOptions, utils.WithInsecureSkipVerify(true))
-	}
-
-	mch.client = utils.NewWXClient(mch.tlsOptions...)
-	mch.tlsClient = utils.NewWXClient(mch.tlsOptions...)
+	mch.client = utils.NewWXClient(utils.WithInsecureSkipVerify(true))
+	mch.tlsClient = utils.NewWXClient(utils.WithInsecureSkipVerify(true))
 
 	return mch
 }
@@ -50,11 +46,13 @@ func (wx *WXMch) LoadP12CertFromFile(path string) error {
 		return err
 	}
 
-	if err = wx.pkcs12ToPem(p12); err != nil {
+	cert, err := wx.pkcs12ToPem(p12)
+
+	if err != nil {
 		return err
 	}
 
-	wx.tlsClient = utils.NewWXClient(wx.tlsOptions...)
+	wx.tlsClient = utils.NewWXClient(utils.WithCertificates(cert), utils.WithInsecureSkipVerify(true))
 
 	return nil
 }
@@ -67,11 +65,13 @@ func (wx *WXMch) LoadP12CertFromBase64(cert string) error {
 		return err
 	}
 
-	if err = wx.pkcs12ToPem(p12); err != nil {
+	certificate, err := wx.pkcs12ToPem(p12)
+
+	if err != nil {
 		return err
 	}
 
-	wx.tlsClient = utils.NewWXClient(wx.tlsOptions...)
+	wx.tlsClient = utils.NewWXClient(utils.WithCertificates(certificate), utils.WithInsecureSkipVerify(true))
 
 	return nil
 }
@@ -210,7 +210,7 @@ func (wx *WXMch) RSAPublicKey(options ...utils.RequestOption) ([]byte, error) {
 	return []byte(pubKey), nil
 }
 
-func (wx *WXMch) pkcs12ToPem(p12 []byte) error {
+func (wx *WXMch) pkcs12ToPem(p12 []byte) (tls.Certificate, error) {
 	blocks, err := pkcs12.ToPEM(p12, wx.mchid)
 
 	if err != nil {
@@ -224,15 +224,7 @@ func (wx *WXMch) pkcs12ToPem(p12 []byte) error {
 	}
 
 	// then use PEM data for tls to construct tls certificate:
-	cert, err := tls.X509KeyPair(pemData, pemData)
-
-	if err != nil {
-		return err
-	}
-
-	wx.tlsOptions = append(wx.tlsOptions, utils.WithCertificates(cert))
-
-	return nil
+	return tls.X509KeyPair(pemData, pemData)
 }
 
 func (wx *WXMch) post(reqURL string, body utils.WXML, options ...utils.RequestOption) (utils.WXML, error) {
