@@ -318,9 +318,7 @@ func NewWXClient(options ...TLSOption) *WXClient {
 	}
 
 	if len(options) > 0 {
-		o := &tlsOptions{
-			rootCAs: make([][]byte, 0),
-		}
+		o := new(tlsOptions)
 
 		for _, option := range options {
 			option.apply(o)
