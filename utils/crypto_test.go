@@ -17,6 +17,20 @@ func TestAESCBCCrypt(t *testing.T) {
 	assert.Equal(t, "shenghui0779", string(db))
 }
 
+func TestAESGCMCrypt(t *testing.T) {
+	key := []byte("AES256Key-32Characters1234567890")
+	nonce := []byte("35f1878f242bd1229a1e6700")
+	plainText := "Iloveyiigo"
+
+	eb, err := AESGCMEncrypt([]byte(plainText), key, nonce)
+	assert.Nil(t, err)
+
+	db, err := AESGCMDecrypt(eb, key, nonce)
+	assert.Nil(t, err)
+
+	assert.Equal(t, plainText, string(db))
+}
+
 func TestRSACrypt(t *testing.T) {
 	eb, err := RSAEncrypt([]byte("shenghui0779"), publicKey)
 
