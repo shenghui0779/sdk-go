@@ -2,7 +2,6 @@ package mch
 
 import (
 	"crypto/tls"
-	"encoding/base64"
 	"encoding/pem"
 	"errors"
 	"fmt"
@@ -38,8 +37,8 @@ func New(appid, mchid, apikey string) *WXMch {
 	return mch
 }
 
-// LoadP12CertFromFile load p12(pfx) cert from file
-func (wx *WXMch) LoadP12CertFromFile(path string) error {
+// LoadCertFromP12File load cert from p12(pfx) file
+func (wx *WXMch) LoadCertFromP12File(path string) error {
 	p12, err := ioutil.ReadFile(path)
 
 	if err != nil {
@@ -57,21 +56,28 @@ func (wx *WXMch) LoadP12CertFromFile(path string) error {
 	return nil
 }
 
-// LoadP12CertFromBase64 load p12(pfx) cert from base64
-func (wx *WXMch) LoadP12CertFromBase64(cert string) error {
-	p12, err := base64.StdEncoding.DecodeString(cert)
+// LoadCertFromPemFile load cert from PEM file
+func (wx *WXMch) LoadCertFromPemFile(certFile, keyFile string) error {
+	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 
 	if err != nil {
 		return err
 	}
 
-	certificate, err := wx.pkcs12ToPem(p12)
+	wx.tlsClient = utils.NewWXClient(utils.WithCertificates(cert), utils.WithInsecureSkipVerify(true))
+
+	return nil
+}
+
+// LoadCertFromPemBlock load cert from a pair of PEM encoded data
+func (wx *WXMch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
+	cert, err := tls.X509KeyPair(certPEMBlock, keyPEMBlock)
 
 	if err != nil {
 		return err
 	}
 
-	wx.tlsClient = utils.NewWXClient(utils.WithCertificates(certificate), utils.WithInsecureSkipVerify(true))
+	wx.tlsClient = utils.NewWXClient(utils.WithCertificates(cert), utils.WithInsecureSkipVerify(true))
 
 	return nil
 }
