@@ -31,8 +31,8 @@ func New(appid, mchid, apikey string) *WXMch {
 		tlsOptions: make([]utils.TLSOption, 0),
 	}
 
-	mch.client = utils.NewWXClient(utils.WithInsecureSkipVerify(true))
-	mch.tlsClient = utils.NewWXClient(utils.WithInsecureSkipVerify(true))
+	mch.client = utils.NewWXClient(utils.WithInsecureSkipVerify())
+	mch.tlsClient = utils.NewWXClient(utils.WithInsecureSkipVerify())
 
 	return mch
 }
@@ -51,7 +51,7 @@ func (wx *WXMch) LoadCertFromP12File(path string) error {
 		return err
 	}
 
-	wx.tlsClient = utils.NewWXClient(utils.WithCertificates(cert), utils.WithInsecureSkipVerify(true))
+	wx.tlsClient = utils.NewWXClient(utils.WithCertificates(cert), utils.WithInsecureSkipVerify())
 
 	return nil
 }
@@ -64,7 +64,7 @@ func (wx *WXMch) LoadCertFromPemFile(certFile, keyFile string) error {
 		return err
 	}
 
-	wx.tlsClient = utils.NewWXClient(utils.WithCertificates(cert), utils.WithInsecureSkipVerify(true))
+	wx.tlsClient = utils.NewWXClient(utils.WithCertificates(cert), utils.WithInsecureSkipVerify())
 
 	return nil
 }
@@ -77,7 +77,7 @@ func (wx *WXMch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
 		return err
 	}
 
-	wx.tlsClient = utils.NewWXClient(utils.WithCertificates(cert), utils.WithInsecureSkipVerify(true))
+	wx.tlsClient = utils.NewWXClient(utils.WithCertificates(cert), utils.WithInsecureSkipVerify())
 
 	return nil
 }
