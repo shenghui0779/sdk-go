@@ -129,7 +129,7 @@ func (wx *WXMch) APPAPI(prepayID string) utils.WXML {
 		"partnerid": wx.mchid,
 		"prepayid":  prepayID,
 		"package":   "Sign=WXPay",
-		"noncestr":  utils.NonceStr(),
+		"noncestr":  utils.Nonce(16),
 		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
@@ -142,7 +142,7 @@ func (wx *WXMch) APPAPI(prepayID string) utils.WXML {
 func (wx *WXMch) JSAPI(prepayID string) utils.WXML {
 	ch := utils.WXML{
 		"appId":     wx.appid,
-		"nonceStr":  utils.NonceStr(),
+		"nonceStr":  utils.Nonce(16),
 		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
 		"signType":  SignMD5,
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
@@ -197,7 +197,7 @@ func (wx *WXMch) VerifyWXReply(reply utils.WXML) error {
 func (wx *WXMch) RSAPublicKey(options ...utils.RequestOption) ([]byte, error) {
 	body := utils.WXML{
 		"mch_id":    wx.mchid,
-		"nonce_str": utils.NonceStr(),
+		"nonce_str": utils.Nonce(16),
 		"sign_type": SignMD5,
 	}
 

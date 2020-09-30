@@ -288,7 +288,7 @@ func (r *Reply) buildMsg(msgBody []byte) (*ReplyMsg, error) {
 	encrypt := base64.StdEncoding.EncodeToString(cipherText)
 
 	now := time.Now().Unix()
-	nonce := utils.NonceStr()
+	nonce := utils.Nonce(16)
 
 	signItems := []string{r.pub.signToken, strconv.FormatInt(now, 10), nonce, encrypt}
 
@@ -316,7 +316,7 @@ func (r *Reply) encrypt(data []byte) ([]byte, error) {
 
 	plainText := make([]byte, appidOffset+len(r.pub.appid))
 
-	copy(plainText[:16], utils.RandomStr(16))
+	copy(plainText[:16], utils.Nonce(16))
 	copy(plainText[16:20], utils.EncodeUint32ToBytes(uint32(contentLen)))
 	copy(plainText[20:], data)
 	copy(plainText[appidOffset:], r.pub.appid)

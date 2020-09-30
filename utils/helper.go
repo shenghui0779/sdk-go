@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"crypto/hmac"
 	"crypto/md5"
+	"crypto/rand"
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/hex"
 	"encoding/xml"
 	"hash"
-	"math/rand"
+	"io"
 	"sync"
-	"time"
 )
 
 // X is a convenient alias for a map[string]interface{}.
@@ -68,9 +68,13 @@ var BufPool = &bufferPool{pool: sync.Pool{
 	},
 }}
 
-// NonceStr 随机字符串
-func NonceStr() string {
-	return RandomStr(16)
+// Nonce random string
+func Nonce(size int) string {
+	nonce := make([]byte, size/2)
+
+	io.ReadFull(rand.Reader, nonce)
+
+	return hex.EncodeToString(nonce)
 }
 
 // MD5 calculate the md5 hash of a string.
@@ -160,22 +164,4 @@ func DecodeBytesToUint32(b []byte) uint32 {
 	}
 
 	return uint32(b[0])<<24 | uint32(b[1])<<16 | uint32(b[2])<<8 | uint32(b[3])
-}
-
-var Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
-
-const pattern = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"
-
-// RandomStr 随机字符串
-func RandomStr(n int) string {
-	salt := make([]byte, 0, n)
-
-	l := len(pattern)
-
-	for i := 0; i < n; i++ {
-		p := Rand.Intn(l)
-		salt = append(salt, pattern[p])
-	}
-
-	return string(salt)
 }

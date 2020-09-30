@@ -30,7 +30,7 @@ func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (
 	body := utils.WXML{
 		"appid":          r.mch.appid,
 		"mch_id":         r.mch.mchid,
-		"nonce_str":      utils.NonceStr(),
+		"nonce_str":      utils.Nonce(16),
 		"sign_type":      SignMD5,
 		"transaction_id": transactionID,
 		"out_refund_no":  data.OutRefundNO,
@@ -62,7 +62,7 @@ func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.
 	body := utils.WXML{
 		"appid":         r.mch.appid,
 		"mch_id":        r.mch.mchid,
-		"nonce_str":     utils.NonceStr(),
+		"nonce_str":     utils.Nonce(16),
 		"sign_type":     SignMD5,
 		"out_trade_no":  outTradeNO,
 		"out_refund_no": data.OutRefundNO,
@@ -95,7 +95,7 @@ func (r *Refund) QueryByRefundID(refundID string, offset ...int) (utils.WXML, er
 		"appid":     r.mch.appid,
 		"mch_id":    r.mch.mchid,
 		"refund_id": refundID,
-		"nonce_str": utils.NonceStr(),
+		"nonce_str": utils.Nonce(16),
 		"sign_type": SignMD5,
 	}
 
@@ -112,7 +112,7 @@ func (r *Refund) QueryByOutRefundNO(outRefundNO string, offset ...int) (utils.WX
 		"appid":         r.mch.appid,
 		"mch_id":        r.mch.mchid,
 		"out_refund_no": outRefundNO,
-		"nonce_str":     utils.NonceStr(),
+		"nonce_str":     utils.Nonce(16),
 		"sign_type":     SignMD5,
 	}
 
@@ -129,7 +129,7 @@ func (r *Refund) QueryByTransactionID(transactionID string, offset ...int) (util
 		"appid":          r.mch.appid,
 		"mch_id":         r.mch.mchid,
 		"transaction_id": transactionID,
-		"nonce_str":      utils.NonceStr(),
+		"nonce_str":      utils.Nonce(16),
 		"sign_type":      SignMD5,
 	}
 
@@ -146,7 +146,7 @@ func (r *Refund) QueryByOutTradeNO(outTradeNO string, offset ...int) (utils.WXML
 		"appid":        r.mch.appid,
 		"mch_id":       r.mch.mchid,
 		"out_trade_no": outTradeNO,
-		"nonce_str":    utils.NonceStr(),
+		"nonce_str":    utils.Nonce(16),
 		"sign_type":    "MD5",
 	}
 

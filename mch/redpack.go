@@ -36,7 +36,7 @@ func (r *Redpack) SendNormal(data *RedpackData) (utils.WXML, error) {
 	body := utils.WXML{
 		"wxappid":      r.mch.appid,
 		"mch_id":       r.mch.mchid,
-		"nonce_str":    utils.NonceStr(),
+		"nonce_str":    utils.Nonce(16),
 		"mch_billno":   data.MchBillNO,
 		"send_name":    data.SendName,
 		"re_openid":    data.ReOpenID,
@@ -64,7 +64,7 @@ func (r *Redpack) SendGroup(data *RedpackData) (utils.WXML, error) {
 	body := utils.WXML{
 		"wxappid":      r.mch.appid,
 		"mch_id":       r.mch.mchid,
-		"nonce_str":    utils.NonceStr(),
+		"nonce_str":    utils.Nonce(16),
 		"mch_billno":   data.MchBillNO,
 		"send_name":    data.SendName,
 		"re_openid":    data.ReOpenID,
@@ -96,7 +96,7 @@ func (r *Redpack) SendMinip(data *RedpackData) (utils.WXML, error) {
 	body := utils.WXML{
 		"wxappid":      r.mch.appid,
 		"mch_id":       r.mch.mchid,
-		"nonce_str":    utils.NonceStr(),
+		"nonce_str":    utils.Nonce(16),
 		"mch_billno":   data.MchBillNO,
 		"send_name":    data.SendName,
 		"re_openid":    data.ReOpenID,
@@ -126,7 +126,7 @@ func (r *Redpack) QueryByBillNO(billNO string) (utils.WXML, error) {
 		"mch_id":     r.mch.mchid,
 		"mch_billno": billNO,
 		"bill_type":  "MCHT",
-		"nonce_str":  utils.NonceStr(),
+		"nonce_str":  utils.Nonce(16),
 	}
 
 	return r.mch.tlsPost(RedpackQueryURL, body, r.options...)

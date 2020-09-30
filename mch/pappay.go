@@ -184,7 +184,7 @@ func (p *Pappay) ContractOrder(order *ContractOrder) (utils.WXML, error) {
 		"mch_id":                   p.mch.mchid,
 		"contract_appid":           p.mch.appid,
 		"contract_mchid":           p.mch.mchid,
-		"nonce_str":                utils.NonceStr(),
+		"nonce_str":                utils.Nonce(16),
 		"fee_type":                 "CNY",
 		"trade_type":               order.TradeType,
 		"body":                     order.Body,
@@ -272,7 +272,7 @@ func (p *Pappay) PayApply(apply *PappayApply) (utils.WXML, error) {
 	body := utils.WXML{
 		"appid":            p.mch.appid,
 		"mch_id":           p.mch.mchid,
-		"nonce_str":        utils.NonceStr(),
+		"nonce_str":        utils.Nonce(16),
 		"fee_type":         "CNY",
 		"trade_type":       TradePAP,
 		"notify_url":       apply.NotifyURL,
@@ -339,7 +339,7 @@ func (p *Pappay) QueryOrderByTransactionID(transactionID string) (utils.WXML, er
 		"appid":          p.mch.appid,
 		"mch_id":         p.mch.mchid,
 		"transaction_id": transactionID,
-		"nonce_str":      utils.NonceStr(),
+		"nonce_str":      utils.Nonce(16),
 	}
 
 	return p.mch.post(PappayOrderQueryURL, body, p.options...)
@@ -351,7 +351,7 @@ func (p *Pappay) QueryOrderByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 		"appid":        p.mch.appid,
 		"mch_id":       p.mch.mchid,
 		"out_trade_no": outTradeNO,
-		"nonce_str":    utils.NonceStr(),
+		"nonce_str":    utils.Nonce(16),
 		"sign_type":    "MD5",
 	}
 

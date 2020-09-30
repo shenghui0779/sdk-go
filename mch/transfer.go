@@ -44,7 +44,7 @@ func (t *Transfer) ToBalance(data *TransferBalanceData) (utils.WXML, error) {
 	body := utils.WXML{
 		"mch_appid":        t.mch.appid,
 		"mchid":            t.mch.mchid,
-		"nonce_str":        utils.NonceStr(),
+		"nonce_str":        utils.Nonce(16),
 		"partner_trade_no": data.PartnerTradeNO,
 		"openid":           data.OpenID,
 		"check_name":       data.CheckName,
@@ -73,7 +73,7 @@ func (t *Transfer) QueryBalanceOrder(partnerTradeNO string) (utils.WXML, error) 
 		"appid":            t.mch.appid,
 		"mch_id":           t.mch.mchid,
 		"partner_trade_no": partnerTradeNO,
-		"nonce_str":        utils.NonceStr(),
+		"nonce_str":        utils.Nonce(16),
 	}
 
 	return t.mch.post(TransferBalanceOrderQueryURL, body, t.options...)
@@ -83,7 +83,7 @@ func (t *Transfer) QueryBalanceOrder(partnerTradeNO string) (utils.WXML, error) 
 func (t *Transfer) ToBankCard(data *TransferBankCardData, pubKey []byte) (utils.WXML, error) {
 	body := utils.WXML{
 		"mch_id":           t.mch.mchid,
-		"nonce_str":        utils.NonceStr(),
+		"nonce_str":        utils.Nonce(16),
 		"partner_trade_no": data.PartnerTradeNO,
 		"bank_code":        data.BankCode,
 		"amount":           strconv.Itoa(data.Amount),
@@ -117,7 +117,7 @@ func (t *Transfer) QueryBankCardOrder(partnerTradeNO string) (utils.WXML, error)
 	body := utils.WXML{
 		"mch_id":           t.mch.mchid,
 		"partner_trade_no": partnerTradeNO,
-		"nonce_str":        utils.NonceStr(),
+		"nonce_str":        utils.Nonce(16),
 	}
 
 	return t.mch.post(TransferBankCardOrderQueryURL, body, t.options...)

@@ -41,7 +41,7 @@ func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
 	body := utils.WXML{
 		"appid":            o.mch.appid,
 		"mch_id":           o.mch.mchid,
-		"nonce_str":        utils.NonceStr(),
+		"nonce_str":        utils.Nonce(16),
 		"sign_type":        SignMD5,
 		"fee_type":         "CNY",
 		"trade_type":       order.TradeType,
@@ -109,7 +109,7 @@ func (o *Order) QueryByTransactionID(transactionID string) (utils.WXML, error) {
 		"appid":          o.mch.appid,
 		"mch_id":         o.mch.mchid,
 		"transaction_id": transactionID,
-		"nonce_str":      utils.NonceStr(),
+		"nonce_str":      utils.Nonce(16),
 		"sign_type":      SignMD5,
 	}
 
@@ -122,7 +122,7 @@ func (o *Order) QueryByOutTradeNO(outTradeNO string) (utils.WXML, error) {
 		"appid":        o.mch.appid,
 		"mch_id":       o.mch.mchid,
 		"out_trade_no": outTradeNO,
-		"nonce_str":    utils.NonceStr(),
+		"nonce_str":    utils.Nonce(16),
 		"sign_type":    SignMD5,
 	}
 
@@ -135,7 +135,7 @@ func (o *Order) Close(outTradeNO string) (utils.WXML, error) {
 		"appid":        o.mch.appid,
 		"mch_id":       o.mch.mchid,
 		"out_trade_no": outTradeNO,
-		"nonce_str":    utils.NonceStr(),
+		"nonce_str":    utils.Nonce(16),
 		"sign_type":    SignMD5,
 	}
 
