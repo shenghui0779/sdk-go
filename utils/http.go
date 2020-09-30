@@ -334,14 +334,14 @@ func NewWXClient(options ...TLSOption) *WXClient {
 			}
 
 			tlsCfg.RootCAs = pool
-		} else {
-			if o.insecureSkipVerify {
-				tlsCfg.InsecureSkipVerify = true
-			}
 		}
 
 		if len(o.certificates) > 0 {
 			tlsCfg.Certificates = o.certificates
+		}
+
+		if o.insecureSkipVerify {
+			tlsCfg.InsecureSkipVerify = true
 		}
 
 		t.TLSClientConfig = tlsCfg
