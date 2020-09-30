@@ -110,9 +110,9 @@ func WithCookies(cookies ...*http.Cookie) RequestOption {
 // WithClose specifies close the connection after
 // replying to this request (for servers) or after sending this
 // request and reading its response (for clients).
-func WithClose(b bool) RequestOption {
+func WithClose() RequestOption {
 	return newFuncRequestOption(func(o *requestOptions) {
-		o.close = b
+		o.close = true
 	})
 }
 
