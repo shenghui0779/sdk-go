@@ -61,9 +61,9 @@ func WithCertificates(certs ...tls.Certificate) TLSOption {
 }
 
 // WithInsecureSkipVerify specifies the `InsecureSkipVerify` to https transport.
-func WithInsecureSkipVerify(b bool) TLSOption {
+func WithInsecureSkipVerify() TLSOption {
 	return newFuncTLSOption(func(o *tlsOptions) {
-		o.insecureSkipVerify = b
+		o.insecureSkipVerify = true
 	})
 }
 
