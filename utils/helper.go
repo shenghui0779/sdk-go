@@ -68,7 +68,7 @@ var BufPool = &bufferPool{pool: sync.Pool{
 	},
 }}
 
-// Nonce random string
+// Nonce random string, size should be even number
 func Nonce(size int) string {
 	nonce := make([]byte, size/2)
 

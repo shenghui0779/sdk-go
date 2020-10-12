@@ -37,8 +37,8 @@ type WaterMark struct {
 	AppID     string `json:"appid"`
 }
 
-// BizDataCrypt 小程序数据解析
-type BizDataCrypt struct {
+// BizDataCrypto 小程序数据解析
+type BizDataCrypto struct {
 	mp            *WXMP
 	encryptedData string
 	sessionKey    string
@@ -47,26 +47,27 @@ type BizDataCrypt struct {
 }
 
 // Decrypt 数据解密
-func (b *BizDataCrypt) Decrypt() error {
-	aesData, err := base64.StdEncoding.DecodeString(b.encryptedData)
+func (b *BizDataCrypto) Decrypt() error {
+	cipherText, err := base64.StdEncoding.DecodeString(b.encryptedData)
 
 	if err != nil {
 		return err
 	}
 
-	aesKey, err := base64.StdEncoding.DecodeString(b.sessionKey)
+	key, err := base64.StdEncoding.DecodeString(b.sessionKey)
 
 	if err != nil {
 		return err
 	}
 
-	aesIV, err := base64.StdEncoding.DecodeString(b.iv)
+	iv, err := base64.StdEncoding.DecodeString(b.iv)
 
 	if err != nil {
 		return err
 	}
 
-	plainText, err := utils.AESCBCDecrypt(aesData, aesKey, aesIV...)
+	cbc := utils.NewAESCBCCrypto(key, iv)
+	plainText, err := cbc.Decrypt(aesData, utils.PKCS7)
 
 	if err != nil {
 		return err
@@ -78,7 +79,7 @@ func (b *BizDataCrypt) Decrypt() error {
 }
 
 // GetUserData 获取用户数据（需先解密）
-func (b *BizDataCrypt) GetUserData() (*UserData, error) {
+func (b *BizDataCrypto) GetUserData() (*UserData, error) {
 	if len(b.data) == 0 {
 		return nil, errors.New("gochat: empty data, check whether decrypted")
 	}
@@ -97,7 +98,7 @@ func (b *BizDataCrypt) GetUserData() (*UserData, error) {
 }
 
 // GetPhoneData 获取用户手机号绑定数据（需先解密）
-func (b *BizDataCrypt) GetPhoneData() (*PhoneData, error) {
+func (b *BizDataCrypto) GetPhoneData() (*PhoneData, error) {
 	if len(b.data) == 0 {
 		return nil, errors.New("gochat: empty data, check whether decrypted")
 	}

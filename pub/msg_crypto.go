@@ -1,6 +1,7 @@
 package pub
 
 import (
+	"crypto/aes"
 	"encoding/base64"
 	"encoding/xml"
 	"errors"
@@ -37,15 +38,15 @@ type EventMsg struct {
 	Precision    float64 `xml:"Precision"`
 }
 
-// MsgCrypt 公众号消息解析
-type MsgCrypt struct {
+// MsgCrypto 公众号消息解析
+type MsgCrypto struct {
 	pub        *WXPub
 	cipherText string
 	body       []byte
 }
 
 // Decrypt 消息解密，参考微信[加密解密技术方案](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318482&token=&lang=zh_CN)
-func (m *MsgCrypt) Decrypt() error {
+func (m *MsgCrypto) Decrypt() error {
 	key, err := base64.StdEncoding.DecodeString(m.pub.encodingAESKey + "=")
 
 	if err != nil {
@@ -58,7 +59,8 @@ func (m *MsgCrypt) Decrypt() error {
 		return err
 	}
 
-	plainText, err := utils.AESCBCDecrypt(cipherText, key)
+	cbc := utils.NewAESCBCCrypto(key, key[:aes.BlockSize])
+	plainText, err := cbc.Decrypt(cipherText, utils.PKCS7)
 
 	if err != nil {
 		return err
@@ -77,9 +79,9 @@ func (m *MsgCrypt) Decrypt() error {
 }
 
 // EventMsg 获取事件消息
-func (m *MsgCrypt) EventMsg() (*EventMsg, error) {
+func (m *MsgCrypto) EventMsg() (*EventMsg, error) {
 	if len(m.body) == 0 {
-		return nil, errors.New("gochat: empty msg, check whether decrypted")
+		return nil, errors.New("gochat: empty msg (forgotten decrypted?)")
 	}
 
 	msg := new(EventMsg)

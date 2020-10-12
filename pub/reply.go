@@ -1,6 +1,7 @@
 package pub
 
 import (
+	"crypto/aes"
 	"encoding/base64"
 	"encoding/xml"
 	"sort"
@@ -321,7 +322,8 @@ func (r *Reply) encrypt(data []byte) ([]byte, error) {
 	copy(plainText[20:], data)
 	copy(plainText[appidOffset:], r.pub.appid)
 
-	cipherText, err := utils.AESCBCEncrypt(plainText, key)
+	cbc := utils.NewAESCBCCrypto(key, key[:aes.BlockSize])
+	cipherText, err := cbc.Encrypt(plainText, utils.PKCS7)
 
 	if err != nil {
 		return nil, err

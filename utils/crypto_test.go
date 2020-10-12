@@ -1,37 +1,55 @@
 package utils
 
 import (
+	"crypto/aes"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAESCBCCrypt(t *testing.T) {
-	eb, err := AESCBCEncrypt([]byte("shenghui0779"), []byte("1234567890abcdef"))
-
-	assert.Nil(t, err)
-
-	db, err := AESCBCDecrypt(eb, []byte("1234567890abcdef"))
-
-	assert.Nil(t, err)
-	assert.Equal(t, "shenghui0779", string(db))
-}
-
-func TestAESGCMCrypt(t *testing.T) {
+func TestAESCBCCrypto(t *testing.T) {
 	key := []byte("AES256Key-32Characters1234567890")
-	nonce := []byte("35f1878f242bd1229a1e6700")
+	iv := key[:aes.BlockSize]
 	plainText := "Iloveyiigo"
 
-	eb, err := AESGCMEncrypt([]byte(plainText), key, nonce)
+	cbc := NewAESCBCCrypto(key, iv)
+
+	// PKCS5_PADDING
+	e5b, err := cbc.Encrypt([]byte(plainText), PKCS5)
 	assert.Nil(t, err)
 
-	db, err := AESGCMDecrypt(eb, key, nonce)
+	d5b, err := cbc.Decrypt(e5b, PKCS5)
+	assert.Nil(t, err)
+
+	assert.Equal(t, plainText, string(d5b))
+
+	// PKCS7_PADDING
+	e7b, err := cbc.Encrypt([]byte(plainText), PKCS7)
+	assert.Nil(t, err)
+
+	d7b, err := cbc.Decrypt(e7b, PKCS7)
+	assert.Nil(t, err)
+
+	assert.Equal(t, plainText, string(d7b))
+}
+
+func TestAESGCMCrypto(t *testing.T) {
+	key := []byte("AES256Key-32Characters1234567890")
+	nonce := key[:12]
+	plainText := "Iloveyiigo"
+
+	gcm := NewAESGCMCrypto(key, nonce)
+
+	eb, err := gcm.Encrypt([]byte(plainText))
+	assert.Nil(t, err)
+
+	db, err := gcm.Decrypt(eb)
 	assert.Nil(t, err)
 
 	assert.Equal(t, plainText, string(db))
 }
 
-func TestRSACrypt(t *testing.T) {
+func TestRSACrypto(t *testing.T) {
 	eb, err := RSAEncrypt([]byte("shenghui0779"), publicKey)
 
 	assert.Nil(t, err)
