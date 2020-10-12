@@ -67,7 +67,7 @@ func (b *BizDataCrypto) Decrypt() error {
 	}
 
 	cbc := utils.NewAESCBCCrypto(key, iv)
-	plainText, err := cbc.Decrypt(aesData, utils.PKCS7)
+	plainText, err := cbc.Decrypt(cipherText, utils.PKCS7)
 
 	if err != nil {
 		return err

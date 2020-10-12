@@ -44,7 +44,7 @@ func (wx *WXPub) CgiBin(options ...utils.RequestOption) *CgiBin {
 	}
 }
 
-// MsgCrypto returns new msg crypt
+// MsgCrypto returns new msg crypto
 func (wx *WXPub) MsgCrypto(cipherMsg string) *MsgCrypto {
 	return &MsgCrypto{
 		pub:        wx,

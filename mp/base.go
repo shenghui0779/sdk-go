@@ -38,9 +38,9 @@ func (wx *WXMP) CgiBin(options ...utils.RequestOption) *CgiBin {
 	}
 }
 
-// BizDataCrypt returns new bizdatacrypt
-func (wx *WXMP) BizDataCrypt(encryptedData, sessionKey, iv string) *BizDataCrypt {
-	return &BizDataCrypt{
+// BizDataCrypto returns new bizdata crypto
+func (wx *WXMP) BizDataCrypto(encryptedData, sessionKey, iv string) *BizDataCrypto {
+	return &BizDataCrypto{
 		mp:            wx,
 		encryptedData: encryptedData,
 		sessionKey:    sessionKey,
