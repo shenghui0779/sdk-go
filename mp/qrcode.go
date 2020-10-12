@@ -2,10 +2,7 @@ package mp
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-
-	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/utils"
 )
@@ -74,7 +71,7 @@ func WithQRCodeIsHyaline(b bool) QRCodeOption {
 // QRCode 小程序二维码
 type QRCode struct {
 	mp      *WXMP
-	options []utils.HTTPRequestOption
+	options []utils.RequestOption
 }
 
 // Create 数量有限
@@ -87,33 +84,19 @@ func (q *QRCode) Create(accessToken, path string, options ...QRCodeOption) ([]by
 		}
 	}
 
-	body := utils.X{"path": path}
+	params := utils.X{"path": path}
 
 	if o.width != 0 {
-		body["width"] = o.width
+		params["width"] = o.width
 	}
 
-	bodyStr, err := MarshalWithNoEscapeHTML(body)
+	bodyStr, err := MarshalWithNoEscapeHTML(params)
 
 	if err != nil {
 		return nil, err
 	}
 
-	q.options = append(q.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
-
-	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeCreateURL, accessToken), []byte(bodyStr), q.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
-	}
-
-	return resp, nil
+	return q.mp.post(fmt.Sprintf("%s?access_token=%s", QRCodeCreateURL, accessToken), []byte(bodyStr), q.options...)
 }
 
 // Get 数量有限
@@ -126,45 +109,31 @@ func (q *QRCode) Get(accessToken, path string, options ...QRCodeOption) ([]byte,
 		}
 	}
 
-	body := utils.X{"path": path}
+	params := utils.X{"path": path}
 
 	if o.width != 0 {
-		body["width"] = o.width
+		params["width"] = o.width
 	}
 
 	if o.autoColor {
-		body["auto_color"] = true
+		params["auto_color"] = true
 	}
 
 	if len(o.lineColor) != 0 {
-		body["line_color"] = o.lineColor
+		params["line_color"] = o.lineColor
 	}
 
 	if o.isHyaline {
-		body["is_hyaline"] = true
+		params["is_hyaline"] = true
 	}
 
-	bodyStr, err := MarshalWithNoEscapeHTML(body)
+	bodyStr, err := MarshalWithNoEscapeHTML(params)
 
 	if err != nil {
 		return nil, err
 	}
 
-	q.options = append(q.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
-
-	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeGetURL, accessToken), []byte(bodyStr), q.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
-	}
-
-	return resp, nil
+	return q.mp.post(fmt.Sprintf("%s?access_token=%s", QRCodeGetURL, accessToken), []byte(bodyStr), q.options...)
 }
 
 // GetUnlimit 数量不限
@@ -177,49 +146,35 @@ func (q *QRCode) GetUnlimit(accessToken, scene string, options ...QRCodeOption) 
 		}
 	}
 
-	body := utils.X{"scene": scene}
+	params := utils.X{"scene": scene}
 
 	if o.page != "" {
-		body["page"] = o.page
+		params["page"] = o.page
 	}
 
 	if o.width != 0 {
-		body["width"] = o.width
+		params["width"] = o.width
 	}
 
 	if o.autoColor {
-		body["auto_color"] = true
+		params["auto_color"] = true
 	}
 
 	if len(o.lineColor) != 0 {
-		body["line_color"] = o.lineColor
+		params["line_color"] = o.lineColor
 	}
 
 	if o.isHyaline {
-		body["is_hyaline"] = true
+		params["is_hyaline"] = true
 	}
 
-	bodyStr, err := MarshalWithNoEscapeHTML(body)
+	bodyStr, err := MarshalWithNoEscapeHTML(params)
 
 	if err != nil {
 		return nil, err
 	}
 
-	q.options = append(q.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
-
-	resp, err := q.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", QRCodeGetUnlimitURL, accessToken), []byte(bodyStr), q.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
-	}
-
-	return resp, nil
+	return q.mp.post(fmt.Sprintf("%s?access_token=%s", QRCodeGetUnlimitURL, accessToken), []byte(bodyStr), q.options...)
 }
 
 // MarshalWithNoEscapeHTML marshal with no escape HTML

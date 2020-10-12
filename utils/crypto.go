@@ -11,50 +11,85 @@ import (
 	"errors"
 )
 
-// AESCBCEncrypt aes-cbc encryption with PKCS#7 padding
-func AESCBCEncrypt(plainText, key []byte, iv ...byte) ([]byte, error) {
-	block, err := aes.NewCipher(key)
+// AESPaddingMode aes padding mode
+type AESPaddingMode string
+
+const (
+	// PKCS5 PKCS#5 padding mode
+	PKCS5 AESPaddingMode = "PKCS#5"
+	// PKCS7 PKCS#7 padding mode
+	PKCS7 AESPaddingMode = "PKCS#7"
+)
+
+// AESCBCCrypto aes-cbc crypto
+type AESCBCCrypto struct {
+	key []byte
+	iv  []byte
+}
+
+// NewAESCBCCrypto returns new aes-cbc crypto
+func NewAESCBCCrypto(key, iv []byte) *AESCBCCrypto {
+	return &AESCBCCrypto{
+		key: key,
+		iv:  iv,
+	}
+}
+
+// Encrypt aes-cbc encrypt with PKCS#7 padding
+func (c *AESCBCCrypto) Encrypt(plainText []byte, mode AESPaddingMode) ([]byte, error) {
+	block, err := aes.NewCipher(c.key)
 
 	if err != nil {
 		return nil, err
 	}
 
-	plainText = PKCS7Padding(plainText, len(key))
+	if len(c.iv) != block.BlockSize() {
+		return nil, errors.New("yiigo: IV length must equal block size")
+	}
+
+	switch mode {
+	case PKCS5:
+		plainText = c.padding(plainText, block.BlockSize())
+	case PKCS7:
+		plainText = c.padding(plainText, len(c.key))
+	}
 
 	cipherText := make([]byte, len(plainText))
 
-	if len(iv) == 0 {
-		iv = key[:block.BlockSize()]
-	}
-
-	blockMode := cipher.NewCBCEncrypter(block, iv)
+	blockMode := cipher.NewCBCEncrypter(block, c.iv)
 	blockMode.CryptBlocks(cipherText, plainText)
 
 	return cipherText, nil
 }
 
-// AESCBCDecrypt aes-cbc decryption with PKCS#7 unpadding
-func AESCBCDecrypt(cipherText, key []byte, iv ...byte) ([]byte, error) {
-	block, err := aes.NewCipher(key)
+// Decrypt aes-cbc decrypt with PKCS#7 padding
+func (c *AESCBCCrypto) Decrypt(cipherText []byte, mode AESPaddingMode) ([]byte, error) {
+	block, err := aes.NewCipher(c.key)
 
 	if err != nil {
 		return nil, err
 	}
 
-	plainText := make([]byte, len(cipherText))
-
-	if len(iv) == 0 {
-		iv = key[:block.BlockSize()]
+	if len(c.iv) != block.BlockSize() {
+		return nil, errors.New("yiigo: IV length must equal block size")
 	}
 
-	blockMode := cipher.NewCBCDecrypter(block, iv)
+	plainText := make([]byte, len(cipherText))
+
+	blockMode := cipher.NewCBCDecrypter(block, c.iv)
 	blockMode.CryptBlocks(plainText, cipherText)
 
-	return PKCS7UnPadding(plainText, len(key)), nil
+	switch mode {
+	case PKCS5:
+		plainText = c.unpadding(plainText, block.BlockSize())
+	case PKCS7:
+		plainText = c.unpadding(plainText, len(c.key))
+	}
+
+	return plainText, nil
 }
 
-// PKCS7Padding PKCS#7 padding
-func PKCS7Padding(cipherText []byte, blockSize int) []byte {
+func (c *AESCBCCrypto) padding(cipherText []byte, blockSize int) []byte {
 	padding := blockSize - len(cipherText)%blockSize
 
 	if padding == 0 {
@@ -66,8 +101,7 @@ func PKCS7Padding(cipherText []byte, blockSize int) []byte {
 	return append(cipherText, padText...)
 }
 
-// PKCS7UnPadding PKCS#7 unpadding
-func PKCS7UnPadding(plainText []byte, blockSize int) []byte {
+func (c *AESCBCCrypto) unpadding(plainText []byte, blockSize int) []byte {
 	l := len(plainText)
 	unpadding := int(plainText[l-1])
 
@@ -76,6 +110,62 @@ func PKCS7UnPadding(plainText []byte, blockSize int) []byte {
 	}
 
 	return plainText[:(l - unpadding)]
+}
+
+// AESGCMCrypto aes-gcm crypto
+type AESGCMCrypto struct {
+	key   []byte
+	nonce []byte
+}
+
+// NewAESGCMCrypto returns new aes-gcm crypto
+func NewAESGCMCrypto(key, nonce []byte) *AESGCMCrypto {
+	return &AESGCMCrypto{
+		key:   key,
+		nonce: nonce,
+	}
+}
+
+// Encrypt aes-gcm encrypt
+func (c *AESGCMCrypto) Encrypt(plainText []byte) ([]byte, error) {
+	block, err := aes.NewCipher(c.key)
+
+	if err != nil {
+		return nil, err
+	}
+
+	aesgcm, err := cipher.NewGCM(block)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(c.nonce) != aesgcm.NonceSize() {
+		return nil, errors.New("yiigo: Nonce length must equal gcm standard nonce size")
+	}
+
+	return aesgcm.Seal(nil, c.nonce, plainText, nil), nil
+}
+
+// Decrypt aes-gcm decrypt
+func (c *AESGCMCrypto) Decrypt(cipherText []byte) ([]byte, error) {
+	block, err := aes.NewCipher(c.key)
+
+	if err != nil {
+		return nil, err
+	}
+
+	aesgcm, err := cipher.NewGCM(block)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(c.nonce) != aesgcm.NonceSize() {
+		return nil, errors.New("yiigo: Nonce length must equal gcm standard nonce size")
+	}
+
+	return aesgcm.Open(nil, c.nonce, cipherText, nil)
 }
 
 // RSAEncrypt rsa encryption with public key

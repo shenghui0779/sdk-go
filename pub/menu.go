@@ -2,12 +2,9 @@ package pub
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/shenghui0779/gochat/utils"
-
-	"github.com/tidwall/gjson"
 )
 
 type MenuList struct {
@@ -49,7 +46,7 @@ type MenuMatchRule struct {
 // Menu 公众号菜单
 type Menu struct {
 	pub     *WXPub
-	options []utils.HTTPRequestOption
+	options []utils.RequestOption
 }
 
 // Create 创建自定义菜单
@@ -62,21 +59,9 @@ func (m *Menu) Create(accessToken string, btns ...Button) error {
 		return err
 	}
 
-	m.options = append(m.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	_, err = m.pub.post(fmt.Sprintf("%s?access_token=%s", MenuCreateURL, accessToken), b, m.options...)
 
-	resp, err := m.pub.Client.Post(fmt.Sprintf("%s?access_token=%s", MenuCreateURL, accessToken), b, m.options...)
-
-	if err != nil {
-		return err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return errors.New(r.Get("errmsg").String())
-	}
-
-	return nil
+	return err
 }
 
 // CreateConditional 创建个性化菜单
@@ -92,61 +77,33 @@ func (m *Menu) CreateConditional(accessToken string, matchRule *MenuMatchRule, b
 		return err
 	}
 
-	m.options = append(m.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	_, err = m.pub.post(fmt.Sprintf("%s?access_token=%s", MenuAddConditionalURL, accessToken), b, m.options...)
 
-	resp, err := m.pub.Client.Post(fmt.Sprintf("%s?access_token=%s", MenuAddConditionalURL, accessToken), b, m.options...)
-
-	if err != nil {
-		return err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return errors.New(r.Get("errmsg").String())
-	}
-
-	return nil
+	return err
 }
 
 // GetList 查询自定义菜单
 func (m *Menu) GetList(accessToken string) (*MenuList, error) {
-	resp, err := m.pub.Client.Get(fmt.Sprintf("%s?access_token=%s", MenuListURL, accessToken), m.options...)
+	b, err := m.pub.get(fmt.Sprintf("%s?access_token=%s", MenuListURL, accessToken), m.options...)
 
 	if err != nil {
 		return nil, err
 	}
 
-	r := gjson.ParseBytes(resp)
+	resp := new(MenuList)
 
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
-	}
-
-	reply := new(MenuList)
-
-	if err := json.Unmarshal(resp, reply); err != nil {
+	if err := json.Unmarshal(b, resp); err != nil {
 		return nil, err
 	}
 
-	return reply, nil
+	return resp, nil
 }
 
 // Delete 删除自定义菜单
 func (m *Menu) Delete(accessToken string) error {
-	resp, err := m.pub.Client.Get(fmt.Sprintf("%s?access_token=%s", MenuDeleteURL, accessToken), m.options...)
+	_, err := m.pub.get(fmt.Sprintf("%s?access_token=%s", MenuDeleteURL, accessToken), m.options...)
 
-	if err != nil {
-		return err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return errors.New(r.Get("errmsg").String())
-	}
-
-	return nil
+	return err
 }
 
 // DeleteConditional 删除个性化菜单
@@ -161,21 +118,9 @@ func (m *Menu) DeleteConditional(accessToken, menuID string) error {
 		return err
 	}
 
-	m.options = append(m.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	_, err = m.pub.post(fmt.Sprintf("%s?access_token=%s", MenuDeleteConditionalURL, accessToken), b, m.options...)
 
-	resp, err := m.pub.Client.Post(fmt.Sprintf("%s?access_token=%s", MenuDeleteConditionalURL, accessToken), b, m.options...)
-
-	if err != nil {
-		return err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return errors.New(r.Get("errmsg").String())
-	}
-
-	return nil
+	return err
 }
 
 // Button 菜单按钮

@@ -2,10 +2,7 @@ package pub
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-
-	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/utils"
 )
@@ -25,51 +22,39 @@ type JSAPITicket struct {
 // CgiBin cgi-bin
 type CgiBin struct {
 	pub     *WXPub
-	options []utils.HTTPRequestOption
+	options []utils.RequestOption
 }
 
 // GetAccessToken returns access_token
 func (c *CgiBin) GetAccessToken() (*AccessToken, error) {
-	resp, err := c.pub.Client.Get(fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", CgiBinAccessTokenURL, c.pub.AppID, c.pub.AppSecret), c.options...)
+	b, err := c.pub.get(fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", CgiBinAccessTokenURL, c.pub.appid, c.pub.appsecret), c.options...)
 
 	if err != nil {
 		return nil, err
 	}
 
-	r := gjson.ParseBytes(resp)
+	resp := new(AccessToken)
 
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
-	}
-
-	reply := new(AccessToken)
-
-	if err := json.Unmarshal(resp, reply); err != nil {
+	if err := json.Unmarshal(b, resp); err != nil {
 		return nil, err
 	}
 
-	return reply, nil
+	return resp, nil
 }
 
 // GetTicket returns jsapi ticket
 func (c *CgiBin) GetTicket(accessToken string) (*JSAPITicket, error) {
-	resp, err := c.pub.Client.Get(fmt.Sprintf("%s?access_token=%s&type=jsapi", CgiBinTicketURL, accessToken), c.options...)
+	b, err := c.pub.get(fmt.Sprintf("%s?access_token=%s&type=jsapi", CgiBinTicketURL, accessToken), c.options...)
 
 	if err != nil {
 		return nil, err
 	}
 
-	r := gjson.ParseBytes(resp)
+	resp := new(JSAPITicket)
 
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
-	}
-
-	reply := new(JSAPITicket)
-
-	if err := json.Unmarshal(resp, reply); err != nil {
+	if err := json.Unmarshal(b, resp); err != nil {
 		return nil, err
 	}
 
-	return reply, nil
+	return resp, nil
 }

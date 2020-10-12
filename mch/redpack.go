@@ -1,7 +1,6 @@
 package mch
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/shenghui0779/gochat/utils"
@@ -29,15 +28,15 @@ type RedpackData struct {
 // Redpack 企业红包
 type Redpack struct {
 	mch     *WXMch
-	options []utils.HTTPRequestOption
+	options []utils.RequestOption
 }
 
 // SendNormal 发放普通红包
 func (r *Redpack) SendNormal(data *RedpackData) (utils.WXML, error) {
 	body := utils.WXML{
-		"wxappid":      r.mch.AppID,
-		"mch_id":       r.mch.MchID,
-		"nonce_str":    utils.NonceStr(),
+		"wxappid":      r.mch.appid,
+		"mch_id":       r.mch.mchid,
+		"nonce_str":    utils.Nonce(16),
 		"mch_billno":   data.MchBillNO,
 		"send_name":    data.SendName,
 		"re_openid":    data.ReOpenID,
@@ -57,31 +56,15 @@ func (r *Redpack) SendNormal(data *RedpackData) (utils.WXML, error) {
 		body["risk_info"] = data.RiskInfo
 	}
 
-	body["sign"] = SignWithMD5(body, r.mch.ApiKey)
-
-	resp, err := r.mch.SSLClient.PostXML(RedpackNormalURL, body, r.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := r.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return r.mch.tlsPost(RedpackNormalURL, body, r.options...)
 }
 
 // SendGroup 发放裂变红包
 func (r *Redpack) SendGroup(data *RedpackData) (utils.WXML, error) {
 	body := utils.WXML{
-		"wxappid":      r.mch.AppID,
-		"mch_id":       r.mch.MchID,
-		"nonce_str":    utils.NonceStr(),
+		"wxappid":      r.mch.appid,
+		"mch_id":       r.mch.mchid,
+		"nonce_str":    utils.Nonce(16),
 		"mch_billno":   data.MchBillNO,
 		"send_name":    data.SendName,
 		"re_openid":    data.ReOpenID,
@@ -105,31 +88,15 @@ func (r *Redpack) SendGroup(data *RedpackData) (utils.WXML, error) {
 		body["risk_info"] = data.RiskInfo
 	}
 
-	body["sign"] = SignWithMD5(body, r.mch.ApiKey)
-
-	resp, err := r.mch.SSLClient.PostXML(RedpackGroupURL, body, r.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := r.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return r.mch.tlsPost(RedpackGroupURL, body, r.options...)
 }
 
 // SendMinip 发放小程序红包
 func (r *Redpack) SendMinip(data *RedpackData) (utils.WXML, error) {
 	body := utils.WXML{
-		"wxappid":      r.mch.AppID,
-		"mch_id":       r.mch.MchID,
-		"nonce_str":    utils.NonceStr(),
+		"wxappid":      r.mch.appid,
+		"mch_id":       r.mch.mchid,
+		"nonce_str":    utils.Nonce(16),
 		"mch_billno":   data.MchBillNO,
 		"send_name":    data.SendName,
 		"re_openid":    data.ReOpenID,
@@ -149,50 +116,18 @@ func (r *Redpack) SendMinip(data *RedpackData) (utils.WXML, error) {
 		body["scene_id"] = data.SceneID
 	}
 
-	body["sign"] = SignWithMD5(body, r.mch.ApiKey)
-
-	resp, err := r.mch.SSLClient.PostXML(RedpackMinipURL, body, r.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := r.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return r.mch.tlsPost(RedpackMinipURL, body, r.options...)
 }
 
 // QueryByBillNO 查询红包记录
 func (r *Redpack) QueryByBillNO(billNO string) (utils.WXML, error) {
 	body := utils.WXML{
-		"appid":      r.mch.AppID,
-		"mch_id":     r.mch.MchID,
+		"appid":      r.mch.appid,
+		"mch_id":     r.mch.mchid,
 		"mch_billno": billNO,
 		"bill_type":  "MCHT",
-		"nonce_str":  utils.NonceStr(),
+		"nonce_str":  utils.Nonce(16),
 	}
 
-	body["sign"] = SignWithMD5(body, r.mch.ApiKey)
-
-	resp, err := r.mch.SSLClient.PostXML(RedpackQueryURL, body, r.options...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
-
-	if err := r.mch.VerifyWXReply(resp); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return r.mch.tlsPost(RedpackQueryURL, body, r.options...)
 }

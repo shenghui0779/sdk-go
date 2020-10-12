@@ -2,10 +2,7 @@ package pub
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-
-	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/utils"
 )
@@ -16,7 +13,7 @@ const MaxSubscriberListCount = 10000
 // Subscriber 微信公众号订阅者
 type Subscriber struct {
 	pub     *WXPub
-	options []utils.HTTPRequestOption
+	options []utils.RequestOption
 }
 
 // SubscriberInfo 微信公众号订阅者信息
@@ -50,25 +47,19 @@ type SubscriberList struct {
 
 // GetSubscriberInfo 获取微信公众号订阅者信息
 func (s *Subscriber) Get(accessToken, openid string) (*SubscriberInfo, error) {
-	resp, err := s.pub.Client.Get(fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", SubscriberGetURL, accessToken, openid), s.options...)
+	b, err := s.pub.get(fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", SubscriberGetURL, accessToken, openid), s.options...)
 
 	if err != nil {
 		return nil, err
 	}
 
-	r := gjson.ParseBytes(resp)
+	resp := new(SubscriberInfo)
 
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
-	}
-
-	reply := new(SubscriberInfo)
-
-	if err := json.Unmarshal(resp, reply); err != nil {
+	if err := json.Unmarshal(b, resp); err != nil {
 		return nil, err
 	}
 
-	return reply, nil
+	return resp, nil
 }
 
 // BatchGet 批量获取微信公众号订阅者信息
@@ -88,33 +79,25 @@ func (s *Subscriber) BatchGet(accessToken string, openid ...string) ([]*Subscrib
 		})
 	}
 
-	b, err := json.Marshal(map[string][]map[string]string{"user_list": userList})
+	body, err := json.Marshal(map[string][]map[string]string{"user_list": userList})
 
 	if err != nil {
 		return nil, err
 	}
 
-	s.options = append(s.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
-
-	resp, err := s.pub.Client.Post(fmt.Sprintf("%s?access_token=%s", SubscriberBatchGetURL, accessToken), b, s.options...)
+	b, err := s.pub.post(fmt.Sprintf("%s?access_token=%s", SubscriberBatchGetURL, accessToken), body, s.options...)
 
 	if err != nil {
 		return nil, err
 	}
 
-	r := gjson.ParseBytes(resp)
+	resp := make(map[string][]*SubscriberInfo)
 
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
-	}
-
-	reply := make(map[string][]*SubscriberInfo)
-
-	if err := json.Unmarshal(resp, &reply); err != nil {
+	if err := json.Unmarshal(b, &resp); err != nil {
 		return nil, err
 	}
 
-	return reply["user_info_list"], nil
+	return resp["user_info_list"], nil
 }
 
 // GetList 获取微信公众号订阅者列表
@@ -125,23 +108,17 @@ func (s *Subscriber) GetList(accessToken string, nextOpenID ...string) (*Subscri
 		url = fmt.Sprintf("%s?access_token=%s&next_openid=%s", SubscriberListURL, accessToken, nextOpenID[0])
 	}
 
-	resp, err := s.pub.Client.Get(url, s.options...)
+	b, err := s.pub.get(url, s.options...)
 
 	if err != nil {
 		return nil, err
 	}
 
-	r := gjson.ParseBytes(resp)
+	resp := new(SubscriberList)
 
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
-	}
-
-	reply := new(SubscriberList)
-
-	if err := json.Unmarshal(resp, reply); err != nil {
+	if err := json.Unmarshal(b, resp); err != nil {
 		return nil, err
 	}
 
-	return reply, nil
+	return resp, nil
 }

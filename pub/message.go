@@ -2,11 +2,9 @@ package pub
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/shenghui0779/gochat/utils"
-
 	"github.com/tidwall/gjson"
 )
 
@@ -27,47 +25,39 @@ type TplMsg struct {
 // Message 公众号消息
 type Message struct {
 	pub     *WXPub
-	options []utils.HTTPRequestOption
+	options []utils.RequestOption
 }
 
 // Template 发送模板消息
 func (m *Message) Template(data *TplMsg, accessToken string) (int64, error) {
-	body := utils.X{
+	params := utils.X{
 		"touser":      data.OpenID,
 		"template_id": data.TplID,
 		"data":        data.Data,
 	}
 
 	if data.RedirectURL != "" {
-		body["url"] = data.RedirectURL
+		params["url"] = data.RedirectURL
 	}
 
 	if data.MPAppID != "" {
-		body["miniprogram"] = map[string]string{
+		params["miniprogram"] = map[string]string{
 			"appid":    data.MPAppID,
 			"pagepath": data.MPPagePath,
 		}
 	}
 
-	b, err := json.Marshal(body)
+	body, err := json.Marshal(params)
 
 	if err != nil {
 		return 0, err
 	}
 
-	m.options = append(m.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
-
-	resp, err := m.pub.Client.Post(fmt.Sprintf("%s?access_token=%s", TplMsgSendURL, accessToken), b, m.options...)
+	b, err := m.pub.post(fmt.Sprintf("%s?access_token=%s", TplMsgSendURL, accessToken), body, m.options...)
 
 	if err != nil {
 		return 0, err
 	}
 
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return 0, errors.New(r.Get("errmsg").String())
-	}
-
-	return r.Get("msgid").Int(), nil
+	return gjson.GetBytes(b, "msgid").Int(), nil
 }

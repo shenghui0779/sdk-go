@@ -2,10 +2,7 @@ package mp
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-
-	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/pub"
 	"github.com/shenghui0779/gochat/utils"
@@ -86,12 +83,12 @@ type TypingMsg struct {
 // Message 小程序消息
 type Message struct {
 	mp      *WXMP
-	options []utils.HTTPRequestOption
+	options []utils.RequestOption
 }
 
 // Uniform 发送统一服务消息
 func (m *Message) Uniform(msg *UniformMsg, accessToken string) error {
-	body := utils.X{
+	params := utils.X{
 		"touser": msg.OpenID,
 	}
 
@@ -103,18 +100,18 @@ func (m *Message) Uniform(msg *UniformMsg, accessToken string) error {
 		}
 
 		if msg.MPTplMsg.Page != "" {
-			body["page"] = msg.MPTplMsg.Page
+			params["page"] = msg.MPTplMsg.Page
 		}
 
 		if msg.MPTplMsg.Data != nil {
-			body["data"] = msg.MPTplMsg.Data
+			params["data"] = msg.MPTplMsg.Data
 		}
 
 		if msg.MPTplMsg.EmphasisKeyword != "" {
-			body["emphasis_keyword"] = msg.MPTplMsg.EmphasisKeyword
+			params["emphasis_keyword"] = msg.MPTplMsg.EmphasisKeyword
 		}
 
-		body["weapp_template_msg"] = tplMsg
+		params["weapp_template_msg"] = tplMsg
 	}
 
 	// 公众号模板消息
@@ -137,190 +134,130 @@ func (m *Message) Uniform(msg *UniformMsg, accessToken string) error {
 			}
 		}
 
-		body["mp_template_msg"] = tplMsg
+		params["mp_template_msg"] = tplMsg
 	}
 
-	b, err := json.Marshal(body)
+	body, err := json.Marshal(params)
 
 	if err != nil {
 		return err
 	}
 
-	m.options = append(m.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	_, err = m.mp.post(fmt.Sprintf("%s?access_token=%s", UniformMsgSendURL, accessToken), body, m.options...)
 
-	resp, err := m.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", UniformMsgSendURL, accessToken), b, m.options...)
-
-	if err != nil {
-		return err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return errors.New(r.Get("errmsg").String())
-	}
-
-	return nil
+	return err
 }
 
 // Subscribe 发送订阅消息
 func (m *Message) Subscribe(msg *SubscribeMsg, accessToken string) error {
-	body := utils.X{
+	params := utils.X{
 		"touser":      msg.OpenID,
 		"template_id": msg.TplID,
 		"data":        msg.Data,
 	}
 
 	if msg.PagePath != "" {
-		body["page"] = msg.PagePath
+		params["page"] = msg.PagePath
 	}
 
 	if msg.MPState != "" {
-		body["miniprogram_state"] = msg.MPState
+		params["miniprogram_state"] = msg.MPState
 	}
 
 	if msg.Lang != "" {
-		body["lang"] = msg.Lang
+		params["lang"] = msg.Lang
 	}
 
-	b, err := json.Marshal(body)
+	body, err := json.Marshal(params)
 
 	if err != nil {
 		return err
 	}
 
-	m.options = append(m.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	_, err = m.mp.post(fmt.Sprintf("%s?access_token=%s", SubscribeMsgSendURL, accessToken), body, m.options...)
 
-	resp, err := m.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", SubscribeMsgSendURL, accessToken), b, m.options...)
-
-	if err != nil {
-		return err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return errors.New(r.Get("errmsg").String())
-	}
-
-	return nil
+	return err
 }
 
 // Template 发送模板消息
 func (m *Message) Template(msg *TplMsg, accessToken string) error {
-	body := utils.X{
+	params := utils.X{
 		"touser":      msg.OpenID,
 		"template_id": msg.TplID,
 		"form_id":     msg.FormID,
 	}
 
 	if msg.Page != "" {
-		body["page"] = msg.Page
+		params["page"] = msg.Page
 	}
 
 	if msg.Data != nil {
-		body["data"] = msg.Data
+		params["data"] = msg.Data
 	}
 
 	if msg.EmphasisKeyword != "" {
-		body["emphasis_keyword"] = msg.EmphasisKeyword
+		params["emphasis_keyword"] = msg.EmphasisKeyword
 	}
 
-	b, err := json.Marshal(body)
+	body, err := json.Marshal(params)
 
 	if err != nil {
 		return err
 	}
 
-	m.options = append(m.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	_, err = m.mp.post(fmt.Sprintf("%s?access_token=%s", TplMsgSendURL, accessToken), body, m.options...)
 
-	resp, err := m.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", TplMsgSendURL, accessToken), b, m.options...)
-
-	if err != nil {
-		return err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return errors.New(r.Get("errmsg").String())
-	}
-
-	return nil
+	return err
 }
 
 // CustomerService 发送客服消息
 func (m *Message) CustomerService(msg *CustomerServiceMsg, accessToken string) error {
-	body := utils.X{
+	params := utils.X{
 		"touser":  msg.OpenID,
 		"msgtype": msg.MsgType,
 	}
 
 	if msg.Text != nil {
-		body["text"] = msg.Text
+		params["text"] = msg.Text
 	}
 
 	if msg.Image != nil {
-		body["image"] = msg.Image
+		params["image"] = msg.Image
 	}
 
 	if msg.Link != nil {
-		body["link"] = msg.Link
+		params["link"] = msg.Link
 	}
 
 	if msg.Page != nil {
-		body["miniprogrampage"] = msg.Page
+		params["miniprogrampage"] = msg.Page
 	}
 
-	b, err := json.Marshal(body)
+	body, err := json.Marshal(params)
 
 	if err != nil {
 		return err
 	}
 
-	m.options = append(m.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	_, err = m.mp.post(fmt.Sprintf("%s?access_token=%s", CustomerServiceMsgSendURL, accessToken), body, m.options...)
 
-	resp, err := m.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", CustomerServiceMsgSendURL, accessToken), b, m.options...)
-
-	if err != nil {
-		return err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return errors.New(r.Get("errmsg").String())
-	}
-
-	return nil
+	return err
 }
 
 // SetTyping 下发当前输入状态，仅支持客服消息
 func (m *Message) SetTyping(msg *TypingMsg, accessToken string) error {
-	body := utils.X{
+	params := utils.X{
 		"touser":  msg.OpenID,
 		"command": msg.Command,
 	}
 
-	b, err := json.Marshal(body)
+	body, err := json.Marshal(params)
 
 	if err != nil {
 		return err
 	}
 
-	m.options = append(m.options, utils.WithRequestHeader("Content-Type", "application/json; charset=utf-8"))
+	_, err = m.mp.post(fmt.Sprintf("%s?access_token=%s", SetTypingURL, accessToken), body, m.options...)
 
-	resp, err := m.mp.Client.Post(fmt.Sprintf("%s?access_token=%s", SetTypingURL, accessToken), b, m.options...)
-
-	if err != nil {
-		return err
-	}
-
-	r := gjson.ParseBytes(resp)
-
-	if r.Get("errcode").Int() != 0 {
-		return errors.New(r.Get("errmsg").String())
-	}
-
-	return nil
+	return err
 }

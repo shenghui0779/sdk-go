@@ -1,6 +1,7 @@
 package pub
 
 import (
+	"crypto/aes"
 	"encoding/base64"
 	"encoding/xml"
 	"sort"
@@ -119,7 +120,7 @@ func (r *Reply) Text(content string) (*ReplyMsg, error) {
 	m := &TextReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(r.openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
+			FromUserName: utils.CDATA(r.pub.accountid),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -141,7 +142,7 @@ func (r *Reply) Image(mediaID string) (*ReplyMsg, error) {
 	m := &ImageReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(r.openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
+			FromUserName: utils.CDATA(r.pub.accountid),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -163,7 +164,7 @@ func (r *Reply) Voice(mediaID string) (*ReplyMsg, error) {
 	m := &VoiceReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(r.openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
+			FromUserName: utils.CDATA(r.pub.accountid),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -185,7 +186,7 @@ func (r *Reply) Video(mediaID, title, desc string) (*ReplyMsg, error) {
 	m := &VideoReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(r.openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
+			FromUserName: utils.CDATA(r.pub.accountid),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -209,7 +210,7 @@ func (r *Reply) Music(mediaID, title, desc, url, HQUrl string) (*ReplyMsg, error
 	m := &MusicReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(r.openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
+			FromUserName: utils.CDATA(r.pub.accountid),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -235,7 +236,7 @@ func (r *Reply) Articles(count int, articles ...*Article) (*ReplyMsg, error) {
 	m := &ArticlesReply{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(r.openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
+			FromUserName: utils.CDATA(r.pub.accountid),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("text"),
 		},
@@ -258,7 +259,7 @@ func (r *Reply) Transfer2KF(kfAccount ...string) (*ReplyMsg, error) {
 	m := &Transfer2KF{
 		ReplyHeader: ReplyHeader{
 			ToUserName:   utils.CDATA(r.openid),
-			FromUserName: utils.CDATA(r.pub.AccountID),
+			FromUserName: utils.CDATA(r.pub.accountid),
 			CreateTime:   time.Now().Unix(),
 			MsgType:      utils.CDATA("transfer_customer_service"),
 		},
@@ -288,9 +289,9 @@ func (r *Reply) buildMsg(msgBody []byte) (*ReplyMsg, error) {
 	encrypt := base64.StdEncoding.EncodeToString(cipherText)
 
 	now := time.Now().Unix()
-	nonce := utils.NonceStr()
+	nonce := utils.Nonce(16)
 
-	signItems := []string{r.pub.SignToken, strconv.FormatInt(now, 10), nonce, encrypt}
+	signItems := []string{r.pub.signToken, strconv.FormatInt(now, 10), nonce, encrypt}
 
 	sort.Strings(signItems)
 
@@ -305,7 +306,7 @@ func (r *Reply) buildMsg(msgBody []byte) (*ReplyMsg, error) {
 }
 
 func (r *Reply) encrypt(data []byte) ([]byte, error) {
-	key, err := base64.StdEncoding.DecodeString(r.pub.EncodingAESKey + "=")
+	key, err := base64.StdEncoding.DecodeString(r.pub.encodingAESKey + "=")
 
 	if err != nil {
 		return nil, err
@@ -314,14 +315,15 @@ func (r *Reply) encrypt(data []byte) ([]byte, error) {
 	contentLen := len(data)
 	appidOffset := 20 + contentLen
 
-	plainText := make([]byte, appidOffset+len(r.pub.AppID))
+	plainText := make([]byte, appidOffset+len(r.pub.appid))
 
-	copy(plainText[:16], utils.RandomStr(16))
+	copy(plainText[:16], utils.Nonce(16))
 	copy(plainText[16:20], utils.EncodeUint32ToBytes(uint32(contentLen)))
 	copy(plainText[20:], data)
-	copy(plainText[appidOffset:], r.pub.AppID)
+	copy(plainText[appidOffset:], r.pub.appid)
 
-	cipherText, err := utils.AESCBCEncrypt(plainText, key)
+	cbc := utils.NewAESCBCCrypto(key, key[:aes.BlockSize])
+	cipherText, err := cbc.Encrypt(plainText, utils.PKCS7)
 
 	if err != nil {
 		return nil, err

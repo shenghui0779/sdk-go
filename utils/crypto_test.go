@@ -1,92 +1,63 @@
 package utils
 
 import (
-	"reflect"
+	"crypto/aes"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestAESCBCCrypt(t *testing.T) {
-	type args struct {
-		data []byte
-		key  []byte
-		iv   []byte
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
-	}{
-		{
-			name: "t1",
-			args: args{
-				data: []byte("IIInsomnia"),
-				key:  []byte("1234567890abcdef"),
-			},
-			want:    "IIInsomnia",
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			aesData, err := AESCBCEncrypt(tt.args.data, tt.args.key, tt.args.iv...)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("AESCBCEncrypt() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			got, err := AESCBCDecrypt(aesData, tt.args.key, tt.args.iv...)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("AESCBCDecrypt() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(string(got), tt.want) {
-				t.Errorf("AESCBCDecrypt() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func TestAESCBCCrypto(t *testing.T) {
+	key := []byte("AES256Key-32Characters1234567890")
+	iv := key[:aes.BlockSize]
+	plainText := "Iloveyiigo"
+
+	cbc := NewAESCBCCrypto(key, iv)
+
+	// PKCS5_PADDING
+	e5b, err := cbc.Encrypt([]byte(plainText), PKCS5)
+	assert.Nil(t, err)
+
+	d5b, err := cbc.Decrypt(e5b, PKCS5)
+	assert.Nil(t, err)
+
+	assert.Equal(t, plainText, string(d5b))
+
+	// PKCS7_PADDING
+	e7b, err := cbc.Encrypt([]byte(plainText), PKCS7)
+	assert.Nil(t, err)
+
+	d7b, err := cbc.Decrypt(e7b, PKCS7)
+	assert.Nil(t, err)
+
+	assert.Equal(t, plainText, string(d7b))
 }
 
-func TestRSACrypt(t *testing.T) {
-	type args struct {
-		data []byte
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
-	}{
-		{
-			name: "t1",
-			args: args{
-				data: []byte("IIInsomnia"),
-			},
-			want:    "IIInsomnia",
-			wantErr: false,
-		},
-	}
+func TestAESGCMCrypto(t *testing.T) {
+	key := []byte("AES256Key-32Characters1234567890")
+	nonce := key[:12]
+	plainText := "Iloveyiigo"
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			rsaData, err := RSAEncrypt(tt.args.data, publicKey)
+	gcm := NewAESGCMCrypto(key, nonce)
 
-			if (err != nil) != tt.wantErr {
-				t.Errorf("RSAEncrypt() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+	eb, err := gcm.Encrypt([]byte(plainText))
+	assert.Nil(t, err)
 
-			got, err := RSADecrypt(rsaData, privateKey)
+	db, err := gcm.Decrypt(eb)
+	assert.Nil(t, err)
 
-			if (err != nil) != tt.wantErr {
-				t.Errorf("RSADecrypt() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+	assert.Equal(t, plainText, string(db))
+}
 
-			if !reflect.DeepEqual(string(got), tt.want) {
-				t.Errorf("RSADecrypt() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func TestRSACrypto(t *testing.T) {
+	eb, err := RSAEncrypt([]byte("shenghui0779"), publicKey)
+
+	assert.Nil(t, err)
+
+	db, err := RSADecrypt(eb, privateKey)
+
+	assert.Nil(t, err)
+	assert.Equal(t, "shenghui0779", string(db))
 }
 
 var (
