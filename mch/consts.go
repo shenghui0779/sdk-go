@@ -36,10 +36,22 @@ const (
 )
 
 const (
-	RefundSuccess    = "SUCCESS"     // 退款成功
-	RefundClosed     = "REFUNDCLOSE" // 退款关闭
-	RefundProcessing = "PROCESSING"  // 退款处理中
-	RefundChange     = "CHANGE"      // 退款异常
+	CouponTypeCash   = "CASH"    // 充值代金券
+	CouponTypeNoCash = "NO_CASH" // NO_CASH
+)
+
+const (
+	RefundStatusSuccess    = "SUCCESS"     // 退款成功
+	RefundStatusClosed     = "REFUNDCLOSE" // 退款关闭
+	RefundStatusProcessing = "PROCESSING"  // 退款处理中
+	RefundStatusChange     = "CHANGE"      // 退款异常
+)
+
+const (
+	RefundChannelOriginal      = "ORIGINAL"       // 原路退款
+	RefundChannelBalance       = "BALANCE"        // 退回到余额
+	RefundChannelOtherBalance  = "OTHER_BALANCE"  // 原账户异常退到其他余额账户
+	RefundChannelOtherBankCard = "OTHER_BANKCARD" // 原银行卡异常退到其他银行卡
 )
 
 const (
@@ -53,8 +65,9 @@ const (
 )
 
 const (
-	ContractEntrustUndo = "1" // 未签约
-	ContractEntrustOK   = "0" // 已签约
+	ContractEntrustUndo       = "1" // 未签约
+	ContractEntrustOK         = "0" // 已签约
+	ContractEntrustProcessing = "9" // 签约进行中
 )
 
 const (
@@ -64,11 +77,19 @@ const (
 	ContractDeleteAPI      = "3" // 商户API解约
 	ContractDeletePlatform = "4" // 商户平台解约
 	ContractDeleteLogout   = "5" // 注销
+	ContractDeleteContact  = "7" // 用户联系客服发起的解约
 )
 
 const (
 	TransferNoCheck    = "NO_CHECK"    // 不校验真实姓名
 	TransferForceCheck = "FORCE_CHECK" // 强校验真实姓名
+)
+
+const (
+	TransferStatusProcessing = "PROCESSING" // 处理中
+	TransferStatusSuccess    = "SUCCESS"    // 转账成功
+	TransferStatusFailed     = "FAILED"     // 转账失败
+	TransferStatusBankFail   = "BANK_FAIL"  // 银行退票
 )
 
 const (
@@ -80,6 +101,26 @@ const (
 	RedpackScene6 = "PRODUCT_6" // 保险回馈
 	RedpackScene7 = "PRODUCT_7" // 彩票派奖
 	RedpackScene8 = "PRODUCT_8" // 税务刮奖
+)
+
+const (
+	RedpackStatusSending   = "SENDING"   // 发放中
+	RedpackStatusSent      = "SENT"      // 已发放待领取
+	RedpackStatusFailed    = "FAILED"    // 发放失败
+	RedpackStatusReceived  = "RECEIVED"  // 已领取
+	RedpackStatusRefunding = "RFUND_ING" // 退款中
+	RedpackStatusRefund    = "REFUND"    // 已退款
+)
+
+const (
+	RedpackTypeNormal = "NORMAL" // 普通红包
+	RedpackTypeGroup  = "GROUP"  // 裂变红包
+)
+
+const (
+	RedpackSendTypeApi      = "API"      // 通过API接口发放
+	RedpackSendTypeUpload   = "UPLOAD"   // 通过上传文件方式发放
+	RedpackSendTypeActivity = "ACTIVITY" // 通过活动方式发放
 )
 
 const RSAPublicKeyURL = "https://fraud.mch.weixin.qq.com/risk/getpublickey"
