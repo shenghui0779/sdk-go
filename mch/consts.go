@@ -37,7 +37,7 @@ const (
 
 const (
 	CouponTypeCash   = "CASH"    // 充值代金券
-	CouponTypeNoCash = "NO_CASH" // NO_CASH
+	CouponTypeNoCash = "NO_CASH" // 非充值优惠券
 )
 
 const (
