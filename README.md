@@ -5,6 +5,13 @@
 [![pkg.go.dev](https://img.shields.io/badge/dev-reference-007d9c?logo=go&logoColor=white&style=flat)](https://pkg.go.dev/github.com/shenghui0779/gochat)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
+
+## 为了功能单独使用，现拆分成三个SDK
+
+- [微信支付](https://github.com/shenghui0779/wechat_pay)
+- [微信小程序](https://github.com/shenghui0779/wechat_mp)
+- [微信公众号](https://github.com/shenghui0779/wechat_oa)
+
 这可能是目前最好的 微信 SDK for Go
 
 | 目录 | 对应         | 功能                                               |
