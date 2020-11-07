@@ -7,7 +7,7 @@
 
 
 ## 该项目进入维护阶段，不再新增功能
-## 现将功能模块拆分成一下三个独立的新SDK
+## 按功能模块拆分成一下三个独立的新SDK
 
 - [微信支付](https://github.com/shenghui0779/wechat_pay)
 - [微信小程序](https://github.com/shenghui0779/wechat_mp)
