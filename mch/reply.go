@@ -1,16 +1,22 @@
 package mch
 
-import (
-	"encoding/xml"
+import "encoding/xml"
 
-	"github.com/shenghui0779/gochat/utils"
-)
+// CDATA XML CDATA section which is defined as blocks of text that are not parsed by the parser, but are otherwise recognized as markup.
+type CDATA string
+
+// MarshalXML encodes the receiver as zero or more XML elements.
+func (c CDATA) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	return e.EncodeElement(struct {
+		string `xml:",cdata"`
+	}{string(c)}, start)
+}
 
 // Reply 回复支付结果
 type Reply struct {
-	XMLName    xml.Name    `xml:"xml"`
-	ReturnCode utils.CDATA `xml:"return_code"`
-	ReturnMsg  utils.CDATA `xml:"return_msg"`
+	XMLName    xml.Name `xml:"xml"`
+	ReturnCode CDATA    `xml:"return_code"`
+	ReturnMsg  CDATA    `xml:"return_msg"`
 }
 
 // ReplyOK 回复成功
@@ -25,6 +31,6 @@ func ReplyOK() *Reply {
 func ReplyFail(msg string) *Reply {
 	return &Reply{
 		ReturnCode: ResultFail,
-		ReturnMsg:  utils.CDATA(msg),
+		ReturnMsg:  CDATA(msg),
 	}
 }

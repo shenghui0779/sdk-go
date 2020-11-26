@@ -3,20 +3,20 @@ package gochat
 import (
 	"github.com/shenghui0779/gochat/mch"
 	"github.com/shenghui0779/gochat/mp"
-	"github.com/shenghui0779/gochat/pub"
+	"github.com/shenghui0779/gochat/oa"
 )
 
-// NewWXMch 微信商户
-func NewWXMch(appid, mchid, apikey string) *mch.WXMch {
+// NewMch 微信商户
+func NewMch(appid, mchid, apikey string) *mch.WechatMch {
 	return mch.New(appid, mchid, apikey)
 }
 
-// NewWXPub 微信公众号
-func NewWXPub(accountid, appid, appsecret, signToken, encodingAESKey string) *pub.WXPub {
-	return pub.New(accountid, appid, appsecret, signToken, encodingAESKey)
+// NewPub 微信公众号
+func NewOA(appid, appsecret string) *oa.WechatOA {
+	return oa.New(appid, appsecret)
 }
 
-// NewWXMP 微信小程序
-func NewWXMP(appid, appsecret string) *mp.WXMP {
+// NewMP 微信小程序
+func NewMP(appid, appsecret string) *mp.WechatMP {
 	return mp.New(appid, appsecret)
 }

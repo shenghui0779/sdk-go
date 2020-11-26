@@ -4,19 +4,17 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
-	"time"
-
-	"github.com/shenghui0779/gochat/utils"
 )
 
-// Entrust 微信纯签约
-type Entrust struct {
+// Contract 微信纯签约协议
+type Contract struct {
 	// 必填字段
 	PlanID                 string // 协议模板id，设置路径见开发步骤
 	ContractCode           string // 商户侧的签约协议号，由商户生成
 	RequestSerial          int64  // 商户请求签约时的序列号，要求唯一性，纯数字, 范围不能超过Int64的范围
 	ContractDisplayAccount string // 签约用户的名称，用于页面展示，参数值不支持UTF8非3字节编码的字符，如表情符号，故请勿使用微信昵称
 	SpbillCreateIP         string // 用户客户端的真实IP地址，H5签约必填
+	Timestamp              int64  // 系统当前时间戳，10位
 	NotifyURL              string // 用于接收签约成功消息的回调通知地址，对notify_url参数值需进行encode处理,注意是对参数值进行encode
 	// 选填字段
 	ReturnAPP   bool   // APP签约选填，签约后是否返回app，注：签约参数appid必须为发起签约的app所有，且在微信开放平台注册过
@@ -52,8 +50,8 @@ type ContractOrder struct {
 	OpenID     string // trade_type=JSAPI，此参数必传，用户在商户appid下的唯一标识
 }
 
-// PappayApply 扣款申请
-type PappayApply struct {
+// PappayApplyData 扣款申请数据
+type PappayApplyData struct {
 	// 必填参数
 	OutTradeNO     string // 商户系统内部的订单号，32个字符内、可包含字母，其他说明见商户订单号
 	TotalFee       int    // 订单总金额，单位为分，详见支付金额
@@ -69,291 +67,378 @@ type PappayApply struct {
 	Receipt  bool   // 是否在支付成功消息和支付详情页中出现开票入口，注：需要在微信支付商户平台或微信公众平台开通电子发票功能
 }
 
-type Pappay struct {
-	mch     *WXMch
-	options []utils.RequestOption
-}
-
 // APPEntrust APP纯签约
-func (p *Pappay) APPEntrust(e *Entrust) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":                    p.mch.appid,
-		"mch_id":                   p.mch.mchid,
-		"plan_id":                  e.PlanID,
-		"contract_code":            e.ContractCode,
-		"request_serial":           strconv.FormatInt(e.RequestSerial, 10),
-		"contract_display_account": e.ContractDisplayAccount,
-		"version":                  "1.0",
-		"sign_type":                SignMD5,
-		"timestamp":                strconv.FormatInt(time.Now().Unix(), 10),
-		"notify_url":               e.NotifyURL,
+func APPEntrust(c *Contract) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":                    appid,
+			"mch_id":                   mchid,
+			"plan_id":                  c.PlanID,
+			"contract_code":            c.ContractCode,
+			"request_serial":           strconv.FormatInt(c.RequestSerial, 10),
+			"contract_display_account": c.ContractDisplayAccount,
+			"version":                  "1.0",
+			"sign_type":                SignMD5,
+			"timestamp":                strconv.FormatInt(c.Timestamp, 10),
+			"notify_url":               c.NotifyURL,
+		}
+
+		if c.ReturnAPP {
+			body["return_app"] = "Y"
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	if e.ReturnAPP {
-		body["return_app"] = "Y"
+	return &WechatAPI{
+		wxml: f,
+		url:  PappayAPPEntrustURL,
 	}
-
-	return p.mch.post(PappayAPPEntrustURL, body, p.options...)
 }
 
-// PubEntrust 公众号纯签约
-func (p *Pappay) PubEntrust(e *Entrust) utils.WXML {
-	body := utils.WXML{
-		"appid":                    p.mch.appid,
-		"mch_id":                   p.mch.mchid,
-		"plan_id":                  e.PlanID,
-		"contract_code":            e.ContractCode,
-		"request_serial":           strconv.FormatInt(e.RequestSerial, 10),
-		"contract_display_account": e.ContractDisplayAccount,
-		"version":                  "1.0",
-		"timestamp":                strconv.FormatInt(time.Now().Unix(), 10),
-		"notify_url":               e.NotifyURL,
+// OAEntrust 公众号纯签约
+func OAEntrust(c *Contract) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":                    appid,
+			"mch_id":                   mchid,
+			"plan_id":                  c.PlanID,
+			"contract_code":            c.ContractCode,
+			"request_serial":           strconv.FormatInt(c.RequestSerial, 10),
+			"contract_display_account": c.ContractDisplayAccount,
+			"version":                  "1.0",
+			"timestamp":                strconv.FormatInt(c.Timestamp, 10),
+			"notify_url":               c.NotifyURL,
+		}
+
+		if c.ReturnWeb {
+			body["return_web"] = "1"
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		query := url.Values{}
+
+		for k, v := range body {
+			query.Add(k, v)
+		}
+
+		return WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayOAEntrustURL, query.Encode())}, nil
 	}
 
-	if e.ReturnWeb {
-		body["return_web"] = "1"
-	}
-
-	body["sign"] = SignWithMD5(body, p.mch.apikey)
-
-	query := url.Values{}
-
-	for k, v := range body {
-		query.Add(k, v)
-	}
-
-	return utils.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayPubEntrustURL, query.Encode())}
+	return &WechatAPI{wxml: f}
 }
 
 // MPEntrust 小程序纯签约，返回小程序所需的 extraData 数据
-func (p *Pappay) MPEntrust(e *Entrust) utils.WXML {
-	extraData := utils.WXML{
-		"appid":                    p.mch.appid,
-		"mch_id":                   p.mch.mchid,
-		"plan_id":                  e.PlanID,
-		"contract_code":            e.ContractCode,
-		"request_serial":           strconv.FormatInt(e.RequestSerial, 10),
-		"contract_display_account": e.ContractDisplayAccount,
-		"timestamp":                strconv.FormatInt(time.Now().Unix(), 10),
-		"notify_url":               e.NotifyURL,
+func MPEntrust(c *Contract) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		extraData := WXML{
+			"appid":                    appid,
+			"mch_id":                   mchid,
+			"plan_id":                  c.PlanID,
+			"contract_code":            c.ContractCode,
+			"request_serial":           strconv.FormatInt(c.RequestSerial, 10),
+			"contract_display_account": c.ContractDisplayAccount,
+			"timestamp":                strconv.FormatInt(c.Timestamp, 10),
+			"notify_url":               c.NotifyURL,
+		}
+
+		if c.OuterID != 0 {
+			extraData["outerid"] = strconv.FormatInt(c.OuterID, 10)
+		}
+
+		extraData["sign"] = SignWithMD5(extraData, apikey, true)
+
+		return extraData, nil
 	}
 
-	if e.OuterID != 0 {
-		extraData["outerid"] = strconv.FormatInt(e.OuterID, 10)
-	}
-
-	extraData["sign"] = SignWithMD5(extraData, p.mch.apikey)
-
-	return extraData
+	return &WechatAPI{wxml: f}
 }
 
 // H5Entrust H5纯签约
-func (p *Pappay) H5Entrust(e *Entrust) utils.WXML {
-	body := utils.WXML{
-		"appid":                    p.mch.appid,
-		"mch_id":                   p.mch.mchid,
-		"plan_id":                  e.PlanID,
-		"contract_code":            e.ContractCode,
-		"request_serial":           strconv.FormatInt(e.RequestSerial, 10),
-		"contract_display_account": e.ContractDisplayAccount,
-		"version":                  "1.0",
-		"timestamp":                strconv.FormatInt(time.Now().Unix(), 10),
-		"clientip":                 e.SpbillCreateIP,
-		"notify_url":               e.NotifyURL,
+func H5Entrust(c *Contract) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":                    appid,
+			"mch_id":                   mchid,
+			"plan_id":                  c.PlanID,
+			"contract_code":            c.ContractCode,
+			"request_serial":           strconv.FormatInt(c.RequestSerial, 10),
+			"contract_display_account": c.ContractDisplayAccount,
+			"version":                  "1.0",
+			"timestamp":                strconv.FormatInt(c.Timestamp, 10),
+			"clientip":                 c.SpbillCreateIP,
+			"notify_url":               c.NotifyURL,
+		}
+
+		if c.ReturnAPPID != "" {
+			body["return_appid"] = c.ReturnAPPID
+		}
+
+		body["sign"] = SignWithHMacSHA256(body, apikey, true)
+
+		query := url.Values{}
+
+		for k, v := range body {
+			query.Add(k, v)
+		}
+
+		return WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayH5EntrustURL, query.Encode())}, nil
 	}
 
-	if e.ReturnAPPID != "" {
-		body["return_appid"] = e.ReturnAPPID
-	}
-
-	body["sign"] = SignWithHMacSHA256(body, p.mch.apikey)
-
-	query := url.Values{}
-
-	for k, v := range body {
-		query.Add(k, v)
-	}
-
-	return utils.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayH5EntrustURL, query.Encode())}
+	return &WechatAPI{wxml: f}
 }
 
-// ContractOrder 支付中签约下单
-func (p *Pappay) ContractOrder(order *ContractOrder) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":                    p.mch.appid,
-		"mch_id":                   p.mch.mchid,
-		"contract_appid":           p.mch.appid,
-		"contract_mchid":           p.mch.mchid,
-		"nonce_str":                utils.Nonce(16),
-		"fee_type":                 "CNY",
-		"trade_type":               order.TradeType,
-		"body":                     order.Body,
-		"out_trade_no":             order.OutTradeNO,
-		"total_fee":                strconv.Itoa(order.TotalFee),
-		"spbill_create_ip":         order.SpbillCreateIP,
-		"plan_id":                  order.PlanID,
-		"contract_code":            order.ContractCode,
-		"request_serial":           strconv.FormatInt(order.RequestSerial, 10),
-		"contract_display_account": order.ContractDisplayAccount,
-		"notify_url":               order.PaymentNotifyURL,
-		"contract_notify_url":      order.ContractNotifyURL,
+// EntrustByOrder 支付中签约下单
+func EntrustByOrder(order *ContractOrder) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":                    appid,
+			"mch_id":                   mchid,
+			"contract_appid":           appid,
+			"contract_mchid":           mchid,
+			"nonce_str":                nonce,
+			"fee_type":                 "CNY",
+			"trade_type":               order.TradeType,
+			"body":                     order.Body,
+			"out_trade_no":             order.OutTradeNO,
+			"total_fee":                strconv.Itoa(order.TotalFee),
+			"spbill_create_ip":         order.SpbillCreateIP,
+			"plan_id":                  order.PlanID,
+			"contract_code":            order.ContractCode,
+			"request_serial":           strconv.FormatInt(order.RequestSerial, 10),
+			"contract_display_account": order.ContractDisplayAccount,
+			"notify_url":               order.PaymentNotifyURL,
+			"contract_notify_url":      order.ContractNotifyURL,
+		}
+
+		if order.DeviceInfo != "" {
+			body["device_info"] = order.DeviceInfo
+		}
+
+		if order.Detail != "" {
+			body["detail"] = order.Detail
+		}
+
+		if order.Attach != "" {
+			body["attach"] = order.Attach
+		}
+
+		if order.FeeType != "" {
+			body["fee_type"] = order.FeeType
+		}
+
+		if order.TimeStart != "" {
+			body["time_start"] = order.TimeStart
+		}
+
+		if order.TimeExpire != "" {
+			body["time_expire"] = order.TimeExpire
+		}
+
+		if order.GoodsTag != "" {
+			body["goods_tag"] = order.GoodsTag
+		}
+
+		if order.ProductID != "" {
+			body["product_id"] = order.ProductID
+		}
+
+		if order.LimitPay != "" {
+			body["limit_pay"] = order.LimitPay
+		}
+
+		if order.OpenID != "" {
+			body["openid"] = order.OpenID
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	if order.DeviceInfo != "" {
-		body["device_info"] = order.DeviceInfo
+	return &WechatAPI{
+		wxml: f,
+		url:  PappayContractOrderURL,
 	}
-
-	if order.Detail != "" {
-		body["detail"] = order.Detail
-	}
-
-	if order.Attach != "" {
-		body["attach"] = order.Attach
-	}
-
-	if order.FeeType != "" {
-		body["fee_type"] = order.FeeType
-	}
-
-	if order.TimeStart != "" {
-		body["time_start"] = order.TimeStart
-	}
-
-	if order.TimeExpire != "" {
-		body["time_expire"] = order.TimeExpire
-	}
-
-	if order.GoodsTag != "" {
-		body["goods_tag"] = order.GoodsTag
-	}
-
-	if order.ProductID != "" {
-		body["product_id"] = order.ProductID
-	}
-
-	if order.LimitPay != "" {
-		body["limit_pay"] = order.LimitPay
-	}
-
-	if order.OpenID != "" {
-		body["openid"] = order.OpenID
-	}
-
-	return p.mch.post(PappayContractOrderURL, body, p.options...)
 }
 
 // QueryContractByID 根据微信返回的委托代扣协议id查询签约关系
-func (p *Pappay) QueryContractByID(contractID string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":       p.mch.appid,
-		"mch_id":      p.mch.mchid,
-		"contract_id": contractID,
-		"version":     "1.0",
+func QueryContractByID(contractID string) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":       appid,
+			"mch_id":      mchid,
+			"contract_id": contractID,
+			"version":     "1.0",
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	return p.mch.post(PappayContractQueryURL, body, p.options...)
+	return &WechatAPI{
+		wxml: f,
+		url:  PappayContractQueryURL,
+	}
 }
 
 // QueryContractByCode 根据签约协议号查询签约关系，需要商户平台配置的代扣模版id
-func (p *Pappay) QueryContractByCode(planID, contractCode string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":         p.mch.appid,
-		"mch_id":        p.mch.mchid,
-		"plan_id":       planID,
-		"contract_code": contractCode,
-		"version":       "1.0",
+func QueryContractByCode(planID, contractCode string) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":         appid,
+			"mch_id":        mchid,
+			"plan_id":       planID,
+			"contract_code": contractCode,
+			"version":       "1.0",
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	return p.mch.post(PappayContractQueryURL, body, p.options...)
+	return &WechatAPI{
+		wxml: f,
+		url:  PappayContractQueryURL,
+	}
 }
 
-// PayApply 申请扣款
-func (p *Pappay) PayApply(apply *PappayApply) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":            p.mch.appid,
-		"mch_id":           p.mch.mchid,
-		"nonce_str":        utils.Nonce(16),
-		"fee_type":         "CNY",
-		"trade_type":       TradePAP,
-		"notify_url":       apply.NotifyURL,
-		"body":             apply.Body,
-		"out_trade_no":     apply.OutTradeNO,
-		"total_fee":        strconv.Itoa(apply.TotalFee),
-		"contract_id":      apply.ContractID,
-		"spbill_create_ip": apply.SpbillCreateIP,
+// PappayApply 申请扣款
+func PappayApply(data *PappayApplyData) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":            appid,
+			"mch_id":           mchid,
+			"nonce_str":        nonce,
+			"fee_type":         "CNY",
+			"trade_type":       TradePAP,
+			"notify_url":       data.NotifyURL,
+			"body":             data.Body,
+			"out_trade_no":     data.OutTradeNO,
+			"total_fee":        strconv.Itoa(data.TotalFee),
+			"contract_id":      data.ContractID,
+			"spbill_create_ip": data.SpbillCreateIP,
+		}
+
+		if data.Detail != "" {
+			body["detail"] = data.Detail
+		}
+
+		if data.Attach != "" {
+			body["attach"] = data.Attach
+		}
+
+		if data.FeeType != "" {
+			body["fee_type"] = data.FeeType
+		}
+
+		if data.GoodsTag != "" {
+			body["goods_tag"] = data.GoodsTag
+		}
+
+		if data.Receipt {
+			body["receipt"] = "Y"
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	if apply.Detail != "" {
-		body["detail"] = apply.Detail
+	return &WechatAPI{
+		wxml: f,
+		url:  PappayApplyURL,
 	}
-
-	if apply.Attach != "" {
-		body["attach"] = apply.Attach
-	}
-
-	if apply.FeeType != "" {
-		body["fee_type"] = apply.FeeType
-	}
-
-	if apply.GoodsTag != "" {
-		body["goods_tag"] = apply.GoodsTag
-	}
-
-	if apply.Receipt {
-		body["receipt"] = "Y"
-	}
-
-	return p.mch.post(PappayPayApplyURL, body, p.options...)
 }
 
 // DeleteContractByID 根据微信返回的委托代扣协议id解约
-func (p *Pappay) DeleteContractByID(contractID, remark string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":                       p.mch.appid,
-		"mch_id":                      p.mch.mchid,
-		"contract_id":                 contractID,
-		"version":                     "1.0",
-		"contract_termination_remark": remark,
+func DeleteContractByID(contractID, remark string) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":                       appid,
+			"mch_id":                      mchid,
+			"contract_id":                 contractID,
+			"version":                     "1.0",
+			"contract_termination_remark": remark,
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	return p.mch.post(PappayContractDeleteURL, body, p.options...)
+	return &WechatAPI{
+		wxml: f,
+		url:  PappayContractDeleteURL,
+	}
 }
 
 // DeleteContractByCode 根据签约协议号解约，需要商户平台配置的代扣模版id
-func (p *Pappay) DeleteContractByCode(planID, contractCode, remark string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":                       p.mch.appid,
-		"mch_id":                      p.mch.mchid,
-		"plan_id":                     planID,
-		"contract_code":               contractCode,
-		"version":                     "1.0",
-		"contract_termination_remark": remark,
+func DeleteContractByCode(planID, contractCode, remark string) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":                       appid,
+			"mch_id":                      mchid,
+			"plan_id":                     planID,
+			"contract_code":               contractCode,
+			"version":                     "1.0",
+			"contract_termination_remark": remark,
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	return p.mch.post(PappayContractDeleteURL, body, p.options...)
+	return &WechatAPI{
+		wxml: f,
+		url:  PappayContractDeleteURL,
+	}
 }
 
-// QueryOrderByTransactionID 根据微信订单号查询
-func (p *Pappay) QueryOrderByTransactionID(transactionID string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":          p.mch.appid,
-		"mch_id":         p.mch.mchid,
-		"transaction_id": transactionID,
-		"nonce_str":      utils.Nonce(16),
+// QueryPappayByTransactionID 根据微信订单号查询扣款信息
+func QueryPappayByTransactionID(transactionID string) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":          appid,
+			"mch_id":         mchid,
+			"transaction_id": transactionID,
+			"nonce_str":      nonce,
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	return p.mch.post(PappayOrderQueryURL, body, p.options...)
+	return &WechatAPI{
+		wxml: f,
+		url:  PappayOrderQueryURL,
+	}
 }
 
-// QueryOrderByOutTradeNO 根据商户订单号查询
-func (p *Pappay) QueryOrderByOutTradeNO(outTradeNO string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":        p.mch.appid,
-		"mch_id":       p.mch.mchid,
-		"out_trade_no": outTradeNO,
-		"nonce_str":    utils.Nonce(16),
-		"sign_type":    "MD5",
+// QueryPappayByOutTradeNO 根据商户订单号查询扣款信息
+func QueryPappayByOutTradeNO(outTradeNO string) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":        appid,
+			"mch_id":       mchid,
+			"out_trade_no": outTradeNO,
+			"nonce_str":    nonce,
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	return p.mch.post(PappayOrderQueryURL, body, p.options...)
+	return &WechatAPI{
+		wxml: f,
+		url:  PappayOrderQueryURL,
+	}
 }

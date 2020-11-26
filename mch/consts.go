@@ -20,6 +20,7 @@ const (
 	ResultSuccess = "SUCCESS"
 	ResultFail    = "FAIL"
 	ResultNull    = "RESULT NULL" // 查询结果为空
+	NotFound      = "NOT_FOUND"   // 数据不存在
 	SystemError   = "SYSTEMERROR" // 系统繁忙，请稍后再试
 )
 
@@ -141,12 +142,12 @@ const (
 // URL - pappay
 const (
 	PappayAPPEntrustURL     = "https://api.mch.weixin.qq.com/papay/preentrustweb"  // APP纯签约
-	PappayPubEntrustURL     = "https://api.mch.weixin.qq.com/papay/entrustweb"     // 公众号纯签约
+	PappayOAEntrustURL      = "https://api.mch.weixin.qq.com/papay/entrustweb"     // 公众号纯签约
 	PappayH5EntrustURL      = "https://api.mch.weixin.qq.com/papay/h5entrustweb"   // H5纯签约
 	PappayContractOrderURL  = "https://api.mch.weixin.qq.com/pay/contractorder"    // 支付中签约
 	PappayContractQueryURL  = "https://api.mch.weixin.qq.com/papay/querycontract"  // 签约查询
 	PappayContractDeleteURL = "https://api.mch.weixin.qq.com/papay/deletecontract" // 申请解约
-	PappayPayApplyURL       = "https://api.mch.weixin.qq.com/pay/pappayapply"      // 申请扣款
+	PappayApplyURL          = "https://api.mch.weixin.qq.com/pay/pappayapply"      // 申请扣款
 	PappayOrderQueryURL     = "https://api.mch.weixin.qq.com/pay/paporderquery"    // 扣款查询
 )
 

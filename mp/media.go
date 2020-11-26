@@ -1,37 +1,58 @@
 package mp
 
 import (
+	"encoding/json"
 	"fmt"
-	"net/url"
+	"io/ioutil"
 
-	"github.com/shenghui0779/gochat/utils"
-	"github.com/tidwall/gjson"
+	"github.com/shenghui0779/gochat/helpers"
 )
 
-// UploadData 媒体上传数据
-type UploadData struct {
-	MediaType string     // 文件类型，合法值：image
-	FormData  url.Values // form-data 中媒体文件标识，有filename、filelength、content-type等信息
+// MediaType 素材类型
+type MediaType string
+
+// MediaImage 图片素材
+var MediaImage MediaType = "image"
+
+// MediaUploadInfo 临时素材上传信息
+type MediaUploadInfo struct {
+	Type      string `json:"type"`
+	MediaID   string `json:"media_id"`
+	CreatedAt int64  `json:"created_at"`
 }
 
-// Media 媒体
-type Media struct {
-	mp      *WXMP
-	options []utils.RequestOption
-}
-
-// Upload 上传媒体
-func (m *Media) Upload(data *UploadData, accessToken string) (string, error) {
-	b, err := m.mp.upload(fmt.Sprintf("%s?access_token=%s&type=%s", MediaUploadURL, accessToken, data.MediaType), []byte(data.FormData.Encode()), m.options...)
-
-	if err != nil {
-		return "", err
+// UploadMedia 上传临时素材到微信服务器
+func UploadMedia(mediaType MediaType, filename string, receiver *MediaUploadInfo) Action {
+	return &WechatAPI{
+		body: helpers.NewUploadBody("media", filename, func() ([]byte, error) {
+			return ioutil.ReadFile(filename)
+		}),
+		url: func(accessToken string) string {
+			return fmt.Sprintf("UPLOAD|%s?access_token=%s&type=%s", MediaUploadURL, accessToken, mediaType)
+		},
+		decode: func(resp []byte) error {
+			return json.Unmarshal(resp, receiver)
+		},
 	}
-
-	return gjson.GetBytes(b, "media_id").String(), nil
 }
 
-// Get 获取媒体
-func (m *Media) Get(mediaID, accessToken string) ([]byte, error) {
-	return m.mp.get(fmt.Sprintf("%s?access_token=%s&media_id=%s", MediaGetURL, accessToken, mediaID), m.options...)
+// Media 临时素材
+type Media struct {
+	Buffer []byte
+}
+
+// GetMedia 获取客服消息内的临时素材
+func GetMedia(mediaID string, receiver *Media) Action {
+	return &WechatAPI{
+		url: func(accessToken string) string {
+			return fmt.Sprintf("GET|%s?access_token=%s&media_id=%s", MediaGetURL, accessToken, mediaID)
+		},
+		decode: func(resp []byte) error {
+			receiver.Buffer = make([]byte, len(resp))
+
+			copy(receiver.Buffer, resp)
+
+			return nil
+		},
+	}
 }

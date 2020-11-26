@@ -1,4 +1,4 @@
-package utils
+package helpers
 
 import (
 	"crypto/aes"
@@ -10,7 +10,7 @@ import (
 func TestAESCBCCrypto(t *testing.T) {
 	key := []byte("AES256Key-32Characters1234567890")
 	iv := key[:aes.BlockSize]
-	plainText := "Iloveyiigo"
+	plainText := "IloveWechatMP"
 
 	cbc := NewAESCBCCrypto(key, iv)
 
@@ -33,31 +33,15 @@ func TestAESCBCCrypto(t *testing.T) {
 	assert.Equal(t, plainText, string(d7b))
 }
 
-func TestAESGCMCrypto(t *testing.T) {
-	key := []byte("AES256Key-32Characters1234567890")
-	nonce := key[:12]
-	plainText := "Iloveyiigo"
-
-	gcm := NewAESGCMCrypto(key, nonce)
-
-	eb, err := gcm.Encrypt([]byte(plainText))
-	assert.Nil(t, err)
-
-	db, err := gcm.Decrypt(eb)
-	assert.Nil(t, err)
-
-	assert.Equal(t, plainText, string(db))
-}
-
 func TestRSACrypto(t *testing.T) {
-	eb, err := RSAEncrypt([]byte("shenghui0779"), publicKey)
+	eb, err := RSAEncrypt([]byte("ILoveWechatPay"), publicKey)
 
 	assert.Nil(t, err)
 
 	db, err := RSADecrypt(eb, privateKey)
 
 	assert.Nil(t, err)
-	assert.Equal(t, "shenghui0779", string(db))
+	assert.Equal(t, "ILoveWechatPay", string(db))
 }
 
 var (

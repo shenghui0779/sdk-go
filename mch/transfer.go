@@ -3,8 +3,6 @@ package mch
 import (
 	"encoding/base64"
 	"strconv"
-
-	"github.com/shenghui0779/gochat/utils"
 )
 
 // TransferBalanceData 付款到零钱数据
@@ -24,7 +22,7 @@ type TransferBalanceData struct {
 // TransferBankCardData 付款到银行卡数据
 type TransferBankCardData struct {
 	// 必填参数
-	PartnerTradeNO string // 商户订单号，需保持唯一（只允许数字[0~9]或字母[A~Z]和[a~z]，最短8位，最长32位）
+	PartnerTradeNO string // 商户订单号，需保持唯一（只允许数字[0~9]或字母[action~Z]和[a~z]，最短8位，最长32位）
 	EncBankNO      string // 收款方银行卡号（采用标准RSA算法，公钥由微信侧提供）
 	EncTrueName    string // 收款方用户名（采用标准RSA算法，公钥由微信侧提供）
 	BankCode       string // 银行卡所在开户行编号，参考：https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay.php?chapter=24_4
@@ -33,92 +31,147 @@ type TransferBankCardData struct {
 	Desc string // 企业付款到银行卡付款说明，即订单备注（UTF8编码，允许100个字符以内）
 }
 
-// Transfer 企业付款
-type Transfer struct {
-	mch     *WXMch
-	options []utils.RequestOption
+// TransferToBalance 付款到零钱【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
+func TransferToBalance(data *TransferBalanceData) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"mch_appid":        appid,
+			"mchid":            mchid,
+			"nonce_str":        nonce,
+			"partner_trade_no": data.PartnerTradeNO,
+			"openid":           data.OpenID,
+			"check_name":       data.CheckName,
+			"amount":           strconv.Itoa(data.Amount),
+			"desc":             data.Desc,
+		}
+
+		if data.ReUserName != "" {
+			body["re_user_name"] = data.ReUserName
+		}
+
+		if data.DeviceInfo != "" {
+			body["device_info"] = data.DeviceInfo
+		}
+
+		if data.SpbillCreateIP != "" {
+			body["spbill_create_ip"] = data.SpbillCreateIP
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
+	}
+
+	return &WechatAPI{
+		wxml: f,
+		url:  TransferToBalanceURL,
+		tls:  true,
+	}
 }
 
-// ToBalance 付款到零钱
-func (t *Transfer) ToBalance(data *TransferBalanceData) (utils.WXML, error) {
-	body := utils.WXML{
-		"mch_appid":        t.mch.appid,
-		"mchid":            t.mch.mchid,
-		"nonce_str":        utils.Nonce(16),
-		"partner_trade_no": data.PartnerTradeNO,
-		"openid":           data.OpenID,
-		"check_name":       data.CheckName,
-		"amount":           strconv.Itoa(data.Amount),
-		"desc":             data.Desc,
+// QueryTransferBalanceOrder 查询付款到零钱订单
+func QueryTransferBalanceOrder(partnerTradeNO string) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"appid":            appid,
+			"mch_id":           mchid,
+			"partner_trade_no": partnerTradeNO,
+			"nonce_str":        nonce,
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	if data.ReUserName != "" {
-		body["re_user_name"] = data.ReUserName
+	return &WechatAPI{
+		wxml: f,
+		url:  TransferBalanceOrderQueryURL,
 	}
-
-	if data.DeviceInfo != "" {
-		body["device_info"] = data.DeviceInfo
-	}
-
-	if data.SpbillCreateIP != "" {
-		body["spbill_create_ip"] = data.SpbillCreateIP
-	}
-
-	return t.mch.tlsPost(TransferToBalanceURL, body, t.options...)
 }
 
-// QueryBalanceOrder 查询付款到零钱订单
-func (t *Transfer) QueryBalanceOrder(partnerTradeNO string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":            t.mch.appid,
-		"mch_id":           t.mch.mchid,
-		"partner_trade_no": partnerTradeNO,
-		"nonce_str":        utils.Nonce(16),
+// TransferToBankCard 付款到银行卡【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
+func TransferToBankCard(data *TransferBankCardData, publicKey []byte) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"mch_id":           mchid,
+			"nonce_str":        nonce,
+			"partner_trade_no": data.PartnerTradeNO,
+			"bank_code":        data.BankCode,
+			"amount":           strconv.Itoa(data.Amount),
+		}
+
+		// 收款方银行卡号加密
+		b, err := RSAEncrypt([]byte(data.EncBankNO), publicKey)
+
+		if err != nil {
+			return nil, err
+		}
+
+		body["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
+
+		// 收款方用户名加密
+		b, err = RSAEncrypt([]byte(data.EncTrueName), publicKey)
+
+		if err != nil {
+			return nil, err
+		}
+
+		body["enc_true_name"] = base64.StdEncoding.EncodeToString(b)
+
+		if data.Desc != "" {
+			body["desc"] = data.Desc
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	return t.mch.post(TransferBalanceOrderQueryURL, body, t.options...)
+	return &WechatAPI{
+		wxml: f,
+		url:  TransferToBankCardURL,
+		tls:  true,
+	}
 }
 
-// ToBankCard 付款到银行卡
-func (t *Transfer) ToBankCard(data *TransferBankCardData, pubKey []byte) (utils.WXML, error) {
-	body := utils.WXML{
-		"mch_id":           t.mch.mchid,
-		"nonce_str":        utils.Nonce(16),
-		"partner_trade_no": data.PartnerTradeNO,
-		"bank_code":        data.BankCode,
-		"amount":           strconv.Itoa(data.Amount),
+// QueryTransferBankCardOrder 查询付款到银行卡订单
+func QueryTransferBankCardOrder(partnerTradeNO string) Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"mch_id":           mchid,
+			"partner_trade_no": partnerTradeNO,
+			"nonce_str":        nonce,
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	b, err := utils.RSAEncrypt([]byte(data.EncBankNO), pubKey)
-
-	if err != nil {
-		return nil, err
+	return &WechatAPI{
+		wxml: f,
+		url:  TransferBankCardOrderQueryURL,
 	}
-
-	body["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
-
-	b, err = utils.RSAEncrypt([]byte(data.EncTrueName), pubKey)
-
-	if err != nil {
-		return nil, err
-	}
-
-	body["enc_true_name"] = base64.StdEncoding.EncodeToString(b)
-
-	if data.Desc != "" {
-		body["desc"] = data.Desc
-	}
-
-	return t.mch.tlsPost(TransferToBankCardURL, body, t.options...)
 }
 
-// QueryBankCardOrder 查询付款到银行卡订单
-func (t *Transfer) QueryBankCardOrder(partnerTradeNO string) (utils.WXML, error) {
-	body := utils.WXML{
-		"mch_id":           t.mch.mchid,
-		"partner_trade_no": partnerTradeNO,
-		"nonce_str":        utils.Nonce(16),
+// RSAPublicKey 获取RSA加密公钥
+func RSAPublicKey() Action {
+	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
+		body := WXML{
+			"mch_id":    mchid,
+			"nonce_str": nonce,
+			"sign_type": SignMD5,
+		}
+
+		body["sign"] = SignWithMD5(body, apikey, true)
+
+		return body, nil
 	}
 
-	return t.mch.post(TransferBankCardOrderQueryURL, body, t.options...)
+	return &WechatAPI{
+		wxml: f,
+		url:  RSAPublicKeyURL,
+		tls:  true,
+	}
 }

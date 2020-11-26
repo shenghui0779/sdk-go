@@ -1,4 +1,4 @@
-package utils
+package helpers
 
 import (
 	"bytes"
@@ -110,62 +110,6 @@ func (c *AESCBCCrypto) unpadding(plainText []byte, blockSize int) []byte {
 	}
 
 	return plainText[:(l - unpadding)]
-}
-
-// AESGCMCrypto aes-gcm crypto
-type AESGCMCrypto struct {
-	key   []byte
-	nonce []byte
-}
-
-// NewAESGCMCrypto returns new aes-gcm crypto
-func NewAESGCMCrypto(key, nonce []byte) *AESGCMCrypto {
-	return &AESGCMCrypto{
-		key:   key,
-		nonce: nonce,
-	}
-}
-
-// Encrypt aes-gcm encrypt
-func (c *AESGCMCrypto) Encrypt(plainText []byte) ([]byte, error) {
-	block, err := aes.NewCipher(c.key)
-
-	if err != nil {
-		return nil, err
-	}
-
-	aesgcm, err := cipher.NewGCM(block)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if len(c.nonce) != aesgcm.NonceSize() {
-		return nil, errors.New("yiigo: Nonce length must equal gcm standard nonce size")
-	}
-
-	return aesgcm.Seal(nil, c.nonce, plainText, nil), nil
-}
-
-// Decrypt aes-gcm decrypt
-func (c *AESGCMCrypto) Decrypt(cipherText []byte) ([]byte, error) {
-	block, err := aes.NewCipher(c.key)
-
-	if err != nil {
-		return nil, err
-	}
-
-	aesgcm, err := cipher.NewGCM(block)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if len(c.nonce) != aesgcm.NonceSize() {
-		return nil, errors.New("yiigo: Nonce length must equal gcm standard nonce size")
-	}
-
-	return aesgcm.Open(nil, c.nonce, cipherText, nil)
 }
 
 // RSAEncrypt rsa encryption with public key
