@@ -17,7 +17,7 @@ func TestCheckAuthToken(t *testing.T) {
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/auth?access_token=ACCESS_TOKEN&openid=OPENID").Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CheckAuthToken("OPENID"))
@@ -43,7 +43,7 @@ func TestGetAuthUser(t *testing.T) {
 		"unionid": "o6_bmasdasdsad6_2sgVt7hMZOPfL"
 	}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	dest := new(AuthUser)

@@ -15,7 +15,7 @@ func TestCode2AuthToken(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxa06e66cf23dc4370&secret=1208c7f9e08b4edd26fd86406a5b30aa&code=CODE&grant_type=authorization_code").Return([]byte(`{
+	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=APPSECRET&code=CODE&grant_type=authorization_code").Return([]byte(`{
 		"access_token": "ACCESS_TOKEN",
 		"expires_in": 7200,
 		"refresh_token": "REFRESH_TOKEN",
@@ -23,7 +23,7 @@ func TestCode2AuthToken(t *testing.T) {
 		"scope": "SCOPE"
 	}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	authToken, err := oa.Code2AuthToken(context.TODO(), "CODE")
@@ -44,7 +44,7 @@ func TestRefreshAuthToken(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=wxa06e66cf23dc4370&grant_type=refresh_token&refresh_token=REFRESH_TOKEN").Return([]byte(`{
+	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=APPID&grant_type=refresh_token&refresh_token=REFRESH_TOKEN").Return([]byte(`{
 		"access_token": "ACCESS_TOKEN",
 		"expires_in": 7200,
 		"refresh_token": "REFRESH_TOKEN",
@@ -52,7 +52,7 @@ func TestRefreshAuthToken(t *testing.T) {
 		"scope": "SCOPE"
 	}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	authToken, err := oa.RefreshAuthToken(context.TODO(), "REFRESH_TOKEN")
@@ -73,12 +73,12 @@ func TestAccessToken(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxa06e66cf23dc4370&secret=1208c7f9e08b4edd26fd86406a5b30aa").Return([]byte(`{
+	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET").Return([]byte(`{
 		"access_token": "39_VzXkFDAJsEVTWbXUZDU3NqHtP6mzcAA7RJvcy1o9e-7fdJ-UuxPYLdBFMiGhpdoeKqVWMGqBe8ldUrMasRv1z_T8RmHKDiybC29wZ_vexHlyQ5YDGb33rff1mBNpOLM9f5nv7oag8UYBSc79ASMcAAADVP",
 		"expires_in": 7200
 	}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	accessToken, err := oa.AccessToken(context.TODO())

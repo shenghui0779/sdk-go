@@ -26,7 +26,7 @@ func TestGetTemplateList(t *testing.T) {
 		}]
    	}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	dest := make([]TemplateInfo, 0)
@@ -54,7 +54,7 @@ func TestDeleteTemplate(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteTemplate("Dyvp3-Ff0cnail_CDSzk1fIc6-9lOkxsQE7exTJbwUE"))
@@ -70,7 +70,7 @@ func TestSendTemplateMessage(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	message := &TemplateMessage{
@@ -104,7 +104,7 @@ func TestSendSubscribeMessage(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	message := &TemplateMessage{

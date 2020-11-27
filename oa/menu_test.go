@@ -17,7 +17,7 @@ func TestCreateMenu(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	action := CreateMenu(
@@ -38,7 +38,7 @@ func TestCreateConditionalMenu(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	matchRule := &MenuMatchRule{
@@ -125,7 +125,7 @@ func TestGetMenu(t *testing.T) {
 		]
 	}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	dest := new(MenuInfo)
@@ -227,7 +227,7 @@ func TestDeleteMenu(t *testing.T) {
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=ACCESS_TOKEN").Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteMenu())
@@ -243,7 +243,7 @@ func TestDeleteConditionalMenu(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/delconditional?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteConditionalMenu("208379533"))

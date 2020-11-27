@@ -35,7 +35,7 @@ func TestGetSubscriberInfo(t *testing.T) {
 		"qr_scene_str": ""
 	}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	dest := new(SubscriberInfo)
@@ -98,7 +98,7 @@ func TestBatchGetSubscriberInfo(t *testing.T) {
 		]
 	 }`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	dest := make([]SubscriberInfo, 0)
@@ -148,7 +148,7 @@ func TestGetSubscriberList(t *testing.T) {
 		"next_openid": "NEXT_OPENID"
 	}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	dest := new(SubscriberList)
@@ -185,7 +185,7 @@ func TestGetBlackList(t *testing.T) {
 		"next_openid": "OPENID10000"
 	}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	dest := new(SubscriberList)
@@ -211,7 +211,7 @@ func TestBatchBlackList(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/batchblacklist?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchBlackList("OPENID1", "OPENID2"))
@@ -227,7 +227,7 @@ func TestBatchUnBlackList(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/batchunblacklist?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchUnBlackList("OPENID1", "OPENID2"))
@@ -243,7 +243,7 @@ func TestSetUserRemark(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("wxa06e66cf23dc4370", "1208c7f9e08b4edd26fd86406a5b30aa")
+	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetUserRemark("oDF3iY9ffA-hqb2vVvbr7qxf6A0Q", "pangzi"))
