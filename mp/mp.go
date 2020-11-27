@@ -17,14 +17,14 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// Action is a interface that defines wechat mp action
+// Action wechat mp action
 type Action interface {
 	Body() helpers.HTTPBody
 	URL() func(accessToken string) string
 	Decode() func(resp []byte) error
 }
 
-// WechatAPI is a Action implementation for wechat mp api
+// WechatAPI 微信小程序API
 type WechatAPI struct {
 	body   helpers.HTTPBody
 	url    func(accessToken string) string
