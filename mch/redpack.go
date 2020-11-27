@@ -57,6 +57,7 @@ func SendNormalRedpack(data *RedpackData) Action {
 	return &WechatAPI{
 		wxml: f,
 		url:  RedpackNormalURL,
+		tls:  true,
 	}
 }
 
@@ -94,6 +95,7 @@ func SendGroupRedpack(data *RedpackData) Action {
 	return &WechatAPI{
 		wxml: f,
 		url:  RedpackGroupURL,
+		tls:  true,
 	}
 }
 
@@ -127,6 +129,7 @@ func SendMinipRedpack(data *RedpackData) Action {
 	return &WechatAPI{
 		wxml: f,
 		url:  RedpackMinipURL,
+		tls:  true,
 	}
 }
 
@@ -149,5 +152,6 @@ func QueryRedpackByBillNO(billNO string) Action {
 	return &WechatAPI{
 		wxml: f,
 		url:  RedpackQueryURL,
+		tls:  true,
 	}
 }

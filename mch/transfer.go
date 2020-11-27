@@ -89,6 +89,7 @@ func QueryTransferBalanceOrder(partnerTradeNO string) Action {
 	return &WechatAPI{
 		wxml: f,
 		url:  TransferBalanceOrderQueryURL,
+		tls:  true,
 	}
 }
 
@@ -154,6 +155,7 @@ func QueryTransferBankCardOrder(partnerTradeNO string) Action {
 	return &WechatAPI{
 		wxml: f,
 		url:  TransferBankCardOrderQueryURL,
+		tls:  true,
 	}
 }
 

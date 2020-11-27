@@ -15,7 +15,7 @@ func TestRefundByTransactionID(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RefundApplyURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/secapi/pay/refund", helpers.WXML{
 		"appid":          "wx2421b1c4370ec43b",
 		"mch_id":         "10000100",
 		"out_refund_no":  "1415701182",
@@ -45,7 +45,7 @@ func TestRefundByTransactionID(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
 	}
-	mch.client = client
+
 	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), RefundByTransactionID("4008450740201411110005820873", &RefundData{
@@ -77,7 +77,7 @@ func TestRefundByOutTradeNO(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RefundApplyURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/secapi/pay/refund", helpers.WXML{
 		"appid":         "wx2421b1c4370ec43b",
 		"mch_id":        "10000100",
 		"out_refund_no": "1415701182",
@@ -107,7 +107,7 @@ func TestRefundByOutTradeNO(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
 	}
-	mch.client = client
+
 	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), RefundByOutTradeNO("1415757673", &RefundData{
@@ -139,7 +139,7 @@ func TestQueryRefundByRefundID(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RefundQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/refundquery", helpers.WXML{
 		"appid":     "wx2421b1c4370ec43b",
 		"mch_id":    "10000100",
 		"refund_id": "2008450740201411110000174436",
@@ -168,8 +168,8 @@ func TestQueryRefundByRefundID(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
+
 	mch.client = client
-	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), QueryRefundByRefundID("2008450740201411110000174436"))
 
@@ -198,7 +198,7 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RefundQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/refundquery", helpers.WXML{
 		"appid":         "wx2421b1c4370ec43b",
 		"mch_id":        "10000100",
 		"out_refund_no": "1415701182",
@@ -227,8 +227,8 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
+
 	mch.client = client
-	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), QueryRefundByOutRefundNO("1415701182"))
 
@@ -257,7 +257,7 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RefundQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/refundquery", helpers.WXML{
 		"appid":          "wx2421b1c4370ec43b",
 		"mch_id":         "10000100",
 		"transaction_id": "1008450740201411110005820873",
@@ -286,8 +286,8 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
+
 	mch.client = client
-	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), QueryRefundByTransactionID("1008450740201411110005820873"))
 
@@ -316,7 +316,7 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RefundQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/refundquery", helpers.WXML{
 		"appid":        "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"out_trade_no": "1415757673",
@@ -345,8 +345,8 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
+
 	mch.client = client
-	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), QueryRefundByOutTradeNO("1415757673"))
 

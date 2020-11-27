@@ -15,7 +15,7 @@ func TestUnifyOrder(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), OrderUnifyURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/unifiedorder", helpers.WXML{
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
 		"nonce_str":        "1add1a30ac87aa2db72f57a2375d8fec",
@@ -79,7 +79,7 @@ func TestQueryOrderByTransactionID(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), OrderQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/orderquery", helpers.WXML{
 		"appid":          "wx2421b1c4370ec43b",
 		"mch_id":         "10000100",
 		"transaction_id": "1008450740201411110005820873",
@@ -148,7 +148,7 @@ func TestQueryOrderByOutTradeNO(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), OrderQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/orderquery", helpers.WXML{
 		"appid":        "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"out_trade_no": "1415757673",
@@ -217,7 +217,7 @@ func TestCloseOrder(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), OrderCloseURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/closeorder", helpers.WXML{
 		"appid":        "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"out_trade_no": "1415983244",

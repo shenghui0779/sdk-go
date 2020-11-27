@@ -15,7 +15,7 @@ func TestTransferToBalance(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), TransferToBalanceURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", helpers.WXML{
 		"mch_appid":        "wx2421b1c4370ec43b",
 		"mchid":            "10000100",
 		"partner_trade_no": "100000982014120919616",
@@ -43,7 +43,7 @@ func TestTransferToBalance(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
-	mch.client = client
+
 	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), TransferToBalance(&TransferBalanceData{
@@ -75,7 +75,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), TransferBalanceOrderQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo", helpers.WXML{
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
 		"partner_trade_no": "1000005901201407261446939628",
@@ -101,7 +101,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
-	mch.client = client
+
 	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), QueryTransferBalanceOrder("1000005901201407261446939628"))
@@ -130,7 +130,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 
 // 	client := helpers.NewMockHTTPClient(ctrl)
 
-// 	client.EXPECT().PostXML(TransferToBankCardURL, helpers.WXML{
+// 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank", helpers.WXML{
 // 		"mch_id":           "10000100",
 // 		"partner_trade_no": "1212121221278",
 // 		"amount":           "500",
@@ -156,7 +156,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 	mch.nonce = func(size int) string {
 // 		return "50780e0cca98c8c8e814883e5caa672e"
 // 	}
-// 	mch.client = client
+
 // 	mch.tlsClient = client
 
 // 	r, err := mch.Do(context.TODO(), TransferToBankCard(&TransferBankCardData{
@@ -187,7 +187,7 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), TransferBankCardOrderQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank", helpers.WXML{
 		"mch_id":           "10000100",
 		"partner_trade_no": "1212121221278",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
@@ -212,7 +212,7 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
-	mch.client = client
+
 	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), QueryTransferBankCardOrder("1212121221278"))

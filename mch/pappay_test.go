@@ -15,7 +15,7 @@ func TestAPPEntrust(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayAPPEntrustURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/papay/preentrustweb", helpers.WXML{
 		"appid":                    "wx2421b1c4370ec43b",
 		"mch_id":                   "10000100",
 		"plan_id":                  "12535",
@@ -169,7 +169,7 @@ func TestEntrustByOrder(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayContractOrderURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/contractorder", helpers.WXML{
 		"appid":                    "wx2421b1c4370ec43b",
 		"mch_id":                   "10000100",
 		"contract_mchid":           "10000100",
@@ -250,7 +250,7 @@ func TestQueryContractByID(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayContractQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/papay/querycontract", helpers.WXML{
 		"appid":       "wx2421b1c4370ec43b",
 		"mch_id":      "10000100",
 		"contract_id": "201509160000028648",
@@ -314,7 +314,7 @@ func TestQueryContractByCode(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayContractQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/papay/querycontract", helpers.WXML{
 		"appid":         "wx2421b1c4370ec43b",
 		"mch_id":        "10000100",
 		"plan_id":       "123",
@@ -379,7 +379,7 @@ func TestPappayApply(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayApplyURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/pappayapply", helpers.WXML{
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
 		"out_trade_no":     "217752501201407033233368018",
@@ -437,7 +437,7 @@ func TestDeleteContractByID(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayContractDeleteURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/papay/deletecontract", helpers.WXML{
 		"appid":                       "wx2421b1c4370ec43b",
 		"mch_id":                      "10000100",
 		"contract_id":                 "100005698",
@@ -480,7 +480,7 @@ func TestDeleteContractByCode(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayContractDeleteURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/papay/deletecontract", helpers.WXML{
 		"appid":                       "wx2421b1c4370ec43b",
 		"mch_id":                      "10000100",
 		"plan_id":                     "12251",
@@ -524,7 +524,7 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayOrderQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/paporderquery", helpers.WXML{
 		"appid":          "wx2421b1c4370ec43b",
 		"mch_id":         "10000100",
 		"transaction_id": "1008450740201411110005820873",
@@ -592,7 +592,7 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayOrderQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/paporderquery", helpers.WXML{
 		"appid":        "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"out_trade_no": "1415757673",

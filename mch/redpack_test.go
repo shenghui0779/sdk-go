@@ -15,7 +15,7 @@ func TestSendNormalRedpack(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RedpackNormalURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack", helpers.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "0010010404201411170000046545",
@@ -46,7 +46,7 @@ func TestSendNormalRedpack(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
-	mch.client = client
+
 	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), SendNormalRedpack(&RedpackData{
@@ -81,7 +81,7 @@ func TestSendGroupRedpack(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RedpackGroupURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack", helpers.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "0010010404201411170000046545",
@@ -112,7 +112,7 @@ func TestSendGroupRedpack(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
-	mch.client = client
+
 	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), SendGroupRedpack(&RedpackData{
@@ -146,7 +146,7 @@ func TestSendMinipRedpack(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RedpackMinipURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendminiprogramhb", helpers.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "2334580734271081478888000026",
@@ -177,7 +177,7 @@ func TestSendMinipRedpack(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
-	mch.client = client
+
 	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), SendMinipRedpack(&RedpackData{
@@ -211,7 +211,7 @@ func TestQueryRedpackByBillNO(t *testing.T) {
 
 	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RedpackQueryURL, helpers.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo", helpers.WXML{
 		"appid":      "wx2421b1c4370ec43b",
 		"mch_id":     "10000100",
 		"mch_billno": "9010080799701411170000046603",
@@ -237,7 +237,7 @@ func TestQueryRedpackByBillNO(t *testing.T) {
 	mch.nonce = func(size int) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
-	mch.client = client
+
 	mch.tlsClient = client
 
 	r, err := mch.Do(context.TODO(), QueryRedpackByBillNO("9010080799701411170000046603"))
