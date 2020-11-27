@@ -12,21 +12,20 @@ import (
 // SecCheckMediaType 检测的素材类型
 type SecCheckMediaType int
 
+// 微信支持的素材类型
 var (
-	// SecCheckMediaAudio 音频
-	SecCheckMediaAudio = 1
-	// SecCheckMediaImage 图片
-	SecCheckMediaImage = 2
+	SecCheckMediaAudio = 1 // 音频
+	SecCheckMediaImage = 2 // 图片
 )
 
-// ImgSecCheck 校验一张图片是否含有违法违规内容
-func ImgSecCheck(filename string) Action {
+// ImageSecCheck 校验一张图片是否含有违法违规内容
+func ImageSecCheck(filename string) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("media", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
 		}),
 		url: func(accessToken string) string {
-			return fmt.Sprintf("UPLOAD|%s?access_token=%s", ImgSecCheckURL, accessToken)
+			return fmt.Sprintf("UPLOAD|%s?access_token=%s", ImageSecCheckURL, accessToken)
 		},
 	}
 }

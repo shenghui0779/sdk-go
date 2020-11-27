@@ -40,7 +40,7 @@ const (
 
 // security
 const (
-	ImgSecCheckURL     = "https://api.weixin.qq.com/wxa/img_sec_check"
+	ImageSecCheckURL   = "https://api.weixin.qq.com/wxa/img_sec_check"
 	MediaCheckAsyncURL = "https://api.weixin.qq.com/wxa/media_check_async"
 	MsgSecCheckURL     = "https://api.weixin.qq.com/wxa/msg_sec_check"
 )
