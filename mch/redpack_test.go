@@ -1,9 +1,11 @@
 package mch
 
 import (
+	"context"
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/helpers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,9 +13,9 @@ func TestSendNormalRedpack(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(RedpackNormalURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RedpackNormalURL, helpers.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "0010010404201411170000046545",
@@ -29,7 +31,7 @@ func TestSendNormalRedpack(t *testing.T) {
 		"risk_info":    "posttime%3d123123412%26clientversion%3d234134%26mobile%3d122344545%26deviceid%3dIOS",
 		"nonce_str":    "50780e0cca98c8c8e814883e5caa672e",
 		"sign":         "CAE645705D54BA78424107C6048E45B8",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -47,7 +49,7 @@ func TestSendNormalRedpack(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(SendNormalRedpack(&RedpackData{
+	r, err := mch.Do(context.TODO(), SendNormalRedpack(&RedpackData{
 		MchBillNO:   "0010010404201411170000046545",
 		SendName:    "send_name",
 		ReOpenID:    "onqOjjmM1tad-3ROpncN-yUfa6uI",
@@ -62,7 +64,7 @@ func TestSendNormalRedpack(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -77,9 +79,9 @@ func TestSendGroupRedpack(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(RedpackGroupURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RedpackGroupURL, helpers.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "0010010404201411170000046545",
@@ -95,7 +97,7 @@ func TestSendGroupRedpack(t *testing.T) {
 		"risk_info":    "posttime%3d123123412%26clientversion%3d234134%26mobile%3d122344545%26deviceid%3dIOS",
 		"nonce_str":    "50780e0cca98c8c8e814883e5caa672e",
 		"sign":         "A7E8609BDC147326E8EE82BD031EBA3D",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -113,7 +115,7 @@ func TestSendGroupRedpack(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(SendGroupRedpack(&RedpackData{
+	r, err := mch.Do(context.TODO(), SendGroupRedpack(&RedpackData{
 		MchBillNO:   "0010010404201411170000046545",
 		SendName:    "send_name",
 		ReOpenID:    "onqOjjmM1tad-3ROpncN-yUfa6uI",
@@ -127,7 +129,7 @@ func TestSendGroupRedpack(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -142,9 +144,9 @@ func TestSendMinipRedpack(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(RedpackMinipURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RedpackMinipURL, helpers.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "2334580734271081478888000026",
@@ -158,7 +160,7 @@ func TestSendMinipRedpack(t *testing.T) {
 		"notify_way":   "MINI_PROGRAM_JSAPI",
 		"nonce_str":    "50780e0cca98c8c8e814883e5caa672e",
 		"sign":         "A3F75B94BB93591BA9065556F70855FA",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -178,7 +180,7 @@ func TestSendMinipRedpack(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(SendMinipRedpack(&RedpackData{
+	r, err := mch.Do(context.TODO(), SendMinipRedpack(&RedpackData{
 		MchBillNO:   "2334580734271081478888000026",
 		SendName:    "miniprogramtest",
 		ReOpenID:    "oeDV3t7xy1IkfYFzgOsCZvdRjb45",
@@ -190,7 +192,7 @@ func TestSendMinipRedpack(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -207,16 +209,16 @@ func TestQueryRedpackByBillNO(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(RedpackQueryURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), RedpackQueryURL, helpers.WXML{
 		"appid":      "wx2421b1c4370ec43b",
 		"mch_id":     "10000100",
 		"mch_billno": "9010080799701411170000046603",
 		"bill_type":  "MCHT",
 		"nonce_str":  "50780e0cca98c8c8e814883e5caa672e",
 		"sign":       "B52930D6136EA0B5A40F5692EA47DE08",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"mch_id":       "10000100",
@@ -238,10 +240,10 @@ func TestQueryRedpackByBillNO(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(QueryRedpackByBillNO("9010080799701411170000046603"))
+	r, err := mch.Do(context.TODO(), QueryRedpackByBillNO("9010080799701411170000046603"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"mch_id":       "10000100",

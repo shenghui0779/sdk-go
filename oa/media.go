@@ -11,15 +11,12 @@ import (
 // MediaType 素材类型
 type MediaType string
 
+// 微信支持的素材类型
 var (
-	// MediaImage 图片素材
-	MediaImage MediaType = "image"
-	// MediaVoice 音频素材
-	MediaVoice MediaType = "voice"
-	// MediaVideo 视频素材
-	MediaVideo MediaType = "video"
-	// MediaThumb 缩略图素材
-	MediaThumb MediaType = "thumb"
+	MediaImage MediaType = "image" // 图片
+	MediaVoice MediaType = "voice" // 音频
+	MediaVideo MediaType = "video" // 视频
+	MediaThumb MediaType = "thumb" // 缩略图
 )
 
 // MediaUploadResult 临时素材上传结果

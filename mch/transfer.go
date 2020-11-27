@@ -3,6 +3,8 @@ package mch
 import (
 	"encoding/base64"
 	"strconv"
+
+	"github.com/shenghui0779/gochat/helpers"
 )
 
 // TransferBalanceData 付款到零钱数据
@@ -33,8 +35,8 @@ type TransferBankCardData struct {
 
 // TransferToBalance 付款到零钱【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
 func TransferToBalance(data *TransferBalanceData) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"mch_appid":        appid,
 			"mchid":            mchid,
 			"nonce_str":        nonce,
@@ -57,7 +59,7 @@ func TransferToBalance(data *TransferBalanceData) Action {
 			body["spbill_create_ip"] = data.SpbillCreateIP
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -71,15 +73,15 @@ func TransferToBalance(data *TransferBalanceData) Action {
 
 // QueryTransferBalanceOrder 查询付款到零钱订单
 func QueryTransferBalanceOrder(partnerTradeNO string) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":            appid,
 			"mch_id":           mchid,
 			"partner_trade_no": partnerTradeNO,
 			"nonce_str":        nonce,
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -92,8 +94,8 @@ func QueryTransferBalanceOrder(partnerTradeNO string) Action {
 
 // TransferToBankCard 付款到银行卡【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
 func TransferToBankCard(data *TransferBankCardData, publicKey []byte) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"mch_id":           mchid,
 			"nonce_str":        nonce,
 			"partner_trade_no": data.PartnerTradeNO,
@@ -102,7 +104,7 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) Action {
 		}
 
 		// 收款方银行卡号加密
-		b, err := RSAEncrypt([]byte(data.EncBankNO), publicKey)
+		b, err := helpers.RSAEncrypt([]byte(data.EncBankNO), publicKey)
 
 		if err != nil {
 			return nil, err
@@ -111,7 +113,7 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) Action {
 		body["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
 
 		// 收款方用户名加密
-		b, err = RSAEncrypt([]byte(data.EncTrueName), publicKey)
+		b, err = helpers.RSAEncrypt([]byte(data.EncTrueName), publicKey)
 
 		if err != nil {
 			return nil, err
@@ -123,7 +125,7 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) Action {
 			body["desc"] = data.Desc
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -137,14 +139,14 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) Action {
 
 // QueryTransferBankCardOrder 查询付款到银行卡订单
 func QueryTransferBankCardOrder(partnerTradeNO string) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"mch_id":           mchid,
 			"partner_trade_no": partnerTradeNO,
 			"nonce_str":        nonce,
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -157,14 +159,14 @@ func QueryTransferBankCardOrder(partnerTradeNO string) Action {
 
 // RSAPublicKey 获取RSA加密公钥
 func RSAPublicKey() Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"mch_id":    mchid,
 			"nonce_str": nonce,
 			"sign_type": SignMD5,
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}

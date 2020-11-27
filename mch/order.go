@@ -2,6 +2,8 @@ package mch
 
 import (
 	"strconv"
+
+	"github.com/shenghui0779/gochat/helpers"
 )
 
 // OrderData 统一下单数据
@@ -30,8 +32,8 @@ type OrderData struct {
 
 // UnifyOrder 统一下单
 func UnifyOrder(data *OrderData) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":            appid,
 			"mch_id":           mchid,
 			"nonce_str":        nonce,
@@ -93,7 +95,7 @@ func UnifyOrder(data *OrderData) Action {
 			body["scene_info"] = data.SceneInfo
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -106,8 +108,8 @@ func UnifyOrder(data *OrderData) Action {
 
 // QueryOrderByTransactionID 根据微信订单号查询
 func QueryOrderByTransactionID(transactionID string) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":          appid,
 			"mch_id":         mchid,
 			"transaction_id": transactionID,
@@ -115,7 +117,7 @@ func QueryOrderByTransactionID(transactionID string) Action {
 			"sign_type":      SignMD5,
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -128,8 +130,8 @@ func QueryOrderByTransactionID(transactionID string) Action {
 
 // QueryOrderByOutTradeNO 根据商户订单号查询
 func QueryOrderByOutTradeNO(outTradeNO string) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":        appid,
 			"mch_id":       mchid,
 			"out_trade_no": outTradeNO,
@@ -137,7 +139,7 @@ func QueryOrderByOutTradeNO(outTradeNO string) Action {
 			"sign_type":    SignMD5,
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -150,8 +152,8 @@ func QueryOrderByOutTradeNO(outTradeNO string) Action {
 
 // CloseOrder 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
 func CloseOrder(outTradeNO string) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":        appid,
 			"mch_id":       mchid,
 			"out_trade_no": outTradeNO,
@@ -159,7 +161,7 @@ func CloseOrder(outTradeNO string) Action {
 			"sign_type":    SignMD5,
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}

@@ -11,8 +11,8 @@ import (
 // MediaType 素材类型
 type MediaType string
 
-// MediaImage 图片素材
-var MediaImage MediaType = "image"
+// 微信支持的素材类型
+var MediaImage MediaType = "image" // 图片
 
 // MediaUploadInfo 临时素材上传信息
 type MediaUploadInfo struct {

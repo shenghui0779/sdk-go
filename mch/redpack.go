@@ -2,6 +2,8 @@ package mch
 
 import (
 	"strconv"
+
+	"github.com/shenghui0779/gochat/helpers"
 )
 
 // RedpackData 红包发放数据
@@ -23,8 +25,8 @@ type RedpackData struct {
 
 // SendNormalRedpack 发放普通红包
 func SendNormalRedpack(data *RedpackData) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
 			"nonce_str":    nonce,
@@ -47,7 +49,7 @@ func SendNormalRedpack(data *RedpackData) Action {
 			body["risk_info"] = data.RiskInfo
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -60,8 +62,8 @@ func SendNormalRedpack(data *RedpackData) Action {
 
 // SendGroupRedpack 发放裂变红包
 func SendGroupRedpack(data *RedpackData) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
 			"nonce_str":    nonce,
@@ -84,7 +86,7 @@ func SendGroupRedpack(data *RedpackData) Action {
 			body["risk_info"] = data.RiskInfo
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -97,8 +99,8 @@ func SendGroupRedpack(data *RedpackData) Action {
 
 // SendMinipRedpack 发放小程序红包
 func SendMinipRedpack(data *RedpackData) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
 			"nonce_str":    nonce,
@@ -117,7 +119,7 @@ func SendMinipRedpack(data *RedpackData) Action {
 			body["scene_id"] = data.SceneID
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -130,8 +132,8 @@ func SendMinipRedpack(data *RedpackData) Action {
 
 // QueryRedpackByBillNO 查询红包记录
 func QueryRedpackByBillNO(billNO string) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":      appid,
 			"mch_id":     mchid,
 			"mch_billno": billNO,
@@ -139,7 +141,7 @@ func QueryRedpackByBillNO(billNO string) Action {
 			"nonce_str":  nonce,
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}

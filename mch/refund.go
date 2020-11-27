@@ -1,6 +1,10 @@
 package mch
 
-import "strconv"
+import (
+	"strconv"
+
+	"github.com/shenghui0779/gochat/helpers"
+)
 
 // RefundData 退款数据
 type RefundData struct {
@@ -17,8 +21,8 @@ type RefundData struct {
 
 // RefundByTransactionID 根据微信订单号退款
 func RefundByTransactionID(transactionID string, data *RefundData) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":          appid,
 			"mch_id":         mchid,
 			"nonce_str":      nonce,
@@ -45,7 +49,7 @@ func RefundByTransactionID(transactionID string, data *RefundData) Action {
 			body["notify_url"] = data.NotifyURL
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -59,8 +63,8 @@ func RefundByTransactionID(transactionID string, data *RefundData) Action {
 
 // RefundByOutTradeNO 根据商户订单号退款
 func RefundByOutTradeNO(outTradeNO string, data *RefundData) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":         appid,
 			"mch_id":        mchid,
 			"nonce_str":     nonce,
@@ -87,7 +91,7 @@ func RefundByOutTradeNO(outTradeNO string, data *RefundData) Action {
 			body["notify_url"] = data.NotifyURL
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -101,8 +105,8 @@ func RefundByOutTradeNO(outTradeNO string, data *RefundData) Action {
 
 // QueryRefundByRefundID 根据微信退款单号查询退款信息
 func QueryRefundByRefundID(refundID string, offset ...int) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":     appid,
 			"mch_id":    mchid,
 			"refund_id": refundID,
@@ -114,7 +118,7 @@ func QueryRefundByRefundID(refundID string, offset ...int) Action {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -127,8 +131,8 @@ func QueryRefundByRefundID(refundID string, offset ...int) Action {
 
 // QueryRefundByOutRefundNO 根据商户退款单号查询退款信息
 func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":         appid,
 			"mch_id":        mchid,
 			"out_refund_no": outRefundNO,
@@ -140,7 +144,7 @@ func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) Action {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -153,8 +157,8 @@ func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) Action {
 
 // QueryRefundByTransactionID 根据微信订单号查询退款信息
 func QueryRefundByTransactionID(transactionID string, offset ...int) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":          appid,
 			"mch_id":         mchid,
 			"transaction_id": transactionID,
@@ -166,7 +170,7 @@ func QueryRefundByTransactionID(transactionID string, offset ...int) Action {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}
@@ -179,8 +183,8 @@ func QueryRefundByTransactionID(transactionID string, offset ...int) Action {
 
 // QueryRefundByOutTradeNO 根据商户订单号查询退款信息
 func QueryRefundByOutTradeNO(outTradeNO string, offset ...int) Action {
-	f := func(appid, mchid, apikey, nonce string) (WXML, error) {
-		body := WXML{
+	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
+		body := helpers.WXML{
 			"appid":        appid,
 			"mch_id":       mchid,
 			"out_trade_no": outTradeNO,
@@ -192,7 +196,7 @@ func QueryRefundByOutTradeNO(outTradeNO string, offset ...int) Action {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
-		body["sign"] = SignWithMD5(body, apikey, true)
+		body["sign"] = helpers.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}

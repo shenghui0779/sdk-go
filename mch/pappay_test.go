@@ -1,9 +1,11 @@
 package mch
 
 import (
+	"context"
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/helpers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,9 +13,9 @@ func TestAPPEntrust(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(PappayAPPEntrustURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayAPPEntrustURL, helpers.WXML{
 		"appid":                    "wx2421b1c4370ec43b",
 		"mch_id":                   "10000100",
 		"plan_id":                  "12535",
@@ -26,7 +28,7 @@ func TestAPPEntrust(t *testing.T) {
 		"return_app":               "Y",
 		"sign_type":                "MD5",
 		"sign":                     "588134C9FA5B9D4E89E44FA303F6CB6F",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code":       "SUCCESS",
 		"return_msg":        "OK",
 		"appid":             "wx2421b1c4370ec43b",
@@ -45,7 +47,7 @@ func TestAPPEntrust(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(APPEntrust(&Contract{
+	r, err := mch.Do(context.TODO(), APPEntrust(&Contract{
 		PlanID:                 "12535",
 		ContractCode:           "100000",
 		RequestSerial:          1000,
@@ -56,7 +58,7 @@ func TestAPPEntrust(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code":       "SUCCESS",
 		"return_msg":        "OK",
 		"appid":             "wx2421b1c4370ec43b",
@@ -72,7 +74,7 @@ func TestOAEntrust(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -82,7 +84,7 @@ func TestOAEntrust(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(OAEntrust(&Contract{
+	r, err := mch.Do(context.TODO(), OAEntrust(&Contract{
 		PlanID:                 "106",
 		ContractCode:           "122",
 		RequestSerial:          123,
@@ -92,14 +94,14 @@ func TestOAEntrust(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/entrustweb?appid=wx2421b1c4370ec43b&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&sign=EB82C3E01B0DB4639921AE07F5A1E68F&timestamp=1414488825&version=1.0"}, r)
+	assert.Equal(t, helpers.WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/entrustweb?appid=wx2421b1c4370ec43b&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&sign=EB82C3E01B0DB4639921AE07F5A1E68F&timestamp=1414488825&version=1.0"}, r)
 }
 
 func TestMPEntrust(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -109,7 +111,7 @@ func TestMPEntrust(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(MPEntrust(&Contract{
+	r, err := mch.Do(context.TODO(), MPEntrust(&Contract{
 		PlanID:                 "106",
 		ContractCode:           "122",
 		RequestSerial:          123,
@@ -119,7 +121,7 @@ func TestMPEntrust(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"appid":                    "wx2421b1c4370ec43b",
 		"mch_id":                   "10000100",
 		"plan_id":                  "106",
@@ -136,7 +138,7 @@ func TestH5Entrust(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -146,7 +148,7 @@ func TestH5Entrust(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(H5Entrust(&Contract{
+	r, err := mch.Do(context.TODO(), H5Entrust(&Contract{
 		PlanID:                 "106",
 		ContractCode:           "122",
 		RequestSerial:          123,
@@ -158,16 +160,16 @@ func TestH5Entrust(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/h5entrustweb?appid=wx2421b1c4370ec43b&clientip=12.1.1.12&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&return_appid=wxcbda96de0b165542&sign=211AFAFF9BF4DE757BD281F3BEF39D06EC8BB710B1E2A07A3614CD63CEE08FCF&timestamp=1414488825&version=1.0"}, r)
+	assert.Equal(t, helpers.WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/h5entrustweb?appid=wx2421b1c4370ec43b&clientip=12.1.1.12&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&return_appid=wxcbda96de0b165542&sign=211AFAFF9BF4DE757BD281F3BEF39D06EC8BB710B1E2A07A3614CD63CEE08FCF&timestamp=1414488825&version=1.0"}, r)
 }
 
 func TestEntrustByOrder(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(PappayContractOrderURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayContractOrderURL, helpers.WXML{
 		"appid":                    "wx2421b1c4370ec43b",
 		"mch_id":                   "10000100",
 		"contract_mchid":           "10000100",
@@ -188,7 +190,7 @@ func TestEntrustByOrder(t *testing.T) {
 		"contract_notify_url":      "https://yoursite.com",
 		"nonce_str":                "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
 		"sign":                     "0FEB33AF95AEFA8922ADB0753A14BB38",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"appid":        "wx2421b1c4370ec43b",
@@ -210,7 +212,7 @@ func TestEntrustByOrder(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(EntrustByOrder(&ContractOrder{
+	r, err := mch.Do(context.TODO(), EntrustByOrder(&ContractOrder{
 		OutTradeNO:             "123456",
 		TotalFee:               888,
 		SpbillCreateIP:         "123.12.12.123",
@@ -227,7 +229,7 @@ func TestEntrustByOrder(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"appid":        "wx2421b1c4370ec43b",
@@ -246,15 +248,15 @@ func TestQueryContractByID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(PappayContractQueryURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayContractQueryURL, helpers.WXML{
 		"appid":       "wx2421b1c4370ec43b",
 		"mch_id":      "10000100",
 		"contract_id": "201509160000028648",
 		"version":     "1.0",
 		"sign":        "D23A52B839DA39302E746FBB1D0E4F7D",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code":                 "SUCCESS",
 		"result_code":                 "SUCCESS",
 		"appid":                       "wx2421b1c4370ec43b",
@@ -282,10 +284,10 @@ func TestQueryContractByID(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(QueryContractByID("201509160000028648"))
+	r, err := mch.Do(context.TODO(), QueryContractByID("201509160000028648"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code":                 "SUCCESS",
 		"result_code":                 "SUCCESS",
 		"appid":                       "wx2421b1c4370ec43b",
@@ -310,16 +312,16 @@ func TestQueryContractByCode(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(PappayContractQueryURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayContractQueryURL, helpers.WXML{
 		"appid":         "wx2421b1c4370ec43b",
 		"mch_id":        "10000100",
 		"plan_id":       "123",
 		"contract_code": "1023658866",
 		"version":       "1.0",
 		"sign":          "1FCDD5BAF037DF736096306BB5213920",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code":                 "SUCCESS",
 		"result_code":                 "SUCCESS",
 		"appid":                       "wx2421b1c4370ec43b",
@@ -347,10 +349,10 @@ func TestQueryContractByCode(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(QueryContractByCode("123", "1023658866"))
+	r, err := mch.Do(context.TODO(), QueryContractByCode("123", "1023658866"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code":                 "SUCCESS",
 		"result_code":                 "SUCCESS",
 		"appid":                       "wx2421b1c4370ec43b",
@@ -375,9 +377,9 @@ func TestPappayApply(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(PappayApplyURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayApplyURL, helpers.WXML{
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
 		"out_trade_no":     "217752501201407033233368018",
@@ -390,7 +392,7 @@ func TestPappayApply(t *testing.T) {
 		"contract_id":      "Wx15463511252015071056489715",
 		"nonce_str":        "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
 		"sign":             "94AD0747C8E32D815623D89A051F7DE8",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code": "SUCCESS",
 		"return_msg":  "OK",
 		"appid":       "wx2421b1c4370ec43b",
@@ -408,7 +410,7 @@ func TestPappayApply(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(PappayApply(&PappayApplyData{
+	r, err := mch.Do(context.TODO(), PappayApply(&PappayApplyData{
 		OutTradeNO:     "217752501201407033233368018",
 		TotalFee:       888,
 		SpbillCreateIP: "8.8.8.8",
@@ -418,7 +420,7 @@ func TestPappayApply(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code": "SUCCESS",
 		"return_msg":  "OK",
 		"appid":       "wx2421b1c4370ec43b",
@@ -433,16 +435,16 @@ func TestDeleteContractByID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(PappayContractDeleteURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayContractDeleteURL, helpers.WXML{
 		"appid":                       "wx2421b1c4370ec43b",
 		"mch_id":                      "10000100",
 		"contract_id":                 "100005698",
 		"contract_termination_remark": "原因",
 		"version":                     "1.0",
 		"sign":                        "5E8C697575CC65D77BBE96B5BB39916E",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code": "SUCCESS",
 		"result_code": "SUCCESS",
 		"appid":       "wx2421b1c4370ec43b",
@@ -459,10 +461,10 @@ func TestDeleteContractByID(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(DeleteContractByID("100005698", "原因"))
+	r, err := mch.Do(context.TODO(), DeleteContractByID("100005698", "原因"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code": "SUCCESS",
 		"result_code": "SUCCESS",
 		"appid":       "wx2421b1c4370ec43b",
@@ -476,9 +478,9 @@ func TestDeleteContractByCode(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(PappayContractDeleteURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayContractDeleteURL, helpers.WXML{
 		"appid":                       "wx2421b1c4370ec43b",
 		"mch_id":                      "10000100",
 		"plan_id":                     "12251",
@@ -486,7 +488,7 @@ func TestDeleteContractByCode(t *testing.T) {
 		"contract_termination_remark": "原因",
 		"version":                     "1.0",
 		"sign":                        "5498EE11E3B24F7AE1308F61FC9A25C2",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code": "SUCCESS",
 		"result_code": "SUCCESS",
 		"appid":       "wx2421b1c4370ec43b",
@@ -503,10 +505,10 @@ func TestDeleteContractByCode(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(DeleteContractByCode("12251", "1234", "原因"))
+	r, err := mch.Do(context.TODO(), DeleteContractByCode("12251", "1234", "原因"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code": "SUCCESS",
 		"result_code": "SUCCESS",
 		"appid":       "wx2421b1c4370ec43b",
@@ -520,15 +522,15 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(PappayOrderQueryURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayOrderQueryURL, helpers.WXML{
 		"appid":          "wx2421b1c4370ec43b",
 		"mch_id":         "10000100",
 		"transaction_id": "1008450740201411110005820873",
 		"nonce_str":      "0b9f35f484df17a732e537c37708d1d0",
 		"sign":           "F57DB02F4B69F3E81F26B28EF6FFC484",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code":    "SUCCESS",
 		"return_msg":     "OK",
 		"appid":          "wx2421b1c4370ec43b",
@@ -558,10 +560,10 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(QueryPappayByTransactionID("1008450740201411110005820873"))
+	r, err := mch.Do(context.TODO(), QueryPappayByTransactionID("1008450740201411110005820873"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code":    "SUCCESS",
 		"return_msg":     "OK",
 		"appid":          "wx2421b1c4370ec43b",
@@ -588,15 +590,15 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := NewMockHTTPClient(ctrl)
+	client := helpers.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().PostXML(PappayOrderQueryURL, WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), PappayOrderQueryURL, helpers.WXML{
 		"appid":        "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"out_trade_no": "1415757673",
 		"nonce_str":    "0b9f35f484df17a732e537c37708d1d0",
 		"sign":         "31A8D85095AE5762A86C1EEC10D1FB7C",
-	}).Return(WXML{
+	}).Return(helpers.WXML{
 		"return_code":    "SUCCESS",
 		"return_msg":     "OK",
 		"appid":          "wx2421b1c4370ec43b",
@@ -626,10 +628,10 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(QueryPappayByOutTradeNO("1415757673"))
+	r, err := mch.Do(context.TODO(), QueryPappayByOutTradeNO("1415757673"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"return_code":    "SUCCESS",
 		"return_msg":     "OK",
 		"appid":          "wx2421b1c4370ec43b",

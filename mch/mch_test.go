@@ -3,6 +3,7 @@ package mch
 import (
 	"testing"
 
+	"github.com/shenghui0779/gochat/helpers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +22,7 @@ func TestAPPAPI(t *testing.T) {
 
 	m := mch.APPAPI("WX1217752501201407033233368018", 1414561699)
 
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"appid":     "wx2421b1c4370ec43b",
 		"partnerid": "10000100",
 		"prepayid":  "WX1217752501201407033233368018",
@@ -41,7 +42,7 @@ func TestJSAPI(t *testing.T) {
 
 	m := mch.JSAPI("u802345jgfjsdfgsdg888", 1414561699)
 
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"appId":     "wx2421b1c4370ec43b",
 		"timeStamp": "1414561699",
 		"nonceStr":  "e61463f8efa94090b1f366cccfbbb444",
@@ -60,7 +61,7 @@ func TestMPRedpackJSAPI(t *testing.T) {
 
 	m := mch.MPRedpackJSAPI("sendid=242e8abd163d300019b2cae74ba8e8c06e3f0e51ab84d16b3c80decd22a5b672&ver=8&sign=4110d649a5aef52dd6b95654ddf91ca7d5411ac159ace4e1a766b7d3967a1c3dfe1d256811445a4abda2d9cfa4a9b377a829258bd00d90313c6c346f2349fe5d&mchid=11475856&appid=wxd27ebc41b85ce36d", 1414561699)
 
-	assert.Equal(t, WXML{
+	assert.Equal(t, helpers.WXML{
 		"timeStamp": "1414561699",
 		"nonceStr":  "e61463f8efa94090b1f366cccfbbb444",
 		"package":   "sendid%3D242e8abd163d300019b2cae74ba8e8c06e3f0e51ab84d16b3c80decd22a5b672%26ver%3D8%26sign%3D4110d649a5aef52dd6b95654ddf91ca7d5411ac159ace4e1a766b7d3967a1c3dfe1d256811445a4abda2d9cfa4a9b377a829258bd00d90313c6c346f2349fe5d%26mchid%3D11475856%26appid%3Dwxd27ebc41b85ce36d",
@@ -72,7 +73,7 @@ func TestMPRedpackJSAPI(t *testing.T) {
 func TestVerifyWXReply(t *testing.T) {
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	assert.Nil(t, mch.VerifyWXReply(WXML{
+	assert.Nil(t, mch.VerifyWXReply(helpers.WXML{
 		"return_code": "SUCCESS",
 		"return_msg":  "OK",
 		"appid":       "wx2421b1c4370ec43b",
