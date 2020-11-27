@@ -44,7 +44,7 @@ type AICropResult struct {
 }
 
 // AICrop 图片智能裁切
-func AICrop(filename string, receiver *AICropResult) Action {
+func AICrop(filename string, dest *AICropResult) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -53,19 +53,19 @@ func AICrop(filename string, receiver *AICropResult) Action {
 			return fmt.Sprintf("UPLOAD|%s?access_token=%s", AICropURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // AICropByURL 图片智能裁切
-func AICropByURL(imgURL string, receiver *AICropResult) Action {
+func AICropByURL(imgURL string, dest *AICropResult) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?img_url=%s&access_token=%s", AICropURL, imgURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
@@ -84,7 +84,7 @@ type QRCodeScanResult struct {
 }
 
 // ScanQRCode 条码/二维码识别
-func ScanQRCode(filename string, receiver *QRCodeScanResult) Action {
+func ScanQRCode(filename string, dest *QRCodeScanResult) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -93,19 +93,19 @@ func ScanQRCode(filename string, receiver *QRCodeScanResult) Action {
 			return fmt.Sprintf("UPLOAD|%s?access_token=%s", ScanQRCodeURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // ScanQRCodeByURL 条码/二维码识别
-func ScanQRCodeByURL(imgURL string, receiver *QRCodeScanResult) Action {
+func ScanQRCodeByURL(imgURL string, dest *QRCodeScanResult) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?img_url=%s&access_token=%s", ScanQRCodeURL, imgURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
@@ -116,7 +116,7 @@ type SuperreSolutionResult struct {
 }
 
 // SuperreSolution 图片高清化
-func SuperreSolution(filename string, receiver *SuperreSolutionResult) Action {
+func SuperreSolution(filename string, dest *SuperreSolutionResult) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -125,7 +125,7 @@ func SuperreSolution(filename string, receiver *SuperreSolutionResult) Action {
 			return fmt.Sprintf("UPLOAD|%s?access_token=%s", SuperreSolutionURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			receiver.MediaID = gjson.GetBytes(resp, "media_id").String()
+			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
 			return nil
 		},
@@ -133,13 +133,13 @@ func SuperreSolution(filename string, receiver *SuperreSolutionResult) Action {
 }
 
 // SuperreSolutionByURL 图片高清化
-func SuperreSolutionByURL(imgURL string, receiver *SuperreSolutionResult) Action {
+func SuperreSolutionByURL(imgURL string, dest *SuperreSolutionResult) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?img_url=%s&access_token=%s", SuperreSolutionURL, imgURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			receiver.MediaID = gjson.GetBytes(resp, "media_id").String()
+			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
 			return nil
 		},

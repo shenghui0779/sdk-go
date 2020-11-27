@@ -22,7 +22,7 @@ type MediaUploadInfo struct {
 }
 
 // UploadMedia 上传临时素材到微信服务器
-func UploadMedia(mediaType MediaType, filename string, receiver *MediaUploadInfo) Action {
+func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadInfo) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("media", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -31,7 +31,7 @@ func UploadMedia(mediaType MediaType, filename string, receiver *MediaUploadInfo
 			return fmt.Sprintf("UPLOAD|%s?access_token=%s&type=%s", MediaUploadURL, accessToken, mediaType)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
@@ -42,15 +42,15 @@ type Media struct {
 }
 
 // GetMedia 获取客服消息内的临时素材
-func GetMedia(mediaID string, receiver *Media) Action {
+func GetMedia(mediaID string, dest *Media) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s&media_id=%s", MediaGetURL, accessToken, mediaID)
 		},
 		decode: func(resp []byte) error {
-			receiver.Buffer = make([]byte, len(resp))
+			dest.Buffer = make([]byte, len(resp))
 
-			copy(receiver.Buffer, resp)
+			copy(dest.Buffer, resp)
 
 			return nil
 		},

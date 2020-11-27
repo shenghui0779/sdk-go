@@ -93,13 +93,13 @@ func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) Act
 }
 
 // GetMenu 查询自定义菜单
-func GetMenu(receiver *MenuInfo) Action {
+func GetMenu(dest *MenuInfo) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s", MenuListURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }

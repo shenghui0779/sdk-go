@@ -37,7 +37,7 @@ type MediaCheckAsyncInfo struct {
 }
 
 // MediaCheckAsync 异步校验图片/音频是否含有违法违规内容
-func MediaCheckAsync(mediaType SecCheckMediaType, mediaURL string, receiver *MediaCheckAsyncInfo) Action {
+func MediaCheckAsync(mediaType SecCheckMediaType, mediaURL string, dest *MediaCheckAsyncInfo) Action {
 	return &WechatAPI{
 		body: helpers.NewPostBody(func() ([]byte, error) {
 			return json.Marshal(helpers.X{
@@ -49,7 +49,7 @@ func MediaCheckAsync(mediaType SecCheckMediaType, mediaURL string, receiver *Med
 			return fmt.Sprintf("POST|%s?access_token=%s", MediaCheckAsyncURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			receiver.TraceID = gjson.GetBytes(resp, "trace_id").String()
+			dest.TraceID = gjson.GetBytes(resp, "trace_id").String()
 
 			return nil
 		},

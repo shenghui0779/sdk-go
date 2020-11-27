@@ -124,7 +124,7 @@ func (w *WechatMP) AccessToken(ctx context.Context, options ...helpers.HTTPOptio
 }
 
 // DecryptAuthInfo 解密授权信息
-func (w *WechatMP) DecryptAuthInfo(sessionKey, iv, encryptedData string, receiver AuthInfo) error {
+func (w *WechatMP) DecryptAuthInfo(sessionKey, iv, encryptedData string, dest AuthInfo) error {
 	key, err := base64.StdEncoding.DecodeString(sessionKey)
 
 	if err != nil {
@@ -151,12 +151,12 @@ func (w *WechatMP) DecryptAuthInfo(sessionKey, iv, encryptedData string, receive
 		return err
 	}
 
-	if err := json.Unmarshal(b, receiver); err != nil {
+	if err := json.Unmarshal(b, dest); err != nil {
 		return err
 	}
 
-	if receiver.AppID() != w.appid {
-		return fmt.Errorf("appid mismatch, want: %s, got: %s", w.appid, receiver.AppID())
+	if dest.AppID() != w.appid {
+		return fmt.Errorf("appid mismatch, want: %s, got: %s", w.appid, dest.AppID())
 	}
 
 	return nil

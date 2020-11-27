@@ -25,7 +25,7 @@ type BankCard struct {
 }
 
 // OCRBankCard 银行卡识别
-func OCRBankCard(mode OCRMode, filename string, receiver *BankCard) Action {
+func OCRBankCard(mode OCRMode, filename string, dest *BankCard) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -34,7 +34,7 @@ func OCRBankCard(mode OCRMode, filename string, receiver *BankCard) Action {
 			return fmt.Sprintf("UPLOAD|%s?type=%s&access_token=%s", OCRBankCardURL, mode, accessToken)
 		},
 		decode: func(resp []byte) error {
-			receiver.ID = gjson.GetBytes(resp, "id").String()
+			dest.ID = gjson.GetBytes(resp, "id").String()
 
 			return nil
 		},
@@ -42,13 +42,13 @@ func OCRBankCard(mode OCRMode, filename string, receiver *BankCard) Action {
 }
 
 // OCRBankCardByURL 银行卡识别
-func OCRBankCardByURL(mode OCRMode, imgURL string, receiver *BankCard) Action {
+func OCRBankCardByURL(mode OCRMode, imgURL string, dest *BankCard) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?type=%s&img_url=%s&access_token=%s", OCRBankCardURL, mode, imgURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			receiver.ID = gjson.GetBytes(resp, "id").String()
+			dest.ID = gjson.GetBytes(resp, "id").String()
 
 			return nil
 		},
@@ -79,7 +79,7 @@ type BusinessLicense struct {
 }
 
 // OCRBusinessLicense 营业执照识别
-func OCRBusinessLicense(mode OCRMode, filename string, receiver *BusinessLicense) Action {
+func OCRBusinessLicense(mode OCRMode, filename string, dest *BusinessLicense) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -88,19 +88,19 @@ func OCRBusinessLicense(mode OCRMode, filename string, receiver *BusinessLicense
 			return fmt.Sprintf("UPLOAD|%s?type=%s&access_token=%s", OCRBusinessLicenseURL, mode, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // OCRBusinessLicenseByURL 营业执照识别
-func OCRBusinessLicenseByURL(mode OCRMode, imgURL string, receiver *BusinessLicense) Action {
+func OCRBusinessLicenseByURL(mode OCRMode, imgURL string, dest *BusinessLicense) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?type=%s&img_url=%s&access_token=%s", OCRBusinessLicenseURL, mode, imgURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
@@ -120,7 +120,7 @@ type DriverLicense struct {
 }
 
 // OCRDriverLicense 驾照识别
-func OCRDriverLicense(mode OCRMode, filename string, receiver *DriverLicense) Action {
+func OCRDriverLicense(mode OCRMode, filename string, dest *DriverLicense) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -129,19 +129,19 @@ func OCRDriverLicense(mode OCRMode, filename string, receiver *DriverLicense) Ac
 			return fmt.Sprintf("UPLOAD|%s?type=%s&access_token=%s", OCRDriverLicenseURL, mode, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // OCRDriverLicenseByURL 驾照识别
-func OCRDriverLicenseByURL(mode OCRMode, imgURL string, receiver *DriverLicense) Action {
+func OCRDriverLicenseByURL(mode OCRMode, imgURL string, dest *DriverLicense) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?type=%s&img_url=%s&access_token=%s", OCRDriverLicenseURL, mode, imgURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
@@ -156,7 +156,7 @@ type IDCardFront struct {
 }
 
 // OCRIDCardFront 身份证前面识别
-func OCRIDCardFront(mode OCRMode, filename string, receiver *IDCardFront) Action {
+func OCRIDCardFront(mode OCRMode, filename string, dest *IDCardFront) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -165,19 +165,19 @@ func OCRIDCardFront(mode OCRMode, filename string, receiver *IDCardFront) Action
 			return fmt.Sprintf("UPLOAD|%s?type=%s&access_token=%s", OCRIDCardURL, mode, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // OCRIDCardFrontByURL 身份证前面识别
-func OCRIDCardFrontByURL(mode OCRMode, imgURL string, receiver *IDCardFront) Action {
+func OCRIDCardFrontByURL(mode OCRMode, imgURL string, dest *IDCardFront) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?type=%s&img_url=%s&access_token=%s", OCRIDCardURL, mode, imgURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
@@ -188,7 +188,7 @@ type IDCardBack struct {
 }
 
 // OCRIDCardBack 身份证背面识别
-func OCRIDCardBack(mode OCRMode, filename string, receiver *IDCardBack) Action {
+func OCRIDCardBack(mode OCRMode, filename string, dest *IDCardBack) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -197,7 +197,7 @@ func OCRIDCardBack(mode OCRMode, filename string, receiver *IDCardBack) Action {
 			return fmt.Sprintf("UPLOAD|%s?type=%s&access_token=%s", OCRBankCardURL, mode, accessToken)
 		},
 		decode: func(resp []byte) error {
-			receiver.ValidDate = gjson.GetBytes(resp, "valid_date").String()
+			dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
 
 			return nil
 		},
@@ -205,13 +205,13 @@ func OCRIDCardBack(mode OCRMode, filename string, receiver *IDCardBack) Action {
 }
 
 // OCRIDCardBackByURL 身份证背面识别
-func OCRIDCardBackByURL(mode OCRMode, imgURL string, receiver *IDCardBack) Action {
+func OCRIDCardBackByURL(mode OCRMode, imgURL string, dest *IDCardBack) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?type=%s&img_url=%s&access_token=%s", OCRBankCardURL, mode, imgURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			receiver.ValidDate = gjson.GetBytes(resp, "valid_date").String()
+			dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
 
 			return nil
 		},
@@ -231,7 +231,7 @@ type PrintedTextItem struct {
 }
 
 // OCRPrintedText 通用印刷体识别
-func OCRPrintedText(mode OCRMode, filename string, receiver *PrintedText) Action {
+func OCRPrintedText(mode OCRMode, filename string, dest *PrintedText) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -240,19 +240,19 @@ func OCRPrintedText(mode OCRMode, filename string, receiver *PrintedText) Action
 			return fmt.Sprintf("UPLOAD|%s?type=%s&access_token=%s", OCRPrintedTextURL, mode, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // OCRPrintedTextByURL 通用印刷体识别
-func OCRPrintedTextByURL(mode OCRMode, imgURL string, receiver *PrintedText) Action {
+func OCRPrintedTextByURL(mode OCRMode, imgURL string, dest *PrintedText) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?type=%s&img_url=%s&access_token=%s", OCRPrintedTextURL, mode, imgURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
@@ -276,7 +276,7 @@ type VehicleLicense struct {
 }
 
 // OCRVehicleLicense 行驶证识别
-func OCRVehicleLicense(mode OCRMode, filename string, receiver *VehicleLicense) Action {
+func OCRVehicleLicense(mode OCRMode, filename string, dest *VehicleLicense) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -285,19 +285,19 @@ func OCRVehicleLicense(mode OCRMode, filename string, receiver *VehicleLicense) 
 			return fmt.Sprintf("UPLOAD|%s?type=%s&access_token=%s", OCRVehicleLicenseURL, mode, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // OCRVehicleLicenseByURL 行驶证识别
-func OCRVehicleLicenseByURL(mode OCRMode, imgURL string, receiver *VehicleLicense) Action {
+func OCRVehicleLicenseByURL(mode OCRMode, imgURL string, dest *VehicleLicense) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?type=%s&img_url=%s&access_token=%s", OCRVehicleLicenseURL, mode, imgURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }

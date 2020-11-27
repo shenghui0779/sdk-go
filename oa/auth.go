@@ -49,25 +49,25 @@ func CheckAuthToken(openid string) Action {
 }
 
 // GetAuthUser 获取授权微信用户信息（注意：使用网页授权的access_token）
-func GetAuthUser(openid string, receiver *AuthUser) Action {
+func GetAuthUser(openid string, dest *AuthUser) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s&openid=%s&lang=zh_CN", SnsUserInfoURL, accessToken, openid)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // GetJSAPITicket 获取 jsapi ticket (注意：使用普通access_token)
-func GetJSAPITicket(receiver *JSAPITicket) Action {
+func GetJSAPITicket(dest *JSAPITicket) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s&type=jsapi", CgiBinTicketURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }

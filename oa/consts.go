@@ -36,7 +36,10 @@ const (
 
 // message
 const (
-	TemplateMessageSendURL = "https://api.weixin.qq.com/cgi-bin/message/template/send"
+	TemplateListURL         = "https://api.weixin.qq.com/cgi-bin/template/get_all_private_template"
+	TemplateDeleteURL       = "https://api.weixin.qq.com/cgi-bin/template/del_private_template"
+	TemplateMessageSendURL  = "https://api.weixin.qq.com/cgi-bin/message/template/send"
+	SubscribeMessageSendURL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"
 )
 
 // media

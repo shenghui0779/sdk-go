@@ -30,7 +30,7 @@ type MediaUploadResult struct {
 }
 
 // UploadMedia 上传临时素材到微信服务器
-func UploadMedia(mediaType MediaType, filename string, receiver *MediaUploadResult) Action {
+func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadResult) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("media", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -39,7 +39,7 @@ func UploadMedia(mediaType MediaType, filename string, receiver *MediaUploadResu
 			return fmt.Sprintf("UPLOAD|%s?access_token=%s&type=%s", MediaUploadURL, accessToken, mediaType)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
@@ -64,7 +64,7 @@ type MaterialArticle struct {
 }
 
 // UploadMaterialNews 上传永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
-func UploadMaterialNews(articles []*MaterialArticle, receiver *MaterialUploadResult) Action {
+func UploadMaterialNews(articles []*MaterialArticle, dest *MaterialUploadResult) Action {
 	return &WechatAPI{
 		body: helpers.NewPostBody(func() ([]byte, error) {
 			return json.Marshal(map[string][]*MaterialArticle{
@@ -75,13 +75,13 @@ func UploadMaterialNews(articles []*MaterialArticle, receiver *MaterialUploadRes
 			return fmt.Sprintf("POST|%s?access_token=%s", MaterialNewsUploadURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // UploadMaterialImage 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制）
-func UploadMaterialImage(filename string, receiver *MaterialUploadResult) Action {
+func UploadMaterialImage(filename string, dest *MaterialUploadResult) Action {
 	return &WechatAPI{
 		body: helpers.NewUploadBody("media", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
@@ -90,7 +90,7 @@ func UploadMaterialImage(filename string, receiver *MaterialUploadResult) Action
 			return fmt.Sprintf("UPLOAD|%s?access_token=%s", MaterialImageUploadURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }

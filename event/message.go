@@ -20,6 +20,20 @@ const (
 	MessageEvent      MessageType = "event"      // 事件推送
 )
 
+// EventType 事件类型
+type EventType string
+
+// 微信支持的事件类型
+const (
+	EventSubscribe             EventType = "subscribe"             // 订阅
+	EventUnSubscribe           EventType = "unsubscribe"           // 取消订阅
+	EventScan                  EventType = "SCAN"                  // 扫码
+	EventLocation              EventType = "LOCATION"              // 上报地理位置
+	EventClick                 EventType = "CLICK"                 // 点击自定义菜单
+	EventView                  EventType = "VIEW"                  // 点击菜单跳转链接
+	EventTemplateSendJobFinish EventType = "TEMPLATESENDJOBFINISH" // 模板消息发送完成
+)
+
 // Message 微信公众平台事件推送消息
 type Message struct {
 	XMLName      xml.Name    `xml:"xml"`
@@ -43,10 +57,10 @@ type Message struct {
 	Description  string  `xml:"Description"`
 	URL          string  `xml:"Url"`
 	// 事件消息
-	Event     string  `xml:"Event"`
-	EventKey  string  `xml:"EventKey"`
-	Ticket    string  `xml:"Ticket"`
-	Latitude  float64 `xml:"Latitude"`
-	Longitude float64 `xml:"Longitude"`
-	Precision float64 `xml:"Precision"`
+	Event     EventType `xml:"Event"`
+	EventKey  string    `xml:"EventKey"`
+	Ticket    string    `xml:"Ticket"`
+	Latitude  float64   `xml:"Latitude"`
+	Longitude float64   `xml:"Longitude"`
+	Precision float64   `xml:"Precision"`
 }

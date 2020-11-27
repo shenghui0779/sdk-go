@@ -32,17 +32,12 @@ type SubscriberInfo struct {
 	QRSceneStr     string  `json:"qr_scene_str"`
 }
 
-// BatchSubscriberInfo 微信公众号批量订阅者信息
-type BatchSubscriberInfo struct {
-	UserInfoList []*SubscriberInfo `json:"user_info_list"`
-}
-
 // SubscriberList 微信公众号订阅者列表
 type SubscriberList struct {
-	Total      int                 `json:"total"`
-	Count      int                 `json:"count"`
-	Data       *SubscriberListData `json:"data"`
-	NextOpenID string              `json:"next_openid"`
+	Total      int                `json:"total"`
+	Count      int                `json:"count"`
+	Data       SubscriberListData `json:"data"`
+	NextOpenID string             `json:"next_openid"`
 }
 
 // SubscriberListData 微信公众号订阅者列表数据
@@ -51,19 +46,19 @@ type SubscriberListData struct {
 }
 
 // GetSubscriberInfo 获取微信公众号订阅者信息
-func GetSubscriberInfo(openid string, receiver *SubscriberInfo) Action {
+func GetSubscriberInfo(openid string, dest *SubscriberInfo) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s&openid=%s&lang=zh_CN", SubscriberGetURL, accessToken, openid)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // BatchGetSubscriberInfo 批量获取微信公众号订阅者信息
-func BatchGetSubscriberInfo(openids []string, receiver *[]SubscriberInfo) Action {
+func BatchGetSubscriberInfo(openids []string, dest *[]SubscriberInfo) Action {
 	return &WechatAPI{
 		body: helpers.NewPostBody(func() ([]byte, error) {
 			userList := make([]map[string]string, 0, len(openids))
@@ -83,25 +78,25 @@ func BatchGetSubscriberInfo(openids []string, receiver *[]SubscriberInfo) Action
 		decode: func(resp []byte) error {
 			r := gjson.GetBytes(resp, "user_info_list")
 
-			return json.Unmarshal([]byte(r.Raw), receiver)
+			return json.Unmarshal([]byte(r.Raw), dest)
 		},
 	}
 }
 
 // GetSubscriberList 获取微信公众号订阅者列表
-func GetSubscriberList(nextOpenID string, receiver *SubscriberList) Action {
+func GetSubscriberList(nextOpenID string, dest *SubscriberList) Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s&next_openid=%s", SubscriberListURL, accessToken, nextOpenID)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // GetBlackList 获取用户黑名单列表
-func GetBlackList(beginOpenID string, receiver *SubscriberList) Action {
+func GetBlackList(beginOpenID string, dest *SubscriberList) Action {
 	return &WechatAPI{
 		body: helpers.NewPostBody(func() ([]byte, error) {
 			return json.Marshal(helpers.X{
@@ -112,13 +107,13 @@ func GetBlackList(beginOpenID string, receiver *SubscriberList) Action {
 			return fmt.Sprintf("POST|%s?access_token=%s", BlackListGetURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, receiver)
+			return json.Unmarshal(resp, dest)
 		},
 	}
 }
 
 // BatchBlackList 拉黑用户
-func BatchBlackList(openids []string) Action {
+func BatchBlackList(openids ...string) Action {
 	return &WechatAPI{
 		body: helpers.NewPostBody(func() ([]byte, error) {
 			return json.Marshal(helpers.X{
@@ -132,7 +127,7 @@ func BatchBlackList(openids []string) Action {
 }
 
 // BatchUnBlackList 取消拉黑用户
-func BatchUnBlackList(openids []string) Action {
+func BatchUnBlackList(openids ...string) Action {
 	return &WechatAPI{
 		body: helpers.NewPostBody(func() ([]byte, error) {
 			return json.Marshal(helpers.X{

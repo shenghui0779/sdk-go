@@ -57,7 +57,7 @@ type PluginDevApplyInfo struct {
 }
 
 // GetPluginDevApplyList 获取当前所有插件使用方（供插件开发者调用）
-func GetPluginDevApplyList(page, num int, receiver *[]PluginDevApplyInfo) Action {
+func GetPluginDevApplyList(page, num int, dest *[]PluginDevApplyInfo) Action {
 	return &WechatAPI{
 		body: helpers.NewPostBody(func() ([]byte, error) {
 			return json.Marshal(helpers.X{
@@ -72,7 +72,7 @@ func GetPluginDevApplyList(page, num int, receiver *[]PluginDevApplyInfo) Action
 		decode: func(resp []byte) error {
 			r := gjson.GetBytes(resp, "apply_list")
 
-			return json.Unmarshal([]byte(r.Raw), receiver)
+			return json.Unmarshal([]byte(r.Raw), dest)
 		},
 	}
 }
@@ -86,7 +86,7 @@ type PluginInfo struct {
 }
 
 // GetPluginList 查询已添加的插件
-func GetPluginList(receiver *[]PluginInfo) Action {
+func GetPluginList(dest *[]PluginInfo) Action {
 	return &WechatAPI{
 		body: helpers.NewPostBody(func() ([]byte, error) {
 			return json.Marshal(helpers.X{
@@ -99,7 +99,7 @@ func GetPluginList(receiver *[]PluginInfo) Action {
 		decode: func(resp []byte) error {
 			r := gjson.GetBytes(resp, "plugin_list")
 
-			return json.Unmarshal([]byte(r.Raw), receiver)
+			return json.Unmarshal([]byte(r.Raw), dest)
 		},
 	}
 }

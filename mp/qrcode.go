@@ -75,7 +75,7 @@ type QRCode struct {
 }
 
 // CreateQRCode 创建小程序二维码 - 数量有限
-func CreateQRCode(path string, receiver *QRCode, options ...QRCodeOption) Action {
+func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) Action {
 	return &WechatAPI{
 		body: helpers.NewPostBody(func() ([]byte, error) {
 			o := new(qrcodeOptions)
@@ -104,8 +104,8 @@ func CreateQRCode(path string, receiver *QRCode, options ...QRCodeOption) Action
 			return fmt.Sprintf("POST|%s?access_token=%s", QRCodeCreateURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			receiver.Buffer = make([]byte, len(resp))
-			copy(receiver.Buffer, resp)
+			dest.Buffer = make([]byte, len(resp))
+			copy(dest.Buffer, resp)
 
 			return nil
 		},
@@ -113,7 +113,7 @@ func CreateQRCode(path string, receiver *QRCode, options ...QRCodeOption) Action
 }
 
 // GetQRCode 获取小程序二维码 - 数量有限
-func GetQRCode(path string, receiver *QRCode, options ...QRCodeOption) Action {
+func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) Action {
 	return &WechatAPI{
 		body: helpers.NewPostBody(func() ([]byte, error) {
 			o := new(qrcodeOptions)
@@ -154,8 +154,8 @@ func GetQRCode(path string, receiver *QRCode, options ...QRCodeOption) Action {
 			return fmt.Sprintf("POST|%s?access_token=%s", QRCodeGetURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			receiver.Buffer = make([]byte, len(resp))
-			copy(receiver.Buffer, resp)
+			dest.Buffer = make([]byte, len(resp))
+			copy(dest.Buffer, resp)
 
 			return nil
 		},
@@ -163,7 +163,7 @@ func GetQRCode(path string, receiver *QRCode, options ...QRCodeOption) Action {
 }
 
 // GetUnlimitQRCode 获取小程序二维码 - 数量不限
-func GetUnlimitQRCode(scene string, receiver *QRCode, options ...QRCodeOption) Action {
+func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) Action {
 	return &WechatAPI{
 		body: helpers.NewPostBody(func() ([]byte, error) {
 			o := new(qrcodeOptions)
@@ -208,8 +208,8 @@ func GetUnlimitQRCode(scene string, receiver *QRCode, options ...QRCodeOption) A
 			return fmt.Sprintf("POST|%s?access_token=%s", QRCodeGetUnlimitURL, accessToken)
 		},
 		decode: func(resp []byte) error {
-			receiver.Buffer = make([]byte, len(resp))
-			copy(receiver.Buffer, resp)
+			dest.Buffer = make([]byte, len(resp))
+			copy(dest.Buffer, resp)
 
 			return nil
 		},
