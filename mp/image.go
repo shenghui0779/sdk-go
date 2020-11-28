@@ -2,8 +2,8 @@ package mp
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"net/url"
 
 	"github.com/shenghui0779/gochat/internal"
 	"github.com/tidwall/gjson"
@@ -45,29 +45,22 @@ type AICropResult struct {
 
 // AICrop 图片智能裁切
 func AICrop(filename string, dest *AICropResult) internal.Action {
-	return &WechatAPI{
-		body: internal.NewUploadBody("img", filename, func() ([]byte, error) {
-			return ioutil.ReadFile(filename)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("UPLOAD|%s?access_token=%s", AICropURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	return internal.NewOpenUploadAPI(AICropURL, url.Values{}, internal.NewUploadBody("img", filename, func() ([]byte, error) {
+		return ioutil.ReadFile(filename)
+	}), func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // AICropByURL 图片智能裁切
 func AICropByURL(imgURL string, dest *AICropResult) internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?img_url=%s&access_token=%s", AICropURL, imgURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	query := url.Values{}
+
+	query.Set("img_url", imgURL)
+
+	return internal.NewOpenPostAPI(AICropURL, query, nil, func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // QRCodeScanData 二维码扫描数据
@@ -85,29 +78,22 @@ type QRCodeScanResult struct {
 
 // ScanQRCode 条码/二维码识别
 func ScanQRCode(filename string, dest *QRCodeScanResult) internal.Action {
-	return &WechatAPI{
-		body: internal.NewUploadBody("img", filename, func() ([]byte, error) {
-			return ioutil.ReadFile(filename)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("UPLOAD|%s?access_token=%s", ScanQRCodeURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	return internal.NewOpenUploadAPI(ScanQRCodeURL, url.Values{}, internal.NewUploadBody("img", filename, func() ([]byte, error) {
+		return ioutil.ReadFile(filename)
+	}), func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // ScanQRCodeByURL 条码/二维码识别
 func ScanQRCodeByURL(imgURL string, dest *QRCodeScanResult) internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?img_url=%s&access_token=%s", ScanQRCodeURL, imgURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	query := url.Values{}
+
+	query.Set("img_url", imgURL)
+
+	return internal.NewOpenPostAPI(ScanQRCodeURL, query, nil, func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // SuperreSolutionResult 图片高清化结果
@@ -117,31 +103,24 @@ type SuperreSolutionResult struct {
 
 // SuperreSolution 图片高清化
 func SuperreSolution(filename string, dest *SuperreSolutionResult) internal.Action {
-	return &WechatAPI{
-		body: internal.NewUploadBody("img", filename, func() ([]byte, error) {
-			return ioutil.ReadFile(filename)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("UPLOAD|%s?access_token=%s", SuperreSolutionURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
+	return internal.NewOpenUploadAPI(SuperreSolutionURL, url.Values{}, internal.NewUploadBody("img", filename, func() ([]byte, error) {
+		return ioutil.ReadFile(filename)
+	}), func(resp []byte) error {
+		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
-			return nil
-		},
-	}
+		return nil
+	})
 }
 
 // SuperreSolutionByURL 图片高清化
 func SuperreSolutionByURL(imgURL string, dest *SuperreSolutionResult) internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?img_url=%s&access_token=%s", SuperreSolutionURL, imgURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
+	query := url.Values{}
 
-			return nil
-		},
-	}
+	query.Set("img_url", imgURL)
+
+	return internal.NewOpenPostAPI(ScanQRCodeURL, query, nil, func(resp []byte) error {
+		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
+
+		return nil
+	})
 }

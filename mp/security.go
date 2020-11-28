@@ -2,8 +2,8 @@ package mp
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"net/url"
 
 	"github.com/shenghui0779/gochat/internal"
 	"github.com/tidwall/gjson"
@@ -20,14 +20,9 @@ var (
 
 // ImageSecCheck 校验一张图片是否含有违法违规内容
 func ImageSecCheck(filename string) internal.Action {
-	return &WechatAPI{
-		body: internal.NewUploadBody("media", filename, func() ([]byte, error) {
-			return ioutil.ReadFile(filename)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("UPLOAD|%s?access_token=%s", ImageSecCheckURL, accessToken)
-		},
-	}
+	return internal.NewOpenUploadAPI(ImageSecCheckURL, url.Values{}, internal.NewUploadBody("media", filename, func() ([]byte, error) {
+		return ioutil.ReadFile(filename)
+	}), nil)
 }
 
 // MediaCheckAsyncInfo 任务id，用于匹配异步推送结果
@@ -37,34 +32,23 @@ type MediaCheckAsyncInfo struct {
 
 // MediaCheckAsync 异步校验图片/音频是否含有违法违规内容
 func MediaCheckAsync(mediaType SecCheckMediaType, mediaURL string, dest *MediaCheckAsyncInfo) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(internal.X{
-				"media_type": mediaType,
-				"media_url":  mediaURL,
-			})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", MediaCheckAsyncURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			dest.TraceID = gjson.GetBytes(resp, "trace_id").String()
+	return internal.NewOpenPostAPI(MediaCheckAsyncURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(internal.X{
+			"media_type": mediaType,
+			"media_url":  mediaURL,
+		})
+	}), func(resp []byte) error {
+		dest.TraceID = gjson.GetBytes(resp, "trace_id").String()
 
-			return nil
-		},
-	}
+		return nil
+	})
 }
 
 // MsgSecCheck 检查一段文本是否含有违法违规内容
 func MsgSecCheck(content string) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(internal.X{
-				"content": content,
-			})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", MsgSecCheckURL, accessToken)
-		},
-	}
+	return internal.NewOpenPostAPI(MsgSecCheckURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(internal.X{
+			"content": content,
+		})
+	}), nil)
 }

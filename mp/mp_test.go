@@ -42,7 +42,7 @@ func TestAccessToken(t *testing.T) {
 
 	client := internal.NewMockClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET").Return([]byte(`{
+	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/token?appid=APPID&secret=APPSECRET&grant_type=client_credential").Return([]byte(`{
 		"access_token": "ACCESS_TOKEN",
 		"expires_in": 7200,
 		"errcode": 0,
@@ -61,7 +61,7 @@ func TestAccessToken(t *testing.T) {
 	}, accessToken)
 }
 
-var postBody internal.WechatBody
+var postBody internal.Body
 
 func TestMain(m *testing.M) {
 	postBody = internal.NewPostBody(func() ([]byte, error) {

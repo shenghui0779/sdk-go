@@ -2,7 +2,7 @@ package mp
 
 import (
 	"encoding/json"
-	"fmt"
+	"net/url"
 
 	"github.com/shenghui0779/gochat/internal"
 )
@@ -92,171 +92,146 @@ type TypingMessage struct {
 
 // Uniform 发送统一服务消息
 func SendUniformMessage(msg *UniformMessage) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			params := internal.X{
-				"touser": msg.OpenID,
+	return internal.NewOpenPostAPI(UniformMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		params := internal.X{
+			"touser": msg.OpenID,
+		}
+
+		// 小程序模板消息
+		if msg.MPTemplateMessage != nil {
+			tplMsg := internal.X{
+				"template_id": msg.MPTemplateMessage.TemplateID,
+				"form_id":     msg.MPTemplateMessage.FormID,
 			}
 
-			// 小程序模板消息
-			if msg.MPTemplateMessage != nil {
-				tplMsg := internal.X{
-					"template_id": msg.MPTemplateMessage.TemplateID,
-					"form_id":     msg.MPTemplateMessage.FormID,
-				}
-
-				if msg.MPTemplateMessage.Page != "" {
-					params["page"] = msg.MPTemplateMessage.Page
-				}
-
-				if msg.MPTemplateMessage.Data != nil {
-					params["data"] = msg.MPTemplateMessage.Data
-				}
-
-				if msg.MPTemplateMessage.EmphasisKeyword != "" {
-					params["emphasis_keyword"] = msg.MPTemplateMessage.EmphasisKeyword
-				}
-
-				params["weapp_template_msg"] = tplMsg
+			if msg.MPTemplateMessage.Page != "" {
+				params["page"] = msg.MPTemplateMessage.Page
 			}
 
-			// 公众号模板消息
-			if msg.PubTemplateMessage != nil {
-				tplMsg := internal.X{
-					"appid":       msg.PubAppID,
-					"template_id": msg.PubTemplateMessage.TemplateID,
-					"data":        msg.PubTemplateMessage.Data,
-				}
-
-				if msg.PubTemplateMessage.RedirectURL != "" {
-					tplMsg["url"] = msg.PubTemplateMessage.RedirectURL
-				}
-
-				// 公众号模板消息所要跳转的小程序，小程序的必须与公众号具有绑定关系
-				if msg.PubTemplateMessage.MPAppID != "" {
-					tplMsg["miniprogram"] = map[string]string{
-						"appid":    msg.PubTemplateMessage.MPAppID,
-						"pagepath": msg.PubTemplateMessage.MPPagePath,
-					}
-				}
-
-				params["mp_template_msg"] = tplMsg
+			if msg.MPTemplateMessage.Data != nil {
+				params["data"] = msg.MPTemplateMessage.Data
 			}
 
-			return json.Marshal(params)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", UniformMessageSendURL, accessToken)
-		},
-	}
+			if msg.MPTemplateMessage.EmphasisKeyword != "" {
+				params["emphasis_keyword"] = msg.MPTemplateMessage.EmphasisKeyword
+			}
+
+			params["weapp_template_msg"] = tplMsg
+		}
+
+		// 公众号模板消息
+		if msg.PubTemplateMessage != nil {
+			tplMsg := internal.X{
+				"appid":       msg.PubAppID,
+				"template_id": msg.PubTemplateMessage.TemplateID,
+				"data":        msg.PubTemplateMessage.Data,
+			}
+
+			if msg.PubTemplateMessage.RedirectURL != "" {
+				tplMsg["url"] = msg.PubTemplateMessage.RedirectURL
+			}
+
+			// 公众号模板消息所要跳转的小程序，小程序的必须与公众号具有绑定关系
+			if msg.PubTemplateMessage.MPAppID != "" {
+				tplMsg["miniprogram"] = map[string]string{
+					"appid":    msg.PubTemplateMessage.MPAppID,
+					"pagepath": msg.PubTemplateMessage.MPPagePath,
+				}
+			}
+
+			params["mp_template_msg"] = tplMsg
+		}
+
+		return json.Marshal(params)
+	}), nil)
 }
 
 // SendSubscribeMessage 发送订阅消息
 func SendSubscribeMessage(msg *SubscribeMessage) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			params := internal.X{
-				"touser":      msg.OpenID,
-				"template_id": msg.TemplateID,
-				"data":        msg.Data,
-			}
+	return internal.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		params := internal.X{
+			"touser":      msg.OpenID,
+			"template_id": msg.TemplateID,
+			"data":        msg.Data,
+		}
 
-			if msg.PagePath != "" {
-				params["page"] = msg.PagePath
-			}
+		if msg.PagePath != "" {
+			params["page"] = msg.PagePath
+		}
 
-			if msg.MPState != "" {
-				params["miniprogram_state"] = msg.MPState
-			}
+		if msg.MPState != "" {
+			params["miniprogram_state"] = msg.MPState
+		}
 
-			if msg.Lang != "" {
-				params["lang"] = msg.Lang
-			}
+		if msg.Lang != "" {
+			params["lang"] = msg.Lang
+		}
 
-			return json.Marshal(params)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", SubscribeMessageSendURL, accessToken)
-		},
-	}
+		return json.Marshal(params)
+	}), nil)
 }
 
 // SendTemplateMessage 发送模板消息
 func SendTemplateMessage(msg *TemplateMessage) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			params := internal.X{
-				"touser":      msg.OpenID,
-				"template_id": msg.TemplateID,
-				"form_id":     msg.FormID,
-			}
+	return internal.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		params := internal.X{
+			"touser":      msg.OpenID,
+			"template_id": msg.TemplateID,
+			"form_id":     msg.FormID,
+		}
 
-			if msg.Page != "" {
-				params["page"] = msg.Page
-			}
+		if msg.Page != "" {
+			params["page"] = msg.Page
+		}
 
-			if msg.Data != nil {
-				params["data"] = msg.Data
-			}
+		if msg.Data != nil {
+			params["data"] = msg.Data
+		}
 
-			if msg.EmphasisKeyword != "" {
-				params["emphasis_keyword"] = msg.EmphasisKeyword
-			}
+		if msg.EmphasisKeyword != "" {
+			params["emphasis_keyword"] = msg.EmphasisKeyword
+		}
 
-			return json.Marshal(params)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", TemplateMessageSendURL, accessToken)
-		},
-	}
+		return json.Marshal(params)
+	}), nil)
 }
 
 // SendCustomerServiceMessage 发送客服消息
 func SendCustomerServiceMessage(msg *CustomerServiceMessage) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			params := internal.X{
-				"touser":  msg.OpenID,
-				"msgtype": msg.MessageType,
-			}
+	return internal.NewOpenPostAPI(CustomerServiceMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		params := internal.X{
+			"touser":  msg.OpenID,
+			"msgtype": msg.MessageType,
+		}
 
-			if msg.Text != nil {
-				params["text"] = msg.Text
-			}
+		if msg.Text != nil {
+			params["text"] = msg.Text
+		}
 
-			if msg.Image != nil {
-				params["image"] = msg.Image
-			}
+		if msg.Image != nil {
+			params["image"] = msg.Image
+		}
 
-			if msg.Link != nil {
-				params["link"] = msg.Link
-			}
+		if msg.Link != nil {
+			params["link"] = msg.Link
+		}
 
-			if msg.Page != nil {
-				params["miniprogrampage"] = msg.Page
-			}
+		if msg.Page != nil {
+			params["miniprogrampage"] = msg.Page
+		}
 
-			return json.Marshal(params)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", CustomerServiceMessageSendURL, accessToken)
-		},
-	}
+		return json.Marshal(params)
+	}), nil)
 }
 
 // SetTyping 下发当前输入状态，仅支持客服消息
 func SetTyping(msg *TypingMessage) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			params := internal.X{
-				"touser":  msg.OpenID,
-				"command": msg.Command,
-			}
+	return internal.NewOpenPostAPI(SetTypingURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		params := internal.X{
+			"touser":  msg.OpenID,
+			"command": msg.Command,
+		}
 
-			return json.Marshal(params)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", SetTypingURL, accessToken)
-		},
-	}
+		return json.Marshal(params)
+	}), nil)
 }

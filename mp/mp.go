@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strings"
 
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/internal"
@@ -73,7 +72,7 @@ func (w *WechatMP) Code2Session(ctx context.Context, code string, options ...int
 
 // AccessToken 获取小程序的access_token
 func (w *WechatMP) AccessToken(ctx context.Context, options ...internal.HTTPOption) (*AccessToken, error) {
-	resp, err := w.client.Get(ctx, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", AccessTokenURL, w.appid, w.appsecret), options...)
+	resp, err := w.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&grant_type=client_credential", AccessTokenURL, w.appid, w.appsecret), options...)
 
 	if err != nil {
 		return nil, err
@@ -140,15 +139,13 @@ func (w *WechatMP) Do(ctx context.Context, accessToken string, action internal.A
 		err  error
 	)
 
-	arr := strings.SplitN(action.URL()(accessToken), "|", 2)
-
-	switch arr[0] {
-	case "GET":
-		resp, err = w.client.Get(ctx, arr[1], options...)
-	case "POST":
-		resp, err = w.client.Post(ctx, arr[1], action.Body(), options...)
-	case "UPLOAD":
-		resp, err = w.client.Upload(ctx, arr[1], action.Body(), options...)
+	switch action.Method() {
+	case internal.MethodGet:
+		resp, err = w.client.Get(ctx, action.URL()(accessToken), options...)
+	case internal.MethodPost:
+		resp, err = w.client.Post(ctx, action.URL()(accessToken), action.Body(), options...)
+	case internal.MethodUpload:
+		resp, err = w.client.Upload(ctx, action.URL()(accessToken), action.Body(), options...)
 	}
 
 	if err != nil {

@@ -2,8 +2,8 @@ package mp
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"net/url"
 
 	"github.com/shenghui0779/gochat/internal"
 )
@@ -23,17 +23,15 @@ type MediaUploadInfo struct {
 
 // UploadMedia 上传临时素材到微信服务器
 func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadInfo) internal.Action {
-	return &WechatAPI{
-		body: internal.NewUploadBody("media", filename, func() ([]byte, error) {
-			return ioutil.ReadFile(filename)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("UPLOAD|%s?access_token=%s&type=%s", MediaUploadURL, accessToken, mediaType)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	query := url.Values{}
+
+	query.Set("type", string(mediaType))
+
+	return internal.NewOpenUploadAPI(MediaUploadURL, query, internal.NewUploadBody("media", filename, func() ([]byte, error) {
+		return ioutil.ReadFile(filename)
+	}), func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // Media 临时素材
@@ -43,16 +41,15 @@ type Media struct {
 
 // GetMedia 获取客服消息内的临时素材
 func GetMedia(mediaID string, dest *Media) internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("GET|%s?access_token=%s&media_id=%s", MediaGetURL, accessToken, mediaID)
-		},
-		decode: func(resp []byte) error {
-			dest.Buffer = make([]byte, len(resp))
+	query := url.Values{}
 
-			copy(dest.Buffer, resp)
+	query.Set("media_id", mediaID)
 
-			return nil
-		},
-	}
+	return internal.NewOpenGetAPI(MediaGetURL, query, func(resp []byte) error {
+		dest.Buffer = make([]byte, len(resp))
+
+		copy(dest.Buffer, resp)
+
+		return nil
+	})
 }
