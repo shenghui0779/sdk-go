@@ -216,9 +216,9 @@ func (h *HTTPClient) Upload(ctx context.Context, url string, body Body, options 
 	}
 
 	buf := new(bytes.Buffer)
-	mw := multipart.NewWriter(buf)
+	w := multipart.NewWriter(buf)
 
-	fw, err := mw.CreateFormFile(body.FieldName(), body.FileName())
+	fw, err := w.CreateFormFile(body.FieldName(), body.FileName())
 
 	if err != nil {
 		return nil, err
@@ -228,11 +228,11 @@ func (h *HTTPClient) Upload(ctx context.Context, url string, body Body, options 
 		return nil, err
 	}
 
-	options = append(options, WithHTTPHeader("Content-Type", mw.FormDataContentType()))
+	options = append(options, WithHTTPHeader("Content-Type", w.FormDataContentType()))
 
 	// Don't forget to close the multipart writer.
 	// If you don't close it, your request will be missing the terminating boundary.
-	mw.Close()
+	w.Close()
 
 	req, err := http.NewRequest("POST", url, bytes.NewReader([]byte(buf.String())))
 

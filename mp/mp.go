@@ -16,8 +16,8 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// WechatMP 微信小程序
-type WechatMP struct {
+// MP 微信小程序
+type MP struct {
 	appid          string
 	appsecret      string
 	signToken      string
@@ -27,8 +27,8 @@ type WechatMP struct {
 }
 
 // New returns new wechat mini program
-func New(appid, appsecret string) *WechatMP {
-	return &WechatMP{
+func New(appid, appsecret string) *MP {
+	return &MP{
 		appid:     appid,
 		appsecret: appsecret,
 		nonce: func(size int) string {
@@ -42,14 +42,14 @@ func New(appid, appsecret string) *WechatMP {
 }
 
 // SetServerConfig 设置服务器配置
-func (w *WechatMP) SetServerConfig(token, encodingAESKey string) {
-	w.signToken = token
-	w.encodingAESKey = encodingAESKey
+func (mp *MP) SetServerConfig(token, encodingAESKey string) {
+	mp.signToken = token
+	mp.encodingAESKey = encodingAESKey
 }
 
 // Code2Session 获取小程序授权的session_key
-func (w *WechatMP) Code2Session(ctx context.Context, code string, options ...internal.HTTPOption) (*AuthSession, error) {
-	resp, err := w.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", Code2SessionURL, w.appid, w.appsecret, code), options...)
+func (mp *MP) Code2Session(ctx context.Context, code string, options ...internal.HTTPOption) (*AuthSession, error) {
+	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", Code2SessionURL, mp.appid, mp.appsecret, code), options...)
 
 	if err != nil {
 		return nil, err
@@ -71,8 +71,8 @@ func (w *WechatMP) Code2Session(ctx context.Context, code string, options ...int
 }
 
 // AccessToken 获取小程序的access_token
-func (w *WechatMP) AccessToken(ctx context.Context, options ...internal.HTTPOption) (*AccessToken, error) {
-	resp, err := w.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&grant_type=client_credential", AccessTokenURL, w.appid, w.appsecret), options...)
+func (mp *MP) AccessToken(ctx context.Context, options ...internal.HTTPOption) (*AccessToken, error) {
+	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&grant_type=client_credential", AccessTokenURL, mp.appid, mp.appsecret), options...)
 
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func (w *WechatMP) AccessToken(ctx context.Context, options ...internal.HTTPOpti
 }
 
 // DecryptAuthInfo 解密授权信息
-func (w *WechatMP) DecryptAuthInfo(sessionKey, iv, encryptedData string, dest AuthInfo) error {
+func (mp *MP) DecryptAuthInfo(sessionKey, iv, encryptedData string, dest AuthInfo) error {
 	key, err := base64.StdEncoding.DecodeString(sessionKey)
 
 	if err != nil {
@@ -125,15 +125,15 @@ func (w *WechatMP) DecryptAuthInfo(sessionKey, iv, encryptedData string, dest Au
 		return err
 	}
 
-	if dest.AppID() != w.appid {
-		return fmt.Errorf("appid mismatch, want: %s, got: %s", w.appid, dest.AppID())
+	if dest.AppID() != mp.appid {
+		return fmt.Errorf("appid mismatch, want: %s, got: %s", mp.appid, dest.AppID())
 	}
 
 	return nil
 }
 
 // Do exec action
-func (w *WechatMP) Do(ctx context.Context, accessToken string, action internal.Action, options ...internal.HTTPOption) error {
+func (mp *MP) Do(ctx context.Context, accessToken string, action internal.Action, options ...internal.HTTPOption) error {
 	var (
 		resp []byte
 		err  error
@@ -141,11 +141,11 @@ func (w *WechatMP) Do(ctx context.Context, accessToken string, action internal.A
 
 	switch action.Method() {
 	case internal.MethodGet:
-		resp, err = w.client.Get(ctx, action.URL()(accessToken), options...)
+		resp, err = mp.client.Get(ctx, action.URL()(accessToken), options...)
 	case internal.MethodPost:
-		resp, err = w.client.Post(ctx, action.URL()(accessToken), action.Body(), options...)
+		resp, err = mp.client.Post(ctx, action.URL()(accessToken), action.Body(), options...)
 	case internal.MethodUpload:
-		resp, err = w.client.Upload(ctx, action.URL()(accessToken), action.Body(), options...)
+		resp, err = mp.client.Upload(ctx, action.URL()(accessToken), action.Body(), options...)
 	}
 
 	if err != nil {
@@ -166,8 +166,8 @@ func (w *WechatMP) Do(ctx context.Context, accessToken string, action internal.A
 }
 
 // DecryptEventMessage 事件消息解密
-func (w *WechatMP) DecryptEventMessage(cipherText string) (*event.Message, error) {
-	b, err := event.Decrypt(w.appid, w.encodingAESKey, cipherText)
+func (mp *MP) DecryptEventMessage(cipherText string) (*event.Message, error) {
+	b, err := event.Decrypt(mp.appid, mp.encodingAESKey, cipherText)
 
 	if err != nil {
 		return nil, err

@@ -7,16 +7,16 @@ import (
 )
 
 // NewMch 微信商户
-func NewMch(appid, mchid, apikey string) *mch.WechatMch {
+func NewMch(appid, mchid, apikey string) *mch.Mch {
 	return mch.New(appid, mchid, apikey)
 }
 
 // NewPub 微信公众号
-func NewOA(appid, appsecret string) *oa.WechatOA {
+func NewOA(appid, appsecret string) *oa.OA {
 	return oa.New(appid, appsecret)
 }
 
 // NewMP 微信小程序
-func NewMP(appid, appsecret string) *mp.WechatMP {
+func NewMP(appid, appsecret string) *mp.MP {
 	return mp.New(appid, appsecret)
 }

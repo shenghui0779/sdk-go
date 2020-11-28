@@ -17,8 +17,8 @@ import (
 	"golang.org/x/crypto/pkcs12"
 )
 
-// WechatMch 微信支付
-type WechatMch struct {
+// Mch 微信支付
+type Mch struct {
 	appid     string
 	mchid     string
 	apikey    string
@@ -28,10 +28,10 @@ type WechatMch struct {
 }
 
 // New returns new wechat pay
-func New(appid, mchid, apikey string) *WechatMch {
+func New(appid, mchid, apikey string) *Mch {
 	c := internal.NewHTTPClient(&tls.Config{InsecureSkipVerify: true})
 
-	return &WechatMch{
+	return &Mch{
 		appid:  appid,
 		mchid:  mchid,
 		apikey: apikey,
@@ -47,20 +47,20 @@ func New(appid, mchid, apikey string) *WechatMch {
 }
 
 // LoadCertFromP12File load cert from p12(pfx) file
-func (w *WechatMch) LoadCertFromP12File(path string) error {
+func (mch *Mch) LoadCertFromP12File(path string) error {
 	p12, err := ioutil.ReadFile(path)
 
 	if err != nil {
 		return err
 	}
 
-	cert, err := w.pkcs12ToPem(p12)
+	cert, err := mch.pkcs12ToPem(p12)
 
 	if err != nil {
 		return err
 	}
 
-	w.tlsClient = internal.NewHTTPClient(&tls.Config{
+	mch.tlsClient = internal.NewHTTPClient(&tls.Config{
 		Certificates:       []tls.Certificate{cert},
 		InsecureSkipVerify: true,
 	})
@@ -69,14 +69,14 @@ func (w *WechatMch) LoadCertFromP12File(path string) error {
 }
 
 // LoadCertFromPemFile load cert from PEM file
-func (w *WechatMch) LoadCertFromPemFile(certFile, keyFile string) error {
+func (mch *Mch) LoadCertFromPemFile(certFile, keyFile string) error {
 	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 
 	if err != nil {
 		return err
 	}
 
-	w.tlsClient = internal.NewHTTPClient(&tls.Config{
+	mch.tlsClient = internal.NewHTTPClient(&tls.Config{
 		Certificates:       []tls.Certificate{cert},
 		InsecureSkipVerify: true,
 	})
@@ -85,14 +85,14 @@ func (w *WechatMch) LoadCertFromPemFile(certFile, keyFile string) error {
 }
 
 // LoadCertFromPemBlock load cert from a pair of PEM encoded data
-func (w *WechatMch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
+func (mch *Mch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
 	cert, err := tls.X509KeyPair(certPEMBlock, keyPEMBlock)
 
 	if err != nil {
 		return err
 	}
 
-	w.tlsClient = internal.NewHTTPClient(&tls.Config{
+	mch.tlsClient = internal.NewHTTPClient(&tls.Config{
 		Certificates:       []tls.Certificate{cert},
 		InsecureSkipVerify: true,
 	})
@@ -101,8 +101,8 @@ func (w *WechatMch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error
 }
 
 // Do exec action
-func (w *WechatMch) Do(ctx context.Context, action internal.Action, options ...internal.HTTPOption) (internal.WXML, error) {
-	body, err := action.WXML()(w.appid, w.mchid, w.apikey, w.nonce(16))
+func (mch *Mch) Do(ctx context.Context, action internal.Action, options ...internal.HTTPOption) (internal.WXML, error) {
+	body, err := action.WXML()(mch.appid, mch.mchid, mch.apikey, mch.nonce(16))
 
 	if err != nil {
 		return nil, err
@@ -117,9 +117,9 @@ func (w *WechatMch) Do(ctx context.Context, action internal.Action, options ...i
 	var resp internal.WXML
 
 	if action.TLS() {
-		resp, err = w.tlsClient.PostXML(ctx, reqURL, body, options...)
+		resp, err = mch.tlsClient.PostXML(ctx, reqURL, body, options...)
 	} else {
-		resp, err = w.client.PostXML(ctx, reqURL, body, options...)
+		resp, err = mch.client.PostXML(ctx, reqURL, body, options...)
 	}
 
 	if err != nil {
@@ -130,7 +130,7 @@ func (w *WechatMch) Do(ctx context.Context, action internal.Action, options ...i
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := w.VerifyWXReply(resp); err != nil {
+	if err := mch.VerifyWXReply(resp); err != nil {
 		return nil, err
 	}
 
@@ -138,46 +138,46 @@ func (w *WechatMch) Do(ctx context.Context, action internal.Action, options ...i
 }
 
 // APPAPI 用于APP拉起支付
-func (w *WechatMch) APPAPI(prepayID string, timestamp int64) internal.WXML {
+func (mch *Mch) APPAPI(prepayID string, timestamp int64) internal.WXML {
 	m := internal.WXML{
-		"appid":     w.appid,
-		"partnerid": w.mchid,
+		"appid":     mch.appid,
+		"partnerid": mch.mchid,
 		"prepayid":  prepayID,
 		"package":   "Sign=WXPay",
-		"noncestr":  w.nonce(16),
+		"noncestr":  mch.nonce(16),
 		"timestamp": strconv.FormatInt(timestamp, 10),
 	}
 
-	m["sign"] = internal.SignWithMD5(m, w.apikey, true)
+	m["sign"] = internal.SignWithMD5(m, mch.apikey, true)
 
 	return m
 }
 
 // JSAPI 用于JS拉起支付
-func (w *WechatMch) JSAPI(prepayID string, timestamp int64) internal.WXML {
+func (mch *Mch) JSAPI(prepayID string, timestamp int64) internal.WXML {
 	m := internal.WXML{
-		"appId":     w.appid,
-		"nonceStr":  w.nonce(16),
+		"appId":     mch.appid,
+		"nonceStr":  mch.nonce(16),
 		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
 		"signType":  SignMD5,
 		"timeStamp": strconv.FormatInt(timestamp, 10),
 	}
 
-	m["paySign"] = internal.SignWithMD5(m, w.apikey, true)
+	m["paySign"] = internal.SignWithMD5(m, mch.apikey, true)
 
 	return m
 }
 
 // MPRedpackJSAPI 小程序领取红包
-func (w *WechatMch) MPRedpackJSAPI(pkg string, timestamp int64) internal.WXML {
+func (mch *Mch) MPRedpackJSAPI(pkg string, timestamp int64) internal.WXML {
 	m := internal.WXML{
-		"appId":     w.appid,
-		"nonceStr":  w.nonce(16),
+		"appId":     mch.appid,
+		"nonceStr":  mch.nonce(16),
 		"package":   url.QueryEscape(pkg),
 		"timeStamp": strconv.FormatInt(timestamp, 10),
 	}
 
-	m["paySign"] = internal.SignWithMD5(m, w.apikey, false)
+	m["paySign"] = internal.SignWithMD5(m, mch.apikey, false)
 
 	delete(m, "appId")
 	m["signType"] = SignMD5
@@ -186,14 +186,14 @@ func (w *WechatMch) MPRedpackJSAPI(pkg string, timestamp int64) internal.WXML {
 }
 
 // VerifyWXReply 验证微信结果
-func (w *WechatMch) VerifyWXReply(m internal.WXML) error {
+func (mch *Mch) VerifyWXReply(m internal.WXML) error {
 	if wxsign, ok := m["sign"]; ok {
 		signature := ""
 
 		if v, ok := m["sign_type"]; ok && v == SignHMacSHA256 {
-			signature = internal.SignWithHMacSHA256(m, w.apikey, true)
+			signature = internal.SignWithHMacSHA256(m, mch.apikey, true)
 		} else {
-			signature = internal.SignWithMD5(m, w.apikey, true)
+			signature = internal.SignWithMD5(m, mch.apikey, true)
 		}
 
 		if wxsign != signature {
@@ -202,22 +202,22 @@ func (w *WechatMch) VerifyWXReply(m internal.WXML) error {
 	}
 
 	if appid, ok := m["appid"]; ok {
-		if appid != w.appid {
-			return fmt.Errorf("appid mismatch, want: %s, got: %s", w.appid, m["appid"])
+		if appid != mch.appid {
+			return fmt.Errorf("appid mismatch, want: %s, got: %s", mch.appid, m["appid"])
 		}
 	}
 
 	if mchid, ok := m["mch_id"]; ok {
-		if mchid != w.mchid {
-			return fmt.Errorf("mchid mismatch, want: %s, got: %s", w.mchid, m["mch_id"])
+		if mchid != mch.mchid {
+			return fmt.Errorf("mchid mismatch, want: %s, got: %s", mch.mchid, m["mch_id"])
 		}
 	}
 
 	return nil
 }
 
-func (w *WechatMch) pkcs12ToPem(p12 []byte) (tls.Certificate, error) {
-	blocks, err := pkcs12.ToPEM(p12, w.mchid)
+func (mch *Mch) pkcs12ToPem(p12 []byte) (tls.Certificate, error) {
+	blocks, err := pkcs12.ToPEM(p12, mch.mchid)
 
 	if err != nil {
 		return tls.Certificate{}, err
