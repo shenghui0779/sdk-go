@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 	"github.com/tidwall/gjson"
 )
 
@@ -19,7 +19,7 @@ type TemplateInfo struct {
 }
 
 // GetTemplateList 获取模板列表
-func GetTemplateList(dest *[]TemplateInfo) Action {
+func GetTemplateList(dest *[]TemplateInfo) internal.Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s", TemplateListURL, accessToken)
@@ -33,10 +33,10 @@ func GetTemplateList(dest *[]TemplateInfo) Action {
 }
 
 // DeleteTemplate 删除模板
-func DeleteTemplate(templateID string) Action {
+func DeleteTemplate(templateID string) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(helpers.X{"template_id": templateID})
+		body: internal.NewPostBody(func() ([]byte, error) {
+			return json.Marshal(internal.X{"template_id": templateID})
 		}),
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?access_token=%s", TemplateDeleteURL, accessToken)
@@ -58,10 +58,10 @@ type TemplateMessage struct {
 }
 
 // SendTemplateMessage 发送模板消息
-func SendTemplateMessage(msg *TemplateMessage) Action {
+func SendTemplateMessage(msg *TemplateMessage) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			params := helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			params := internal.X{
 				"touser":      msg.OpenID,
 				"template_id": msg.TemplateID,
 				"data":        msg.Data,
@@ -87,10 +87,10 @@ func SendTemplateMessage(msg *TemplateMessage) Action {
 }
 
 // SendSubscribeMessage 发送订阅消息
-func SendSubscribeMessage(scene, title string, msg *TemplateMessage) Action {
+func SendSubscribeMessage(scene, title string, msg *TemplateMessage) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			params := helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			params := internal.X{
 				"scene":       scene,
 				"title":       title,
 				"touser":      msg.OpenID,

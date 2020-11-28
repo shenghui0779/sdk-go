@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 )
 
 // MessageBody 消息内容体
@@ -74,7 +74,7 @@ type LinkMessage struct {
 	Title       string // 消息标题
 	Description string // 图文链接消息
 	RedirectURL string // 图文链接消息被点击后跳转的链接
-	ThumbURL    string // 图文链接消息的图片链接，支持 JPG、PNG 格式，较好的效果为大图 640 helpers.X 320，小图 80 helpers.X 80
+	ThumbURL    string // 图文链接消息的图片链接，支持 JPG、PNG 格式，较好的效果为大图 640 internal.X 320，小图 80 internal.X 80
 }
 
 // PageMessage 小程序卡片
@@ -91,16 +91,16 @@ type TypingMessage struct {
 }
 
 // Uniform 发送统一服务消息
-func SendUniformMessage(msg *UniformMessage) Action {
+func SendUniformMessage(msg *UniformMessage) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			params := helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			params := internal.X{
 				"touser": msg.OpenID,
 			}
 
 			// 小程序模板消息
 			if msg.MPTemplateMessage != nil {
-				tplMsg := helpers.X{
+				tplMsg := internal.X{
 					"template_id": msg.MPTemplateMessage.TemplateID,
 					"form_id":     msg.MPTemplateMessage.FormID,
 				}
@@ -122,7 +122,7 @@ func SendUniformMessage(msg *UniformMessage) Action {
 
 			// 公众号模板消息
 			if msg.PubTemplateMessage != nil {
-				tplMsg := helpers.X{
+				tplMsg := internal.X{
 					"appid":       msg.PubAppID,
 					"template_id": msg.PubTemplateMessage.TemplateID,
 					"data":        msg.PubTemplateMessage.Data,
@@ -152,10 +152,10 @@ func SendUniformMessage(msg *UniformMessage) Action {
 }
 
 // SendSubscribeMessage 发送订阅消息
-func SendSubscribeMessage(msg *SubscribeMessage) Action {
+func SendSubscribeMessage(msg *SubscribeMessage) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			params := helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			params := internal.X{
 				"touser":      msg.OpenID,
 				"template_id": msg.TemplateID,
 				"data":        msg.Data,
@@ -182,10 +182,10 @@ func SendSubscribeMessage(msg *SubscribeMessage) Action {
 }
 
 // SendTemplateMessage 发送模板消息
-func SendTemplateMessage(msg *TemplateMessage) Action {
+func SendTemplateMessage(msg *TemplateMessage) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			params := helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			params := internal.X{
 				"touser":      msg.OpenID,
 				"template_id": msg.TemplateID,
 				"form_id":     msg.FormID,
@@ -212,10 +212,10 @@ func SendTemplateMessage(msg *TemplateMessage) Action {
 }
 
 // SendCustomerServiceMessage 发送客服消息
-func SendCustomerServiceMessage(msg *CustomerServiceMessage) Action {
+func SendCustomerServiceMessage(msg *CustomerServiceMessage) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			params := helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			params := internal.X{
 				"touser":  msg.OpenID,
 				"msgtype": msg.MessageType,
 			}
@@ -245,10 +245,10 @@ func SendCustomerServiceMessage(msg *CustomerServiceMessage) Action {
 }
 
 // SetTyping 下发当前输入状态，仅支持客服消息
-func SetTyping(msg *TypingMessage) Action {
+func SetTyping(msg *TypingMessage) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			params := helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			params := internal.X{
 				"touser":  msg.OpenID,
 				"command": msg.Command,
 			}

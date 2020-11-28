@@ -13,35 +13,9 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 	"golang.org/x/crypto/pkcs12"
 )
-
-// Action wechat pay action
-type Action interface {
-	WXML() func(appid, mchid, apikey, nonce string) (helpers.WXML, error)
-	URL() string
-	TLS() bool
-}
-
-// WechatAPI 微信支付API
-type WechatAPI struct {
-	wxml func(appid, mchid, apikey, nonce string) (helpers.WXML, error)
-	url  string
-	tls  bool
-}
-
-func (a *WechatAPI) WXML() func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
-	return a.wxml
-}
-
-func (a *WechatAPI) URL() string {
-	return a.url
-}
-
-func (a *WechatAPI) TLS() bool {
-	return a.tls
-}
 
 // WechatMch 微信支付
 type WechatMch struct {
@@ -49,13 +23,13 @@ type WechatMch struct {
 	mchid     string
 	apikey    string
 	nonce     func(size int) string
-	client    helpers.HTTPClient
-	tlsClient helpers.HTTPClient
+	client    internal.Client
+	tlsClient internal.Client
 }
 
 // New returns new wechat pay
 func New(appid, mchid, apikey string) *WechatMch {
-	c := helpers.NewHTTPClient(&tls.Config{InsecureSkipVerify: true})
+	c := internal.NewHTTPClient(&tls.Config{InsecureSkipVerify: true})
 
 	return &WechatMch{
 		appid:  appid,
@@ -86,7 +60,7 @@ func (w *WechatMch) LoadCertFromP12File(path string) error {
 		return err
 	}
 
-	w.tlsClient = helpers.NewHTTPClient(&tls.Config{
+	w.tlsClient = internal.NewHTTPClient(&tls.Config{
 		Certificates:       []tls.Certificate{cert},
 		InsecureSkipVerify: true,
 	})
@@ -102,7 +76,7 @@ func (w *WechatMch) LoadCertFromPemFile(certFile, keyFile string) error {
 		return err
 	}
 
-	w.tlsClient = helpers.NewHTTPClient(&tls.Config{
+	w.tlsClient = internal.NewHTTPClient(&tls.Config{
 		Certificates:       []tls.Certificate{cert},
 		InsecureSkipVerify: true,
 	})
@@ -118,7 +92,7 @@ func (w *WechatMch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error
 		return err
 	}
 
-	w.tlsClient = helpers.NewHTTPClient(&tls.Config{
+	w.tlsClient = internal.NewHTTPClient(&tls.Config{
 		Certificates:       []tls.Certificate{cert},
 		InsecureSkipVerify: true,
 	})
@@ -127,23 +101,25 @@ func (w *WechatMch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error
 }
 
 // Do exec action
-func (w *WechatMch) Do(ctx context.Context, action Action, options ...helpers.HTTPOption) (helpers.WXML, error) {
+func (w *WechatMch) Do(ctx context.Context, action internal.Action, options ...internal.HTTPOption) (internal.WXML, error) {
 	body, err := action.WXML()(w.appid, w.mchid, w.apikey, w.nonce(16))
 
 	if err != nil {
 		return nil, err
 	}
 
-	if action.URL() == "" {
+	reqURL := action.URL()()
+
+	if len(reqURL) == 0 {
 		return body, nil
 	}
 
-	var resp helpers.WXML
+	var resp internal.WXML
 
 	if action.TLS() {
-		resp, err = w.tlsClient.PostXML(ctx, action.URL(), body, options...)
+		resp, err = w.tlsClient.PostXML(ctx, reqURL, body, options...)
 	} else {
-		resp, err = w.client.PostXML(ctx, action.URL(), body, options...)
+		resp, err = w.client.PostXML(ctx, reqURL, body, options...)
 	}
 
 	if err != nil {
@@ -162,8 +138,8 @@ func (w *WechatMch) Do(ctx context.Context, action Action, options ...helpers.HT
 }
 
 // APPAPI 用于APP拉起支付
-func (w *WechatMch) APPAPI(prepayID string, timestamp int64) helpers.WXML {
-	m := helpers.WXML{
+func (w *WechatMch) APPAPI(prepayID string, timestamp int64) internal.WXML {
+	m := internal.WXML{
 		"appid":     w.appid,
 		"partnerid": w.mchid,
 		"prepayid":  prepayID,
@@ -172,14 +148,14 @@ func (w *WechatMch) APPAPI(prepayID string, timestamp int64) helpers.WXML {
 		"timestamp": strconv.FormatInt(timestamp, 10),
 	}
 
-	m["sign"] = helpers.SignWithMD5(m, w.apikey, true)
+	m["sign"] = internal.SignWithMD5(m, w.apikey, true)
 
 	return m
 }
 
 // JSAPI 用于JS拉起支付
-func (w *WechatMch) JSAPI(prepayID string, timestamp int64) helpers.WXML {
-	m := helpers.WXML{
+func (w *WechatMch) JSAPI(prepayID string, timestamp int64) internal.WXML {
+	m := internal.WXML{
 		"appId":     w.appid,
 		"nonceStr":  w.nonce(16),
 		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
@@ -187,21 +163,21 @@ func (w *WechatMch) JSAPI(prepayID string, timestamp int64) helpers.WXML {
 		"timeStamp": strconv.FormatInt(timestamp, 10),
 	}
 
-	m["paySign"] = helpers.SignWithMD5(m, w.apikey, true)
+	m["paySign"] = internal.SignWithMD5(m, w.apikey, true)
 
 	return m
 }
 
 // MPRedpackJSAPI 小程序领取红包
-func (w *WechatMch) MPRedpackJSAPI(pkg string, timestamp int64) helpers.WXML {
-	m := helpers.WXML{
+func (w *WechatMch) MPRedpackJSAPI(pkg string, timestamp int64) internal.WXML {
+	m := internal.WXML{
 		"appId":     w.appid,
 		"nonceStr":  w.nonce(16),
 		"package":   url.QueryEscape(pkg),
 		"timeStamp": strconv.FormatInt(timestamp, 10),
 	}
 
-	m["paySign"] = helpers.SignWithMD5(m, w.apikey, false)
+	m["paySign"] = internal.SignWithMD5(m, w.apikey, false)
 
 	delete(m, "appId")
 	m["signType"] = SignMD5
@@ -210,14 +186,14 @@ func (w *WechatMch) MPRedpackJSAPI(pkg string, timestamp int64) helpers.WXML {
 }
 
 // VerifyWXReply 验证微信结果
-func (w *WechatMch) VerifyWXReply(m helpers.WXML) error {
+func (w *WechatMch) VerifyWXReply(m internal.WXML) error {
 	if wxsign, ok := m["sign"]; ok {
 		signature := ""
 
 		if v, ok := m["sign_type"]; ok && v == SignHMacSHA256 {
-			signature = helpers.SignWithHMacSHA256(m, w.apikey, true)
+			signature = internal.SignWithHMacSHA256(m, w.apikey, true)
 		} else {
-			signature = helpers.SignWithMD5(m, w.apikey, true)
+			signature = internal.SignWithMD5(m, w.apikey, true)
 		}
 
 		if wxsign != signature {

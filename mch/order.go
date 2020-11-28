@@ -3,7 +3,7 @@ package mch
 import (
 	"strconv"
 
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 )
 
 // OrderData 统一下单数据
@@ -31,9 +31,9 @@ type OrderData struct {
 }
 
 // UnifyOrder 统一下单
-func UnifyOrder(data *OrderData) Action {
-	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
-		body := helpers.WXML{
+func UnifyOrder(data *OrderData) internal.Action {
+	return internal.NewMchAPI(OrderUnifyURL, func(appid, mchid, apikey, nonce string) (internal.WXML, error) {
+		body := internal.WXML{
 			"appid":            appid,
 			"mch_id":           mchid,
 			"nonce_str":        nonce,
@@ -95,21 +95,16 @@ func UnifyOrder(data *OrderData) Action {
 			body["scene_info"] = data.SceneInfo
 		}
 
-		body["sign"] = helpers.SignWithMD5(body, apikey, true)
+		body["sign"] = internal.SignWithMD5(body, apikey, true)
 
 		return body, nil
-	}
-
-	return &WechatAPI{
-		wxml: f,
-		url:  OrderUnifyURL,
-	}
+	}, false)
 }
 
 // QueryOrderByTransactionID 根据微信订单号查询
-func QueryOrderByTransactionID(transactionID string) Action {
-	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
-		body := helpers.WXML{
+func QueryOrderByTransactionID(transactionID string) internal.Action {
+	return internal.NewMchAPI(OrderQueryURL, func(appid, mchid, apikey, nonce string) (internal.WXML, error) {
+		body := internal.WXML{
 			"appid":          appid,
 			"mch_id":         mchid,
 			"transaction_id": transactionID,
@@ -117,21 +112,16 @@ func QueryOrderByTransactionID(transactionID string) Action {
 			"sign_type":      SignMD5,
 		}
 
-		body["sign"] = helpers.SignWithMD5(body, apikey, true)
+		body["sign"] = internal.SignWithMD5(body, apikey, true)
 
 		return body, nil
-	}
-
-	return &WechatAPI{
-		wxml: f,
-		url:  OrderQueryURL,
-	}
+	}, false)
 }
 
 // QueryOrderByOutTradeNO 根据商户订单号查询
-func QueryOrderByOutTradeNO(outTradeNO string) Action {
-	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
-		body := helpers.WXML{
+func QueryOrderByOutTradeNO(outTradeNO string) internal.Action {
+	return internal.NewMchAPI(OrderQueryURL, func(appid, mchid, apikey, nonce string) (internal.WXML, error) {
+		body := internal.WXML{
 			"appid":        appid,
 			"mch_id":       mchid,
 			"out_trade_no": outTradeNO,
@@ -139,21 +129,16 @@ func QueryOrderByOutTradeNO(outTradeNO string) Action {
 			"sign_type":    SignMD5,
 		}
 
-		body["sign"] = helpers.SignWithMD5(body, apikey, true)
+		body["sign"] = internal.SignWithMD5(body, apikey, true)
 
 		return body, nil
-	}
-
-	return &WechatAPI{
-		wxml: f,
-		url:  OrderQueryURL,
-	}
+	}, false)
 }
 
 // CloseOrder 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
-func CloseOrder(outTradeNO string) Action {
-	f := func(appid, mchid, apikey, nonce string) (helpers.WXML, error) {
-		body := helpers.WXML{
+func CloseOrder(outTradeNO string) internal.Action {
+	return internal.NewMchAPI(OrderCloseURL, func(appid, mchid, apikey, nonce string) (internal.WXML, error) {
+		body := internal.WXML{
 			"appid":        appid,
 			"mch_id":       mchid,
 			"out_trade_no": outTradeNO,
@@ -161,13 +146,8 @@ func CloseOrder(outTradeNO string) Action {
 			"sign_type":    SignMD5,
 		}
 
-		body["sign"] = helpers.SignWithMD5(body, apikey, true)
+		body["sign"] = internal.SignWithMD5(body, apikey, true)
 
 		return body, nil
-	}
-
-	return &WechatAPI{
-		wxml: f,
-		url:  OrderCloseURL,
-	}
+	}, false)
 }

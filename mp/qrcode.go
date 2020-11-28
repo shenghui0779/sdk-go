@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 )
 
 type qrcodeOptions struct {
@@ -75,9 +75,9 @@ type QRCode struct {
 }
 
 // CreateQRCode 创建小程序二维码 - 数量有限
-func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) Action {
+func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
+		body: internal.NewPostBody(func() ([]byte, error) {
 			o := new(qrcodeOptions)
 
 			if len(options) > 0 {
@@ -86,7 +86,7 @@ func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) Action {
 				}
 			}
 
-			params := helpers.X{"path": path}
+			params := internal.X{"path": path}
 
 			if o.width != 0 {
 				params["width"] = o.width
@@ -113,9 +113,9 @@ func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) Action {
 }
 
 // GetQRCode 获取小程序二维码 - 数量有限
-func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) Action {
+func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
+		body: internal.NewPostBody(func() ([]byte, error) {
 			o := new(qrcodeOptions)
 
 			if len(options) > 0 {
@@ -124,7 +124,7 @@ func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) Action {
 				}
 			}
 
-			params := helpers.X{"path": path}
+			params := internal.X{"path": path}
 
 			if o.width != 0 {
 				params["width"] = o.width
@@ -163,9 +163,9 @@ func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) Action {
 }
 
 // GetUnlimitQRCode 获取小程序二维码 - 数量不限
-func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) Action {
+func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
+		body: internal.NewPostBody(func() ([]byte, error) {
 			o := new(qrcodeOptions)
 
 			if len(options) > 0 {
@@ -174,7 +174,7 @@ func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) Actio
 				}
 			}
 
-			params := helpers.X{"scene": scene}
+			params := internal.X{"scene": scene}
 
 			if o.page != "" {
 				params["page"] = o.page
@@ -218,10 +218,10 @@ func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) Actio
 
 // MarshalWithNoEscapeHTML marshal with no escape HTML
 func MarshalWithNoEscapeHTML(v interface{}) (string, error) {
-	buf := helpers.BufferPool.Get().(*bytes.Buffer)
+	buf := internal.BufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
 
-	defer helpers.BufferPool.Put(buf)
+	defer internal.BufferPool.Put(buf)
 
 	jsonEncoder := json.NewEncoder(buf)
 	jsonEncoder.SetEscapeHTML(false)

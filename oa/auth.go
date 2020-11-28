@@ -3,6 +3,8 @@ package oa
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/shenghui0779/gochat/internal"
 )
 
 // AuthToken 公众号网页授权Token
@@ -40,7 +42,7 @@ type JSAPITicket struct {
 }
 
 // CheckAuthToken 校验网页授权AccessToken是否有效
-func CheckAuthToken(openid string) Action {
+func CheckAuthToken(openid string) internal.Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s&openid=%s", SnsCheckAccessTokenURL, accessToken, openid)
@@ -49,7 +51,7 @@ func CheckAuthToken(openid string) Action {
 }
 
 // GetAuthUser 获取授权微信用户信息（注意：使用网页授权的access_token）
-func GetAuthUser(openid string, dest *AuthUser) Action {
+func GetAuthUser(openid string, dest *AuthUser) internal.Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s&openid=%s&lang=zh_CN", SnsUserInfoURL, accessToken, openid)
@@ -61,7 +63,7 @@ func GetAuthUser(openid string, dest *AuthUser) Action {
 }
 
 // GetJSAPITicket 获取 jsapi ticket (注意：使用普通access_token)
-func GetJSAPITicket(dest *JSAPITicket) Action {
+func GetJSAPITicket(dest *JSAPITicket) internal.Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s&type=jsapi", CgiBinTicketURL, accessToken)

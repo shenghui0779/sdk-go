@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"time"
 
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 )
 
 // DefaultReply 公众号默认回复
@@ -16,22 +16,22 @@ type Reply interface {
 
 // ReplyHeader 公众号消息回复公共头
 type ReplyHeader struct {
-	XMLName      xml.Name      `xml:"xml"`
-	FromUserName helpers.CDATA `xml:"FromUserName"`
-	ToUserName   helpers.CDATA `xml:"ToUserName"`
-	CreateTime   int64         `xml:"CreateTime"`
-	MsgType      helpers.CDATA `xml:"MsgType"`
+	XMLName      xml.Name       `xml:"xml"`
+	FromUserName internal.CDATA `xml:"FromUserName"`
+	ToUserName   internal.CDATA `xml:"ToUserName"`
+	CreateTime   int64          `xml:"CreateTime"`
+	MsgType      internal.CDATA `xml:"MsgType"`
 }
 
 // TextReply 公众号文本回复
 type TextReply struct {
 	ReplyHeader
-	Content helpers.CDATA `xml:"Content"`
+	Content internal.CDATA `xml:"Content"`
 }
 
 func (r *TextReply) Bytes(from, to string) ([]byte, error) {
-	r.ReplyHeader.FromUserName = helpers.CDATA(from)
-	r.ReplyHeader.ToUserName = helpers.CDATA(to)
+	r.ReplyHeader.FromUserName = internal.CDATA(from)
+	r.ReplyHeader.ToUserName = internal.CDATA(to)
 
 	return xml.Marshal(r)
 }
@@ -40,13 +40,13 @@ func (r *TextReply) Bytes(from, to string) ([]byte, error) {
 type ImageReply struct {
 	ReplyHeader
 	Image struct {
-		MediaID helpers.CDATA `xml:"MediaId"` // 通过素材管理接口上传多媒体文件得到 MediaId
+		MediaID internal.CDATA `xml:"MediaId"` // 通过素材管理接口上传多媒体文件得到 MediaId
 	} `xml:"Image"`
 }
 
 func (r *ImageReply) Bytes(from, to string) ([]byte, error) {
-	r.ReplyHeader.FromUserName = helpers.CDATA(from)
-	r.ReplyHeader.ToUserName = helpers.CDATA(to)
+	r.ReplyHeader.FromUserName = internal.CDATA(from)
+	r.ReplyHeader.ToUserName = internal.CDATA(to)
 
 	return xml.Marshal(r)
 }
@@ -55,13 +55,13 @@ func (r *ImageReply) Bytes(from, to string) ([]byte, error) {
 type VoiceReply struct {
 	ReplyHeader
 	Voice struct {
-		MediaID helpers.CDATA `xml:"MediaId"` // 通过素材管理接口上传多媒体文件得到 MediaId
+		MediaID internal.CDATA `xml:"MediaId"` // 通过素材管理接口上传多媒体文件得到 MediaId
 	} `xml:"Voice"`
 }
 
 func (r *VoiceReply) Bytes(from, to string) ([]byte, error) {
-	r.ReplyHeader.FromUserName = helpers.CDATA(from)
-	r.ReplyHeader.ToUserName = helpers.CDATA(to)
+	r.ReplyHeader.FromUserName = internal.CDATA(from)
+	r.ReplyHeader.ToUserName = internal.CDATA(to)
 
 	return xml.Marshal(r)
 }
@@ -70,15 +70,15 @@ func (r *VoiceReply) Bytes(from, to string) ([]byte, error) {
 type VideoReply struct {
 	ReplyHeader
 	Video struct {
-		MediaID     helpers.CDATA `xml:"MediaId"`               // 通过素材管理接口上传多媒体文件得到 MediaId
-		Title       helpers.CDATA `xml:"Title,omitempty"`       // 视频消息的标题, 可以为空
-		Description helpers.CDATA `xml:"Description,omitempty"` // 视频消息的描述, 可以为空
+		MediaID     internal.CDATA `xml:"MediaId"`               // 通过素材管理接口上传多媒体文件得到 MediaId
+		Title       internal.CDATA `xml:"Title,omitempty"`       // 视频消息的标题, 可以为空
+		Description internal.CDATA `xml:"Description,omitempty"` // 视频消息的描述, 可以为空
 	} `xml:"Video" json:"Video"`
 }
 
 func (r *VideoReply) Bytes(from, to string) ([]byte, error) {
-	r.ReplyHeader.FromUserName = helpers.CDATA(from)
-	r.ReplyHeader.ToUserName = helpers.CDATA(to)
+	r.ReplyHeader.FromUserName = internal.CDATA(from)
+	r.ReplyHeader.ToUserName = internal.CDATA(to)
 
 	return xml.Marshal(r)
 }
@@ -87,17 +87,17 @@ func (r *VideoReply) Bytes(from, to string) ([]byte, error) {
 type MusicReply struct {
 	ReplyHeader
 	Music struct {
-		Title        helpers.CDATA `xml:"Title,omitempty"`       // 音乐标题
-		Description  helpers.CDATA `xml:"Description,omitempty"` // 音乐描述
-		MusicURL     helpers.CDATA `xml:"MusicUrl,omitempty"`    // 音乐链接
-		HQMusicURL   helpers.CDATA `xml:"HQMusicUrl,omitempty"`  // 高质量音乐链接, WIFI环境优先使用该链接播放音乐
-		ThumbMediaID helpers.CDATA `xml:"ThumbMediaId"`          // 通过素材管理接口上传多媒体文件得到 ThumbMediaId
+		Title        internal.CDATA `xml:"Title,omitempty"`       // 音乐标题
+		Description  internal.CDATA `xml:"Description,omitempty"` // 音乐描述
+		MusicURL     internal.CDATA `xml:"MusicUrl,omitempty"`    // 音乐链接
+		HQMusicURL   internal.CDATA `xml:"HQMusicUrl,omitempty"`  // 高质量音乐链接, WIFI环境优先使用该链接播放音乐
+		ThumbMediaID internal.CDATA `xml:"ThumbMediaId"`          // 通过素材管理接口上传多媒体文件得到 ThumbMediaId
 	} `xml:"Music"`
 }
 
 func (r *MusicReply) Bytes(from, to string) ([]byte, error) {
-	r.ReplyHeader.FromUserName = helpers.CDATA(from)
-	r.ReplyHeader.ToUserName = helpers.CDATA(to)
+	r.ReplyHeader.FromUserName = internal.CDATA(from)
+	r.ReplyHeader.ToUserName = internal.CDATA(to)
 
 	return xml.Marshal(r)
 }
@@ -111,15 +111,15 @@ type NewsReply struct {
 
 // Article 公众号图文
 type Article struct {
-	Title       helpers.CDATA `xml:"Title"`       // 图文消息标题
-	Description helpers.CDATA `xml:"Description"` // 图文消息描述
-	PicURL      helpers.CDATA `xml:"PicUrl"`      // 图片链接, 支持JPG, PNG格式, 较好的效果为大图360*200, 小图200*200
-	URL         helpers.CDATA `xml:"Url"`         // 点击图文消息跳转链接
+	Title       internal.CDATA `xml:"Title"`       // 图文消息标题
+	Description internal.CDATA `xml:"Description"` // 图文消息描述
+	PicURL      internal.CDATA `xml:"PicUrl"`      // 图片链接, 支持JPG, PNG格式, 较好的效果为大图360*200, 小图200*200
+	URL         internal.CDATA `xml:"Url"`         // 点击图文消息跳转链接
 }
 
 func (r *NewsReply) Bytes(from, to string) ([]byte, error) {
-	r.ReplyHeader.FromUserName = helpers.CDATA(from)
-	r.ReplyHeader.ToUserName = helpers.CDATA(to)
+	r.ReplyHeader.FromUserName = internal.CDATA(from)
+	r.ReplyHeader.ToUserName = internal.CDATA(to)
 
 	return xml.Marshal(r)
 }
@@ -132,12 +132,12 @@ type Transfer2KFReply struct {
 
 // TransInfo 转发客服账号
 type TransInfo struct {
-	KfAccount helpers.CDATA `xml:"KfAccount"`
+	KfAccount internal.CDATA `xml:"KfAccount"`
 }
 
 func (r *Transfer2KFReply) Bytes(from, to string) ([]byte, error) {
-	r.ReplyHeader.FromUserName = helpers.CDATA(from)
-	r.ReplyHeader.ToUserName = helpers.CDATA(to)
+	r.ReplyHeader.FromUserName = internal.CDATA(from)
+	r.ReplyHeader.ToUserName = internal.CDATA(to)
 
 	return xml.Marshal(r)
 }
@@ -147,11 +147,11 @@ func NewTextReply(content string) Reply {
 	r := &TextReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
-			MsgType:    helpers.CDATA("text"),
+			MsgType:    internal.CDATA("text"),
 		},
 	}
 
-	r.Content = helpers.CDATA(content)
+	r.Content = internal.CDATA(content)
 
 	return r
 }
@@ -161,11 +161,11 @@ func NewImageReply(mediaID string) Reply {
 	r := &ImageReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
-			MsgType:    helpers.CDATA("image"),
+			MsgType:    internal.CDATA("image"),
 		},
 	}
 
-	r.Image.MediaID = helpers.CDATA(mediaID)
+	r.Image.MediaID = internal.CDATA(mediaID)
 
 	return r
 }
@@ -175,11 +175,11 @@ func NewVoiceReply(mediaID string) Reply {
 	r := &VoiceReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
-			MsgType:    helpers.CDATA("voice"),
+			MsgType:    internal.CDATA("voice"),
 		},
 	}
 
-	r.Voice.MediaID = helpers.CDATA(mediaID)
+	r.Voice.MediaID = internal.CDATA(mediaID)
 
 	return r
 }
@@ -189,13 +189,13 @@ func NewVideoReply(mediaID, title, desc string) Reply {
 	r := &VideoReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
-			MsgType:    helpers.CDATA("video"),
+			MsgType:    internal.CDATA("video"),
 		},
 	}
 
-	r.Video.MediaID = helpers.CDATA(mediaID)
-	r.Video.Title = helpers.CDATA(title)
-	r.Video.Description = helpers.CDATA(desc)
+	r.Video.MediaID = internal.CDATA(mediaID)
+	r.Video.Title = internal.CDATA(title)
+	r.Video.Description = internal.CDATA(desc)
 
 	return r
 }
@@ -205,15 +205,15 @@ func NewMusicReply(mediaID, title, desc, url, HQUrl string) Reply {
 	r := &MusicReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
-			MsgType:    helpers.CDATA("music"),
+			MsgType:    internal.CDATA("music"),
 		},
 	}
 
-	r.Music.Title = helpers.CDATA(title)
-	r.Music.Description = helpers.CDATA(desc)
-	r.Music.MusicURL = helpers.CDATA(url)
-	r.Music.HQMusicURL = helpers.CDATA(HQUrl)
-	r.Music.ThumbMediaID = helpers.CDATA(mediaID)
+	r.Music.Title = internal.CDATA(title)
+	r.Music.Description = internal.CDATA(desc)
+	r.Music.MusicURL = internal.CDATA(url)
+	r.Music.HQMusicURL = internal.CDATA(HQUrl)
+	r.Music.ThumbMediaID = internal.CDATA(mediaID)
 
 	return r
 }
@@ -223,7 +223,7 @@ func NewArticleReply(count int, articles ...Article) Reply {
 	r := &NewsReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
-			MsgType:    helpers.CDATA("news"),
+			MsgType:    internal.CDATA("news"),
 		},
 	}
 
@@ -238,12 +238,12 @@ func NewTransfer2KFReply(kfAccount ...string) Reply {
 	r := &Transfer2KFReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
-			MsgType:    helpers.CDATA("transfer_customer_service"),
+			MsgType:    internal.CDATA("transfer_customer_service"),
 		},
 	}
 
 	if len(kfAccount) > 0 {
-		r.TransInfo = &TransInfo{KfAccount: helpers.CDATA(kfAccount[0])}
+		r.TransInfo = &TransInfo{KfAccount: internal.CDATA(kfAccount[0])}
 	}
 
 	return r
@@ -251,9 +251,9 @@ func NewTransfer2KFReply(kfAccount ...string) Reply {
 
 // ReplyMessage 公众号回复
 type ReplyMessage struct {
-	XMLName      xml.Name      `xml:"xml"`
-	Encrypt      helpers.CDATA `xml:"Encrypt"`
-	MsgSignature helpers.CDATA `xml:"MsgSignature"`
-	TimeStamp    int64         `xml:"TimeStamp"`
-	Nonce        helpers.CDATA `xml:"Nonce"`
+	XMLName      xml.Name       `xml:"xml"`
+	Encrypt      internal.CDATA `xml:"Encrypt"`
+	MsgSignature internal.CDATA `xml:"MsgSignature"`
+	TimeStamp    int64          `xml:"TimeStamp"`
+	Nonce        internal.CDATA `xml:"Nonce"`
 }

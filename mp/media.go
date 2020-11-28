@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 )
 
 // MediaType 素材类型
@@ -22,9 +22,9 @@ type MediaUploadInfo struct {
 }
 
 // UploadMedia 上传临时素材到微信服务器
-func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadInfo) Action {
+func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadInfo) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewUploadBody("media", filename, func() ([]byte, error) {
+		body: internal.NewUploadBody("media", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
 		}),
 		url: func(accessToken string) string {
@@ -42,7 +42,7 @@ type Media struct {
 }
 
 // GetMedia 获取客服消息内的临时素材
-func GetMedia(mediaID string, dest *Media) Action {
+func GetMedia(mediaID string, dest *Media) internal.Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s&media_id=%s", MediaGetURL, accessToken, mediaID)

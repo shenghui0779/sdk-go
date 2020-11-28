@@ -119,7 +119,7 @@ const (
 )
 
 const (
-	RedpackSendTypeApi      = "API"      // 通过API接口发放
+	RedpackSendTypeAPI      = "API"      // 通过API接口发放
 	RedpackSendTypeUpload   = "UPLOAD"   // 通过上传文件方式发放
 	RedpackSendTypeActivity = "ACTIVITY" // 通过活动方式发放
 )

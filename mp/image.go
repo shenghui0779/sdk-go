@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 	"github.com/tidwall/gjson"
 )
 
@@ -33,20 +33,20 @@ type ImagePosition struct {
 type CropPosition struct {
 	CropLeft   int `json:"crop_left"`
 	CropTop    int `json:"crop_top"`
-	CropRignt  int `json:"crop_rignt"`
+	CropRight  int `json:"crop_right"`
 	CropBottom int `json:"crop_bottom"`
 }
 
 // AICropResult 图片裁切结果
 type AICropResult struct {
-	Result  []CropPosition `json:"result"`
+	Results []CropPosition `json:"results"`
 	ImgSize ImageSize      `json:"img_size"`
 }
 
 // AICrop 图片智能裁切
-func AICrop(filename string, dest *AICropResult) Action {
+func AICrop(filename string, dest *AICropResult) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
+		body: internal.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
 		}),
 		url: func(accessToken string) string {
@@ -59,7 +59,7 @@ func AICrop(filename string, dest *AICropResult) Action {
 }
 
 // AICropByURL 图片智能裁切
-func AICropByURL(imgURL string, dest *AICropResult) Action {
+func AICropByURL(imgURL string, dest *AICropResult) internal.Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?img_url=%s&access_token=%s", AICropURL, imgURL, accessToken)
@@ -84,9 +84,9 @@ type QRCodeScanResult struct {
 }
 
 // ScanQRCode 条码/二维码识别
-func ScanQRCode(filename string, dest *QRCodeScanResult) Action {
+func ScanQRCode(filename string, dest *QRCodeScanResult) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
+		body: internal.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
 		}),
 		url: func(accessToken string) string {
@@ -99,7 +99,7 @@ func ScanQRCode(filename string, dest *QRCodeScanResult) Action {
 }
 
 // ScanQRCodeByURL 条码/二维码识别
-func ScanQRCodeByURL(imgURL string, dest *QRCodeScanResult) Action {
+func ScanQRCodeByURL(imgURL string, dest *QRCodeScanResult) internal.Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?img_url=%s&access_token=%s", ScanQRCodeURL, imgURL, accessToken)
@@ -116,9 +116,9 @@ type SuperreSolutionResult struct {
 }
 
 // SuperreSolution 图片高清化
-func SuperreSolution(filename string, dest *SuperreSolutionResult) Action {
+func SuperreSolution(filename string, dest *SuperreSolutionResult) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewUploadBody("img", filename, func() ([]byte, error) {
+		body: internal.NewUploadBody("img", filename, func() ([]byte, error) {
 			return ioutil.ReadFile(filename)
 		}),
 		url: func(accessToken string) string {
@@ -133,7 +133,7 @@ func SuperreSolution(filename string, dest *SuperreSolutionResult) Action {
 }
 
 // SuperreSolutionByURL 图片高清化
-func SuperreSolutionByURL(imgURL string, dest *SuperreSolutionResult) Action {
+func SuperreSolutionByURL(imgURL string, dest *SuperreSolutionResult) internal.Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?img_url=%s&access_token=%s", SuperreSolutionURL, imgURL, accessToken)

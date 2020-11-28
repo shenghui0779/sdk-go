@@ -17,38 +17,9 @@ import (
 	"time"
 
 	"github.com/shenghui0779/gochat/event"
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 	"github.com/tidwall/gjson"
 )
-
-// Action wechat oa action
-type Action interface {
-	Body() helpers.HTTPBody
-	URL() func(accessToken string) string
-	Decode() func(resp []byte) error
-}
-
-// WechatAPI 微信公众号API
-type WechatAPI struct {
-	body   helpers.HTTPBody
-	url    func(accessToken string) string
-	decode func(resp []byte) error
-}
-
-// Body returns http body
-func (a *WechatAPI) Body() helpers.HTTPBody {
-	return a.body
-}
-
-// URL returns url closure
-func (a *WechatAPI) URL() func(accessToken string) string {
-	return a.url
-}
-
-// Decode returns decode closure
-func (a *WechatAPI) Decode() func(resp []byte) error {
-	return a.decode
-}
 
 // WechatOA 微信公众号
 type WechatOA struct {
@@ -57,7 +28,7 @@ type WechatOA struct {
 	signToken      string
 	encodingAESKey string
 	nonce          func(size int) string
-	client         helpers.HTTPClient
+	client         internal.Client
 }
 
 // New returns new WechatOA
@@ -71,7 +42,7 @@ func New(appid, appsecret string) *WechatOA {
 
 			return hex.EncodeToString(nonce)
 		},
-		client: helpers.NewHTTPClient(),
+		client: internal.NewHTTPClient(),
 	}
 }
 
@@ -82,7 +53,7 @@ func (w *WechatOA) SetServerConfig(token, encodingAESKey string) {
 }
 
 // Code2AuthToken 获取公众号网页授权AccessToken
-func (w *WechatOA) Code2AuthToken(ctx context.Context, code string, options ...helpers.HTTPOption) (*AuthToken, error) {
+func (w *WechatOA) Code2AuthToken(ctx context.Context, code string, options ...internal.HTTPOption) (*AuthToken, error) {
 	resp, err := w.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", SnsCode2TokenURL, w.appid, w.appsecret, code), options...)
 
 	if err != nil {
@@ -105,7 +76,7 @@ func (w *WechatOA) Code2AuthToken(ctx context.Context, code string, options ...h
 }
 
 // RefreshAuthToken 刷新网页授权AccessToken
-func (w *WechatOA) RefreshAuthToken(ctx context.Context, refreshToken string, options ...helpers.HTTPOption) (*AuthToken, error) {
+func (w *WechatOA) RefreshAuthToken(ctx context.Context, refreshToken string, options ...internal.HTTPOption) (*AuthToken, error) {
 	resp, err := w.client.Get(ctx, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", SnsRefreshAccessTokenURL, w.appid, refreshToken), options...)
 
 	if err != nil {
@@ -128,7 +99,7 @@ func (w *WechatOA) RefreshAuthToken(ctx context.Context, refreshToken string, op
 }
 
 // AccessToken 获取普通AccessToken
-func (w *WechatOA) AccessToken(ctx context.Context, options ...helpers.HTTPOption) (*AccessToken, error) {
+func (w *WechatOA) AccessToken(ctx context.Context, options ...internal.HTTPOption) (*AccessToken, error) {
 	resp, err := w.client.Get(ctx, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", CgiBinAccessTokenURL, w.appid, w.appsecret), options...)
 
 	if err != nil {
@@ -151,7 +122,7 @@ func (w *WechatOA) AccessToken(ctx context.Context, options ...helpers.HTTPOptio
 }
 
 // Do exec action
-func (w *WechatOA) Do(ctx context.Context, accessToken string, action Action, options ...helpers.HTTPOption) error {
+func (w *WechatOA) Do(ctx context.Context, accessToken string, action internal.Action, options ...internal.HTTPOption) error {
 	var (
 		resp []byte
 		err  error
@@ -230,10 +201,10 @@ func (w *WechatOA) EncryptReplyMessage(from, to string, reply Reply) (*ReplyMess
 	h.Write([]byte(strings.Join(signItems, "")))
 
 	msg := &ReplyMessage{
-		Encrypt:      helpers.CDATA(encryptData),
-		MsgSignature: helpers.CDATA(hex.EncodeToString(h.Sum(nil))),
+		Encrypt:      internal.CDATA(encryptData),
+		MsgSignature: internal.CDATA(hex.EncodeToString(h.Sum(nil))),
 		TimeStamp:    now,
-		Nonce:        helpers.CDATA(nonce),
+		Nonce:        internal.CDATA(nonce),
 	}
 
 	return msg, nil

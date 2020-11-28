@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 )
 
 type MenuButtonType string
@@ -66,10 +66,10 @@ type MenuMatchRule struct {
 }
 
 // CreateMenu 自定义菜单
-func CreateMenu(buttons ...*MenuButton) Action {
+func CreateMenu(buttons ...*MenuButton) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(helpers.X{"button": buttons})
+		body: internal.NewPostBody(func() ([]byte, error) {
+			return json.Marshal(internal.X{"button": buttons})
 		}),
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?access_token=%s", MenuCreateURL, accessToken)
@@ -78,10 +78,10 @@ func CreateMenu(buttons ...*MenuButton) Action {
 }
 
 // CreateConditionalMenu 个性化菜单
-func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) Action {
+func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			return json.Marshal(internal.X{
 				"button":    buttons,
 				"matchrule": matchRule,
 			})
@@ -93,7 +93,7 @@ func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) Act
 }
 
 // GetMenu 查询自定义菜单
-func GetMenu(dest *MenuInfo) Action {
+func GetMenu(dest *MenuInfo) internal.Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s", MenuListURL, accessToken)
@@ -105,7 +105,7 @@ func GetMenu(dest *MenuInfo) Action {
 }
 
 // DeleteMenu 删除自定义菜单
-func DeleteMenu() Action {
+func DeleteMenu() internal.Action {
 	return &WechatAPI{
 		url: func(accessToken string) string {
 			return fmt.Sprintf("GET|%s?access_token=%s", MenuDeleteURL, accessToken)
@@ -114,10 +114,10 @@ func DeleteMenu() Action {
 }
 
 // DeleteConditional 删除个性化菜单
-func DeleteConditionalMenu(menuID string) Action {
+func DeleteConditionalMenu(menuID string) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(helpers.X{"menuid": menuID})
+		body: internal.NewPostBody(func() ([]byte, error) {
+			return json.Marshal(internal.X{"menuid": menuID})
 		}),
 		url: func(accessToken string) string {
 			return fmt.Sprintf("POST|%s?access_token=%s", MenuDeleteConditionalURL, accessToken)

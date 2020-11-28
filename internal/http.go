@@ -1,4 +1,4 @@
-package helpers
+package internal
 
 import (
 	"bytes"
@@ -72,67 +72,16 @@ func WithHTTPTimeout(d time.Duration) HTTPOption {
 	})
 }
 
-// HTTPBody is the interface that defines http body
-type HTTPBody interface {
-	FieldName() string
-	FileName() string
-	Bytes() func() ([]byte, error)
-}
-
-// PostBody is a HTTPBody implementation for wechat http request body
-type PostBody struct {
-	fieldname string
-	filename  string
-	bytes     func() ([]byte, error)
-}
-
-// FieldName returns multipart fieldname
-func (b *PostBody) FieldName() string {
-	return b.fieldname
-}
-
-// FileName returns multipart filename
-func (b *PostBody) FileName() string {
-	return b.filename
-}
-
-// Bytes returns bytes closure
-func (b *PostBody) Bytes() func() ([]byte, error) {
-	return b.bytes
-}
-
-// NewPostBody returns post body
-func NewPostBody(f func() ([]byte, error)) HTTPBody {
-	return &PostBody{bytes: f}
-}
-
-// NewUploadBody returns upload body
-func NewUploadBody(fieldname, filename string, f func() ([]byte, error)) HTTPBody {
-	return &PostBody{
-		fieldname: fieldname,
-		filename:  fieldname,
-		bytes:     f,
-	}
-}
-
-// HTTPClient is the interface that wraps http request
-type HTTPClient interface {
-	Get(ctx context.Context, url string, options ...HTTPOption) ([]byte, error)
-	Post(ctx context.Context, url string, body HTTPBody, options ...HTTPOption) ([]byte, error)
-	PostXML(ctx context.Context, url string, body WXML, options ...HTTPOption) (WXML, error)
-	Upload(ctx context.Context, url string, body HTTPBody, options ...HTTPOption) ([]byte, error)
-}
-
-// WXClient is a HTTPClient implementation for wechat http request
-type WXClient struct {
+// HTTPClient is a Client implementation for wechat http request
+type HTTPClient struct {
 	client  *http.Client
 	timeout time.Duration
 }
 
-func (c *WXClient) do(ctx context.Context, req *http.Request, options ...HTTPOption) ([]byte, error) {
+func (h *HTTPClient) do(ctx context.Context, req *http.Request, options ...HTTPOption) ([]byte, error) {
 	o := &httpOptions{
 		headers: make(map[string]string),
-		timeout: c.timeout,
+		timeout: h.timeout,
 	}
 
 	if len(options) > 0 {
@@ -164,7 +113,7 @@ func (c *WXClient) do(ctx context.Context, req *http.Request, options ...HTTPOpt
 
 	defer cancel()
 
-	resp, err := c.client.Do(req.WithContext(ctx))
+	resp, err := h.client.Do(req.WithContext(ctx))
 
 	if err != nil {
 		// If the context has been canceled, the context's error is probably more useful.
@@ -195,18 +144,18 @@ func (c *WXClient) do(ctx context.Context, req *http.Request, options ...HTTPOpt
 }
 
 // Get http get request
-func (c *WXClient) Get(ctx context.Context, url string, options ...HTTPOption) ([]byte, error) {
+func (h *HTTPClient) Get(ctx context.Context, url string, options ...HTTPOption) ([]byte, error) {
 	req, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return c.do(ctx, req, options...)
+	return h.do(ctx, req, options...)
 }
 
 // Post http post request
-func (c *WXClient) Post(ctx context.Context, url string, body HTTPBody, options ...HTTPOption) ([]byte, error) {
+func (h *HTTPClient) Post(ctx context.Context, url string, body Body, options ...HTTPOption) ([]byte, error) {
 	var (
 		b   []byte
 		err error
@@ -228,11 +177,11 @@ func (c *WXClient) Post(ctx context.Context, url string, body HTTPBody, options 
 		return nil, err
 	}
 
-	return c.do(ctx, req, options...)
+	return h.do(ctx, req, options...)
 }
 
 // PostXML http xml post request
-func (c *WXClient) PostXML(ctx context.Context, url string, body WXML, options ...HTTPOption) (WXML, error) {
+func (h *HTTPClient) PostXML(ctx context.Context, url string, body WXML, options ...HTTPOption) (WXML, error) {
 	xmlStr, err := FormatMap2XML(body)
 
 	options = append(options, WithHTTPHeader("Content-Type", "text/xml; charset=utf-8"))
@@ -243,7 +192,7 @@ func (c *WXClient) PostXML(ctx context.Context, url string, body WXML, options .
 		return nil, err
 	}
 
-	resp, err := c.do(ctx, req, options...)
+	resp, err := h.do(ctx, req, options...)
 
 	if err != nil {
 		return nil, err
@@ -259,7 +208,7 @@ func (c *WXClient) PostXML(ctx context.Context, url string, body WXML, options .
 }
 
 // Upload http upload media
-func (c *WXClient) Upload(ctx context.Context, url string, body HTTPBody, options ...HTTPOption) ([]byte, error) {
+func (h *HTTPClient) Upload(ctx context.Context, url string, body Body, options ...HTTPOption) ([]byte, error) {
 	media, err := body.Bytes()()
 
 	if err != nil {
@@ -291,11 +240,11 @@ func (c *WXClient) Upload(ctx context.Context, url string, body HTTPBody, option
 		return nil, err
 	}
 
-	return c.do(ctx, req, options...)
+	return h.do(ctx, req, options...)
 }
 
 // NewHTTPClient returns a new http client
-func NewHTTPClient(tlsCfg ...*tls.Config) HTTPClient {
+func NewHTTPClient(tlsCfg ...*tls.Config) *HTTPClient {
 	t := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
@@ -314,7 +263,7 @@ func NewHTTPClient(tlsCfg ...*tls.Config) HTTPClient {
 		t.TLSClientConfig = tlsCfg[0]
 	}
 
-	return &WXClient{
+	return &HTTPClient{
 		client: &http.Client{
 			Transport: t,
 		},

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 	"github.com/tidwall/gjson"
 )
 
@@ -29,10 +29,10 @@ var (
 )
 
 // ApplyPlugin 向插件开发者发起使用插件的申请
-func ApplyPlugin(pluginAppID, reason string) Action {
+func ApplyPlugin(pluginAppID, reason string) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			return json.Marshal(internal.X{
 				"action":       PluginApply,
 				"plugin_appid": pluginAppID,
 				"reason":       reason,
@@ -46,21 +46,21 @@ func ApplyPlugin(pluginAppID, reason string) Action {
 
 // PluginDevApplyInfo 插件使用方信息
 type PluginDevApplyInfo struct {
-	AppID      string      `json:"appid"`
-	Status     int         `json:"status"`
-	Nickname   string      `json:"nickname"`
-	HeadImgURL string      `json:"headimgurl"`
-	Categories []helpers.X `json:"categories"`
-	CreateTime string      `json:"create_time"`
-	ApplyURL   string      `json:"apply_url"`
-	Reason     string      `json:"reason"`
+	AppID      string       `json:"appid"`
+	Status     int          `json:"status"`
+	Nickname   string       `json:"nickname"`
+	HeadImgURL string       `json:"headimgurl"`
+	Categories []internal.X `json:"categories"`
+	CreateTime string       `json:"create_time"`
+	ApplyURL   string       `json:"apply_url"`
+	Reason     string       `json:"reason"`
 }
 
 // GetPluginDevApplyList 获取当前所有插件使用方（供插件开发者调用）
-func GetPluginDevApplyList(page, num int, dest *[]PluginDevApplyInfo) Action {
+func GetPluginDevApplyList(page, num int, dest *[]PluginDevApplyInfo) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			return json.Marshal(internal.X{
 				"action": PluginDevApplyList,
 				"page":   page,
 				"num":    num,
@@ -86,10 +86,10 @@ type PluginInfo struct {
 }
 
 // GetPluginList 查询已添加的插件
-func GetPluginList(dest *[]PluginInfo) Action {
+func GetPluginList(dest *[]PluginInfo) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			return json.Marshal(internal.X{
 				"action": PluginList,
 			})
 		}),
@@ -105,10 +105,10 @@ func GetPluginList(dest *[]PluginInfo) Action {
 }
 
 // SetDevPluginApplyStatus 修改插件使用申请的状态（供插件开发者调用）
-func SetDevPluginApplyStatus(action PluginAction, appid, reason string) Action {
+func SetDevPluginApplyStatus(action PluginAction, appid, reason string) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			return json.Marshal(internal.X{
 				"action": action,
 				"appid":  appid,
 				"reason": reason,
@@ -121,10 +121,10 @@ func SetDevPluginApplyStatus(action PluginAction, appid, reason string) Action {
 }
 
 // UnbindPlugin 删除已添加的插件
-func UnbindPlugin(pluginAppID string) Action {
+func UnbindPlugin(pluginAppID string) internal.Action {
 	return &WechatAPI{
-		body: helpers.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(helpers.X{
+		body: internal.NewPostBody(func() ([]byte, error) {
+			return json.Marshal(internal.X{
 				"action":       PluginUnbind,
 				"plugin_appid": pluginAppID,
 			})

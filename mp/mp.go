@@ -13,38 +13,9 @@ import (
 	"strings"
 
 	"github.com/shenghui0779/gochat/event"
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 	"github.com/tidwall/gjson"
 )
-
-// Action wechat mp action
-type Action interface {
-	Body() helpers.HTTPBody
-	URL() func(accessToken string) string
-	Decode() func(resp []byte) error
-}
-
-// WechatAPI 微信小程序API
-type WechatAPI struct {
-	body   helpers.HTTPBody
-	url    func(accessToken string) string
-	decode func(resp []byte) error
-}
-
-// Body returns http body
-func (a *WechatAPI) Body() helpers.HTTPBody {
-	return a.body
-}
-
-// URL returns url closure
-func (a *WechatAPI) URL() func(accessToken string) string {
-	return a.url
-}
-
-// Decode returns decode closure
-func (a *WechatAPI) Decode() func(resp []byte) error {
-	return a.decode
-}
 
 // WechatMP 微信小程序
 type WechatMP struct {
@@ -53,7 +24,7 @@ type WechatMP struct {
 	signToken      string
 	encodingAESKey string
 	nonce          func(size int) string
-	client         helpers.HTTPClient
+	client         internal.Client
 }
 
 // New returns new wechat mini program
@@ -67,7 +38,7 @@ func New(appid, appsecret string) *WechatMP {
 
 			return hex.EncodeToString(nonce)
 		},
-		client: helpers.NewHTTPClient(),
+		client: internal.NewHTTPClient(),
 	}
 }
 
@@ -78,7 +49,7 @@ func (w *WechatMP) SetServerConfig(token, encodingAESKey string) {
 }
 
 // Code2Session 获取小程序授权的session_key
-func (w *WechatMP) Code2Session(ctx context.Context, code string, options ...helpers.HTTPOption) (*AuthSession, error) {
+func (w *WechatMP) Code2Session(ctx context.Context, code string, options ...internal.HTTPOption) (*AuthSession, error) {
 	resp, err := w.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", Code2SessionURL, w.appid, w.appsecret, code), options...)
 
 	if err != nil {
@@ -101,7 +72,7 @@ func (w *WechatMP) Code2Session(ctx context.Context, code string, options ...hel
 }
 
 // AccessToken 获取小程序的access_token
-func (w *WechatMP) AccessToken(ctx context.Context, options ...helpers.HTTPOption) (*AccessToken, error) {
+func (w *WechatMP) AccessToken(ctx context.Context, options ...internal.HTTPOption) (*AccessToken, error) {
 	resp, err := w.client.Get(ctx, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", AccessTokenURL, w.appid, w.appsecret), options...)
 
 	if err != nil {
@@ -143,9 +114,9 @@ func (w *WechatMP) DecryptAuthInfo(sessionKey, iv, encryptedData string, dest Au
 		return err
 	}
 
-	cbc := helpers.NewAESCBCCrypto(key, ivb)
+	cbc := internal.NewAESCBCCrypto(key, ivb)
 
-	b, err := cbc.Decrypt(cipherText, helpers.PKCS7)
+	b, err := cbc.Decrypt(cipherText, internal.PKCS7)
 
 	if err != nil {
 		return err
@@ -163,7 +134,7 @@ func (w *WechatMP) DecryptAuthInfo(sessionKey, iv, encryptedData string, dest Au
 }
 
 // Do exec action
-func (w *WechatMP) Do(ctx context.Context, accessToken string, action Action, options ...helpers.HTTPOption) error {
+func (w *WechatMP) Do(ctx context.Context, accessToken string, action internal.Action, options ...internal.HTTPOption) error {
 	var (
 		resp []byte
 		err  error
