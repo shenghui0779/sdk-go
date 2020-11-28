@@ -13,7 +13,7 @@ func TestRefundByTransactionID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/secapi/pay/refund", internal.WXML{
 		"appid":          "wx2421b1c4370ec43b",
@@ -75,7 +75,7 @@ func TestRefundByOutTradeNO(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/secapi/pay/refund", internal.WXML{
 		"appid":         "wx2421b1c4370ec43b",
@@ -137,7 +137,7 @@ func TestQueryRefundByRefundID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/refundquery", internal.WXML{
 		"appid":     "wx2421b1c4370ec43b",
@@ -196,7 +196,7 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/refundquery", internal.WXML{
 		"appid":         "wx2421b1c4370ec43b",
@@ -255,7 +255,7 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/refundquery", internal.WXML{
 		"appid":          "wx2421b1c4370ec43b",
@@ -314,7 +314,7 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/refundquery", internal.WXML{
 		"appid":        "wx2421b1c4370ec43b",

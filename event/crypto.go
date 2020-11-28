@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/shenghui0779/gochat/helpers"
+	"github.com/shenghui0779/gochat/internal"
 )
 
 // Encrypt 参考微信[加密技术方案](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318482&token=&lang=zh_CN)
@@ -22,12 +22,12 @@ func Encrypt(appid, encodingAESKey, nonce string, plainText []byte) ([]byte, err
 	encryptData := make([]byte, appidOffset+len(appid))
 
 	copy(encryptData[:16], nonce)
-	copy(encryptData[16:20], helpers.EncodeUint32ToBytes(uint32(contentLen)))
+	copy(encryptData[16:20], internal.EncodeUint32ToBytes(uint32(contentLen)))
 	copy(encryptData[20:], plainText)
 	copy(encryptData[appidOffset:], appid)
 
-	cbc := helpers.NewAESCBCCrypto(key, key[:aes.BlockSize])
-	cipherText, err := cbc.Encrypt(encryptData, helpers.PKCS7)
+	cbc := internal.NewAESCBCCrypto(key, key[:aes.BlockSize])
+	cipherText, err := cbc.Encrypt(encryptData, internal.PKCS7)
 
 	if err != nil {
 		return nil, err
@@ -50,8 +50,8 @@ func Decrypt(appid, encodingAESKey, cipherText string) ([]byte, error) {
 		return nil, err
 	}
 
-	cbc := helpers.NewAESCBCCrypto(key, key[:aes.BlockSize])
-	plainText, err := cbc.Decrypt(decryptData, helpers.PKCS7)
+	cbc := internal.NewAESCBCCrypto(key, key[:aes.BlockSize])
+	plainText, err := cbc.Decrypt(decryptData, internal.PKCS7)
 
 	if err != nil {
 		return nil, err

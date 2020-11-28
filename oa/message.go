@@ -2,7 +2,7 @@ package oa
 
 import (
 	"encoding/json"
-	"fmt"
+	"net/url"
 
 	"github.com/shenghui0779/gochat/internal"
 	"github.com/tidwall/gjson"
@@ -20,28 +20,18 @@ type TemplateInfo struct {
 
 // GetTemplateList 获取模板列表
 func GetTemplateList(dest *[]TemplateInfo) internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("GET|%s?access_token=%s", TemplateListURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			r := gjson.GetBytes(resp, "template_list")
+	return internal.NewOpenGetAPI(TemplateListURL, url.Values{}, func(resp []byte) error {
+		r := gjson.GetBytes(resp, "template_list")
 
-			return json.Unmarshal([]byte(r.Raw), dest)
-		},
-	}
+		return json.Unmarshal([]byte(r.Raw), dest)
+	})
 }
 
 // DeleteTemplate 删除模板
 func DeleteTemplate(templateID string) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(internal.X{"template_id": templateID})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", TemplateDeleteURL, accessToken)
-		},
-	}
+	return internal.NewOpenPostAPI(TemplateDeleteURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(internal.X{"template_id": templateID})
+	}), nil)
 }
 
 // MessageBody 消息内容体
@@ -59,60 +49,50 @@ type TemplateMessage struct {
 
 // SendTemplateMessage 发送模板消息
 func SendTemplateMessage(msg *TemplateMessage) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			params := internal.X{
-				"touser":      msg.OpenID,
-				"template_id": msg.TemplateID,
-				"data":        msg.Data,
-			}
+	return internal.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		params := internal.X{
+			"touser":      msg.OpenID,
+			"template_id": msg.TemplateID,
+			"data":        msg.Data,
+		}
 
-			if msg.RedirectURL != "" {
-				params["url"] = msg.RedirectURL
-			}
+		if msg.RedirectURL != "" {
+			params["url"] = msg.RedirectURL
+		}
 
-			if msg.MPAppID != "" {
-				params["miniprogram"] = map[string]string{
-					"appid":    msg.MPAppID,
-					"pagepath": msg.MPPagePath,
-				}
+		if msg.MPAppID != "" {
+			params["miniprogram"] = map[string]string{
+				"appid":    msg.MPAppID,
+				"pagepath": msg.MPPagePath,
 			}
+		}
 
-			return json.Marshal(params)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", TemplateMessageSendURL, accessToken)
-		},
-	}
+		return json.Marshal(params)
+	}), nil)
 }
 
 // SendSubscribeMessage 发送订阅消息
 func SendSubscribeMessage(scene, title string, msg *TemplateMessage) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			params := internal.X{
-				"scene":       scene,
-				"title":       title,
-				"touser":      msg.OpenID,
-				"template_id": msg.TemplateID,
-				"data":        msg.Data,
-			}
+	return internal.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		params := internal.X{
+			"scene":       scene,
+			"title":       title,
+			"touser":      msg.OpenID,
+			"template_id": msg.TemplateID,
+			"data":        msg.Data,
+		}
 
-			if msg.RedirectURL != "" {
-				params["url"] = msg.RedirectURL
-			}
+		if msg.RedirectURL != "" {
+			params["url"] = msg.RedirectURL
+		}
 
-			if msg.MPAppID != "" {
-				params["miniprogram"] = map[string]string{
-					"appid":    msg.MPAppID,
-					"pagepath": msg.MPPagePath,
-				}
+		if msg.MPAppID != "" {
+			params["miniprogram"] = map[string]string{
+				"appid":    msg.MPAppID,
+				"pagepath": msg.MPPagePath,
 			}
+		}
 
-			return json.Marshal(params)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", SubscribeMessageSendURL, accessToken)
-		},
-	}
+		return json.Marshal(params)
+	}), nil)
 }

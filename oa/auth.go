@@ -2,7 +2,7 @@ package oa
 
 import (
 	"encoding/json"
-	"fmt"
+	"net/url"
 
 	"github.com/shenghui0779/gochat/internal"
 )
@@ -43,33 +43,32 @@ type JSAPITicket struct {
 
 // CheckAuthToken 校验网页授权AccessToken是否有效
 func CheckAuthToken(openid string) internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("GET|%s?access_token=%s&openid=%s", SnsCheckAccessTokenURL, accessToken, openid)
-		},
-	}
+	query := url.Values{}
+
+	query.Set("openid", openid)
+
+	return internal.NewOpenGetAPI(SnsCheckAccessTokenURL, query, nil)
 }
 
 // GetAuthUser 获取授权微信用户信息（注意：使用网页授权的access_token）
 func GetAuthUser(openid string, dest *AuthUser) internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("GET|%s?access_token=%s&openid=%s&lang=zh_CN", SnsUserInfoURL, accessToken, openid)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	query := url.Values{}
+
+	query.Set("openid", openid)
+	query.Set("lang", "zh_CN")
+
+	return internal.NewOpenGetAPI(SnsUserInfoURL, query, func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // GetJSAPITicket 获取 jsapi ticket (注意：使用普通access_token)
 func GetJSAPITicket(dest *JSAPITicket) internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("GET|%s?access_token=%s&type=jsapi", CgiBinTicketURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	query := url.Values{}
+
+	query.Set("type", "jsapi")
+
+	return internal.NewOpenGetAPI(CgiBinTicketURL, query, func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }

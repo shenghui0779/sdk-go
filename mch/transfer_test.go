@@ -13,7 +13,7 @@ func TestTransferToBalance(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", internal.WXML{
 		"mch_appid":        "wx2421b1c4370ec43b",
@@ -73,7 +73,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo", internal.WXML{
 		"appid":            "wx2421b1c4370ec43b",
@@ -128,7 +128,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 	ctrl := gomock.NewController(t)
 // 	defer ctrl.Finish()
 
-// 	client := internal.NewMockWechatClient(ctrl)
+// 	client := internal.NewMockClient(ctrl)
 
 // 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank", internal.WXML{
 // 		"mch_id":           "10000100",
@@ -185,7 +185,7 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank", internal.WXML{
 		"mch_id":           "10000100",
@@ -231,5 +231,58 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 		"cmms_amt":         "0",
 		"create_time":      "2017-03-09 15:04:04",
 		"reason":           "福利测试",
+	}, r)
+}
+
+func TestRSAPublicKey(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := internal.NewMockClient(ctrl)
+
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://fraud.mch.weixin.qq.com/risk/getpublickey", internal.WXML{
+		"mch_id":    "10000100",
+		"nonce_str": "50780e0cca98c8c8e814883e5caa672e",
+		"sign_type": "MD5",
+		"sign":      "CA227C435D88EE017A9457B657FCA515",
+	}).Return(internal.WXML{
+		"return_code": "SUCCESS",
+		"mch_id":      "10000100",
+		"result_code": "SUCCESS",
+		"pub_key": `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl1c+37GJSFSqbuHJ/wge
+LzxLp7C2GYrjzVAnEF3xgjJVTltkQzdu3u+fcB3c/dgHX/Zdv5fqVoOqvoOMk4N4
+zdGeaxN+Cm19c1gsxigNJDtm6Qno1s1T/qPph/zRArylM0N9Z3vWVEq4xI4B4NXk
+6IoK/bXc1dwQe5UBzIZyzU5aWfqmTQilWEs7mqro43LTFkhN05QjC7IUFvWEhh6T
+wvGYLBSAn+oNw/uSAu6B3c6dh+pslgORCzrIRs68GWsARGZkI/lmOJWEgzQ9KC7b
+yHVqEnDDaWQFyQpq30JdP6YTXR/xlKyo8f1DingoSDXAhKMGRKaT4oIFkE6OA3jt
+DQIDAQAB
+-----END PUBLIC KEY-----`,
+	}, nil)
+
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	mch.nonce = func(size int) string {
+		return "50780e0cca98c8c8e814883e5caa672e"
+	}
+
+	mch.tlsClient = client
+
+	r, err := mch.Do(context.TODO(), RSAPublicKey())
+
+	assert.Nil(t, err)
+	assert.Equal(t, internal.WXML{
+		"return_code": "SUCCESS",
+		"mch_id":      "10000100",
+		"result_code": "SUCCESS",
+		"pub_key": `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl1c+37GJSFSqbuHJ/wge
+LzxLp7C2GYrjzVAnEF3xgjJVTltkQzdu3u+fcB3c/dgHX/Zdv5fqVoOqvoOMk4N4
+zdGeaxN+Cm19c1gsxigNJDtm6Qno1s1T/qPph/zRArylM0N9Z3vWVEq4xI4B4NXk
+6IoK/bXc1dwQe5UBzIZyzU5aWfqmTQilWEs7mqro43LTFkhN05QjC7IUFvWEhh6T
+wvGYLBSAn+oNw/uSAu6B3c6dh+pslgORCzrIRs68GWsARGZkI/lmOJWEgzQ9KC7b
+yHVqEnDDaWQFyQpq30JdP6YTXR/xlKyo8f1DingoSDXAhKMGRKaT4oIFkE6OA3jt
+DQIDAQAB
+-----END PUBLIC KEY-----`,
 	}, r)
 }

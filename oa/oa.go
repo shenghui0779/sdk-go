@@ -128,15 +128,13 @@ func (w *WechatOA) Do(ctx context.Context, accessToken string, action internal.A
 		err  error
 	)
 
-	arr := strings.SplitN(action.URL()(accessToken), "|", 2)
-
-	switch arr[0] {
-	case "GET":
-		resp, err = w.client.Get(ctx, arr[1], options...)
-	case "POST":
-		resp, err = w.client.Post(ctx, arr[1], action.Body(), options...)
-	case "UPLOAD":
-		resp, err = w.client.Upload(ctx, arr[1], action.Body(), options...)
+	switch action.Method() {
+	case internal.MethodGet:
+		resp, err = w.client.Get(ctx, action.URL()(accessToken), options...)
+	case internal.MethodPost:
+		resp, err = w.client.Post(ctx, action.URL()(accessToken), action.Body(), options...)
+	case internal.MethodUpload:
+		resp, err = w.client.Upload(ctx, action.URL()(accessToken), action.Body(), options...)
 	}
 
 	if err != nil {

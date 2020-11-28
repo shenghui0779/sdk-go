@@ -2,8 +2,8 @@ package oa
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"net/url"
 
 	"github.com/shenghui0779/gochat/internal"
 )
@@ -28,17 +28,15 @@ type MediaUploadResult struct {
 
 // UploadMedia 上传临时素材到微信服务器
 func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadResult) internal.Action {
-	return &WechatAPI{
-		body: internal.NewUploadBody("media", filename, func() ([]byte, error) {
-			return ioutil.ReadFile(filename)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("UPLOAD|%s?access_token=%s&type=%s", MediaUploadURL, accessToken, mediaType)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	query := url.Values{}
+
+	query.Set("type", string(mediaType))
+
+	return internal.NewOpenUploadAPI(MediaUploadURL, query, internal.NewUploadBody("media", filename, func() ([]byte, error) {
+		return ioutil.ReadFile(filename)
+	}), func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // MaterialUploadResult 永久素材上传结果
@@ -62,32 +60,20 @@ type MaterialArticle struct {
 
 // UploadMaterialNews 上传永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
 func UploadMaterialNews(articles []*MaterialArticle, dest *MaterialUploadResult) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(map[string][]*MaterialArticle{
-				"articles": articles,
-			})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", MaterialNewsUploadURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	return internal.NewOpenPostAPI(MaterialNewsUploadURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(map[string][]*MaterialArticle{
+			"articles": articles,
+		})
+	}), func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // UploadMaterialImage 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制）
 func UploadMaterialImage(filename string, dest *MaterialUploadResult) internal.Action {
-	return &WechatAPI{
-		body: internal.NewUploadBody("media", filename, func() ([]byte, error) {
-			return ioutil.ReadFile(filename)
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("UPLOAD|%s?access_token=%s", MaterialImageUploadURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	return internal.NewOpenUploadAPI(MaterialImageUploadURL, url.Values{}, internal.NewUploadBody("media", filename, func() ([]byte, error) {
+		return ioutil.ReadFile(filename)
+	}), func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }

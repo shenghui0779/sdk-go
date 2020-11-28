@@ -2,7 +2,7 @@ package oa
 
 import (
 	"encoding/json"
-	"fmt"
+	"net/url"
 
 	"github.com/shenghui0779/gochat/internal"
 )
@@ -67,62 +67,38 @@ type MenuMatchRule struct {
 
 // CreateMenu 自定义菜单
 func CreateMenu(buttons ...*MenuButton) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(internal.X{"button": buttons})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", MenuCreateURL, accessToken)
-		},
-	}
+	return internal.NewOpenPostAPI(MenuCreateURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(internal.X{"button": buttons})
+	}), nil)
 }
 
 // CreateConditionalMenu 个性化菜单
 func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(internal.X{
-				"button":    buttons,
-				"matchrule": matchRule,
-			})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", MenuAddConditionalURL, accessToken)
-		},
-	}
+	return internal.NewOpenPostAPI(MenuAddConditionalURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(internal.X{
+			"button":    buttons,
+			"matchrule": matchRule,
+		})
+	}), nil)
 }
 
 // GetMenu 查询自定义菜单
 func GetMenu(dest *MenuInfo) internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("GET|%s?access_token=%s", MenuListURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	return internal.NewOpenGetAPI(MenuListURL, url.Values{}, func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // DeleteMenu 删除自定义菜单
 func DeleteMenu() internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("GET|%s?access_token=%s", MenuDeleteURL, accessToken)
-		},
-	}
+	return internal.NewOpenGetAPI(MenuDeleteURL, url.Values{}, nil)
 }
 
 // DeleteConditional 删除个性化菜单
 func DeleteConditionalMenu(menuID string) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(internal.X{"menuid": menuID})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", MenuDeleteConditionalURL, accessToken)
-		},
-	}
+	return internal.NewOpenPostAPI(MenuDeleteConditionalURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(internal.X{"menuid": menuID})
+	}), nil)
 }
 
 // GroupButton 组合按钮
@@ -146,20 +122,20 @@ func ClickButton(name, key string) *MenuButton {
 }
 
 // ViewButton 跳转URL按钮
-func ViewButton(name, url string) *MenuButton {
+func ViewButton(name, redirectURL string) *MenuButton {
 	return &MenuButton{
 		Type: ButtonTypeView,
 		Name: name,
-		URL:  url,
+		URL:  redirectURL,
 	}
 }
 
 // MPButton 小程序跳转按钮
-func MPButton(name, appid, pagepath, url string) *MenuButton {
+func MPButton(name, appid, pagepath, redirectURL string) *MenuButton {
 	return &MenuButton{
 		Type:     ButtonTypeMP,
 		Name:     name,
-		URL:      url,
+		URL:      redirectURL,
 		AppID:    appid,
 		PagePath: pagepath,
 	}

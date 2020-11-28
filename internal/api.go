@@ -45,7 +45,7 @@ type Action interface {
 	// URL returns url for request
 	URL() func(accessToken ...string) string
 	// Method returns request method
-	Method() string
+	Method() HTTPMethod
 	// WXML returns body for xml request
 	WXML() func(appid, mchid, apikey, nonce string) (WXML, error)
 	// Body returns body for post and upload request
@@ -99,20 +99,20 @@ type API struct {
 	tls    bool
 }
 
-func (a *API) WXML() func(appid, mchid, apikey, nonce string) (WXML, error) {
-	return a.wxml
+func (a *API) URL() func(accessToken ...string) string {
+	return a.reqURL
 }
 
 func (a *API) Method() HTTPMethod {
 	return a.method
 }
 
-func (a *API) Body() Body {
-	return a.body
+func (a *API) WXML() func(appid, mchid, apikey, nonce string) (WXML, error) {
+	return a.wxml
 }
 
-func (a *API) URL() func(accessToken ...string) string {
-	return a.reqURL
+func (a *API) Body() Body {
+	return a.body
 }
 
 func (a *API) Decode() func(resp []byte) error {

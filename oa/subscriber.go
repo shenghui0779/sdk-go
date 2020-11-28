@@ -2,7 +2,7 @@ package oa
 
 import (
 	"encoding/json"
-	"fmt"
+	"net/url"
 
 	"github.com/shenghui0779/gochat/internal"
 	"github.com/tidwall/gjson"
@@ -47,110 +47,82 @@ type SubscriberListData struct {
 
 // GetSubscriberInfo 获取微信公众号订阅者信息
 func GetSubscriberInfo(openid string, dest *SubscriberInfo) internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("GET|%s?access_token=%s&openid=%s&lang=zh_CN", SubscriberGetURL, accessToken, openid)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	query := url.Values{}
+
+	query.Set("openid", openid)
+	query.Set("lang", "zh_CN")
+
+	return internal.NewOpenGetAPI(SubscriberGetURL, query, func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // BatchGetSubscriberInfo 批量获取微信公众号订阅者信息
 func BatchGetSubscriberInfo(openids []string, dest *[]SubscriberInfo) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			userList := make([]map[string]string, 0, len(openids))
+	return internal.NewOpenPostAPI(SubscriberBatchGetURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		userList := make([]map[string]string, 0, len(openids))
 
-			for _, v := range openids {
-				userList = append(userList, map[string]string{
-					"openid": v,
-					"lang":   "zh_CN",
-				})
-			}
+		for _, v := range openids {
+			userList = append(userList, map[string]string{
+				"openid": v,
+				"lang":   "zh_CN",
+			})
+		}
 
-			return json.Marshal(map[string][]map[string]string{"user_list": userList})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", SubscriberBatchGetURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			r := gjson.GetBytes(resp, "user_info_list")
+		return json.Marshal(map[string][]map[string]string{"user_list": userList})
+	}), func(resp []byte) error {
+		r := gjson.GetBytes(resp, "user_info_list")
 
-			return json.Unmarshal([]byte(r.Raw), dest)
-		},
-	}
+		return json.Unmarshal([]byte(r.Raw), dest)
+	})
 }
 
 // GetSubscriberList 获取微信公众号订阅者列表
 func GetSubscriberList(nextOpenID string, dest *SubscriberList) internal.Action {
-	return &WechatAPI{
-		url: func(accessToken string) string {
-			return fmt.Sprintf("GET|%s?access_token=%s&next_openid=%s", SubscriberListURL, accessToken, nextOpenID)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	query := url.Values{}
+
+	query.Set("next_openid", nextOpenID)
+
+	return internal.NewOpenGetAPI(SubscriberListURL, query, func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // GetBlackList 获取用户黑名单列表
 func GetBlackList(beginOpenID string, dest *SubscriberList) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(internal.X{
-				"begin_openid": beginOpenID,
-			})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", BlackListGetURL, accessToken)
-		},
-		decode: func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		},
-	}
+	return internal.NewOpenPostAPI(BlackListGetURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(internal.X{
+			"begin_openid": beginOpenID,
+		})
+	}), func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
 }
 
 // BatchBlackList 拉黑用户
 func BatchBlackList(openids ...string) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(internal.X{
-				"openid_list": openids,
-			})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", BatchBlackListURL, accessToken)
-		},
-	}
+	return internal.NewOpenPostAPI(BatchBlackListURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(internal.X{
+			"openid_list": openids,
+		})
+	}), nil)
 }
 
 // BatchUnBlackList 取消拉黑用户
 func BatchUnBlackList(openids ...string) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(internal.X{
-				"openid_list": openids,
-			})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", BatchUnBlackListURL, accessToken)
-		},
-	}
+	return internal.NewOpenPostAPI(BatchUnBlackListURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(internal.X{
+			"openid_list": openids,
+		})
+	}), nil)
 }
 
 // SetUserRemark 设置用户备注名（该接口暂时开放给微信认证的服务号）
 func SetUserRemark(openid, remark string) internal.Action {
-	return &WechatAPI{
-		body: internal.NewPostBody(func() ([]byte, error) {
-			return json.Marshal(internal.X{
-				"openid": openid,
-				"remark": remark,
-			})
-		}),
-		url: func(accessToken string) string {
-			return fmt.Sprintf("POST|%s?access_token=%s", UserRemarkSetURL, accessToken)
-		},
-	}
+	return internal.NewOpenPostAPI(UserRemarkSetURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(internal.X{
+			"openid": openid,
+			"remark": remark,
+		})
+	}), nil)
 }

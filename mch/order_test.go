@@ -13,7 +13,7 @@ func TestUnifyOrder(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/unifiedorder", internal.WXML{
 		"appid":            "wx2421b1c4370ec43b",
@@ -77,7 +77,7 @@ func TestQueryOrderByTransactionID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/orderquery", internal.WXML{
 		"appid":          "wx2421b1c4370ec43b",
@@ -146,7 +146,7 @@ func TestQueryOrderByOutTradeNO(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/orderquery", internal.WXML{
 		"appid":        "wx2421b1c4370ec43b",
@@ -215,7 +215,7 @@ func TestCloseOrder(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockWechatClient(ctrl)
+	client := internal.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/closeorder", internal.WXML{
 		"appid":        "wx2421b1c4370ec43b",
