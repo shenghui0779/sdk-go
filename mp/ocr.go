@@ -12,11 +12,10 @@ import (
 // OCRMode 识别模式
 type OCRMode string
 
+// 微信支持的识别模式
 var (
-	// OCRPhoto 拍照模式
-	OCRPhoto OCRMode = "photo"
-	// OCRScan 扫描模式
-	OCRScan OCRMode = "scan"
+	OCRPhoto OCRMode = "photo" // 拍照模式
+	OCRScan  OCRMode = "scan"  // 扫描模式
 )
 
 // BankCard 银行卡
