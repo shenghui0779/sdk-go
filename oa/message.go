@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/internal"
+	"github.com/shenghui0779/gochat/public"
 	"github.com/tidwall/gjson"
 )
 
@@ -19,8 +19,8 @@ type TemplateInfo struct {
 }
 
 // GetTemplateList 获取模板列表
-func GetTemplateList(dest *[]TemplateInfo) internal.Action {
-	return internal.NewOpenGetAPI(TemplateListURL, url.Values{}, func(resp []byte) error {
+func GetTemplateList(dest *[]TemplateInfo) public.Action {
+	return public.NewOpenGetAPI(TemplateListURL, url.Values{}, func(resp []byte) error {
 		r := gjson.GetBytes(resp, "template_list")
 
 		return json.Unmarshal([]byte(r.Raw), dest)
@@ -28,9 +28,9 @@ func GetTemplateList(dest *[]TemplateInfo) internal.Action {
 }
 
 // DeleteTemplate 删除模板
-func DeleteTemplate(templateID string) internal.Action {
-	return internal.NewOpenPostAPI(TemplateDeleteURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(internal.X{"template_id": templateID})
+func DeleteTemplate(templateID string) public.Action {
+	return public.NewOpenPostAPI(TemplateDeleteURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(public.X{"template_id": templateID})
 	}), nil)
 }
 
@@ -48,9 +48,9 @@ type TemplateMessage struct {
 }
 
 // SendTemplateMessage 发送模板消息
-func SendTemplateMessage(msg *TemplateMessage) internal.Action {
-	return internal.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		params := internal.X{
+func SendTemplateMessage(msg *TemplateMessage) public.Action {
+	return public.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		params := public.X{
 			"touser":      msg.OpenID,
 			"template_id": msg.TemplateID,
 			"data":        msg.Data,
@@ -72,9 +72,9 @@ func SendTemplateMessage(msg *TemplateMessage) internal.Action {
 }
 
 // SendSubscribeMessage 发送订阅消息
-func SendSubscribeMessage(scene, title string, msg *TemplateMessage) internal.Action {
-	return internal.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		params := internal.X{
+func SendSubscribeMessage(scene, title string, msg *TemplateMessage) public.Action {
+	return public.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		params := public.X{
 			"scene":       scene,
 			"title":       title,
 			"touser":      msg.OpenID,

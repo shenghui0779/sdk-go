@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/internal"
+	"github.com/shenghui0779/gochat/public"
 )
 
 type qrcodeOptions struct {
@@ -75,8 +75,8 @@ type QRCode struct {
 }
 
 // CreateQRCode 创建小程序二维码 - 数量有限
-func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) internal.Action {
-	return internal.NewOpenPostAPI(QRCodeCreateURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) public.Action {
+	return public.NewOpenPostAPI(QRCodeCreateURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
 		o := new(qrcodeOptions)
 
 		if len(options) > 0 {
@@ -85,7 +85,7 @@ func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) internal.A
 			}
 		}
 
-		params := internal.X{"path": path}
+		params := public.X{"path": path}
 
 		if o.width != 0 {
 			params["width"] = o.width
@@ -107,8 +107,8 @@ func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) internal.A
 }
 
 // GetQRCode 获取小程序二维码 - 数量有限
-func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) internal.Action {
-	return internal.NewOpenPostAPI(QRCodeGetURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) public.Action {
+	return public.NewOpenPostAPI(QRCodeGetURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
 		o := new(qrcodeOptions)
 
 		if len(options) > 0 {
@@ -117,7 +117,7 @@ func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) internal.Acti
 			}
 		}
 
-		params := internal.X{"path": path}
+		params := public.X{"path": path}
 
 		if o.width != 0 {
 			params["width"] = o.width
@@ -151,8 +151,8 @@ func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) internal.Acti
 }
 
 // GetUnlimitQRCode 获取小程序二维码 - 数量不限
-func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) internal.Action {
-	return internal.NewOpenPostAPI(QRCodeGetUnlimitURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) public.Action {
+	return public.NewOpenPostAPI(QRCodeGetUnlimitURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
 		o := new(qrcodeOptions)
 
 		if len(options) > 0 {
@@ -161,7 +161,7 @@ func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) inter
 			}
 		}
 
-		params := internal.X{"scene": scene}
+		params := public.X{"scene": scene}
 
 		if o.page != "" {
 			params["page"] = o.page
@@ -200,10 +200,10 @@ func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) inter
 
 // MarshalWithNoEscapeHTML marshal with no escape HTML
 func MarshalWithNoEscapeHTML(v interface{}) (string, error) {
-	buf := internal.BufferPool.Get().(*bytes.Buffer)
+	buf := public.BufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
 
-	defer internal.BufferPool.Put(buf)
+	defer public.BufferPool.Put(buf)
 
 	jsonEncoder := json.NewEncoder(buf)
 	jsonEncoder.SetEscapeHTML(false)

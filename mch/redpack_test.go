@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/internal"
+	"github.com/shenghui0779/gochat/public"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,9 +13,9 @@ func TestSendNormalRedpack(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockClient(ctrl)
+	client := public.NewMockClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack", internal.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack", public.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "0010010404201411170000046545",
@@ -31,7 +31,7 @@ func TestSendNormalRedpack(t *testing.T) {
 		"risk_info":    "posttime%3d123123412%26clientversion%3d234134%26mobile%3d122344545%26deviceid%3dIOS",
 		"nonce_str":    "50780e0cca98c8c8e814883e5caa672e",
 		"sign":         "CAE645705D54BA78424107C6048E45B8",
-	}).Return(internal.WXML{
+	}).Return(public.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -64,7 +64,7 @@ func TestSendNormalRedpack(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, internal.WXML{
+	assert.Equal(t, public.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -79,9 +79,9 @@ func TestSendGroupRedpack(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockClient(ctrl)
+	client := public.NewMockClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack", internal.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack", public.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "0010010404201411170000046545",
@@ -97,7 +97,7 @@ func TestSendGroupRedpack(t *testing.T) {
 		"risk_info":    "posttime%3d123123412%26clientversion%3d234134%26mobile%3d122344545%26deviceid%3dIOS",
 		"nonce_str":    "50780e0cca98c8c8e814883e5caa672e",
 		"sign":         "A7E8609BDC147326E8EE82BD031EBA3D",
-	}).Return(internal.WXML{
+	}).Return(public.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -129,7 +129,7 @@ func TestSendGroupRedpack(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, internal.WXML{
+	assert.Equal(t, public.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -144,9 +144,9 @@ func TestSendMinipRedpack(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockClient(ctrl)
+	client := public.NewMockClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendminiprogramhb", internal.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendminiprogramhb", public.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "2334580734271081478888000026",
@@ -160,7 +160,7 @@ func TestSendMinipRedpack(t *testing.T) {
 		"notify_way":   "MINI_PROGRAM_JSAPI",
 		"nonce_str":    "50780e0cca98c8c8e814883e5caa672e",
 		"sign":         "A3F75B94BB93591BA9065556F70855FA",
-	}).Return(internal.WXML{
+	}).Return(public.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -192,7 +192,7 @@ func TestSendMinipRedpack(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, internal.WXML{
+	assert.Equal(t, public.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -209,16 +209,16 @@ func TestQueryRedpackByBillNO(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockClient(ctrl)
+	client := public.NewMockClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo", internal.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo", public.WXML{
 		"appid":      "wx2421b1c4370ec43b",
 		"mch_id":     "10000100",
 		"mch_billno": "9010080799701411170000046603",
 		"bill_type":  "MCHT",
 		"nonce_str":  "50780e0cca98c8c8e814883e5caa672e",
 		"sign":       "B52930D6136EA0B5A40F5692EA47DE08",
-	}).Return(internal.WXML{
+	}).Return(public.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"mch_id":       "10000100",
@@ -243,7 +243,7 @@ func TestQueryRedpackByBillNO(t *testing.T) {
 	r, err := mch.Do(context.TODO(), QueryRedpackByBillNO("9010080799701411170000046603"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, internal.WXML{
+	assert.Equal(t, public.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
 		"mch_id":       "10000100",

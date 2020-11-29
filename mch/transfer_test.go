@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/internal"
+	"github.com/shenghui0779/gochat/public"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,9 +13,9 @@ func TestTransferToBalance(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockClient(ctrl)
+	client := public.NewMockClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", internal.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", public.WXML{
 		"mch_appid":        "wx2421b1c4370ec43b",
 		"mchid":            "10000100",
 		"partner_trade_no": "100000982014120919616",
@@ -27,7 +27,7 @@ func TestTransferToBalance(t *testing.T) {
 		"spbill_create_ip": "10.2.3.10",
 		"nonce_str":        "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS",
 		"sign":             "86557FA2370F4A0897C7DD15D5CDAE1D",
-	}).Return(internal.WXML{
+	}).Return(public.WXML{
 		"return_code":      "SUCCESS",
 		"mch_appid":        "wx2421b1c4370ec43b",
 		"mchid":            "10000100",
@@ -57,7 +57,7 @@ func TestTransferToBalance(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, internal.WXML{
+	assert.Equal(t, public.WXML{
 		"return_code":      "SUCCESS",
 		"mch_appid":        "wx2421b1c4370ec43b",
 		"mchid":            "10000100",
@@ -73,15 +73,15 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockClient(ctrl)
+	client := public.NewMockClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo", internal.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo", public.WXML{
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
 		"partner_trade_no": "1000005901201407261446939628",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
 		"sign":             "0DE046BCF7FB34BF484C6F42693C11A0",
-	}).Return(internal.WXML{
+	}).Return(public.WXML{
 		"return_code":      "SUCCESS",
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
@@ -107,7 +107,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 	r, err := mch.Do(context.TODO(), QueryTransferBalanceOrder("1000005901201407261446939628"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, internal.WXML{
+	assert.Equal(t, public.WXML{
 		"return_code":      "SUCCESS",
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
@@ -128,9 +128,9 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 	ctrl := gomock.NewController(t)
 // 	defer ctrl.Finish()
 
-// 	client := internal.NewMockClient(ctrl)
+// 	client := public.NewMockClient(ctrl)
 
-// 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank", internal.WXML{
+// 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank", public.WXML{
 // 		"mch_id":           "10000100",
 // 		"partner_trade_no": "1212121221278",
 // 		"amount":           "500",
@@ -140,7 +140,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 		"desc":             "test",
 // 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
 // 		"sign":             "93FD9CF5C2D3F2D6016A168F69D221D5",
-// 	}).Return(internal.WXML{
+// 	}).Return(public.WXML{
 // 		"return_code":      "SUCCESS",
 // 		"mch_id":           "10000100",
 // 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
@@ -169,7 +169,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 	}, publicKey))
 
 // 	assert.Nil(t, err)
-// 	assert.Equal(t, internal.WXML{
+// 	assert.Equal(t, public.WXML{
 // 		"return_code":      "SUCCESS",
 // 		"mch_id":           "10000100",
 // 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
@@ -185,14 +185,14 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockClient(ctrl)
+	client := public.NewMockClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank", internal.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank", public.WXML{
 		"mch_id":           "10000100",
 		"partner_trade_no": "1212121221278",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
 		"sign":             "E4E201459D36D29853C951D64545149E",
-	}).Return(internal.WXML{
+	}).Return(public.WXML{
 		"return_code":      "SUCCESS",
 		"mch_id":           "10000100",
 		"result_code":      "SUCCESS",
@@ -218,7 +218,7 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 	r, err := mch.Do(context.TODO(), QueryTransferBankCardOrder("1212121221278"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, internal.WXML{
+	assert.Equal(t, public.WXML{
 		"return_code":      "SUCCESS",
 		"mch_id":           "10000100",
 		"result_code":      "SUCCESS",
@@ -238,14 +238,14 @@ func TestRSAPublicKey(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := internal.NewMockClient(ctrl)
+	client := public.NewMockClient(ctrl)
 
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://fraud.mch.weixin.qq.com/risk/getpublickey", internal.WXML{
+	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://fraud.mch.weixin.qq.com/risk/getpublickey", public.WXML{
 		"mch_id":    "10000100",
 		"nonce_str": "50780e0cca98c8c8e814883e5caa672e",
 		"sign_type": "MD5",
 		"sign":      "CA227C435D88EE017A9457B657FCA515",
-	}).Return(internal.WXML{
+	}).Return(public.WXML{
 		"return_code": "SUCCESS",
 		"mch_id":      "10000100",
 		"result_code": "SUCCESS",
@@ -271,7 +271,7 @@ DQIDAQAB
 	r, err := mch.Do(context.TODO(), RSAPublicKey())
 
 	assert.Nil(t, err)
-	assert.Equal(t, internal.WXML{
+	assert.Equal(t, public.WXML{
 		"return_code": "SUCCESS",
 		"mch_id":      "10000100",
 		"result_code": "SUCCESS",

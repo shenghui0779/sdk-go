@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/internal"
+	"github.com/shenghui0779/gochat/public"
 )
 
 type MenuButtonType string
@@ -66,16 +66,16 @@ type MenuMatchRule struct {
 }
 
 // CreateMenu 自定义菜单
-func CreateMenu(buttons ...*MenuButton) internal.Action {
-	return internal.NewOpenPostAPI(MenuCreateURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(internal.X{"button": buttons})
+func CreateMenu(buttons ...*MenuButton) public.Action {
+	return public.NewOpenPostAPI(MenuCreateURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(public.X{"button": buttons})
 	}), nil)
 }
 
 // CreateConditionalMenu 个性化菜单
-func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) internal.Action {
-	return internal.NewOpenPostAPI(MenuAddConditionalURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(internal.X{
+func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) public.Action {
+	return public.NewOpenPostAPI(MenuAddConditionalURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(public.X{
 			"button":    buttons,
 			"matchrule": matchRule,
 		})
@@ -83,21 +83,21 @@ func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) int
 }
 
 // GetMenu 查询自定义菜单
-func GetMenu(dest *MenuInfo) internal.Action {
-	return internal.NewOpenGetAPI(MenuListURL, url.Values{}, func(resp []byte) error {
+func GetMenu(dest *MenuInfo) public.Action {
+	return public.NewOpenGetAPI(MenuListURL, url.Values{}, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
 
 // DeleteMenu 删除自定义菜单
-func DeleteMenu() internal.Action {
-	return internal.NewOpenGetAPI(MenuDeleteURL, url.Values{}, nil)
+func DeleteMenu() public.Action {
+	return public.NewOpenGetAPI(MenuDeleteURL, url.Values{}, nil)
 }
 
 // DeleteConditional 删除个性化菜单
-func DeleteConditionalMenu(menuID string) internal.Action {
-	return internal.NewOpenPostAPI(MenuDeleteConditionalURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(internal.X{"menuid": menuID})
+func DeleteConditionalMenu(menuID string) public.Action {
+	return public.NewOpenPostAPI(MenuDeleteConditionalURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(public.X{"menuid": menuID})
 	}), nil)
 }
 

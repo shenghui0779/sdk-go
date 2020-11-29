@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"strconv"
 
-	"github.com/shenghui0779/gochat/internal"
+	"github.com/shenghui0779/gochat/public"
 )
 
 // TransferBalanceData 付款到零钱数据
@@ -34,9 +34,9 @@ type TransferBankCardData struct {
 }
 
 // TransferToBalance 付款到零钱【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
-func TransferToBalance(data *TransferBalanceData) internal.Action {
-	return internal.NewMchAPI(TransferToBalanceURL, func(appid, mchid, apikey, nonce string) (internal.WXML, error) {
-		body := internal.WXML{
+func TransferToBalance(data *TransferBalanceData) public.Action {
+	return public.NewMchAPI(TransferToBalanceURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
+		body := public.WXML{
 			"mch_appid":        appid,
 			"mchid":            mchid,
 			"nonce_str":        nonce,
@@ -59,32 +59,32 @@ func TransferToBalance(data *TransferBalanceData) internal.Action {
 			body["spbill_create_ip"] = data.SpbillCreateIP
 		}
 
-		body["sign"] = internal.SignWithMD5(body, apikey, true)
+		body["sign"] = public.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)
 }
 
 // QueryTransferBalanceOrder 查询付款到零钱订单
-func QueryTransferBalanceOrder(partnerTradeNO string) internal.Action {
-	return internal.NewMchAPI(TransferBalanceOrderQueryURL, func(appid, mchid, apikey, nonce string) (internal.WXML, error) {
-		body := internal.WXML{
+func QueryTransferBalanceOrder(partnerTradeNO string) public.Action {
+	return public.NewMchAPI(TransferBalanceOrderQueryURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
+		body := public.WXML{
 			"appid":            appid,
 			"mch_id":           mchid,
 			"partner_trade_no": partnerTradeNO,
 			"nonce_str":        nonce,
 		}
 
-		body["sign"] = internal.SignWithMD5(body, apikey, true)
+		body["sign"] = public.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)
 }
 
 // TransferToBankCard 付款到银行卡【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
-func TransferToBankCard(data *TransferBankCardData, publicKey []byte) internal.Action {
-	return internal.NewMchAPI(TransferToBankCardURL, func(appid, mchid, apikey, nonce string) (internal.WXML, error) {
-		body := internal.WXML{
+func TransferToBankCard(data *TransferBankCardData, publicKey []byte) public.Action {
+	return public.NewMchAPI(TransferToBankCardURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
+		body := public.WXML{
 			"mch_id":           mchid,
 			"nonce_str":        nonce,
 			"partner_trade_no": data.PartnerTradeNO,
@@ -93,7 +93,7 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) internal.A
 		}
 
 		// 收款方银行卡号加密
-		b, err := internal.RSAEncrypt([]byte(data.EncBankNO), publicKey)
+		b, err := public.RSAEncrypt([]byte(data.EncBankNO), publicKey)
 
 		if err != nil {
 			return nil, err
@@ -102,7 +102,7 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) internal.A
 		body["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
 
 		// 收款方用户名加密
-		b, err = internal.RSAEncrypt([]byte(data.EncTrueName), publicKey)
+		b, err = public.RSAEncrypt([]byte(data.EncTrueName), publicKey)
 
 		if err != nil {
 			return nil, err
@@ -114,37 +114,37 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) internal.A
 			body["desc"] = data.Desc
 		}
 
-		body["sign"] = internal.SignWithMD5(body, apikey, true)
+		body["sign"] = public.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)
 }
 
 // QueryTransferBankCardOrder 查询付款到银行卡订单
-func QueryTransferBankCardOrder(partnerTradeNO string) internal.Action {
-	return internal.NewMchAPI(TransferBankCardOrderQueryURL, func(appid, mchid, apikey, nonce string) (internal.WXML, error) {
-		body := internal.WXML{
+func QueryTransferBankCardOrder(partnerTradeNO string) public.Action {
+	return public.NewMchAPI(TransferBankCardOrderQueryURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
+		body := public.WXML{
 			"mch_id":           mchid,
 			"partner_trade_no": partnerTradeNO,
 			"nonce_str":        nonce,
 		}
 
-		body["sign"] = internal.SignWithMD5(body, apikey, true)
+		body["sign"] = public.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)
 }
 
 // RSAPublicKey 获取RSA加密公钥
-func RSAPublicKey() internal.Action {
-	return internal.NewMchAPI(RSAPublicKeyURL, func(appid, mchid, apikey, nonce string) (internal.WXML, error) {
-		body := internal.WXML{
+func RSAPublicKey() public.Action {
+	return public.NewMchAPI(RSAPublicKeyURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
+		body := public.WXML{
 			"mch_id":    mchid,
 			"nonce_str": nonce,
 			"sign_type": SignMD5,
 		}
 
-		body["sign"] = internal.SignWithMD5(body, apikey, true)
+		body["sign"] = public.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)

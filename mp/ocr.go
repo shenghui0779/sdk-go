@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/internal"
+	"github.com/shenghui0779/gochat/public"
 	"github.com/tidwall/gjson"
 )
 
@@ -25,12 +25,12 @@ type BankCard struct {
 }
 
 // OCRBankCard 银行卡识别
-func OCRBankCard(mode OCRMode, filename string, dest *BankCard) internal.Action {
+func OCRBankCard(mode OCRMode, filename string, dest *BankCard) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 
-	return internal.NewOpenUploadAPI(OCRBankCardURL, query, internal.NewUploadBody("img", filename, func() ([]byte, error) {
+	return public.NewOpenUploadAPI(OCRBankCardURL, query, public.NewUploadBody("img", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), func(resp []byte) error {
 		dest.ID = gjson.GetBytes(resp, "id").String()
@@ -40,13 +40,13 @@ func OCRBankCard(mode OCRMode, filename string, dest *BankCard) internal.Action 
 }
 
 // OCRBankCardByURL 银行卡识别
-func OCRBankCardByURL(mode OCRMode, imgURL string, dest *BankCard) internal.Action {
+func OCRBankCardByURL(mode OCRMode, imgURL string, dest *BankCard) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return internal.NewOpenPostAPI(OCRBankCardURL, query, nil, func(resp []byte) error {
+	return public.NewOpenPostAPI(OCRBankCardURL, query, nil, func(resp []byte) error {
 		dest.ID = gjson.GetBytes(resp, "id").String()
 
 		return nil
@@ -77,12 +77,12 @@ type BusinessLicense struct {
 }
 
 // OCRBusinessLicense 营业执照识别
-func OCRBusinessLicense(mode OCRMode, filename string, dest *BusinessLicense) internal.Action {
+func OCRBusinessLicense(mode OCRMode, filename string, dest *BusinessLicense) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 
-	return internal.NewOpenUploadAPI(OCRBusinessLicenseURL, query, internal.NewUploadBody("img", filename, func() ([]byte, error) {
+	return public.NewOpenUploadAPI(OCRBusinessLicenseURL, query, public.NewUploadBody("img", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
@@ -90,13 +90,13 @@ func OCRBusinessLicense(mode OCRMode, filename string, dest *BusinessLicense) in
 }
 
 // OCRBusinessLicenseByURL 营业执照识别
-func OCRBusinessLicenseByURL(mode OCRMode, imgURL string, dest *BusinessLicense) internal.Action {
+func OCRBusinessLicenseByURL(mode OCRMode, imgURL string, dest *BusinessLicense) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return internal.NewOpenPostAPI(OCRBusinessLicenseURL, query, nil, func(resp []byte) error {
+	return public.NewOpenPostAPI(OCRBusinessLicenseURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -116,12 +116,12 @@ type DriverLicense struct {
 }
 
 // OCRDriverLicense 驾照识别
-func OCRDriverLicense(mode OCRMode, filename string, dest *DriverLicense) internal.Action {
+func OCRDriverLicense(mode OCRMode, filename string, dest *DriverLicense) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 
-	return internal.NewOpenUploadAPI(OCRDriverLicenseURL, query, internal.NewUploadBody("img", filename, func() ([]byte, error) {
+	return public.NewOpenUploadAPI(OCRDriverLicenseURL, query, public.NewUploadBody("img", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
@@ -129,13 +129,13 @@ func OCRDriverLicense(mode OCRMode, filename string, dest *DriverLicense) intern
 }
 
 // OCRDriverLicenseByURL 驾照识别
-func OCRDriverLicenseByURL(mode OCRMode, imgURL string, dest *DriverLicense) internal.Action {
+func OCRDriverLicenseByURL(mode OCRMode, imgURL string, dest *DriverLicense) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return internal.NewOpenPostAPI(OCRDriverLicenseURL, query, nil, func(resp []byte) error {
+	return public.NewOpenPostAPI(OCRDriverLicenseURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -150,12 +150,12 @@ type IDCardFront struct {
 }
 
 // OCRIDCardFront 身份证前面识别
-func OCRIDCardFront(mode OCRMode, filename string, dest *IDCardFront) internal.Action {
+func OCRIDCardFront(mode OCRMode, filename string, dest *IDCardFront) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 
-	return internal.NewOpenUploadAPI(OCRIDCardURL, query, internal.NewUploadBody("img", filename, func() ([]byte, error) {
+	return public.NewOpenUploadAPI(OCRIDCardURL, query, public.NewUploadBody("img", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
@@ -163,13 +163,13 @@ func OCRIDCardFront(mode OCRMode, filename string, dest *IDCardFront) internal.A
 }
 
 // OCRIDCardFrontByURL 身份证前面识别
-func OCRIDCardFrontByURL(mode OCRMode, imgURL string, dest *IDCardFront) internal.Action {
+func OCRIDCardFrontByURL(mode OCRMode, imgURL string, dest *IDCardFront) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return internal.NewOpenPostAPI(OCRIDCardURL, query, nil, func(resp []byte) error {
+	return public.NewOpenPostAPI(OCRIDCardURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -180,12 +180,12 @@ type IDCardBack struct {
 }
 
 // OCRIDCardBack 身份证背面识别
-func OCRIDCardBack(mode OCRMode, filename string, dest *IDCardBack) internal.Action {
+func OCRIDCardBack(mode OCRMode, filename string, dest *IDCardBack) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 
-	return internal.NewOpenUploadAPI(OCRBankCardURL, query, internal.NewUploadBody("img", filename, func() ([]byte, error) {
+	return public.NewOpenUploadAPI(OCRBankCardURL, query, public.NewUploadBody("img", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), func(resp []byte) error {
 		dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
@@ -195,13 +195,13 @@ func OCRIDCardBack(mode OCRMode, filename string, dest *IDCardBack) internal.Act
 }
 
 // OCRIDCardBackByURL 身份证背面识别
-func OCRIDCardBackByURL(mode OCRMode, imgURL string, dest *IDCardBack) internal.Action {
+func OCRIDCardBackByURL(mode OCRMode, imgURL string, dest *IDCardBack) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return internal.NewOpenPostAPI(OCRBankCardURL, query, nil, func(resp []byte) error {
+	return public.NewOpenPostAPI(OCRBankCardURL, query, nil, func(resp []byte) error {
 		dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
 
 		return nil
@@ -221,12 +221,12 @@ type PrintedTextItem struct {
 }
 
 // OCRPrintedText 通用印刷体识别
-func OCRPrintedText(mode OCRMode, filename string, dest *PrintedText) internal.Action {
+func OCRPrintedText(mode OCRMode, filename string, dest *PrintedText) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 
-	return internal.NewOpenUploadAPI(OCRPrintedTextURL, query, internal.NewUploadBody("img", filename, func() ([]byte, error) {
+	return public.NewOpenUploadAPI(OCRPrintedTextURL, query, public.NewUploadBody("img", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
@@ -234,13 +234,13 @@ func OCRPrintedText(mode OCRMode, filename string, dest *PrintedText) internal.A
 }
 
 // OCRPrintedTextByURL 通用印刷体识别
-func OCRPrintedTextByURL(mode OCRMode, imgURL string, dest *PrintedText) internal.Action {
+func OCRPrintedTextByURL(mode OCRMode, imgURL string, dest *PrintedText) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return internal.NewOpenPostAPI(OCRPrintedTextURL, query, nil, func(resp []byte) error {
+	return public.NewOpenPostAPI(OCRPrintedTextURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -264,12 +264,12 @@ type VehicleLicense struct {
 }
 
 // OCRVehicleLicense 行驶证识别
-func OCRVehicleLicense(mode OCRMode, filename string, dest *VehicleLicense) internal.Action {
+func OCRVehicleLicense(mode OCRMode, filename string, dest *VehicleLicense) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 
-	return internal.NewOpenUploadAPI(OCRVehicleLicenseURL, query, internal.NewUploadBody("img", filename, func() ([]byte, error) {
+	return public.NewOpenUploadAPI(OCRVehicleLicenseURL, query, public.NewUploadBody("img", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
@@ -277,13 +277,13 @@ func OCRVehicleLicense(mode OCRMode, filename string, dest *VehicleLicense) inte
 }
 
 // OCRVehicleLicenseByURL 行驶证识别
-func OCRVehicleLicenseByURL(mode OCRMode, imgURL string, dest *VehicleLicense) internal.Action {
+func OCRVehicleLicenseByURL(mode OCRMode, imgURL string, dest *VehicleLicense) public.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return internal.NewOpenPostAPI(OCRVehicleLicenseURL, query, nil, func(resp []byte) error {
+	return public.NewOpenPostAPI(OCRVehicleLicenseURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/internal"
+	"github.com/shenghui0779/gochat/public"
 	"github.com/tidwall/gjson"
 )
 
@@ -46,20 +46,20 @@ type SubscriberListData struct {
 }
 
 // GetSubscriberInfo 获取微信公众号订阅者信息
-func GetSubscriberInfo(openid string, dest *SubscriberInfo) internal.Action {
+func GetSubscriberInfo(openid string, dest *SubscriberInfo) public.Action {
 	query := url.Values{}
 
 	query.Set("openid", openid)
 	query.Set("lang", "zh_CN")
 
-	return internal.NewOpenGetAPI(SubscriberGetURL, query, func(resp []byte) error {
+	return public.NewOpenGetAPI(SubscriberGetURL, query, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
 
 // BatchGetSubscriberInfo 批量获取微信公众号订阅者信息
-func BatchGetSubscriberInfo(openids []string, dest *[]SubscriberInfo) internal.Action {
-	return internal.NewOpenPostAPI(SubscriberBatchGetURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
+func BatchGetSubscriberInfo(openids []string, dest *[]SubscriberInfo) public.Action {
+	return public.NewOpenPostAPI(SubscriberBatchGetURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
 		userList := make([]map[string]string, 0, len(openids))
 
 		for _, v := range openids {
@@ -78,20 +78,20 @@ func BatchGetSubscriberInfo(openids []string, dest *[]SubscriberInfo) internal.A
 }
 
 // GetSubscriberList 获取微信公众号订阅者列表
-func GetSubscriberList(nextOpenID string, dest *SubscriberList) internal.Action {
+func GetSubscriberList(nextOpenID string, dest *SubscriberList) public.Action {
 	query := url.Values{}
 
 	query.Set("next_openid", nextOpenID)
 
-	return internal.NewOpenGetAPI(SubscriberListURL, query, func(resp []byte) error {
+	return public.NewOpenGetAPI(SubscriberListURL, query, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
 
 // GetBlackList 获取用户黑名单列表
-func GetBlackList(beginOpenID string, dest *SubscriberList) internal.Action {
-	return internal.NewOpenPostAPI(BlackListGetURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(internal.X{
+func GetBlackList(beginOpenID string, dest *SubscriberList) public.Action {
+	return public.NewOpenPostAPI(BlackListGetURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(public.X{
 			"begin_openid": beginOpenID,
 		})
 	}), func(resp []byte) error {
@@ -100,27 +100,27 @@ func GetBlackList(beginOpenID string, dest *SubscriberList) internal.Action {
 }
 
 // BatchBlackList 拉黑用户
-func BatchBlackList(openids ...string) internal.Action {
-	return internal.NewOpenPostAPI(BatchBlackListURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(internal.X{
+func BatchBlackList(openids ...string) public.Action {
+	return public.NewOpenPostAPI(BatchBlackListURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(public.X{
 			"openid_list": openids,
 		})
 	}), nil)
 }
 
 // BatchUnBlackList 取消拉黑用户
-func BatchUnBlackList(openids ...string) internal.Action {
-	return internal.NewOpenPostAPI(BatchUnBlackListURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(internal.X{
+func BatchUnBlackList(openids ...string) public.Action {
+	return public.NewOpenPostAPI(BatchUnBlackListURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(public.X{
 			"openid_list": openids,
 		})
 	}), nil)
 }
 
 // SetUserRemark 设置用户备注名（该接口暂时开放给微信认证的服务号）
-func SetUserRemark(openid, remark string) internal.Action {
-	return internal.NewOpenPostAPI(UserRemarkSetURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(internal.X{
+func SetUserRemark(openid, remark string) public.Action {
+	return public.NewOpenPostAPI(UserRemarkSetURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(public.X{
 			"openid": openid,
 			"remark": remark,
 		})

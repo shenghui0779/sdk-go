@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/internal"
+	"github.com/shenghui0779/gochat/public"
 )
 
 // MessageBody 消息内容体
@@ -46,7 +46,6 @@ type OATemplateMessage struct {
 	MPAppID     string      // 所需跳转到的小程序appid（该小程序appid必须与发模板消息的公众号是绑定关联关系，暂不支持小游戏）
 	MPPagePath  string      // 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar），要求该小程序已发布，暂不支持小游戏
 	Data        MessageBody // 模板内容，格式形如：{"key1": {"value": any}, "key2": {"value": any}}
-	Color       string      // 模板内容字体颜色，不填默认为黑色
 }
 
 // CustomerServiceMessage 小程序客服消息
@@ -74,7 +73,7 @@ type LinkMessage struct {
 	Title       string // 消息标题
 	Description string // 图文链接消息
 	RedirectURL string // 图文链接消息被点击后跳转的链接
-	ThumbURL    string // 图文链接消息的图片链接，支持 JPG、PNG 格式，较好的效果为大图 640 internal.X 320，小图 80 internal.X 80
+	ThumbURL    string // 图文链接消息的图片链接，支持 JPG、PNG 格式，较好的效果为大图 640 public.X 320，小图 80 public.X 80
 }
 
 // PageMessage 小程序卡片
@@ -91,15 +90,15 @@ type TypingMessage struct {
 }
 
 // Uniform 发送统一服务消息
-func SendUniformMessage(msg *UniformMessage) internal.Action {
-	return internal.NewOpenPostAPI(UniformMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		params := internal.X{
+func SendUniformMessage(msg *UniformMessage) public.Action {
+	return public.NewOpenPostAPI(UniformMessageSendURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		params := public.X{
 			"touser": msg.OpenID,
 		}
 
 		// 小程序模板消息
 		if msg.MPTemplateMessage != nil {
-			tplMsg := internal.X{
+			tplMsg := public.X{
 				"template_id": msg.MPTemplateMessage.TemplateID,
 				"form_id":     msg.MPTemplateMessage.FormID,
 			}
@@ -121,7 +120,7 @@ func SendUniformMessage(msg *UniformMessage) internal.Action {
 
 		// 公众号模板消息
 		if msg.PubTemplateMessage != nil {
-			tplMsg := internal.X{
+			tplMsg := public.X{
 				"appid":       msg.PubAppID,
 				"template_id": msg.PubTemplateMessage.TemplateID,
 				"data":        msg.PubTemplateMessage.Data,
@@ -147,9 +146,9 @@ func SendUniformMessage(msg *UniformMessage) internal.Action {
 }
 
 // SendSubscribeMessage 发送订阅消息
-func SendSubscribeMessage(msg *SubscribeMessage) internal.Action {
-	return internal.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		params := internal.X{
+func SendSubscribeMessage(msg *SubscribeMessage) public.Action {
+	return public.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		params := public.X{
 			"touser":      msg.OpenID,
 			"template_id": msg.TemplateID,
 			"data":        msg.Data,
@@ -172,9 +171,9 @@ func SendSubscribeMessage(msg *SubscribeMessage) internal.Action {
 }
 
 // SendTemplateMessage 发送模板消息
-func SendTemplateMessage(msg *TemplateMessage) internal.Action {
-	return internal.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		params := internal.X{
+func SendTemplateMessage(msg *TemplateMessage) public.Action {
+	return public.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		params := public.X{
 			"touser":      msg.OpenID,
 			"template_id": msg.TemplateID,
 			"form_id":     msg.FormID,
@@ -197,9 +196,9 @@ func SendTemplateMessage(msg *TemplateMessage) internal.Action {
 }
 
 // SendCustomerServiceMessage 发送客服消息
-func SendCustomerServiceMessage(msg *CustomerServiceMessage) internal.Action {
-	return internal.NewOpenPostAPI(CustomerServiceMessageSendURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		params := internal.X{
+func SendCustomerServiceMessage(msg *CustomerServiceMessage) public.Action {
+	return public.NewOpenPostAPI(CustomerServiceMessageSendURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		params := public.X{
 			"touser":  msg.OpenID,
 			"msgtype": msg.MessageType,
 		}
@@ -225,9 +224,9 @@ func SendCustomerServiceMessage(msg *CustomerServiceMessage) internal.Action {
 }
 
 // SetTyping 下发当前输入状态，仅支持客服消息
-func SetTyping(msg *TypingMessage) internal.Action {
-	return internal.NewOpenPostAPI(SetTypingURL, url.Values{}, internal.NewPostBody(func() ([]byte, error) {
-		params := internal.X{
+func SetTyping(msg *TypingMessage) public.Action {
+	return public.NewOpenPostAPI(SetTypingURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+		params := public.X{
 			"touser":  msg.OpenID,
 			"command": msg.Command,
 		}
