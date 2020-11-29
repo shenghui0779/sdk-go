@@ -12,7 +12,7 @@ import (
 	"io"
 
 	"github.com/shenghui0779/gochat/event"
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
 )
 
@@ -23,7 +23,7 @@ type MP struct {
 	signToken      string
 	encodingAESKey string
 	nonce          func(size int) string
-	client         public.Client
+	client         wx.Client
 }
 
 // New returns new wechat mini program
@@ -37,7 +37,7 @@ func New(appid, appsecret string) *MP {
 
 			return hex.EncodeToString(nonce)
 		},
-		client: public.NewHTTPClient(),
+		client: wx.NewHTTPClient(),
 	}
 }
 
@@ -48,7 +48,7 @@ func (mp *MP) SetServerConfig(token, encodingAESKey string) {
 }
 
 // Code2Session 获取小程序授权的session_key
-func (mp *MP) Code2Session(ctx context.Context, code string, options ...public.HTTPOption) (*AuthSession, error) {
+func (mp *MP) Code2Session(ctx context.Context, code string, options ...wx.HTTPOption) (*AuthSession, error) {
 	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", Code2SessionURL, mp.appid, mp.appsecret, code), options...)
 
 	if err != nil {
@@ -71,7 +71,7 @@ func (mp *MP) Code2Session(ctx context.Context, code string, options ...public.H
 }
 
 // AccessToken 获取小程序的access_token
-func (mp *MP) AccessToken(ctx context.Context, options ...public.HTTPOption) (*AccessToken, error) {
+func (mp *MP) AccessToken(ctx context.Context, options ...wx.HTTPOption) (*AccessToken, error) {
 	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&grant_type=client_credential", AccessTokenURL, mp.appid, mp.appsecret), options...)
 
 	if err != nil {
@@ -113,9 +113,9 @@ func (mp *MP) DecryptAuthInfo(sessionKey, iv, encryptedData string, dest AuthInf
 		return err
 	}
 
-	cbc := public.NewAESCBCCrypto(key, ivb)
+	cbc := wx.NewAESCBCCrypto(key, ivb)
 
-	b, err := cbc.Decrypt(cipherText, public.PKCS7)
+	b, err := cbc.Decrypt(cipherText, wx.PKCS7)
 
 	if err != nil {
 		return err
@@ -133,18 +133,18 @@ func (mp *MP) DecryptAuthInfo(sessionKey, iv, encryptedData string, dest AuthInf
 }
 
 // Do exec action
-func (mp *MP) Do(ctx context.Context, accessToken string, action public.Action, options ...public.HTTPOption) error {
+func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, options ...wx.HTTPOption) error {
 	var (
 		resp []byte
 		err  error
 	)
 
 	switch action.Method() {
-	case public.MethodGet:
+	case wx.MethodGet:
 		resp, err = mp.client.Get(ctx, action.URL()(accessToken), options...)
-	case public.MethodPost:
+	case wx.MethodPost:
 		resp, err = mp.client.Post(ctx, action.URL()(accessToken), action.Body(), options...)
-	case public.MethodUpload:
+	case wx.MethodUpload:
 		resp, err = mp.client.Upload(ctx, action.URL()(accessToken), action.Body(), options...)
 	}
 

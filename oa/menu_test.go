@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,7 +13,7 @@ func TestCreateMenu(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := public.NewMockClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -34,7 +34,7 @@ func TestCreateConditionalMenu(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := public.NewMockClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -65,7 +65,7 @@ func TestGetMenu(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := public.NewMockClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=ACCESS_TOKEN").Return([]byte(`{
 		"menu": {
@@ -223,7 +223,7 @@ func TestDeleteMenu(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := public.NewMockClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=ACCESS_TOKEN").Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -239,7 +239,7 @@ func TestDeleteConditionalMenu(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := public.NewMockClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/delconditional?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 

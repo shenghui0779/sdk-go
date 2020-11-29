@@ -13,7 +13,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 	"golang.org/x/crypto/pkcs12"
 )
 
@@ -23,13 +23,13 @@ type Mch struct {
 	mchid     string
 	apikey    string
 	nonce     func(size int) string
-	client    public.Client
-	tlsClient public.Client
+	client    wx.Client
+	tlsClient wx.Client
 }
 
 // New returns new wechat pay
 func New(appid, mchid, apikey string) *Mch {
-	c := public.NewHTTPClient(&tls.Config{InsecureSkipVerify: true})
+	c := wx.NewHTTPClient(&tls.Config{InsecureSkipVerify: true})
 
 	return &Mch{
 		appid:  appid,
@@ -60,7 +60,7 @@ func (mch *Mch) LoadCertFromP12File(path string) error {
 		return err
 	}
 
-	mch.tlsClient = public.NewHTTPClient(&tls.Config{
+	mch.tlsClient = wx.NewHTTPClient(&tls.Config{
 		Certificates:       []tls.Certificate{cert},
 		InsecureSkipVerify: true,
 	})
@@ -76,7 +76,7 @@ func (mch *Mch) LoadCertFromPemFile(certFile, keyFile string) error {
 		return err
 	}
 
-	mch.tlsClient = public.NewHTTPClient(&tls.Config{
+	mch.tlsClient = wx.NewHTTPClient(&tls.Config{
 		Certificates:       []tls.Certificate{cert},
 		InsecureSkipVerify: true,
 	})
@@ -92,7 +92,7 @@ func (mch *Mch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
 		return err
 	}
 
-	mch.tlsClient = public.NewHTTPClient(&tls.Config{
+	mch.tlsClient = wx.NewHTTPClient(&tls.Config{
 		Certificates:       []tls.Certificate{cert},
 		InsecureSkipVerify: true,
 	})
@@ -101,7 +101,7 @@ func (mch *Mch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
 }
 
 // Do exec action
-func (mch *Mch) Do(ctx context.Context, action public.Action, options ...public.HTTPOption) (public.WXML, error) {
+func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOption) (wx.WXML, error) {
 	body, err := action.WXML()(mch.appid, mch.mchid, mch.apikey, mch.nonce(16))
 
 	if err != nil {
@@ -114,7 +114,7 @@ func (mch *Mch) Do(ctx context.Context, action public.Action, options ...public.
 		return body, nil
 	}
 
-	var resp public.WXML
+	var resp wx.WXML
 
 	if action.TLS() {
 		resp, err = mch.tlsClient.PostXML(ctx, reqURL, body, options...)
@@ -138,8 +138,8 @@ func (mch *Mch) Do(ctx context.Context, action public.Action, options ...public.
 }
 
 // APPAPI 用于APP拉起支付
-func (mch *Mch) APPAPI(prepayID string, timestamp int64) public.WXML {
-	m := public.WXML{
+func (mch *Mch) APPAPI(prepayID string, timestamp int64) wx.WXML {
+	m := wx.WXML{
 		"appid":     mch.appid,
 		"partnerid": mch.mchid,
 		"prepayid":  prepayID,
@@ -148,14 +148,14 @@ func (mch *Mch) APPAPI(prepayID string, timestamp int64) public.WXML {
 		"timestamp": strconv.FormatInt(timestamp, 10),
 	}
 
-	m["sign"] = public.SignWithMD5(m, mch.apikey, true)
+	m["sign"] = wx.SignWithMD5(m, mch.apikey, true)
 
 	return m
 }
 
 // JSAPI 用于JS拉起支付
-func (mch *Mch) JSAPI(prepayID string, timestamp int64) public.WXML {
-	m := public.WXML{
+func (mch *Mch) JSAPI(prepayID string, timestamp int64) wx.WXML {
+	m := wx.WXML{
 		"appId":     mch.appid,
 		"nonceStr":  mch.nonce(16),
 		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
@@ -163,21 +163,21 @@ func (mch *Mch) JSAPI(prepayID string, timestamp int64) public.WXML {
 		"timeStamp": strconv.FormatInt(timestamp, 10),
 	}
 
-	m["paySign"] = public.SignWithMD5(m, mch.apikey, true)
+	m["paySign"] = wx.SignWithMD5(m, mch.apikey, true)
 
 	return m
 }
 
 // MPRedpackJSAPI 小程序领取红包
-func (mch *Mch) MPRedpackJSAPI(pkg string, timestamp int64) public.WXML {
-	m := public.WXML{
+func (mch *Mch) MPRedpackJSAPI(pkg string, timestamp int64) wx.WXML {
+	m := wx.WXML{
 		"appId":     mch.appid,
 		"nonceStr":  mch.nonce(16),
 		"package":   url.QueryEscape(pkg),
 		"timeStamp": strconv.FormatInt(timestamp, 10),
 	}
 
-	m["paySign"] = public.SignWithMD5(m, mch.apikey, false)
+	m["paySign"] = wx.SignWithMD5(m, mch.apikey, false)
 
 	delete(m, "appId")
 	m["signType"] = SignMD5
@@ -186,14 +186,14 @@ func (mch *Mch) MPRedpackJSAPI(pkg string, timestamp int64) public.WXML {
 }
 
 // VerifyWXReply 验证微信结果
-func (mch *Mch) VerifyWXReply(m public.WXML) error {
+func (mch *Mch) VerifyWXReply(m wx.WXML) error {
 	if wxsign, ok := m["sign"]; ok {
 		signature := ""
 
 		if v, ok := m["sign_type"]; ok && v == SignHMacSHA256 {
-			signature = public.SignWithHMacSHA256(m, mch.apikey, true)
+			signature = wx.SignWithHMacSHA256(m, mch.apikey, true)
 		} else {
-			signature = public.SignWithMD5(m, mch.apikey, true)
+			signature = wx.SignWithMD5(m, mch.apikey, true)
 		}
 
 		if wxsign != signature {

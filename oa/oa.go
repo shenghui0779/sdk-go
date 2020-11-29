@@ -17,7 +17,7 @@ import (
 	"time"
 
 	"github.com/shenghui0779/gochat/event"
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
 )
 
@@ -28,7 +28,7 @@ type OA struct {
 	signToken      string
 	encodingAESKey string
 	nonce          func(size int) string
-	client         public.Client
+	client         wx.Client
 }
 
 // New returns new OA
@@ -42,7 +42,7 @@ func New(appid, appsecret string) *OA {
 
 			return hex.EncodeToString(nonce)
 		},
-		client: public.NewHTTPClient(),
+		client: wx.NewHTTPClient(),
 	}
 }
 
@@ -53,7 +53,7 @@ func (oa *OA) SetServerConfig(token, encodingAESKey string) {
 }
 
 // Code2AuthToken 获取公众号网页授权AccessToken
-func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...public.HTTPOption) (*AuthToken, error) {
+func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...wx.HTTPOption) (*AuthToken, error) {
 	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", SnsCode2TokenURL, oa.appid, oa.appsecret, code), options...)
 
 	if err != nil {
@@ -76,7 +76,7 @@ func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...public
 }
 
 // RefreshAuthToken 刷新网页授权AccessToken
-func (oa *OA) RefreshAuthToken(ctx context.Context, refreshToken string, options ...public.HTTPOption) (*AuthToken, error) {
+func (oa *OA) RefreshAuthToken(ctx context.Context, refreshToken string, options ...wx.HTTPOption) (*AuthToken, error) {
 	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", SnsRefreshAccessTokenURL, oa.appid, refreshToken), options...)
 
 	if err != nil {
@@ -99,7 +99,7 @@ func (oa *OA) RefreshAuthToken(ctx context.Context, refreshToken string, options
 }
 
 // AccessToken 获取普通AccessToken
-func (oa *OA) AccessToken(ctx context.Context, options ...public.HTTPOption) (*AccessToken, error) {
+func (oa *OA) AccessToken(ctx context.Context, options ...wx.HTTPOption) (*AccessToken, error) {
 	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", CgiBinAccessTokenURL, oa.appid, oa.appsecret), options...)
 
 	if err != nil {
@@ -122,18 +122,18 @@ func (oa *OA) AccessToken(ctx context.Context, options ...public.HTTPOption) (*A
 }
 
 // Do exec action
-func (oa *OA) Do(ctx context.Context, accessToken string, action public.Action, options ...public.HTTPOption) error {
+func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, options ...wx.HTTPOption) error {
 	var (
 		resp []byte
 		err  error
 	)
 
 	switch action.Method() {
-	case public.MethodGet:
+	case wx.MethodGet:
 		resp, err = oa.client.Get(ctx, action.URL()(accessToken), options...)
-	case public.MethodPost:
+	case wx.MethodPost:
 		resp, err = oa.client.Post(ctx, action.URL()(accessToken), action.Body(), options...)
-	case public.MethodUpload:
+	case wx.MethodUpload:
 		resp, err = oa.client.Upload(ctx, action.URL()(accessToken), action.Body(), options...)
 	}
 
@@ -199,10 +199,10 @@ func (oa *OA) EncryptReplyMessage(from, to string, reply Reply) (*ReplyMessage, 
 	h.Write([]byte(strings.Join(signItems, "")))
 
 	msg := &ReplyMessage{
-		Encrypt:      public.CDATA(encryptData),
-		MsgSignature: public.CDATA(hex.EncodeToString(h.Sum(nil))),
+		Encrypt:      wx.CDATA(encryptData),
+		MsgSignature: wx.CDATA(hex.EncodeToString(h.Sum(nil))),
 		TimeStamp:    now,
-		Nonce:        public.CDATA(nonce),
+		Nonce:        wx.CDATA(nonce),
 	}
 
 	return msg, nil

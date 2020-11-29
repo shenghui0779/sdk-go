@@ -12,11 +12,11 @@ const (
 
 // msg
 const (
-	UniformMessageSendURL         = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send"
-	SubscribeMessageSendURL       = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send"
-	TemplateMessageSendURL        = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"
-	CustomerServiceMessageSendURL = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
-	SetTypingURL                  = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
+	UniformMessageSendURL   = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send"
+	SubscribeMessageSendURL = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send"
+	TemplateMessageSendURL  = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"
+	KFMessageSendURL        = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
+	SetTypingURL            = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 )
 
 // qrcode

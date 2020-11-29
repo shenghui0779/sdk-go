@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
 )
 
@@ -23,9 +23,9 @@ var (
 )
 
 // ApplyPlugin 向插件开发者发起使用插件的申请
-func ApplyPlugin(pluginAppID, reason string) public.Action {
-	return public.NewOpenPostAPI(PluginManageURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(public.X{
+func ApplyPlugin(pluginAppID, reason string) wx.Action {
+	return wx.NewOpenPostAPI(PluginManageURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{
 			"action":       PluginApply,
 			"plugin_appid": pluginAppID,
 			"reason":       reason,
@@ -35,20 +35,20 @@ func ApplyPlugin(pluginAppID, reason string) public.Action {
 
 // PluginDevApplyInfo 插件使用方信息
 type PluginDevApplyInfo struct {
-	AppID      string     `json:"appid"`
-	Status     int        `json:"status"`
-	Nickname   string     `json:"nickname"`
-	HeadImgURL string     `json:"headimgurl"`
-	Categories []public.X `json:"categories"`
-	CreateTime string     `json:"create_time"`
-	ApplyURL   string     `json:"apply_url"`
-	Reason     string     `json:"reason"`
+	AppID      string `json:"appid"`
+	Status     int    `json:"status"`
+	Nickname   string `json:"nickname"`
+	HeadImgURL string `json:"headimgurl"`
+	Categories []wx.X `json:"categories"`
+	CreateTime string `json:"create_time"`
+	ApplyURL   string `json:"apply_url"`
+	Reason     string `json:"reason"`
 }
 
 // GetPluginDevApplyList 获取当前所有插件使用方（供插件开发者调用）
-func GetPluginDevApplyList(page, num int, dest *[]PluginDevApplyInfo) public.Action {
-	return public.NewOpenPostAPI(PluginDevManageURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(public.X{
+func GetPluginDevApplyList(page, num int, dest *[]PluginDevApplyInfo) wx.Action {
+	return wx.NewOpenPostAPI(PluginDevManageURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{
 			"action": PluginDevApplyList,
 			"page":   page,
 			"num":    num,
@@ -69,9 +69,9 @@ type PluginInfo struct {
 }
 
 // GetPluginList 查询已添加的插件
-func GetPluginList(dest *[]PluginInfo) public.Action {
-	return public.NewOpenPostAPI(PluginManageURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(public.X{
+func GetPluginList(dest *[]PluginInfo) wx.Action {
+	return wx.NewOpenPostAPI(PluginManageURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{
 			"action": PluginList,
 		})
 	}), func(resp []byte) error {
@@ -82,9 +82,9 @@ func GetPluginList(dest *[]PluginInfo) public.Action {
 }
 
 // SetDevPluginApplyStatus 修改插件使用申请的状态（供插件开发者调用）
-func SetDevPluginApplyStatus(action PluginAction, appid, reason string) public.Action {
-	return public.NewOpenPostAPI(PluginDevManageURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(public.X{
+func SetDevPluginApplyStatus(action PluginAction, appid, reason string) wx.Action {
+	return wx.NewOpenPostAPI(PluginDevManageURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{
 			"action": action,
 			"appid":  appid,
 			"reason": reason,
@@ -93,9 +93,9 @@ func SetDevPluginApplyStatus(action PluginAction, appid, reason string) public.A
 }
 
 // UnbindPlugin 删除已添加的插件
-func UnbindPlugin(pluginAppID string) public.Action {
-	return public.NewOpenPostAPI(PluginManageURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(public.X{
+func UnbindPlugin(pluginAppID string) wx.Action {
+	return wx.NewOpenPostAPI(PluginManageURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{
 			"action":       PluginUnbind,
 			"plugin_appid": pluginAppID,
 		})

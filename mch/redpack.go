@@ -3,7 +3,7 @@ package mch
 import (
 	"strconv"
 
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // RedpackData 红包发放数据
@@ -24,9 +24,9 @@ type RedpackData struct {
 }
 
 // SendNormalRedpack 发放普通红包
-func SendNormalRedpack(data *RedpackData) public.Action {
-	return public.NewMchAPI(RedpackNormalURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func SendNormalRedpack(data *RedpackData) wx.Action {
+	return wx.NewMchAPI(RedpackNormalURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
 			"nonce_str":    nonce,
@@ -49,16 +49,16 @@ func SendNormalRedpack(data *RedpackData) public.Action {
 			body["risk_info"] = data.RiskInfo
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)
 }
 
 // SendGroupRedpack 发放裂变红包
-func SendGroupRedpack(data *RedpackData) public.Action {
-	return public.NewMchAPI(RedpackGroupURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func SendGroupRedpack(data *RedpackData) wx.Action {
+	return wx.NewMchAPI(RedpackGroupURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
 			"nonce_str":    nonce,
@@ -81,16 +81,16 @@ func SendGroupRedpack(data *RedpackData) public.Action {
 			body["risk_info"] = data.RiskInfo
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)
 }
 
 // SendMinipRedpack 发放小程序红包
-func SendMinipRedpack(data *RedpackData) public.Action {
-	return public.NewMchAPI(RedpackMinipURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func SendMinipRedpack(data *RedpackData) wx.Action {
+	return wx.NewMchAPI(RedpackMinipURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
 			"nonce_str":    nonce,
@@ -109,16 +109,16 @@ func SendMinipRedpack(data *RedpackData) public.Action {
 			body["scene_id"] = data.SceneID
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)
 }
 
 // QueryRedpackByBillNO 查询红包记录
-func QueryRedpackByBillNO(billNO string) public.Action {
-	return public.NewMchAPI(RedpackQueryURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func QueryRedpackByBillNO(billNO string) wx.Action {
+	return wx.NewMchAPI(RedpackQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":      appid,
 			"mch_id":     mchid,
 			"mch_billno": billNO,
@@ -126,7 +126,7 @@ func QueryRedpackByBillNO(billNO string) public.Action {
 			"nonce_str":  nonce,
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)

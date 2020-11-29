@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // AuthToken 公众号网页授权Token
@@ -42,33 +42,33 @@ type JSAPITicket struct {
 }
 
 // CheckAuthToken 校验网页授权AccessToken是否有效
-func CheckAuthToken(openid string) public.Action {
+func CheckAuthToken(openid string) wx.Action {
 	query := url.Values{}
 
 	query.Set("openid", openid)
 
-	return public.NewOpenGetAPI(SnsCheckAccessTokenURL, query, nil)
+	return wx.NewOpenGetAPI(SnsCheckAccessTokenURL, query, nil)
 }
 
 // GetAuthUser 获取授权微信用户信息（注意：使用网页授权的access_token）
-func GetAuthUser(openid string, dest *AuthUser) public.Action {
+func GetAuthUser(openid string, dest *AuthUser) wx.Action {
 	query := url.Values{}
 
 	query.Set("openid", openid)
 	query.Set("lang", "zh_CN")
 
-	return public.NewOpenGetAPI(SnsUserInfoURL, query, func(resp []byte) error {
+	return wx.NewOpenGetAPI(SnsUserInfoURL, query, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
 
 // GetJSAPITicket 获取 jsapi ticket (注意：使用普通access_token)
-func GetJSAPITicket(dest *JSAPITicket) public.Action {
+func GetJSAPITicket(dest *JSAPITicket) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", "jsapi")
 
-	return public.NewOpenGetAPI(CgiBinTicketURL, query, func(resp []byte) error {
+	return wx.NewOpenGetAPI(CgiBinTicketURL, query, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,7 +13,7 @@ func TestCode2Session(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := public.NewMockClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=APPSECRET&js_code=JSCODE&grant_type=authorization_code").Return([]byte(`{
 		"openid": "OPENID",
@@ -40,7 +40,7 @@ func TestAccessToken(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := public.NewMockClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/token?appid=APPID&secret=APPSECRET&grant_type=client_credential").Return([]byte(`{
 		"access_token": "ACCESS_TOKEN",
@@ -61,10 +61,10 @@ func TestAccessToken(t *testing.T) {
 	}, accessToken)
 }
 
-var postBody public.Body
+var postBody wx.Body
 
 func TestMain(m *testing.M) {
-	postBody = public.NewPostBody(func() ([]byte, error) {
+	postBody = wx.NewPostBody(func() ([]byte, error) {
 		return nil, nil
 	})
 

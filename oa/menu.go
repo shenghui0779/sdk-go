@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 type MenuButtonType string
@@ -66,16 +66,16 @@ type MenuMatchRule struct {
 }
 
 // CreateMenu 自定义菜单
-func CreateMenu(buttons ...*MenuButton) public.Action {
-	return public.NewOpenPostAPI(MenuCreateURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(public.X{"button": buttons})
+func CreateMenu(buttons ...*MenuButton) wx.Action {
+	return wx.NewOpenPostAPI(MenuCreateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{"button": buttons})
 	}), nil)
 }
 
 // CreateConditionalMenu 个性化菜单
-func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) public.Action {
-	return public.NewOpenPostAPI(MenuAddConditionalURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(public.X{
+func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.Action {
+	return wx.NewOpenPostAPI(MenuAddConditionalURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{
 			"button":    buttons,
 			"matchrule": matchRule,
 		})
@@ -83,21 +83,21 @@ func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) pub
 }
 
 // GetMenu 查询自定义菜单
-func GetMenu(dest *MenuInfo) public.Action {
-	return public.NewOpenGetAPI(MenuListURL, url.Values{}, func(resp []byte) error {
+func GetMenu(dest *MenuInfo) wx.Action {
+	return wx.NewOpenGetAPI(MenuListURL, url.Values{}, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
 
 // DeleteMenu 删除自定义菜单
-func DeleteMenu() public.Action {
-	return public.NewOpenGetAPI(MenuDeleteURL, url.Values{}, nil)
+func DeleteMenu() wx.Action {
+	return wx.NewOpenGetAPI(MenuDeleteURL, url.Values{}, nil)
 }
 
 // DeleteConditional 删除个性化菜单
-func DeleteConditionalMenu(menuID string) public.Action {
-	return public.NewOpenPostAPI(MenuDeleteConditionalURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(public.X{"menuid": menuID})
+func DeleteConditionalMenu(menuID string) wx.Action {
+	return wx.NewOpenPostAPI(MenuDeleteConditionalURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{"menuid": menuID})
 	}), nil)
 }
 

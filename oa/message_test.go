@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,7 +13,7 @@ func TestGetTemplateList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := public.NewMockClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/template/get_all_private_template?access_token=ACCESS_TOKEN").Return([]byte(`{
 		"template_list": [{
@@ -50,7 +50,7 @@ func TestDeleteTemplate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := public.NewMockClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -66,7 +66,7 @@ func TestSendTemplateMessage(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := public.NewMockClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -74,11 +74,10 @@ func TestSendTemplateMessage(t *testing.T) {
 	oa.client = client
 
 	message := &TemplateMessage{
-		OpenID:      "OPENID",
 		TemplateID:  "ngqIpbwh8bUfcSsECmogfXcV14J0tQlEpBO27izEYtY",
 		RedirectURL: "http://weixin.qq.com/download",
-		MPAppID:     "xiaochengxuappid12345",
-		MPPagePath:  "index?foo=bar",
+		MinipAppID:  "xiaochengxuappid12345",
+		MinipPage:   "index?foo=bar",
 		Data: MessageBody{
 			"first": {
 				"value": "恭喜你购买成功！",
@@ -91,7 +90,7 @@ func TestSendTemplateMessage(t *testing.T) {
 		},
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendTemplateMessage(message))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendTemplateMessage("OPENID", message))
 
 	assert.Nil(t, err)
 }
@@ -100,7 +99,7 @@ func TestSendSubscribeMessage(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := public.NewMockClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -108,11 +107,10 @@ func TestSendSubscribeMessage(t *testing.T) {
 	oa.client = client
 
 	message := &TemplateMessage{
-		OpenID:      "OPENID",
 		TemplateID:  "ngqIpbwh8bUfcSsECmogfXcV14J0tQlEpBO27izEYtY",
 		RedirectURL: "http://weixin.qq.com/download",
-		MPAppID:     "xiaochengxuappid12345",
-		MPPagePath:  "index?foo=bar",
+		MinipAppID:  "xiaochengxuappid12345",
+		MinipPage:   "index?foo=bar",
 		Data: MessageBody{
 			"first": {
 				"value": "恭喜你购买成功！",
@@ -125,7 +123,7 @@ func TestSendSubscribeMessage(t *testing.T) {
 		},
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMessage("SCENE", "TITLE", message))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMessage("OPENID", "SCENE", "TITLE", message))
 
 	assert.Nil(t, err)
 }

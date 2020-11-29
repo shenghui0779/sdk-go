@@ -3,7 +3,7 @@ package mch
 import (
 	"strconv"
 
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // RefundData 退款数据
@@ -20,9 +20,9 @@ type RefundData struct {
 }
 
 // RefundByTransactionID 根据微信订单号退款
-func RefundByTransactionID(transactionID string, data *RefundData) public.Action {
-	return public.NewMchAPI(RefundApplyURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func RefundByTransactionID(transactionID string, data *RefundData) wx.Action {
+	return wx.NewMchAPI(RefundApplyURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":          appid,
 			"mch_id":         mchid,
 			"nonce_str":      nonce,
@@ -49,16 +49,16 @@ func RefundByTransactionID(transactionID string, data *RefundData) public.Action
 			body["notify_url"] = data.NotifyURL
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)
 }
 
 // RefundByOutTradeNO 根据商户订单号退款
-func RefundByOutTradeNO(outTradeNO string, data *RefundData) public.Action {
-	return public.NewMchAPI(RefundApplyURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func RefundByOutTradeNO(outTradeNO string, data *RefundData) wx.Action {
+	return wx.NewMchAPI(RefundApplyURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":         appid,
 			"mch_id":        mchid,
 			"nonce_str":     nonce,
@@ -85,16 +85,16 @@ func RefundByOutTradeNO(outTradeNO string, data *RefundData) public.Action {
 			body["notify_url"] = data.NotifyURL
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)
 }
 
 // QueryRefundByRefundID 根据微信退款单号查询退款信息
-func QueryRefundByRefundID(refundID string, offset ...int) public.Action {
-	return public.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func QueryRefundByRefundID(refundID string, offset ...int) wx.Action {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":     appid,
 			"mch_id":    mchid,
 			"refund_id": refundID,
@@ -106,16 +106,16 @@ func QueryRefundByRefundID(refundID string, offset ...int) public.Action {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
 }
 
 // QueryRefundByOutRefundNO 根据商户退款单号查询退款信息
-func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) public.Action {
-	return public.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) wx.Action {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":         appid,
 			"mch_id":        mchid,
 			"out_refund_no": outRefundNO,
@@ -127,16 +127,16 @@ func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) public.Action {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
 }
 
 // QueryRefundByTransactionID 根据微信订单号查询退款信息
-func QueryRefundByTransactionID(transactionID string, offset ...int) public.Action {
-	return public.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func QueryRefundByTransactionID(transactionID string, offset ...int) wx.Action {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":          appid,
 			"mch_id":         mchid,
 			"transaction_id": transactionID,
@@ -148,16 +148,16 @@ func QueryRefundByTransactionID(transactionID string, offset ...int) public.Acti
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
 }
 
 // QueryRefundByOutTradeNO 根据商户订单号查询退款信息
-func QueryRefundByOutTradeNO(outTradeNO string, offset ...int) public.Action {
-	return public.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func QueryRefundByOutTradeNO(outTradeNO string, offset ...int) wx.Action {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":        appid,
 			"mch_id":       mchid,
 			"out_trade_no": outTradeNO,
@@ -169,7 +169,7 @@ func QueryRefundByOutTradeNO(outTradeNO string, offset ...int) public.Action {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)

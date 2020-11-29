@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
 )
 
@@ -19,8 +19,8 @@ type TemplateInfo struct {
 }
 
 // GetTemplateList 获取模板列表
-func GetTemplateList(dest *[]TemplateInfo) public.Action {
-	return public.NewOpenGetAPI(TemplateListURL, url.Values{}, func(resp []byte) error {
+func GetTemplateList(dest *[]TemplateInfo) wx.Action {
+	return wx.NewOpenGetAPI(TemplateListURL, url.Values{}, func(resp []byte) error {
 		r := gjson.GetBytes(resp, "template_list")
 
 		return json.Unmarshal([]byte(r.Raw), dest)
@@ -28,9 +28,9 @@ func GetTemplateList(dest *[]TemplateInfo) public.Action {
 }
 
 // DeleteTemplate 删除模板
-func DeleteTemplate(templateID string) public.Action {
-	return public.NewOpenPostAPI(TemplateDeleteURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(public.X{"template_id": templateID})
+func DeleteTemplate(templateID string) wx.Action {
+	return wx.NewOpenPostAPI(TemplateDeleteURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{"template_id": templateID})
 	}), nil)
 }
 
@@ -39,19 +39,18 @@ type MessageBody map[string]map[string]string
 
 // TemplateMessage 公众号模板消息
 type TemplateMessage struct {
-	OpenID      string      // 接收者（用户）的 openid
 	TemplateID  string      // 模板ID
 	RedirectURL string      // 模板跳转链接（海外帐号没有跳转能力）
-	MPAppID     string      // 所需跳转到的小程序appid（该小程序appid必须与发模板消息的公众号是绑定关联关系，暂不支持小游戏）
-	MPPagePath  string      // 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar），要求该小程序已发布，暂不支持小游戏
+	MinipAppID  string      // 所需跳转到的小程序appid（该小程序appid必须与发模板消息的公众号是绑定关联关系，暂不支持小游戏）
+	MinipPage   string      // 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar），要求该小程序已发布，暂不支持小游戏
 	Data        MessageBody // 模板内容，格式形如：{"key1":{"value":"V","color":"#"},"key2":{"value": "V","color":"#"}}
 }
 
 // SendTemplateMessage 发送模板消息
-func SendTemplateMessage(msg *TemplateMessage) public.Action {
-	return public.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		params := public.X{
-			"touser":      msg.OpenID,
+func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
+	return wx.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		params := wx.X{
+			"touser":      openID,
 			"template_id": msg.TemplateID,
 			"data":        msg.Data,
 		}
@@ -60,10 +59,10 @@ func SendTemplateMessage(msg *TemplateMessage) public.Action {
 			params["url"] = msg.RedirectURL
 		}
 
-		if msg.MPAppID != "" {
+		if msg.MinipAppID != "" {
 			params["miniprogram"] = map[string]string{
-				"appid":    msg.MPAppID,
-				"pagepath": msg.MPPagePath,
+				"appid":    msg.MinipAppID,
+				"pagepath": msg.MinipPage,
 			}
 		}
 
@@ -72,12 +71,12 @@ func SendTemplateMessage(msg *TemplateMessage) public.Action {
 }
 
 // SendSubscribeMessage 发送订阅消息
-func SendSubscribeMessage(scene, title string, msg *TemplateMessage) public.Action {
-	return public.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		params := public.X{
+func SendSubscribeMessage(openID, scene, title string, msg *TemplateMessage) wx.Action {
+	return wx.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		params := wx.X{
 			"scene":       scene,
 			"title":       title,
-			"touser":      msg.OpenID,
+			"touser":      openID,
 			"template_id": msg.TemplateID,
 			"data":        msg.Data,
 		}
@@ -86,10 +85,10 @@ func SendSubscribeMessage(scene, title string, msg *TemplateMessage) public.Acti
 			params["url"] = msg.RedirectURL
 		}
 
-		if msg.MPAppID != "" {
+		if msg.MinipAppID != "" {
 			params["miniprogram"] = map[string]string{
-				"appid":    msg.MPAppID,
-				"pagepath": msg.MPPagePath,
+				"appid":    msg.MinipAppID,
+				"pagepath": msg.MinipPage,
 			}
 		}
 

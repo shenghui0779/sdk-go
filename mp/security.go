@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
 )
 
@@ -19,8 +19,8 @@ var (
 )
 
 // ImageSecCheck 校验一张图片是否含有违法违规内容
-func ImageSecCheck(filename string) public.Action {
-	return public.NewOpenUploadAPI(ImageSecCheckURL, url.Values{}, public.NewUploadBody("media", filename, func() ([]byte, error) {
+func ImageSecCheck(filename string) wx.Action {
+	return wx.NewOpenUploadAPI(ImageSecCheckURL, url.Values{}, wx.NewUploadBody("media", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), nil)
 }
@@ -31,9 +31,9 @@ type MediaCheckAsyncInfo struct {
 }
 
 // MediaCheckAsync 异步校验图片/音频是否含有违法违规内容
-func MediaCheckAsync(mediaType SecCheckMediaType, mediaURL string, dest *MediaCheckAsyncInfo) public.Action {
-	return public.NewOpenPostAPI(MediaCheckAsyncURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(public.X{
+func MediaCheckAsync(mediaType SecCheckMediaType, mediaURL string, dest *MediaCheckAsyncInfo) wx.Action {
+	return wx.NewOpenPostAPI(MediaCheckAsyncURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{
 			"media_type": mediaType,
 			"media_url":  mediaURL,
 		})
@@ -45,9 +45,9 @@ func MediaCheckAsync(mediaType SecCheckMediaType, mediaURL string, dest *MediaCh
 }
 
 // MsgSecCheck 检查一段文本是否含有违法违规内容
-func MsgSecCheck(content string) public.Action {
-	return public.NewOpenPostAPI(MsgSecCheckURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(public.X{
+func MsgSecCheck(content string) wx.Action {
+	return wx.NewOpenPostAPI(MsgSecCheckURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{
 			"content": content,
 		})
 	}), nil)

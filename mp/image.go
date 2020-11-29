@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
 )
 
@@ -44,8 +44,8 @@ type AICropResult struct {
 }
 
 // AICrop 图片智能裁切
-func AICrop(filename string, dest *AICropResult) public.Action {
-	return public.NewOpenUploadAPI(AICropURL, url.Values{}, public.NewUploadBody("img", filename, func() ([]byte, error) {
+func AICrop(filename string, dest *AICropResult) wx.Action {
+	return wx.NewOpenUploadAPI(AICropURL, url.Values{}, wx.NewUploadBody("img", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
@@ -53,12 +53,12 @@ func AICrop(filename string, dest *AICropResult) public.Action {
 }
 
 // AICropByURL 图片智能裁切
-func AICropByURL(imgURL string, dest *AICropResult) public.Action {
+func AICropByURL(imgURL string, dest *AICropResult) wx.Action {
 	query := url.Values{}
 
 	query.Set("img_url", imgURL)
 
-	return public.NewOpenPostAPI(AICropURL, query, nil, func(resp []byte) error {
+	return wx.NewOpenPostAPI(AICropURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -77,8 +77,8 @@ type QRCodeScanResult struct {
 }
 
 // ScanQRCode 条码/二维码识别
-func ScanQRCode(filename string, dest *QRCodeScanResult) public.Action {
-	return public.NewOpenUploadAPI(ScanQRCodeURL, url.Values{}, public.NewUploadBody("img", filename, func() ([]byte, error) {
+func ScanQRCode(filename string, dest *QRCodeScanResult) wx.Action {
+	return wx.NewOpenUploadAPI(ScanQRCodeURL, url.Values{}, wx.NewUploadBody("img", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
@@ -86,12 +86,12 @@ func ScanQRCode(filename string, dest *QRCodeScanResult) public.Action {
 }
 
 // ScanQRCodeByURL 条码/二维码识别
-func ScanQRCodeByURL(imgURL string, dest *QRCodeScanResult) public.Action {
+func ScanQRCodeByURL(imgURL string, dest *QRCodeScanResult) wx.Action {
 	query := url.Values{}
 
 	query.Set("img_url", imgURL)
 
-	return public.NewOpenPostAPI(ScanQRCodeURL, query, nil, func(resp []byte) error {
+	return wx.NewOpenPostAPI(ScanQRCodeURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -102,8 +102,8 @@ type SuperreSolutionResult struct {
 }
 
 // SuperreSolution 图片高清化
-func SuperreSolution(filename string, dest *SuperreSolutionResult) public.Action {
-	return public.NewOpenUploadAPI(SuperreSolutionURL, url.Values{}, public.NewUploadBody("img", filename, func() ([]byte, error) {
+func SuperreSolution(filename string, dest *SuperreSolutionResult) wx.Action {
+	return wx.NewOpenUploadAPI(SuperreSolutionURL, url.Values{}, wx.NewUploadBody("img", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), func(resp []byte) error {
 		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
@@ -113,12 +113,12 @@ func SuperreSolution(filename string, dest *SuperreSolutionResult) public.Action
 }
 
 // SuperreSolutionByURL 图片高清化
-func SuperreSolutionByURL(imgURL string, dest *SuperreSolutionResult) public.Action {
+func SuperreSolutionByURL(imgURL string, dest *SuperreSolutionResult) wx.Action {
 	query := url.Values{}
 
 	query.Set("img_url", imgURL)
 
-	return public.NewOpenPostAPI(SuperreSolutionURL, query, nil, func(resp []byte) error {
+	return wx.NewOpenPostAPI(SuperreSolutionURL, query, nil, func(resp []byte) error {
 		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
 		return nil

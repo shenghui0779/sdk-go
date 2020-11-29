@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 type qrcodeOptions struct {
@@ -75,8 +75,8 @@ type QRCode struct {
 }
 
 // CreateQRCode 创建小程序二维码 - 数量有限
-func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) public.Action {
-	return public.NewOpenPostAPI(QRCodeCreateURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) wx.Action {
+	return wx.NewOpenPostAPI(QRCodeCreateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		o := new(qrcodeOptions)
 
 		if len(options) > 0 {
@@ -85,7 +85,7 @@ func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) public.Act
 			}
 		}
 
-		params := public.X{"path": path}
+		params := wx.X{"path": path}
 
 		if o.width != 0 {
 			params["width"] = o.width
@@ -107,8 +107,8 @@ func CreateQRCode(path string, dest *QRCode, options ...QRCodeOption) public.Act
 }
 
 // GetQRCode 获取小程序二维码 - 数量有限
-func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) public.Action {
-	return public.NewOpenPostAPI(QRCodeGetURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) wx.Action {
+	return wx.NewOpenPostAPI(QRCodeGetURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		o := new(qrcodeOptions)
 
 		if len(options) > 0 {
@@ -117,7 +117,7 @@ func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) public.Action
 			}
 		}
 
-		params := public.X{"path": path}
+		params := wx.X{"path": path}
 
 		if o.width != 0 {
 			params["width"] = o.width
@@ -151,8 +151,8 @@ func GetQRCode(path string, dest *QRCode, options ...QRCodeOption) public.Action
 }
 
 // GetUnlimitQRCode 获取小程序二维码 - 数量不限
-func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) public.Action {
-	return public.NewOpenPostAPI(QRCodeGetUnlimitURL, url.Values{}, public.NewPostBody(func() ([]byte, error) {
+func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) wx.Action {
+	return wx.NewOpenPostAPI(QRCodeGetUnlimitURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		o := new(qrcodeOptions)
 
 		if len(options) > 0 {
@@ -161,7 +161,7 @@ func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) publi
 			}
 		}
 
-		params := public.X{"scene": scene}
+		params := wx.X{"scene": scene}
 
 		if o.page != "" {
 			params["page"] = o.page
@@ -200,10 +200,10 @@ func GetUnlimitQRCode(scene string, dest *QRCode, options ...QRCodeOption) publi
 
 // MarshalWithNoEscapeHTML marshal with no escape HTML
 func MarshalWithNoEscapeHTML(v interface{}) (string, error) {
-	buf := public.BufferPool.Get().(*bytes.Buffer)
+	buf := wx.BufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
 
-	defer public.BufferPool.Put(buf)
+	defer wx.BufferPool.Put(buf)
 
 	jsonEncoder := json.NewEncoder(buf)
 	jsonEncoder.SetEscapeHTML(false)

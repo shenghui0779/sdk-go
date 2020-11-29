@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/shenghui0779/gochat/public"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // Contract 微信纯签约协议
@@ -70,9 +70,9 @@ type PappayApplyData struct {
 }
 
 // APPEntrust APP纯签约
-func APPEntrust(c *Contract) public.Action {
-	return public.NewMchAPI(PappayAPPEntrustURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func APPEntrust(c *Contract) wx.Action {
+	return wx.NewMchAPI(PappayAPPEntrustURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":                    appid,
 			"mch_id":                   mchid,
 			"plan_id":                  c.PlanID,
@@ -89,16 +89,16 @@ func APPEntrust(c *Contract) public.Action {
 			body["return_app"] = "Y"
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
 }
 
 // OAEntrust 公众号纯签约
-func OAEntrust(c *Contract) public.Action {
-	return public.NewMchAPI("", func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func OAEntrust(c *Contract) wx.Action {
+	return wx.NewMchAPI("", func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":                    appid,
 			"mch_id":                   mchid,
 			"plan_id":                  c.PlanID,
@@ -114,7 +114,7 @@ func OAEntrust(c *Contract) public.Action {
 			body["return_web"] = "1"
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		query := url.Values{}
 
@@ -122,14 +122,14 @@ func OAEntrust(c *Contract) public.Action {
 			query.Add(k, v)
 		}
 
-		return public.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayOAEntrustURL, query.Encode())}, nil
+		return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayOAEntrustURL, query.Encode())}, nil
 	}, false)
 }
 
 // MPEntrust 小程序纯签约，返回小程序所需的 extraData 数据
-func MPEntrust(c *Contract) public.Action {
-	return public.NewMchAPI("", func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		extraData := public.WXML{
+func MPEntrust(c *Contract) wx.Action {
+	return wx.NewMchAPI("", func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		extraData := wx.WXML{
 			"appid":                    appid,
 			"mch_id":                   mchid,
 			"plan_id":                  c.PlanID,
@@ -144,16 +144,16 @@ func MPEntrust(c *Contract) public.Action {
 			extraData["outerid"] = strconv.FormatInt(c.OuterID, 10)
 		}
 
-		extraData["sign"] = public.SignWithMD5(extraData, apikey, true)
+		extraData["sign"] = wx.SignWithMD5(extraData, apikey, true)
 
 		return extraData, nil
 	}, false)
 }
 
 // H5Entrust H5纯签约
-func H5Entrust(c *Contract) public.Action {
-	return public.NewMchAPI("", func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func H5Entrust(c *Contract) wx.Action {
+	return wx.NewMchAPI("", func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":                    appid,
 			"mch_id":                   mchid,
 			"plan_id":                  c.PlanID,
@@ -170,7 +170,7 @@ func H5Entrust(c *Contract) public.Action {
 			body["return_appid"] = c.ReturnAPPID
 		}
 
-		body["sign"] = public.SignWithHMacSHA256(body, apikey, true)
+		body["sign"] = wx.SignWithHMacSHA256(body, apikey, true)
 
 		query := url.Values{}
 
@@ -178,14 +178,14 @@ func H5Entrust(c *Contract) public.Action {
 			query.Add(k, v)
 		}
 
-		return public.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayH5EntrustURL, query.Encode())}, nil
+		return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayH5EntrustURL, query.Encode())}, nil
 	}, false)
 }
 
 // EntrustByOrder 支付中签约下单
-func EntrustByOrder(order *ContractOrder) public.Action {
-	return public.NewMchAPI(PappayContractOrderURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func EntrustByOrder(order *ContractOrder) wx.Action {
+	return wx.NewMchAPI(PappayContractOrderURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":                    appid,
 			"mch_id":                   mchid,
 			"contract_appid":           appid,
@@ -245,32 +245,32 @@ func EntrustByOrder(order *ContractOrder) public.Action {
 			body["openid"] = order.OpenID
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
 }
 
 // QueryContractByID 根据微信返回的委托代扣协议id查询签约关系
-func QueryContractByID(contractID string) public.Action {
-	return public.NewMchAPI(PappayContractQueryURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func QueryContractByID(contractID string) wx.Action {
+	return wx.NewMchAPI(PappayContractQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":       appid,
 			"mch_id":      mchid,
 			"contract_id": contractID,
 			"version":     "1.0",
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
 }
 
 // QueryContractByCode 根据签约协议号查询签约关系，需要商户平台配置的代扣模版id
-func QueryContractByCode(planID, contractCode string) public.Action {
-	return public.NewMchAPI(PappayContractQueryURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func QueryContractByCode(planID, contractCode string) wx.Action {
+	return wx.NewMchAPI(PappayContractQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":         appid,
 			"mch_id":        mchid,
 			"plan_id":       planID,
@@ -278,16 +278,16 @@ func QueryContractByCode(planID, contractCode string) public.Action {
 			"version":       "1.0",
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
 }
 
 // PappayApply 申请扣款
-func PappayApply(data *PappayApplyData) public.Action {
-	return public.NewMchAPI(PappayApplyURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func PappayApply(data *PappayApplyData) wx.Action {
+	return wx.NewMchAPI(PappayApplyURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":            appid,
 			"mch_id":           mchid,
 			"nonce_str":        nonce,
@@ -321,16 +321,16 @@ func PappayApply(data *PappayApplyData) public.Action {
 			body["receipt"] = "Y"
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
 }
 
 // DeleteContractByID 根据微信返回的委托代扣协议id解约
-func DeleteContractByID(contractID, remark string) public.Action {
-	return public.NewMchAPI(PappayContractDeleteURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func DeleteContractByID(contractID, remark string) wx.Action {
+	return wx.NewMchAPI(PappayContractDeleteURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":                       appid,
 			"mch_id":                      mchid,
 			"contract_id":                 contractID,
@@ -338,16 +338,16 @@ func DeleteContractByID(contractID, remark string) public.Action {
 			"contract_termination_remark": remark,
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
 }
 
 // DeleteContractByCode 根据签约协议号解约，需要商户平台配置的代扣模版id
-func DeleteContractByCode(planID, contractCode, remark string) public.Action {
-	return public.NewMchAPI(PappayContractDeleteURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func DeleteContractByCode(planID, contractCode, remark string) wx.Action {
+	return wx.NewMchAPI(PappayContractDeleteURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":                       appid,
 			"mch_id":                      mchid,
 			"plan_id":                     planID,
@@ -356,39 +356,39 @@ func DeleteContractByCode(planID, contractCode, remark string) public.Action {
 			"contract_termination_remark": remark,
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
 }
 
 // QueryPappayByTransactionID 根据微信订单号查询扣款信息
-func QueryPappayByTransactionID(transactionID string) public.Action {
-	return public.NewMchAPI(PappayOrderQueryURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func QueryPappayByTransactionID(transactionID string) wx.Action {
+	return wx.NewMchAPI(PappayOrderQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":          appid,
 			"mch_id":         mchid,
 			"transaction_id": transactionID,
 			"nonce_str":      nonce,
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
 }
 
 // QueryPappayByOutTradeNO 根据商户订单号查询扣款信息
-func QueryPappayByOutTradeNO(outTradeNO string) public.Action {
-	return public.NewMchAPI(PappayOrderQueryURL, func(appid, mchid, apikey, nonce string) (public.WXML, error) {
-		body := public.WXML{
+func QueryPappayByOutTradeNO(outTradeNO string) wx.Action {
+	return wx.NewMchAPI(PappayOrderQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
 			"appid":        appid,
 			"mch_id":       mchid,
 			"out_trade_no": outTradeNO,
 			"nonce_str":    nonce,
 		}
 
-		body["sign"] = public.SignWithMD5(body, apikey, true)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
