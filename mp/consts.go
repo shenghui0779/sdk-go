@@ -61,3 +61,9 @@ const (
 	OCRPrintedTextURL     = "https://api.weixin.qq.com/cv/ocr/comm"
 	OCRVehicleLicenseURL  = "https://api.weixin.qq.com/cv/ocr/driving"
 )
+
+// other
+const (
+	InvokeServiceURL = "https://api.weixin.qq.com/wxa/servicemarket"
+	SoterVerifyURL   = "https://api.weixin.qq.com/cgi-bin/soter/verify_signature"
+)
