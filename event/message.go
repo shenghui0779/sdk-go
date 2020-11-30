@@ -32,6 +32,7 @@ const (
 	EventClick                 EventType = "CLICK"                 // 点击自定义菜单
 	EventView                  EventType = "VIEW"                  // 点击菜单跳转链接
 	EventTemplateSendJobFinish EventType = "TEMPLATESENDJOBFINISH" // 模板消息发送完成
+	EventWxaMediaCheck         EventType = "wxa_media_check"       // 校验图片/音频是否含有违法违规内容
 )
 
 // Message 微信公众平台事件推送消息
@@ -57,10 +58,15 @@ type Message struct {
 	Description  string  `xml:"Description"`
 	URL          string  `xml:"Url"`
 	// 事件消息
-	Event     EventType `xml:"Event"`
-	EventKey  string    `xml:"EventKey"`
-	Ticket    string    `xml:"Ticket"`
-	Latitude  float64   `xml:"Latitude"`
-	Longitude float64   `xml:"Longitude"`
-	Precision float64   `xml:"Precision"`
+	Event         EventType `xml:"Event"`
+	EventKey      string    `xml:"EventKey"`
+	Ticket        string    `xml:"Ticket"`
+	Latitude      float64   `xml:"Latitude"`
+	Longitude     float64   `xml:"Longitude"`
+	Precision     float64   `xml:"Precision"`
+	IsRisky       int       `xml:"isrisky"`
+	ExtraInfoJSON string    `xml:"extra_info_json"`
+	AppID         string    `xml:"app_id"`
+	TraceID       string    `xml:"trace_id"`
+	StatusCode    int       `xml:"status_code"`
 }
