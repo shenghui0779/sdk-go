@@ -105,6 +105,7 @@ type DriverLicense struct {
 	IDNum        string `json:"id_num"`
 	Name         string `json:"name"`
 	Sex          string `json:"sex"`
+	Nationality  string `json:"nationality"`
 	Address      string `json:"address"`
 	BirthDate    string `json:"birth_date"`
 	IssueDate    string `json:"issue_date"`
@@ -184,7 +185,7 @@ func OCRIDCardBack(mode OCRMode, filename string, dest *IDCardBack) wx.Action {
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRBankCardURL, query, wx.NewUploadBody("img", filename, func() ([]byte, error) {
+	return wx.NewOpenUploadAPI(OCRIDCardURL, query, wx.NewUploadBody("img", filename, func() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}), func(resp []byte) error {
 		dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
@@ -200,7 +201,7 @@ func OCRIDCardBackByURL(mode OCRMode, imgURL string, dest *IDCardBack) wx.Action
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(OCRBankCardURL, query, nil, func(resp []byte) error {
+	return wx.NewOpenPostAPI(OCRIDCardURL, query, nil, func(resp []byte) error {
 		dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
 
 		return nil
@@ -246,7 +247,7 @@ func OCRPrintedTextByURL(mode OCRMode, imgURL string, dest *PrintedText) wx.Acti
 
 // VehicleLicense 行驶证
 type VehicleLicense struct {
-	VehicleType    string `json:"vehicle_type"`
+	VehicleType    string `json:"vhicle_type"`
 	Owner          string `json:"owner"`
 	Addr           string `json:"addr"`
 	UseCharacter   string `json:"use_character"`

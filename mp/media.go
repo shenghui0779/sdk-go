@@ -14,15 +14,15 @@ type MediaType string
 // 微信支持的素材类型
 var MediaImage MediaType = "image" // 图片
 
-// MediaUploadInfo 临时素材上传信息
-type MediaUploadInfo struct {
+// MediaUploadResult  临时素材上传信息
+type MediaUploadResult struct {
 	Type      string `json:"type"`
 	MediaID   string `json:"media_id"`
 	CreatedAt int64  `json:"created_at"`
 }
 
 // UploadMedia 上传临时素材到微信服务器
-func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadInfo) wx.Action {
+func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadResult) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mediaType))
