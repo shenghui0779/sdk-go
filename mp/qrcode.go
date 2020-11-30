@@ -34,38 +34,42 @@ func newFuncQRCodeOption(f func(options *qrcodeOptions)) *funcQRCodeOption {
 	return &funcQRCodeOption{f: f}
 }
 
-// WithQRCodePage specifies the `page` to wxa_qrcode.
+// WithQRCodePage specifies the `page` to qrcode.
 func WithQRCodePage(s string) QRCodeOption {
 	return newFuncQRCodeOption(func(o *qrcodeOptions) {
 		o.page = s
 	})
 }
 
-// WithQRCodeWidth specifies the `width` to wxa_qrcode.
+// WithQRCodeWidth specifies the `width` to qrcode.
 func WithQRCodeWidth(w int) QRCodeOption {
 	return newFuncQRCodeOption(func(o *qrcodeOptions) {
 		o.width = w
 	})
 }
 
-// WithQRCodeAutoColor specifies the `auto_color` to wxa_qrcode.
-func WithQRCodeAutoColor(b bool) QRCodeOption {
+// WithQRCodeAutoColor specifies the `auto_color` to qrcode.
+func WithQRCodeAutoColor() QRCodeOption {
 	return newFuncQRCodeOption(func(o *qrcodeOptions) {
-		o.autoColor = b
+		o.autoColor = true
 	})
 }
 
-// WithQRCodeLineColor specifies the `line_color` to wxa_qrcode.
-func WithQRCodeLineColor(m map[string]int) QRCodeOption {
+// WithQRCodeLineColor specifies the `line_color` to qrcode.
+func WithQRCodeLineColor(r, g, b int) QRCodeOption {
 	return newFuncQRCodeOption(func(o *qrcodeOptions) {
-		o.lineColor = m
+		o.lineColor = map[string]int{
+			"r": r,
+			"g": g,
+			"b": b,
+		}
 	})
 }
 
-// WithQRCodeIsHyaline specifies the `is_hyaline` to wxa_qrcode.
-func WithQRCodeIsHyaline(b bool) QRCodeOption {
+// WithQRCodeIsHyaline specifies the `is_hyaline` to qrcode.
+func WithQRCodeIsHyaline() QRCodeOption {
 	return newFuncQRCodeOption(func(o *qrcodeOptions) {
-		o.isHyaline = b
+		o.isHyaline = true
 	})
 }
 
