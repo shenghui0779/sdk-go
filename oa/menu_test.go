@@ -22,7 +22,7 @@ func TestCreateMenu(t *testing.T) {
 
 	action := CreateMenu(
 		ClickButton("今日歌曲", "V1001_TODAY_MUSIC"),
-		GroupButton("菜单", ViewButton("搜索", "http://www.soso.com/"), MPButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"), ClickButton("赞一下我们", "V1001_GOOD")),
+		GroupButton("菜单", ViewButton("搜索", "http://www.soso.com/"), MinipButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"), ClickButton("赞一下我们", "V1001_GOOD")),
 	)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", action)
@@ -53,7 +53,7 @@ func TestCreateConditionalMenu(t *testing.T) {
 
 	action := CreateConditionalMenu(matchRule,
 		ClickButton("今日歌曲", "V1001_TODAY_MUSIC"),
-		GroupButton("菜单", ViewButton("搜索", "http://www.soso.com/"), MPButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"), ClickButton("赞一下我们", "V1001_GOOD")),
+		GroupButton("菜单", ViewButton("搜索", "http://www.soso.com/"), MinipButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"), ClickButton("赞一下我们", "V1001_GOOD")),
 	)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", action)
@@ -134,7 +134,7 @@ func TestGetMenu(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &MenuInfo{
-		DefaultMenu: &DefaultMenu{
+		Menu: Menu{
 			Button: []*MenuButton{
 				{
 					Type:      "click",
@@ -204,7 +204,7 @@ func TestGetMenu(t *testing.T) {
 						},
 					},
 				},
-				MatchRule: &MenuMatchRule{
+				MatchRule: MenuMatchRule{
 					TagID:              "2",
 					Sex:                "1",
 					Country:            "中国",
