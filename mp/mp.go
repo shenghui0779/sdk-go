@@ -198,7 +198,7 @@ func (mp *MP) VerifyServer(signature, timestamp, nonce string) bool {
 	return signStr == signature
 }
 
-// VerifyEvent 验证事件签名（注意：使用 msg_signature）
+// VerifyEvent 验证事件签名（注意：务必使用 msg_signature）
 func (mp *MP) VerifyEvent(msgSignature, timestamp, nonce, msgEncrypt string) bool {
 	signItems := []string{mp.token, timestamp, nonce, msgEncrypt}
 

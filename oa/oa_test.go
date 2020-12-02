@@ -109,7 +109,7 @@ func TestDecryptEventMessage(t *testing.T) {
 	msg, err := oa.DecryptEventMessage("GmSmP2C7QlatlbnrXhJHweW5JsW2F1Fr/xmoMBIJNGnZcN/1PoOySJOJNYEC9ttFhaqDrkznaMkDs7s9u7/eOpvqqRn144EBkLdBLxcNbjLRoF4lD3zBGqjPUS9k/U0x/lET35SkYi+ZwRvuSJSzVEfaRmixYep+JmzIYf5k2qT8113wg2tI68+3gUaKZQqq5W/jC7tbWjWX67XgzMW2JdQOs9VnTjJJO292PWkNZxbhzudrvj2Up8NdJbmaDw93Jz/Kcf7qRfdh5h0GFtOoVh7M4bVwTJf94iZU4ZDx1r8/xDxDINRWGJou4Er72cDBCVBK1TUrtwdmb8eWNJ1gSvw53LckULci98+peaSnTFYuaNhgRQqpVQ+CqVjT0+ASRdyMmDomRyUmhBqSsdrGae9pRfP+Dq4tiRoub87T0gGkFTxAXbUZ0ZPxme67ddreWKFCN/V5ypCynDbjkgpIgfPAFpk017ShXc30RRq4qPvPvN/6XUi1HVXSJq8AkgSQ")
 
 	assert.Nil(t, err)
-	assert.Equal(t, &event.Message{
+	assert.Equal(t, &event.EventMessage{
 		XMLName: xml.Name{
 			Space: "",
 			Local: "xml",
@@ -122,6 +122,27 @@ func TestDecryptEventMessage(t *testing.T) {
 		Content:      "ILoveGochat",
 	}, msg)
 }
+
+// 由于签名涉及时间戳，故结果会实时变化（已通过「微信公众平台接口调试工具」测试）
+// func TestReply(t *testing.T) {
+// 	oa := New("wx1def0e9e5891b338", "APPSECRET")
+// 	oa.SetOriginID("gh_3ad31c0ba9b5")
+// 	oa.SetServerConfig("2faf43d6343a802b6073aae5b3f2f109", "jxAko083VoJ3lcPXJWzcGJ0M1tFVLgdD6qAq57GJY1U")
+
+// 	oa.nonce = func(size int) string {
+// 		return "af80b480c5e065a6"·
+// 	}
+
+// 	msg, err := oa.Reply("oB4tA6ANthOfuQ5XSlkdPsWOVUsY", NewTextReply("OK"))
+
+// 	assert.Nil(t, err)
+// 	assert.Equal(t, &event.ReplyMessage{
+// 		Encrypt:      "CjjWC1QnyZR7TjXuiCgoyKpKRP2qNVAII+TSfd5FKFUXOY7SbQGRbsaJtoxczYacxy7vB2PUPR3cLswT6DkvGa+lbIJ8TcR7Eek8RLH8t9A9rjkxdlGsd9fxN9jPfSlc3aF39YOC5Dpd464/r4asIQ79OXpfkeSqe24gwoP7c41R17YLU/LUqVc2BNVHcJjmVUtUJ70smR7LL0YPBT2eNcwH/HFlxn4ZasSShIx3hgfPTdN68Eoui6oyjWi04x2LYhsTNqBpVScphVMlToN0Nl1+NiL47lm792gGuHeSnINyB8UlgVIjydXmxESAaCv5pZOM1h8UiEXJccB5YoBP1JHoU1ayh7kbgIuglWkTpkJaI2dQCh39cr2DWwQBn5tY",
+// 		MsgSignature: "f5fd8bf943047bb788902b9340294eae36f3103a",
+// 		TimeStamp:    1606910298,
+// 		Nonce:        "af80b480c5e065a6",
+// 	}, msg)
+// }
 
 func TestVerifyServer(t *testing.T) {
 	oa := New("APPID", "APPSECRET")

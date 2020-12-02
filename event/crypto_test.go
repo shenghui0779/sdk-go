@@ -20,10 +20,10 @@ func TestCrypto(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	msg := new(Message)
+	msg := new(EventMessage)
 
 	assert.Nil(t, xml.Unmarshal(pb, msg))
-	assert.Equal(t, &Message{
+	assert.Equal(t, &EventMessage{
 		XMLName: xml.Name{
 			Space: "",
 			Local: "xml",

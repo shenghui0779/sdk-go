@@ -35,8 +35,8 @@ const (
 	EventWxaMediaCheck         EventType = "wxa_media_check"       // 校验图片/音频是否含有违法违规内容
 )
 
-// Message 微信公众平台事件推送消息（解密/明文模式）
-type Message struct {
+// EventMessage 微信公众平台事件推送消息（解密/明文模式）
+type EventMessage struct {
 	XMLName      xml.Name    `xml:"xml"`
 	ToUserName   string      `xml:"ToUserName"`
 	FromUserName string      `xml:"FromUserName"`

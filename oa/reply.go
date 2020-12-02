@@ -4,15 +4,9 @@ import (
 	"encoding/xml"
 	"time"
 
+	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
 )
-
-// DefaultReply 公众号默认回复
-const DefaultReply = "success"
-
-type Reply interface {
-	Bytes(from, to string) ([]byte, error)
-}
 
 // ReplyHeader 公众号消息回复公共头
 type ReplyHeader struct {
@@ -132,7 +126,7 @@ type Transfer2KFReply struct {
 
 // TransInfo 转发客服账号
 type TransInfo struct {
-	KfAccount wx.CDATA `xml:"KfAccount"`
+	KFAccount wx.CDATA `xml:"KfAccount"`
 }
 
 func (r *Transfer2KFReply) Bytes(from, to string) ([]byte, error) {
@@ -143,7 +137,7 @@ func (r *Transfer2KFReply) Bytes(from, to string) ([]byte, error) {
 }
 
 // NewTextReply returns text reply
-func NewTextReply(content string) Reply {
+func NewTextReply(content string) event.Reply {
 	r := &TextReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
@@ -157,7 +151,7 @@ func NewTextReply(content string) Reply {
 }
 
 // NewImageReply returns image reply
-func NewImageReply(mediaID string) Reply {
+func NewImageReply(mediaID string) event.Reply {
 	r := &ImageReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
@@ -171,7 +165,7 @@ func NewImageReply(mediaID string) Reply {
 }
 
 // NewVoiceReply returns voice reply
-func NewVoiceReply(mediaID string) Reply {
+func NewVoiceReply(mediaID string) event.Reply {
 	r := &VoiceReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
@@ -185,7 +179,7 @@ func NewVoiceReply(mediaID string) Reply {
 }
 
 // NewVideoReply returns video reply
-func NewVideoReply(mediaID, title, desc string) Reply {
+func NewVideoReply(mediaID, title, desc string) event.Reply {
 	r := &VideoReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
@@ -201,7 +195,7 @@ func NewVideoReply(mediaID, title, desc string) Reply {
 }
 
 // NewMusicReply returns music reply
-func NewMusicReply(mediaID, title, desc, url, HQUrl string) Reply {
+func NewMusicReply(mediaID, title, desc, url, HQUrl string) event.Reply {
 	r := &MusicReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
@@ -219,7 +213,7 @@ func NewMusicReply(mediaID, title, desc, url, HQUrl string) Reply {
 }
 
 // NewArticleReply returns article reply
-func NewArticleReply(count int, articles ...Article) Reply {
+func NewArticleReply(count int, articles ...Article) event.Reply {
 	r := &NewsReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
@@ -234,7 +228,7 @@ func NewArticleReply(count int, articles ...Article) Reply {
 }
 
 // NewTransfer2KFReply returns transfer to kf reply
-func NewTransfer2KFReply(kfAccount ...string) Reply {
+func NewTransfer2KFReply(kfAccount ...string) event.Reply {
 	r := &Transfer2KFReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
@@ -243,17 +237,8 @@ func NewTransfer2KFReply(kfAccount ...string) Reply {
 	}
 
 	if len(kfAccount) > 0 {
-		r.TransInfo = &TransInfo{KfAccount: wx.CDATA(kfAccount[0])}
+		r.TransInfo = &TransInfo{KFAccount: wx.CDATA(kfAccount[0])}
 	}
 
 	return r
-}
-
-// ReplyMessage 公众号回复
-type ReplyMessage struct {
-	XMLName      xml.Name `xml:"xml"`
-	Encrypt      wx.CDATA `xml:"Encrypt"`
-	MsgSignature wx.CDATA `xml:"MsgSignature"`
-	TimeStamp    int64    `xml:"TimeStamp"`
-	Nonce        wx.CDATA `xml:"Nonce"`
 }
