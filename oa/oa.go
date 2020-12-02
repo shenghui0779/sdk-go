@@ -163,8 +163,34 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 	return action.Decode()(resp)
 }
 
-// DecryptEventMessage 事件消息解密
-func (oa *OA) DecryptEventMessage(msgEncrypt string) (*event.EventMessage, error) {
+// VerifyServer 验证消息来自微信服务器（若验证成功，请原样返回echostr参数内容）
+func (oa *OA) VerifyServer(signature, timestamp, nonce string) bool {
+	signItems := []string{oa.token, timestamp, nonce}
+
+	sort.Strings(signItems)
+
+	h := sha1.New()
+	h.Write([]byte(strings.Join(signItems, "")))
+	signStr := hex.EncodeToString(h.Sum(nil))
+
+	return signStr == signature
+}
+
+// VerifyEvent 验证事件签名（注意：务必使用 msg_signature）
+func (oa *OA) VerifyEvent(msgSignature, timestamp, nonce, msgEncrypt string) bool {
+	signItems := []string{oa.token, timestamp, nonce, msgEncrypt}
+
+	sort.Strings(signItems)
+
+	h := sha1.New()
+	h.Write([]byte(strings.Join(signItems, "")))
+	signStr := hex.EncodeToString(h.Sum(nil))
+
+	return signStr == msgSignature
+}
+
+// DecryptEvent 事件消息解密
+func (oa *OA) DecryptEvent(msgEncrypt string) (*event.EventMessage, error) {
 	b, err := event.Decrypt(oa.appid, oa.encodingAESKey, msgEncrypt)
 
 	if err != nil {
@@ -196,30 +222,4 @@ func (oa *OA) Reply(openid string, reply event.Reply) (*event.ReplyMessage, erro
 	}
 
 	return event.BuildReply(oa.token, oa.nonce(16), base64.StdEncoding.EncodeToString(cipherText)), nil
-}
-
-// VerifyServer 验证消息来自微信服务器（若验证成功，请原样返回echostr参数内容）
-func (oa *OA) VerifyServer(signature, timestamp, nonce string) bool {
-	signItems := []string{oa.token, timestamp, nonce}
-
-	sort.Strings(signItems)
-
-	h := sha1.New()
-	h.Write([]byte(strings.Join(signItems, "")))
-	signStr := hex.EncodeToString(h.Sum(nil))
-
-	return signStr == signature
-}
-
-// VerifyEvent 验证事件签名（注意：务必使用 msg_signature）
-func (oa *OA) VerifyEvent(msgSignature, timestamp, nonce, msgEncrypt string) bool {
-	signItems := []string{oa.token, timestamp, nonce, msgEncrypt}
-
-	sort.Strings(signItems)
-
-	h := sha1.New()
-	h.Write([]byte(strings.Join(signItems, "")))
-	signStr := hex.EncodeToString(h.Sum(nil))
-
-	return signStr == msgSignature
 }

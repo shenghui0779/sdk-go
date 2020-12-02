@@ -84,7 +84,7 @@ func NewPostBody(f func() ([]byte, error)) *HTTPBody {
 func NewUploadBody(fieldname, filename string, f func() ([]byte, error)) *HTTPBody {
 	return &HTTPBody{
 		fieldname: fieldname,
-		filename:  fieldname,
+		filename:  filename,
 		bytes:     f,
 	}
 }

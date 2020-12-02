@@ -168,23 +168,6 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 	return action.Decode()(resp)
 }
 
-// DecryptEventMessage 事件消息解密
-func (mp *MP) DecryptEventMessage(msgEncrypt string) (*event.EventMessage, error) {
-	b, err := event.Decrypt(mp.appid, mp.encodingAESKey, msgEncrypt)
-
-	if err != nil {
-		return nil, err
-	}
-
-	msg := new(event.EventMessage)
-
-	if err = xml.Unmarshal(b, msg); err != nil {
-		return nil, err
-	}
-
-	return msg, nil
-}
-
 // VerifyServer 验证消息来自微信服务器（若验证成功，请原样返回echostr参数内容）
 func (mp *MP) VerifyServer(signature, timestamp, nonce string) bool {
 	signItems := []string{mp.token, timestamp, nonce}
@@ -209,4 +192,21 @@ func (mp *MP) VerifyEvent(msgSignature, timestamp, nonce, msgEncrypt string) boo
 	signStr := hex.EncodeToString(h.Sum(nil))
 
 	return signStr == msgSignature
+}
+
+// DecryptEvent 事件消息解密
+func (mp *MP) DecryptEvent(msgEncrypt string) (*event.EventMessage, error) {
+	b, err := event.Decrypt(mp.appid, mp.encodingAESKey, msgEncrypt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	msg := new(event.EventMessage)
+
+	if err = xml.Unmarshal(b, msg); err != nil {
+		return nil, err
+	}
+
+	return msg, nil
 }
