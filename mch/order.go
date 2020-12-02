@@ -3,11 +3,11 @@ package mch
 import (
 	"strconv"
 
-	"github.com/shenghui0779/gochat/utils"
+	"github.com/shenghui0779/gochat/wx"
 )
 
-// UnifiedOrder 统一下单数据
-type UnifiedOrder struct {
+// OrderData 统一下单数据
+type OrderData struct {
 	// 必填参数
 	OutTradeNO     string // 商户系统内部的订单号，32个字符内、可包含字母，其他说明见商户订单号
 	TotalFee       int    // 订单总金额，单位为分，详见支付金额
@@ -30,114 +30,124 @@ type UnifiedOrder struct {
 	SceneInfo  string // 该字段用于上报支付的场景信息
 }
 
-// Order 订单操作
-type Order struct {
-	mch     *WXMch
-	options []utils.RequestOption
+// UnifyOrder 统一下单
+func UnifyOrder(data *OrderData) wx.Action {
+	return wx.NewMchAPI(OrderUnifyURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
+			"appid":            appid,
+			"mch_id":           mchid,
+			"nonce_str":        nonce,
+			"sign_type":        SignMD5,
+			"fee_type":         "CNY",
+			"trade_type":       data.TradeType,
+			"body":             data.Body,
+			"out_trade_no":     data.OutTradeNO,
+			"total_fee":        strconv.Itoa(data.TotalFee),
+			"spbill_create_ip": data.SpbillCreateIP,
+			"notify_url":       data.NotifyURL,
+		}
+
+		if data.DeviceInfo != "" {
+			body["device_info"] = data.DeviceInfo
+		}
+
+		if data.Detail != "" {
+			body["detail"] = data.Detail
+		}
+
+		if data.Attach != "" {
+			body["attach"] = data.Attach
+		}
+
+		if data.FeeType != "" {
+			body["fee_type"] = data.FeeType
+		}
+
+		if data.TimeStart != "" {
+			body["time_start"] = data.TimeStart
+		}
+
+		if data.TimeExpire != "" {
+			body["time_expire"] = data.TimeExpire
+		}
+
+		if data.GoodsTag != "" {
+			body["goods_tag"] = data.GoodsTag
+		}
+
+		if data.ProductID != "" {
+			body["product_id"] = data.ProductID
+		}
+
+		if data.LimitPay != "" {
+			body["limit_pay"] = data.LimitPay
+		}
+
+		if data.OpenID != "" {
+			body["openid"] = data.OpenID
+		}
+
+		if data.Receipt {
+			body["receipt"] = "Y"
+		}
+
+		if data.SceneInfo != "" {
+			body["scene_info"] = data.SceneInfo
+		}
+
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
+
+		return body, nil
+	}, false)
 }
 
-// Unify 统一下单
-func (o *Order) Unify(order *UnifiedOrder) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":            o.mch.appid,
-		"mch_id":           o.mch.mchid,
-		"nonce_str":        utils.Nonce(16),
-		"sign_type":        SignMD5,
-		"fee_type":         "CNY",
-		"trade_type":       order.TradeType,
-		"body":             order.Body,
-		"out_trade_no":     order.OutTradeNO,
-		"total_fee":        strconv.Itoa(order.TotalFee),
-		"spbill_create_ip": order.SpbillCreateIP,
-		"notify_url":       order.NotifyURL,
-	}
+// QueryOrderByTransactionID 根据微信订单号查询
+func QueryOrderByTransactionID(transactionID string) wx.Action {
+	return wx.NewMchAPI(OrderQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
+			"appid":          appid,
+			"mch_id":         mchid,
+			"transaction_id": transactionID,
+			"nonce_str":      nonce,
+			"sign_type":      SignMD5,
+		}
 
-	if order.DeviceInfo != "" {
-		body["device_info"] = order.DeviceInfo
-	}
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
-	if order.Detail != "" {
-		body["detail"] = order.Detail
-	}
-
-	if order.Attach != "" {
-		body["attach"] = order.Attach
-	}
-
-	if order.FeeType != "" {
-		body["fee_type"] = order.FeeType
-	}
-
-	if order.TimeStart != "" {
-		body["time_start"] = order.TimeStart
-	}
-
-	if order.TimeExpire != "" {
-		body["time_expire"] = order.TimeExpire
-	}
-
-	if order.GoodsTag != "" {
-		body["goods_tag"] = order.GoodsTag
-	}
-
-	if order.ProductID != "" {
-		body["product_id"] = order.ProductID
-	}
-
-	if order.LimitPay != "" {
-		body["limit_pay"] = order.LimitPay
-	}
-
-	if order.OpenID != "" {
-		body["openid"] = order.OpenID
-	}
-
-	if order.Receipt {
-		body["receipt"] = "Y"
-	}
-
-	if order.SceneInfo != "" {
-		body["scene_info"] = order.SceneInfo
-	}
-
-	return o.mch.post(OrderUnifyURL, body, o.options...)
+		return body, nil
+	}, false)
 }
 
-// QueryByTransactionID 根据微信订单号查询
-func (o *Order) QueryByTransactionID(transactionID string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":          o.mch.appid,
-		"mch_id":         o.mch.mchid,
-		"transaction_id": transactionID,
-		"nonce_str":      utils.Nonce(16),
-		"sign_type":      SignMD5,
-	}
+// QueryOrderByOutTradeNO 根据商户订单号查询
+func QueryOrderByOutTradeNO(outTradeNO string) wx.Action {
+	return wx.NewMchAPI(OrderQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
+			"appid":        appid,
+			"mch_id":       mchid,
+			"out_trade_no": outTradeNO,
+			"nonce_str":    nonce,
+			"sign_type":    SignMD5,
+		}
 
-	return o.mch.post(OrderQueryURL, body, o.options...)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
+
+		return body, nil
+	}, false)
 }
 
-// QueryByOutTradeNO 根据商户订单号查询
-func (o *Order) QueryByOutTradeNO(outTradeNO string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":        o.mch.appid,
-		"mch_id":       o.mch.mchid,
-		"out_trade_no": outTradeNO,
-		"nonce_str":    utils.Nonce(16),
-		"sign_type":    SignMD5,
-	}
+// CloseOrder 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
+func CloseOrder(outTradeNO string) wx.Action {
+	return wx.NewMchAPI(OrderCloseURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
+			"appid":        appid,
+			"mch_id":       mchid,
+			"out_trade_no": outTradeNO,
+			"nonce_str":    nonce,
+			"sign_type":    SignMD5,
+		}
 
-	return o.mch.post(OrderQueryURL, body, o.options...)
-}
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
-// Close 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
-func (o *Order) Close(outTradeNO string) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":        o.mch.appid,
-		"mch_id":       o.mch.mchid,
-		"out_trade_no": outTradeNO,
-		"nonce_str":    utils.Nonce(16),
-		"sign_type":    SignMD5,
-	}
-
-	return o.mch.post(OrderCloseURL, body, o.options...)
+		return body, nil
+	}, false)
 }

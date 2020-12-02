@@ -1,37 +1,55 @@
 package mp
 
 import (
-	"fmt"
+	"encoding/json"
+	"io/ioutil"
 	"net/url"
 
-	"github.com/shenghui0779/gochat/utils"
-	"github.com/tidwall/gjson"
+	"github.com/shenghui0779/gochat/wx"
 )
 
-// UploadData 媒体上传数据
-type UploadData struct {
-	MediaType string     // 文件类型，合法值：image
-	FormData  url.Values // form-data 中媒体文件标识，有filename、filelength、content-type等信息
+// MediaType 素材类型
+type MediaType string
+
+// 微信支持的素材类型
+var MediaImage MediaType = "image" // 图片
+
+// MediaUploadResult  临时素材上传信息
+type MediaUploadResult struct {
+	Type      string `json:"type"`
+	MediaID   string `json:"media_id"`
+	CreatedAt int64  `json:"created_at"`
 }
 
-// Media 媒体
+// UploadMedia 上传临时素材到微信服务器
+func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadResult) wx.Action {
+	query := url.Values{}
+
+	query.Set("type", string(mediaType))
+
+	return wx.NewOpenUploadAPI(MediaUploadURL, query, wx.NewUploadBody("media", filename, func() ([]byte, error) {
+		return ioutil.ReadFile(filename)
+	}), func(resp []byte) error {
+		return json.Unmarshal(resp, dest)
+	})
+}
+
+// Media 临时素材
 type Media struct {
-	mp      *WXMP
-	options []utils.RequestOption
+	Buffer []byte
 }
 
-// Upload 上传媒体
-func (m *Media) Upload(data *UploadData, accessToken string) (string, error) {
-	b, err := m.mp.upload(fmt.Sprintf("%s?access_token=%s&type=%s", MediaUploadURL, accessToken, data.MediaType), []byte(data.FormData.Encode()), m.options...)
+// GetMedia 获取客服消息内的临时素材
+func GetMedia(mediaID string, dest *Media) wx.Action {
+	query := url.Values{}
 
-	if err != nil {
-		return "", err
-	}
+	query.Set("media_id", mediaID)
 
-	return gjson.GetBytes(b, "media_id").String(), nil
-}
+	return wx.NewOpenGetAPI(MediaGetURL, query, func(resp []byte) error {
+		dest.Buffer = make([]byte, len(resp))
 
-// Get 获取媒体
-func (m *Media) Get(mediaID, accessToken string) ([]byte, error) {
-	return m.mp.get(fmt.Sprintf("%s?access_token=%s&media_id=%s", MediaGetURL, accessToken, mediaID), m.options...)
+		copy(dest.Buffer, resp)
+
+		return nil
+	})
 }

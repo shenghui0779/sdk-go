@@ -3,7 +3,7 @@ package mch
 import (
 	"strconv"
 
-	"github.com/shenghui0779/gochat/utils"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // RefundData 退款数据
@@ -19,140 +19,158 @@ type RefundData struct {
 	NotifyURL     string // 异步接收微信支付退款结果通知的回调地址，通知URL必须为外网可访问的url，不允许带参数
 }
 
-// Refund 退款操作
-type Refund struct {
-	mch     *WXMch
-	options []utils.RequestOption
-}
-
 // RefundByTransactionID 根据微信订单号退款
-func (r *Refund) RefundByTransactionID(transactionID string, data *RefundData) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":          r.mch.appid,
-		"mch_id":         r.mch.mchid,
-		"nonce_str":      utils.Nonce(16),
-		"sign_type":      SignMD5,
-		"transaction_id": transactionID,
-		"out_refund_no":  data.OutRefundNO,
-		"total_fee":      strconv.Itoa(data.TotalFee),
-		"refund_fee":     strconv.Itoa(data.RefundFee),
-	}
+func RefundByTransactionID(transactionID string, data *RefundData) wx.Action {
+	return wx.NewMchAPI(RefundApplyURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
+			"appid":          appid,
+			"mch_id":         mchid,
+			"nonce_str":      nonce,
+			"sign_type":      SignMD5,
+			"transaction_id": transactionID,
+			"out_refund_no":  data.OutRefundNO,
+			"total_fee":      strconv.Itoa(data.TotalFee),
+			"refund_fee":     strconv.Itoa(data.RefundFee),
+		}
 
-	if data.RefundFeeType != "" {
-		body["refund_fee_type"] = data.RefundFeeType
-	}
+		if data.RefundFeeType != "" {
+			body["refund_fee_type"] = data.RefundFeeType
+		}
 
-	if data.RefundDesc != "" {
-		body["refund_desc"] = data.RefundDesc
-	}
+		if data.RefundDesc != "" {
+			body["refund_desc"] = data.RefundDesc
+		}
 
-	if data.RefundAccount != "" {
-		body["refund_account"] = data.RefundAccount
-	}
+		if data.RefundAccount != "" {
+			body["refund_account"] = data.RefundAccount
+		}
 
-	if data.NotifyURL != "" {
-		body["notify_url"] = data.NotifyURL
-	}
+		if data.NotifyURL != "" {
+			body["notify_url"] = data.NotifyURL
+		}
 
-	return r.mch.tlsPost(RefundApplyURL, body, r.options...)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
+
+		return body, nil
+	}, true)
 }
 
 // RefundByOutTradeNO 根据商户订单号退款
-func (r *Refund) RefundByOutTradeNO(outTradeNO string, data *RefundData) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":         r.mch.appid,
-		"mch_id":        r.mch.mchid,
-		"nonce_str":     utils.Nonce(16),
-		"sign_type":     SignMD5,
-		"out_trade_no":  outTradeNO,
-		"out_refund_no": data.OutRefundNO,
-		"total_fee":     strconv.Itoa(data.TotalFee),
-		"refund_fee":    strconv.Itoa(data.RefundFee),
-	}
+func RefundByOutTradeNO(outTradeNO string, data *RefundData) wx.Action {
+	return wx.NewMchAPI(RefundApplyURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
+			"appid":         appid,
+			"mch_id":        mchid,
+			"nonce_str":     nonce,
+			"sign_type":     SignMD5,
+			"out_trade_no":  outTradeNO,
+			"out_refund_no": data.OutRefundNO,
+			"total_fee":     strconv.Itoa(data.TotalFee),
+			"refund_fee":    strconv.Itoa(data.RefundFee),
+		}
 
-	if data.RefundFeeType != "" {
-		body["refund_fee_type"] = data.RefundFeeType
-	}
+		if data.RefundFeeType != "" {
+			body["refund_fee_type"] = data.RefundFeeType
+		}
 
-	if data.RefundDesc != "" {
-		body["refund_desc"] = data.RefundDesc
-	}
+		if data.RefundDesc != "" {
+			body["refund_desc"] = data.RefundDesc
+		}
 
-	if data.RefundAccount != "" {
-		body["refund_account"] = data.RefundAccount
-	}
+		if data.RefundAccount != "" {
+			body["refund_account"] = data.RefundAccount
+		}
 
-	if data.NotifyURL != "" {
-		body["notify_url"] = data.NotifyURL
-	}
+		if data.NotifyURL != "" {
+			body["notify_url"] = data.NotifyURL
+		}
 
-	return r.mch.tlsPost(RefundApplyURL, body, r.options...)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
+
+		return body, nil
+	}, true)
 }
 
-// QueryByRefundID 根据微信退款单号查询
-func (r *Refund) QueryByRefundID(refundID string, offset ...int) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":     r.mch.appid,
-		"mch_id":    r.mch.mchid,
-		"refund_id": refundID,
-		"nonce_str": utils.Nonce(16),
-		"sign_type": SignMD5,
-	}
+// QueryRefundByRefundID 根据微信退款单号查询退款信息
+func QueryRefundByRefundID(refundID string, offset ...int) wx.Action {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
+			"appid":     appid,
+			"mch_id":    mchid,
+			"refund_id": refundID,
+			"nonce_str": nonce,
+			"sign_type": SignMD5,
+		}
 
-	if len(offset) > 0 {
-		body["offset"] = strconv.Itoa(offset[0])
-	}
+		if len(offset) > 0 {
+			body["offset"] = strconv.Itoa(offset[0])
+		}
 
-	return r.mch.post(RefundQueryURL, body, r.options...)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
+
+		return body, nil
+	}, false)
 }
 
-// QueryByOutRefundNO 根据商户退款单号查询
-func (r *Refund) QueryByOutRefundNO(outRefundNO string, offset ...int) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":         r.mch.appid,
-		"mch_id":        r.mch.mchid,
-		"out_refund_no": outRefundNO,
-		"nonce_str":     utils.Nonce(16),
-		"sign_type":     SignMD5,
-	}
+// QueryRefundByOutRefundNO 根据商户退款单号查询退款信息
+func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) wx.Action {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
+			"appid":         appid,
+			"mch_id":        mchid,
+			"out_refund_no": outRefundNO,
+			"nonce_str":     nonce,
+			"sign_type":     SignMD5,
+		}
 
-	if len(offset) > 0 {
-		body["offset"] = strconv.Itoa(offset[0])
-	}
+		if len(offset) > 0 {
+			body["offset"] = strconv.Itoa(offset[0])
+		}
 
-	return r.mch.post(RefundQueryURL, body, r.options...)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
+
+		return body, nil
+	}, false)
 }
 
-// QueryByTransactionID 根据微信订单号查询
-func (r *Refund) QueryByTransactionID(transactionID string, offset ...int) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":          r.mch.appid,
-		"mch_id":         r.mch.mchid,
-		"transaction_id": transactionID,
-		"nonce_str":      utils.Nonce(16),
-		"sign_type":      SignMD5,
-	}
+// QueryRefundByTransactionID 根据微信订单号查询退款信息
+func QueryRefundByTransactionID(transactionID string, offset ...int) wx.Action {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
+			"appid":          appid,
+			"mch_id":         mchid,
+			"transaction_id": transactionID,
+			"nonce_str":      nonce,
+			"sign_type":      SignMD5,
+		}
 
-	if len(offset) > 0 {
-		body["offset"] = strconv.Itoa(offset[0])
-	}
+		if len(offset) > 0 {
+			body["offset"] = strconv.Itoa(offset[0])
+		}
 
-	return r.mch.post(RefundQueryURL, body, r.options...)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
+
+		return body, nil
+	}, false)
 }
 
-// QueryByOutTradeNO 根据商户订单号查询
-func (r *Refund) QueryByOutTradeNO(outTradeNO string, offset ...int) (utils.WXML, error) {
-	body := utils.WXML{
-		"appid":        r.mch.appid,
-		"mch_id":       r.mch.mchid,
-		"out_trade_no": outTradeNO,
-		"nonce_str":    utils.Nonce(16),
-		"sign_type":    "MD5",
-	}
+// QueryRefundByOutTradeNO 根据商户订单号查询退款信息
+func QueryRefundByOutTradeNO(outTradeNO string, offset ...int) wx.Action {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+		body := wx.WXML{
+			"appid":        appid,
+			"mch_id":       mchid,
+			"out_trade_no": outTradeNO,
+			"nonce_str":    nonce,
+			"sign_type":    "MD5",
+		}
 
-	if len(offset) > 0 {
-		body["offset"] = strconv.Itoa(offset[0])
-	}
+		if len(offset) > 0 {
+			body["offset"] = strconv.Itoa(offset[0])
+		}
 
-	return r.mch.post(RefundQueryURL, body, r.options...)
+		body["sign"] = wx.SignWithMD5(body, apikey, true)
+
+		return body, nil
+	}, false)
 }
