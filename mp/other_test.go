@@ -71,3 +71,35 @@ func TestSoterVerify(t *testing.T) {
 	assert.Nil(t, err)
 	assert.True(t, dest.OK)
 }
+
+func TestGetUserRiskRank(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := wx.NewMockClient(ctrl)
+
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/getuserriskrank?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+		"errcode": 0,
+		"errmsg": "ok",
+		"risk_rank": 0
+	}`), nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.client = client
+
+	data := &UserRiskData{
+		AppID:        "APPID",
+		OpenID:       "OPENID",
+		Scene:        RiskRegister,
+		MobileNO:     "12345678",
+		ClientIP:     "******",
+		EmailAddress: "****@qq.com",
+	}
+
+	dest := new(UserRiskResult)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUserRiskRank(data, dest))
+
+	assert.Nil(t, err)
+	assert.Equal(t, 0, dest.RiskRank)
+}

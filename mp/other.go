@@ -53,3 +53,39 @@ func SoterVerify(sign *SoterSignature, dest *SoterVerifyResult) wx.Action {
 		return nil
 	})
 }
+
+// 风控场景
+type RiskScene int
+
+// 微信支持的风控场景值
+const (
+	RiskRegister RiskScene = 0 // 注册
+	RiskCheat    RiskScene = 1 // 营销作弊
+)
+
+// UserRiskData 用户风控数据
+type UserRiskData struct {
+	AppID        string    `json:"appid"`
+	OpenID       string    `json:"openid"`
+	Scene        RiskScene `json:"scene"`
+	MobileNO     string    `json:"mobile_no,omitempty"`
+	ClientIP     string    `json:"client_ip"`
+	EmailAddress string    `json:"email_address,omitempty"`
+	ExtendedInfo string    `json:"extended_info,omitempty"`
+}
+
+// UserRiskRank 用户风控结果
+type UserRiskResult struct {
+	RiskRank int
+}
+
+// GetUserRiskRank 获取用户的安全等级（无需用户授权）
+func GetUserRiskRank(data *UserRiskData, dest *UserRiskResult) wx.Action {
+	return wx.NewOpenPostAPI(UserRiskRankURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(data)
+	}), func(resp []byte) error {
+		dest.RiskRank = int(gjson.GetBytes(resp, "risk_rank").Int())
+
+		return nil
+	})
+}

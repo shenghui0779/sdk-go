@@ -66,4 +66,5 @@ const (
 const (
 	InvokeServiceURL = "https://api.weixin.qq.com/wxa/servicemarket"
 	SoterVerifyURL   = "https://api.weixin.qq.com/cgi-bin/soter/verify_signature"
+	UserRiskRankURL  = "https://api.weixin.qq.com/wxa/getuserriskrank"
 )

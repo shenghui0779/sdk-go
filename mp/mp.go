@@ -3,6 +3,7 @@ package mp
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -10,6 +11,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"sort"
+	"strings"
 
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
@@ -180,4 +183,17 @@ func (mp *MP) DecryptEventMessage(cipherText string) (*event.Message, error) {
 	}
 
 	return msg, nil
+}
+
+// VerifyServerSign 验证消息的确来自微信服务器（若验证成功，请原样返回echostr参数内容）
+func (mp *MP) VerifyServerSign(signature, timestamp, nonce string) bool {
+	signArr := []string{mp.signToken, timestamp, nonce}
+
+	sort.Strings(signArr)
+
+	h := sha1.New()
+	h.Write([]byte(strings.Join(signArr, "")))
+	signStr := hex.EncodeToString(h.Sum(nil))
+
+	return signStr == signature
 }
