@@ -2,7 +2,6 @@ package mp
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -29,9 +28,7 @@ func OCRBankCard(mode OCRMode, filename string, dest *BankCard) wx.Action {
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRBankCardURL, query, wx.NewUploadBody("img", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(OCRBankCardURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		dest.ID = gjson.GetBytes(resp, "id").String()
 
 		return nil
@@ -81,9 +78,7 @@ func OCRBusinessLicense(mode OCRMode, filename string, dest *BusinessLicense) wx
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRBusinessLicenseURL, query, wx.NewUploadBody("img", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(OCRBusinessLicenseURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -121,9 +116,7 @@ func OCRDriverLicense(mode OCRMode, filename string, dest *DriverLicense) wx.Act
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRDriverLicenseURL, query, wx.NewUploadBody("img", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(OCRDriverLicenseURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -155,9 +148,7 @@ func OCRIDCardFront(mode OCRMode, filename string, dest *IDCardFront) wx.Action 
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRIDCardURL, query, wx.NewUploadBody("img", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(OCRIDCardURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -185,9 +176,7 @@ func OCRIDCardBack(mode OCRMode, filename string, dest *IDCardBack) wx.Action {
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRIDCardURL, query, wx.NewUploadBody("img", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(OCRIDCardURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
 
 		return nil
@@ -226,9 +215,7 @@ func OCRPrintedText(mode OCRMode, filename string, dest *PrintedText) wx.Action 
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRPrintedTextURL, query, wx.NewUploadBody("img", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(OCRPrintedTextURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -269,9 +256,7 @@ func OCRVehicleLicense(mode OCRMode, filename string, dest *VehicleLicense) wx.A
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRVehicleLicenseURL, query, wx.NewUploadBody("img", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(OCRVehicleLicenseURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
