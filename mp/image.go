@@ -2,7 +2,6 @@ package mp
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -45,9 +44,7 @@ type AICropResult struct {
 
 // AICrop 图片智能裁切
 func AICrop(filename string, dest *AICropResult) wx.Action {
-	return wx.NewOpenUploadAPI(AICropURL, url.Values{}, wx.NewUploadBody("img", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(AICropURL, url.Values{}, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -78,9 +75,7 @@ type QRCodeScanResult struct {
 
 // ScanQRCode 条码/二维码识别
 func ScanQRCode(filename string, dest *QRCodeScanResult) wx.Action {
-	return wx.NewOpenUploadAPI(ScanQRCodeURL, url.Values{}, wx.NewUploadBody("img", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(ScanQRCodeURL, url.Values{}, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -103,9 +98,7 @@ type SuperreSolutionResult struct {
 
 // SuperreSolution 图片高清化
 func SuperreSolution(filename string, dest *SuperreSolutionResult) wx.Action {
-	return wx.NewOpenUploadAPI(SuperreSolutionURL, url.Values{}, wx.NewUploadBody("img", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(SuperreSolutionURL, url.Values{}, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
 		return nil

@@ -3,7 +3,9 @@ package wx
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"net/url"
+	"path/filepath"
 )
 
 // WXML deal with xml for wechat
@@ -36,6 +38,8 @@ type Body interface {
 	FieldName() string
 	// FieldName returns file name for upload request
 	FileName() string
+	// Description returns file description for upload request
+	Description() X
 	// Bytes returns body for post request
 	Bytes() func() ([]byte, error)
 }
@@ -58,9 +62,10 @@ type Action interface {
 
 // HTTPBody is a Body implementation for http request body
 type HTTPBody struct {
-	fieldname string
-	filename  string
-	bytes     func() ([]byte, error)
+	fieldname   string
+	filename    string
+	description X
+	bytes       func() ([]byte, error)
 }
 
 func (h *HTTPBody) FieldName() string {
@@ -69,6 +74,10 @@ func (h *HTTPBody) FieldName() string {
 
 func (h *HTTPBody) FileName() string {
 	return h.filename
+}
+
+func (h *HTTPBody) Description() X {
+	return h.description
 }
 
 func (h *HTTPBody) Bytes() func() ([]byte, error) {
@@ -81,11 +90,20 @@ func NewPostBody(f func() ([]byte, error)) *HTTPBody {
 }
 
 // NewUploadBody returns upload body
-func NewUploadBody(fieldname, filename string, f func() ([]byte, error)) *HTTPBody {
+func NewUploadBody(fieldname, filename string, description X) *HTTPBody {
 	return &HTTPBody{
-		fieldname: fieldname,
-		filename:  filename,
-		bytes:     f,
+		fieldname:   fieldname,
+		filename:    filename,
+		description: description,
+		bytes: func() ([]byte, error) {
+			path, err := filepath.Abs(fieldname)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return ioutil.ReadFile(path)
+		},
 	}
 }
 

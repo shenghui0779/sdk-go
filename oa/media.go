@@ -2,7 +2,6 @@ package oa
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -32,9 +31,7 @@ func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadResult) 
 
 	query.Set("type", string(mediaType))
 
-	return wx.NewOpenUploadAPI(MediaUploadURL, query, wx.NewUploadBody("media", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(MediaUploadURL, query, wx.NewUploadBody("media", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -71,9 +68,7 @@ func UploadMaterialNews(articles []*MaterialArticle, dest *MaterialUploadResult)
 
 // UploadMaterialImage 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制）
 func UploadMaterialImage(filename string, dest *MaterialUploadResult) wx.Action {
-	return wx.NewOpenUploadAPI(MaterialImageUploadURL, url.Values{}, wx.NewUploadBody("media", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(MaterialImageUploadURL, url.Values{}, wx.NewUploadBody("media", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }

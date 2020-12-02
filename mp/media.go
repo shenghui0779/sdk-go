@@ -2,7 +2,6 @@ package mp
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -27,9 +26,7 @@ func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadResult) 
 
 	query.Set("type", string(mediaType))
 
-	return wx.NewOpenUploadAPI(MediaUploadURL, query, wx.NewUploadBody("media", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), func(resp []byte) error {
+	return wx.NewOpenUploadAPI(MediaUploadURL, query, wx.NewUploadBody("media", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }

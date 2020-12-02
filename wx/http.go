@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -226,6 +227,17 @@ func (h *HTTPClient) Upload(ctx context.Context, url string, body Body, options 
 
 	if _, err = io.Copy(fw, bytes.NewReader(media)); err != nil {
 		return nil, err
+	}
+
+	// 素材描述（上传视频适用）
+	if desc := body.Description(); len(desc) != 0 {
+		b, err := json.Marshal(desc)
+
+		if err != nil {
+			return nil, err
+		}
+
+		w.WriteField("description", string(b))
 	}
 
 	options = append(options, WithHTTPHeader("Content-Type", w.FormDataContentType()))
