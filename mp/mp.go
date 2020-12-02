@@ -169,14 +169,14 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 }
 
 // DecryptEventMessage 事件消息解密
-func (mp *MP) DecryptEventMessage(msgEncrypt string) (*event.Message, error) {
+func (mp *MP) DecryptEventMessage(msgEncrypt string) (*event.EventMessage, error) {
 	b, err := event.Decrypt(mp.appid, mp.encodingAESKey, msgEncrypt)
 
 	if err != nil {
 		return nil, err
 	}
 
-	msg := new(event.Message)
+	msg := new(event.EventMessage)
 
 	if err = xml.Unmarshal(b, msg); err != nil {
 		return nil, err
