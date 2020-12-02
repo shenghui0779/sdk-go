@@ -100,6 +100,13 @@ func TestAccessToken(t *testing.T) {
 	}, accessToken)
 }
 
+func TestVerifyServer(t *testing.T) {
+	oa := New("APPID", "APPSECRET")
+	oa.SetServerConfig("2faf43d6343a802b6073aae5b3f2f109", "jxAko083VoJ3lcPXJWzcGJ0M1tFVLgdD6qAq57GJY1U")
+
+	assert.True(t, oa.VerifyServer("ffb882ae55647757d3b807ff0e9b6098dfc2bc57", "1606902086", "1246833592"))
+}
+
 var postBody wx.Body
 
 func TestMain(m *testing.M) {
