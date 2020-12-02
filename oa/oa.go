@@ -213,8 +213,8 @@ func (oa *OA) EncryptReplyMessage(from, to string, reply Reply) (*ReplyMessage, 
 	return msg, nil
 }
 
-// VerifyServerSign 验证消息的确来自微信服务器（若验证成功，请原样返回echostr参数内容）
-func (oa *OA) VerifyServerSign(signature, timestamp, nonce string) bool {
+// VerifyServer 验证消息来自微信服务器（若验证成功，请原样返回echostr参数内容）
+func (oa *OA) VerifyServer(signature, timestamp, nonce string) bool {
 	signArr := []string{oa.signToken, timestamp, nonce}
 
 	sort.Strings(signArr)
