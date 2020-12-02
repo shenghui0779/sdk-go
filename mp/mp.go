@@ -23,7 +23,7 @@ import (
 type MP struct {
 	appid          string
 	appsecret      string
-	signToken      string
+	token          string
 	encodingAESKey string
 	nonce          func(size int) string
 	client         wx.Client
@@ -46,7 +46,7 @@ func New(appid, appsecret string) *MP {
 
 // SetServerConfig 设置服务器配置
 func (mp *MP) SetServerConfig(token, encodingAESKey string) {
-	mp.signToken = token
+	mp.token = token
 	mp.encodingAESKey = encodingAESKey
 }
 
@@ -169,8 +169,8 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 }
 
 // DecryptEventMessage 事件消息解密
-func (mp *MP) DecryptEventMessage(cipherText string) (*event.Message, error) {
-	b, err := event.Decrypt(mp.appid, mp.encodingAESKey, cipherText)
+func (mp *MP) DecryptEventMessage(msgEncrypt string) (*event.Message, error) {
+	b, err := event.Decrypt(mp.appid, mp.encodingAESKey, msgEncrypt)
 
 	if err != nil {
 		return nil, err
@@ -187,13 +187,26 @@ func (mp *MP) DecryptEventMessage(cipherText string) (*event.Message, error) {
 
 // VerifyServer 验证消息来自微信服务器（若验证成功，请原样返回echostr参数内容）
 func (mp *MP) VerifyServer(signature, timestamp, nonce string) bool {
-	signArr := []string{mp.signToken, timestamp, nonce}
+	signItems := []string{mp.token, timestamp, nonce}
 
-	sort.Strings(signArr)
+	sort.Strings(signItems)
 
 	h := sha1.New()
-	h.Write([]byte(strings.Join(signArr, "")))
+	h.Write([]byte(strings.Join(signItems, "")))
 	signStr := hex.EncodeToString(h.Sum(nil))
 
 	return signStr == signature
+}
+
+// VerifyEvent 验证事件签名（注意：使用 msg_signature）
+func (mp *MP) VerifyEvent(msgSignature, timestamp, nonce, msgEncrypt string) bool {
+	signItems := []string{mp.token, timestamp, nonce, msgEncrypt}
+
+	sort.Strings(signItems)
+
+	h := sha1.New()
+	h.Write([]byte(strings.Join(signItems, "")))
+	signStr := hex.EncodeToString(h.Sum(nil))
+
+	return signStr == msgSignature
 }

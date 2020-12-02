@@ -25,7 +25,8 @@ import (
 type OA struct {
 	appid          string
 	appsecret      string
-	signToken      string
+	originid       string
+	token          string
 	encodingAESKey string
 	nonce          func(size int) string
 	client         wx.Client
@@ -46,9 +47,14 @@ func New(appid, appsecret string) *OA {
 	}
 }
 
+// SetOriginID 设置原始ID（开发者微信号）
+func (oa *OA) SetOriginID(originid string) {
+	oa.originid = originid
+}
+
 // SetServerConfig 设置服务器配置
 func (oa *OA) SetServerConfig(token, encodingAESKey string) {
-	oa.signToken = token
+	oa.token = token
 	oa.encodingAESKey = encodingAESKey
 }
 
@@ -160,8 +166,8 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 }
 
 // DecryptEventMessage 事件消息解密
-func (oa *OA) DecryptEventMessage(cipherText string) (*event.Message, error) {
-	b, err := event.Decrypt(oa.appid, oa.encodingAESKey, cipherText)
+func (oa *OA) DecryptEventMessage(msgEncrypt string) (*event.Message, error) {
+	b, err := event.Decrypt(oa.appid, oa.encodingAESKey, msgEncrypt)
 
 	if err != nil {
 		return nil, err
@@ -177,8 +183,8 @@ func (oa *OA) DecryptEventMessage(cipherText string) (*event.Message, error) {
 }
 
 // EncryptReplyMessage 回复消息加密
-func (oa *OA) EncryptReplyMessage(from, to string, reply Reply) (*ReplyMessage, error) {
-	body, err := reply.Bytes(from, to)
+func (oa *OA) EncryptReplyMessage(openid string, reply Reply) (*ReplyMessage, error) {
+	body, err := reply.Bytes(oa.originid, openid)
 
 	if err != nil {
 		return nil, err
@@ -191,12 +197,13 @@ func (oa *OA) EncryptReplyMessage(from, to string, reply Reply) (*ReplyMessage, 
 		return nil, err
 	}
 
-	encryptData := base64.StdEncoding.EncodeToString(cipherText)
+	encryptMsg := base64.StdEncoding.EncodeToString(cipherText)
 
+	// 签名
 	now := time.Now().Unix()
 	nonce := oa.nonce(16)
 
-	signItems := []string{oa.signToken, strconv.FormatInt(now, 10), nonce, encryptData}
+	signItems := []string{oa.token, strconv.FormatInt(now, 10), nonce, encryptMsg}
 
 	sort.Strings(signItems)
 
@@ -204,7 +211,7 @@ func (oa *OA) EncryptReplyMessage(from, to string, reply Reply) (*ReplyMessage, 
 	h.Write([]byte(strings.Join(signItems, "")))
 
 	msg := &ReplyMessage{
-		Encrypt:      wx.CDATA(encryptData),
+		Encrypt:      wx.CDATA(encryptMsg),
 		MsgSignature: wx.CDATA(hex.EncodeToString(h.Sum(nil))),
 		TimeStamp:    now,
 		Nonce:        wx.CDATA(nonce),
@@ -215,13 +222,26 @@ func (oa *OA) EncryptReplyMessage(from, to string, reply Reply) (*ReplyMessage, 
 
 // VerifyServer 验证消息来自微信服务器（若验证成功，请原样返回echostr参数内容）
 func (oa *OA) VerifyServer(signature, timestamp, nonce string) bool {
-	signArr := []string{oa.signToken, timestamp, nonce}
+	signItems := []string{oa.token, timestamp, nonce}
 
-	sort.Strings(signArr)
+	sort.Strings(signItems)
 
 	h := sha1.New()
-	h.Write([]byte(strings.Join(signArr, "")))
+	h.Write([]byte(strings.Join(signItems, "")))
 	signStr := hex.EncodeToString(h.Sum(nil))
 
 	return signStr == signature
+}
+
+// VerifyEvent 验证事件签名（注意：使用 msg_signature）
+func (oa *OA) VerifyEvent(msgSignature, timestamp, nonce, msgEncrypt string) bool {
+	signItems := []string{oa.token, timestamp, nonce, msgEncrypt}
+
+	sort.Strings(signItems)
+
+	h := sha1.New()
+	h.Write([]byte(strings.Join(signItems, "")))
+	signStr := hex.EncodeToString(h.Sum(nil))
+
+	return signStr == msgSignature
 }
