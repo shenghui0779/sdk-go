@@ -52,6 +52,11 @@ func (oa *OA) SetServerConfig(token, encodingAESKey string) {
 	oa.encodingAESKey = encodingAESKey
 }
 
+// AuthURL 生成网页授权URL（请使用 URLEncode 对 redirectURL 进行处理）
+func (oa *OA) AuthURL(scope AuthScope, redirectURL string) string {
+	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", AuthorizeURL, oa.appid, redirectURL, scope, oa.nonce(16))
+}
+
 // Code2AuthToken 获取公众号网页授权AccessToken
 func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...wx.HTTPOption) (*AuthToken, error) {
 	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", SnsCode2TokenURL, oa.appid, oa.appsecret, code), options...)

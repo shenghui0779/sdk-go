@@ -9,6 +9,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestAuthURL(t *testing.T) {
+	oa := New("APPID", "APPSECRET")
+	oa.nonce = func(size int) string {
+		return "STATE"
+	}
+
+	assert.Equal(t, "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=RedirectURL&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect", oa.AuthURL(ScopeSnsapiBase, "RedirectURL"))
+	assert.Equal(t, "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=RedirectURL&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect", oa.AuthURL(ScopeSnsapiUser, "RedirectURL"))
+}
+
 func TestCode2AuthToken(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

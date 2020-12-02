@@ -1,5 +1,17 @@
 package oa
 
+// AuthScope 应用授权作用域
+type AuthScope string
+
+// 公众号支持的应用授权作用域
+const (
+	ScopeSnsapiBase AuthScope = "snsapi_base"     // 静默授权使用，不弹出授权页面，直接跳转，只能获取用户openid
+	ScopeSnsapiUser AuthScope = "snsapi_userinfo" // 弹出授权页面，可通过openid拿到昵称、性别、所在地。并且，即使在未关注的情况下，只要用户授权，也能获取其信息
+)
+
+// oauth2
+const AuthorizeURL = "https://open.weixin.qq.com/connect/oauth2/authorize"
+
 // cgi-bin
 const (
 	CgiBinAccessTokenURL = "https://api.weixin.qq.com/cgi-bin/token"
