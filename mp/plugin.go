@@ -46,7 +46,7 @@ type PluginDevApplyInfo struct {
 }
 
 // GetPluginDevApplyList 获取当前所有插件使用方（供插件开发者调用）
-func GetPluginDevApplyList(page, num int, dest *[]PluginDevApplyInfo) wx.Action {
+func GetPluginDevApplyList(dest *[]PluginDevApplyInfo, page, num int) wx.Action {
 	return wx.NewOpenPostAPI(PluginDevManageURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(wx.X{
 			"action": PluginDevApplyList,

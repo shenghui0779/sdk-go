@@ -3,12 +3,14 @@ package oa
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
@@ -201,4 +203,19 @@ func (oa *OA) Reply(openid string, reply event.Reply) (*event.ReplyMessage, erro
 	}
 
 	return event.BuildReply(oa.token, oa.nonce(16), base64.StdEncoding.EncodeToString(cipherText)), nil
+}
+
+// BuildJSSDKSign 生成 JS-SDK 签名
+func (oa *OA) BuildJSSDKSign(jsapiTicket, url string) *JSSDKSign {
+	noncestr := oa.nonce(16)
+	now := time.Now().Unix()
+
+	h := sha1.New()
+	h.Write([]byte(fmt.Sprintf("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s", jsapiTicket, noncestr, now, url)))
+
+	return &JSSDKSign{
+		Signature: hex.EncodeToString(h.Sum(nil)),
+		Noncestr:  noncestr,
+		Timestamp: now,
+	}
 }

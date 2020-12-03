@@ -23,7 +23,7 @@ type BankCard struct {
 }
 
 // OCRBankCard 银行卡识别
-func OCRBankCard(mode OCRMode, filename string, dest *BankCard) wx.Action {
+func OCRBankCard(dest *BankCard, mode OCRMode, filename string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -36,7 +36,7 @@ func OCRBankCard(mode OCRMode, filename string, dest *BankCard) wx.Action {
 }
 
 // OCRBankCardByURL 银行卡识别
-func OCRBankCardByURL(mode OCRMode, imgURL string, dest *BankCard) wx.Action {
+func OCRBankCardByURL(dest *BankCard, mode OCRMode, imgURL string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -73,7 +73,7 @@ type BusinessLicense struct {
 }
 
 // OCRBusinessLicense 营业执照识别
-func OCRBusinessLicense(mode OCRMode, filename string, dest *BusinessLicense) wx.Action {
+func OCRBusinessLicense(dest *BusinessLicense, mode OCRMode, filename string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -84,7 +84,7 @@ func OCRBusinessLicense(mode OCRMode, filename string, dest *BusinessLicense) wx
 }
 
 // OCRBusinessLicenseByURL 营业执照识别
-func OCRBusinessLicenseByURL(mode OCRMode, imgURL string, dest *BusinessLicense) wx.Action {
+func OCRBusinessLicenseByURL(dest *BusinessLicense, mode OCRMode, imgURL string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -111,7 +111,7 @@ type DriverLicense struct {
 }
 
 // OCRDriverLicense 驾照识别
-func OCRDriverLicense(mode OCRMode, filename string, dest *DriverLicense) wx.Action {
+func OCRDriverLicense(dest *DriverLicense, mode OCRMode, filename string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -122,7 +122,7 @@ func OCRDriverLicense(mode OCRMode, filename string, dest *DriverLicense) wx.Act
 }
 
 // OCRDriverLicenseByURL 驾照识别
-func OCRDriverLicenseByURL(mode OCRMode, imgURL string, dest *DriverLicense) wx.Action {
+func OCRDriverLicenseByURL(dest *DriverLicense, mode OCRMode, imgURL string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -143,7 +143,7 @@ type IDCardFront struct {
 }
 
 // OCRIDCardFront 身份证前面识别
-func OCRIDCardFront(mode OCRMode, filename string, dest *IDCardFront) wx.Action {
+func OCRIDCardFront(dest *IDCardFront, mode OCRMode, filename string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -154,7 +154,7 @@ func OCRIDCardFront(mode OCRMode, filename string, dest *IDCardFront) wx.Action 
 }
 
 // OCRIDCardFrontByURL 身份证前面识别
-func OCRIDCardFrontByURL(mode OCRMode, imgURL string, dest *IDCardFront) wx.Action {
+func OCRIDCardFrontByURL(dest *IDCardFront, mode OCRMode, imgURL string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -171,7 +171,7 @@ type IDCardBack struct {
 }
 
 // OCRIDCardBack 身份证背面识别
-func OCRIDCardBack(mode OCRMode, filename string, dest *IDCardBack) wx.Action {
+func OCRIDCardBack(dest *IDCardBack, mode OCRMode, filename string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -184,7 +184,7 @@ func OCRIDCardBack(mode OCRMode, filename string, dest *IDCardBack) wx.Action {
 }
 
 // OCRIDCardBackByURL 身份证背面识别
-func OCRIDCardBackByURL(mode OCRMode, imgURL string, dest *IDCardBack) wx.Action {
+func OCRIDCardBackByURL(dest *IDCardBack, mode OCRMode, imgURL string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -210,7 +210,7 @@ type PrintedTextItem struct {
 }
 
 // OCRPrintedText 通用印刷体识别
-func OCRPrintedText(mode OCRMode, filename string, dest *PrintedText) wx.Action {
+func OCRPrintedText(dest *PrintedText, mode OCRMode, filename string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -221,7 +221,7 @@ func OCRPrintedText(mode OCRMode, filename string, dest *PrintedText) wx.Action 
 }
 
 // OCRPrintedTextByURL 通用印刷体识别
-func OCRPrintedTextByURL(mode OCRMode, imgURL string, dest *PrintedText) wx.Action {
+func OCRPrintedTextByURL(dest *PrintedText, mode OCRMode, imgURL string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -251,7 +251,7 @@ type VehicleLicense struct {
 }
 
 // OCRVehicleLicense 行驶证识别
-func OCRVehicleLicense(mode OCRMode, filename string, dest *VehicleLicense) wx.Action {
+func OCRVehicleLicense(dest *VehicleLicense, mode OCRMode, filename string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))
@@ -262,7 +262,7 @@ func OCRVehicleLicense(mode OCRMode, filename string, dest *VehicleLicense) wx.A
 }
 
 // OCRVehicleLicenseByURL 行驶证识别
-func OCRVehicleLicenseByURL(mode OCRMode, imgURL string, dest *VehicleLicense) wx.Action {
+func OCRVehicleLicenseByURL(dest *VehicleLicense, mode OCRMode, imgURL string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mode))

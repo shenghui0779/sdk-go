@@ -16,6 +16,21 @@ type AuthToken struct {
 	Scope        string `json:"scope"`
 }
 
+// AccessToken 公众号普通AccessToken
+type AccessToken struct {
+	Token     string `json:"access_token"`
+	ExpiresIn int64  `json:"expires_in"`
+}
+
+// CheckAuthToken 校验网页授权AccessToken是否有效
+func CheckAuthToken(openid string) wx.Action {
+	query := url.Values{}
+
+	query.Set("openid", openid)
+
+	return wx.NewOpenGetAPI(SnsCheckAccessTokenURL, query, nil)
+}
+
 // AuthUser 授权微信用户信息
 type AuthUser struct {
 	OpenID     string   `json:"openid"`
@@ -29,29 +44,8 @@ type AuthUser struct {
 	Privilege  []string `json:"privilege"`
 }
 
-// AccessToken 公众号普通AccessToken
-type AccessToken struct {
-	Token     string `json:"access_token"`
-	ExpiresIn int64  `json:"expires_in"`
-}
-
-// JSAPITicket 公众号 jsapi ticket
-type JSAPITicket struct {
-	Ticket    string `json:"ticket"`
-	ExpiresIn int64  `json:"expires_in"`
-}
-
-// CheckAuthToken 校验网页授权AccessToken是否有效
-func CheckAuthToken(openid string) wx.Action {
-	query := url.Values{}
-
-	query.Set("openid", openid)
-
-	return wx.NewOpenGetAPI(SnsCheckAccessTokenURL, query, nil)
-}
-
 // GetAuthUser 获取授权微信用户信息（注意：使用网页授权的access_token）
-func GetAuthUser(openid string, dest *AuthUser) wx.Action {
+func GetAuthUser(dest *AuthUser, openid string) wx.Action {
 	query := url.Values{}
 
 	query.Set("openid", openid)
@@ -62,11 +56,33 @@ func GetAuthUser(openid string, dest *AuthUser) wx.Action {
 	})
 }
 
-// GetJSAPITicket 获取 jsapi ticket (注意：使用普通access_token)
-func GetJSAPITicket(dest *JSAPITicket) wx.Action {
+// JS-SDK ticket 类型
+type TicketType string
+
+// 微信支持的 JS-SDK ticket
+const (
+	APITicket   TicketType = "wx_card"
+	JSAPITicket TicketType = "jsapi"
+)
+
+// JSSDKSign JS-SDK签名
+type JSSDKSign struct {
+	Signature string `json:"signature"`
+	Noncestr  string `json:"noncestr"`
+	Timestamp int64  `json:"timestamp"`
+}
+
+// JSSDKTicket 公众号 JS-SDK ticket
+type JSSDKTicket struct {
+	Ticket    string `json:"ticket"`
+	ExpiresIn int64  `json:"expires_in"`
+}
+
+// GetJSSDKTicket 获取 JS-SDK ticket (注意：使用普通access_token)
+func GetJSSDKTicket(dest *JSSDKTicket, t TicketType) wx.Action {
 	query := url.Values{}
 
-	query.Set("type", "jsapi")
+	query.Set("type", string(t))
 
 	return wx.NewOpenGetAPI(CgiBinTicketURL, query, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)

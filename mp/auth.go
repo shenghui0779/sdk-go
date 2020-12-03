@@ -1,5 +1,12 @@
 package mp
 
+import (
+	"net/url"
+
+	"github.com/shenghui0779/gochat/wx"
+	"github.com/tidwall/gjson"
+)
+
 // AuthSession 小程序授权Session
 type AuthSession struct {
 	SessionKey string `json:"session_key"`
@@ -52,4 +59,38 @@ func (p *PhoneInfo) AppID() string {
 type WaterMark struct {
 	Timestamp int64  `json:"timestamp"`
 	AppID     string `json:"appid"`
+}
+
+// PaidUnionID 支付用户unionid
+type PaidUnionID struct {
+	UnionID string
+}
+
+// GetPaidUnionIDByTransactionID 用户支付完成后，获取该用户的 UnionId，无需用户授权
+func GetPaidUnionIDByTransactionID(dest *PaidUnionID, openid, transactionID string) wx.Action {
+	query := url.Values{}
+
+	query.Set("openid", openid)
+	query.Set("transaction_id", transactionID)
+
+	return wx.NewOpenGetAPI(PaidUnionURL, query, func(resp []byte) error {
+		dest.UnionID = gjson.GetBytes(resp, "unionid").String()
+
+		return nil
+	})
+}
+
+// GetPaidUnionIDByOutTradeNO 用户支付完成后，获取该用户的 UnionId，无需用户授权
+func GetPaidUnionIDByOutTradeNO(dest *PaidUnionID, openid, mchid, outTradeNO string) wx.Action {
+	query := url.Values{}
+
+	query.Set("openid", openid)
+	query.Set("mch_id", mchid)
+	query.Set("out_trade_no", outTradeNO)
+
+	return wx.NewOpenGetAPI(PaidUnionURL, query, func(resp []byte) error {
+		dest.UnionID = gjson.GetBytes(resp, "unionid").String()
+
+		return nil
+	})
 }

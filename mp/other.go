@@ -21,7 +21,7 @@ type InvokeResult struct {
 }
 
 // InvokeService 调用服务平台提供的服务
-func InvokeService(data *InvokeData, dest *InvokeResult) wx.Action {
+func InvokeService(dest *InvokeResult, data *InvokeData) wx.Action {
 	return wx.NewOpenPostAPI(InvokeServiceURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(data)
 	}), func(resp []byte) error {
@@ -44,7 +44,7 @@ type SoterVerifyResult struct {
 }
 
 // SoterVerify 生物认证秘钥签名验证
-func SoterVerify(sign *SoterSignature, dest *SoterVerifyResult) wx.Action {
+func SoterVerify(dest *SoterVerifyResult, sign *SoterSignature) wx.Action {
 	return wx.NewOpenPostAPI(SoterVerifyURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(sign)
 	}), func(resp []byte) error {
@@ -80,7 +80,7 @@ type UserRiskResult struct {
 }
 
 // GetUserRiskRank 获取用户的安全等级（无需用户授权）
-func GetUserRiskRank(data *UserRiskData, dest *UserRiskResult) wx.Action {
+func GetUserRiskRank(dest *UserRiskResult, data *UserRiskData) wx.Action {
 	return wx.NewOpenPostAPI(UserRiskRankURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(data)
 	}), func(resp []byte) error {

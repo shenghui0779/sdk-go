@@ -1,13 +1,10 @@
 package mp
 
-// cgi-bin
+// auth
 const (
-	AccessTokenURL = "https://api.weixin.qq.com/cgi-bin/token"
-)
-
-// sns
-const (
+	AccessTokenURL  = "https://api.weixin.qq.com/cgi-bin/token"
 	Code2SessionURL = "https://api.weixin.qq.com/sns/jscode2session"
+	PaidUnionURL    = "https://api.weixin.qq.com/wxa/getpaidunionid"
 )
 
 // msg

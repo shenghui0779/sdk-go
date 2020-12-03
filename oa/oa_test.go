@@ -130,7 +130,7 @@ func TestDecryptEventMessage(t *testing.T) {
 	}, msg)
 }
 
-// 由于签名涉及时间戳，故结果会实时变化（已通过「微信公众平台接口调试工具」测试）
+// 签名涉及时间戳，结果会变化（已通过「微信公众平台接口调试工具」测试）
 // func TestReply(t *testing.T) {
 // 	oa := New("wx1def0e9e5891b338", "APPSECRET")
 // 	oa.SetOriginID("gh_3ad31c0ba9b5")
@@ -149,6 +149,18 @@ func TestDecryptEventMessage(t *testing.T) {
 // 		TimeStamp:    1606910298,
 // 		Nonce:        "af80b480c5e065a6",
 // 	}, msg)
+// }
+
+// 签名涉及时间戳，结果会变化（已通过固定时间戳验证）
+// func TestBuildJSSDKSign(t *testing.T) {
+// 	oa := New("APPID", "APPSECRET")
+// 	oa.nonce = func(size int) string {
+// 		return "Wm3WZYTPz0wzccnW"
+// 	}
+
+// 	sign := oa.BuildJSSDKSign("sM4AOVdWfPE4DxkXGEs8VMCPGGVi4C3VM0P37wVUCFvkVAy_90u5h9nbSlYy3-Sl-HhTdfl2fzFy1AOcHKP7qg", "http://mp.weixin.qq.com?params=value")
+
+// 	assert.Equal(t, "0f9de62fce790f9a083d5c99e95740ceb90c27ed", sign.Signature)
 // }
 
 var postBody wx.Body

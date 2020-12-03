@@ -40,7 +40,7 @@ func TestGetSubscriberInfo(t *testing.T) {
 
 	dest := new(SubscriberInfo)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetSubscriberInfo("OPENID", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetSubscriberInfo(dest, "OPENID"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &SubscriberInfo{
@@ -103,7 +103,7 @@ func TestBatchGetSubscriberInfo(t *testing.T) {
 
 	dest := make([]SubscriberInfo, 0)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetSubscriberInfo([]string{"otvxTs4dckWG7imySrJd6jSi0CWE", "otvxTs_JZ6SEiP0imdhpi50fuSZg"}, &dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetSubscriberInfo(&dest, "otvxTs4dckWG7imySrJd6jSi0CWE", "otvxTs_JZ6SEiP0imdhpi50fuSZg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, []SubscriberInfo{
@@ -153,7 +153,7 @@ func TestGetSubscriberList(t *testing.T) {
 
 	dest := new(SubscriberList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetSubscriberList("NEXT_OPENID", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetSubscriberList(dest, "NEXT_OPENID"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &SubscriberList{
@@ -190,7 +190,7 @@ func TestGetBlackList(t *testing.T) {
 
 	dest := new(SubscriberList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetBlackList("OPENID1", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetBlackList(dest))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &SubscriberList{

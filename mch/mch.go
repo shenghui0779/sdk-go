@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"net/url"
 	"strconv"
+	"time"
 
 	"github.com/shenghui0779/gochat/wx"
 	"golang.org/x/crypto/pkcs12"
@@ -138,14 +139,14 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOpti
 }
 
 // APPAPI 用于APP拉起支付
-func (mch *Mch) APPAPI(prepayID string, timestamp int64) wx.WXML {
+func (mch *Mch) APPAPI(prepayID string) wx.WXML {
 	m := wx.WXML{
 		"appid":     mch.appid,
 		"partnerid": mch.mchid,
 		"prepayid":  prepayID,
 		"package":   "Sign=WXPay",
 		"noncestr":  mch.nonce(16),
-		"timestamp": strconv.FormatInt(timestamp, 10),
+		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	m["sign"] = wx.SignWithMD5(m, mch.apikey, true)
@@ -154,13 +155,13 @@ func (mch *Mch) APPAPI(prepayID string, timestamp int64) wx.WXML {
 }
 
 // JSAPI 用于JS拉起支付
-func (mch *Mch) JSAPI(prepayID string, timestamp int64) wx.WXML {
+func (mch *Mch) JSAPI(prepayID string) wx.WXML {
 	m := wx.WXML{
 		"appId":     mch.appid,
 		"nonceStr":  mch.nonce(16),
 		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
 		"signType":  SignMD5,
-		"timeStamp": strconv.FormatInt(timestamp, 10),
+		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	m["paySign"] = wx.SignWithMD5(m, mch.apikey, true)
@@ -168,13 +169,13 @@ func (mch *Mch) JSAPI(prepayID string, timestamp int64) wx.WXML {
 	return m
 }
 
-// MPRedpackJSAPI 小程序领取红包
-func (mch *Mch) MPRedpackJSAPI(pkg string, timestamp int64) wx.WXML {
+// MinipRedpackJSAPI 小程序领取红包
+func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 	m := wx.WXML{
 		"appId":     mch.appid,
 		"nonceStr":  mch.nonce(16),
 		"package":   url.QueryEscape(pkg),
-		"timeStamp": strconv.FormatInt(timestamp, 10),
+		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	m["paySign"] = wx.SignWithMD5(m, mch.apikey, false)

@@ -26,7 +26,7 @@ func TestOCRBankCard(t *testing.T) {
 
 	dest := new(BankCard)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBankCard(OCRPhoto, "test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBankCard(dest, OCRPhoto, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "622213XXXXXXXXX", dest.ID)
@@ -49,7 +49,7 @@ func TestOCRBankCardByURL(t *testing.T) {
 
 	dest := new(BankCard)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBankCardByURL(OCRPhoto, "ENCODE_URL", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBankCardByURL(dest, OCRPhoto, "ENCODE_URL"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "622213XXXXXXXXX", dest.ID)
@@ -107,7 +107,7 @@ func TestOCRBusinessLicense(t *testing.T) {
 
 	dest := new(BusinessLicense)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBusinessLicense(OCRPhoto, "test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBusinessLicense(dest, OCRPhoto, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &BusinessLicense{
@@ -202,7 +202,7 @@ func TestOCRBusinessLicenseByURL(t *testing.T) {
 
 	dest := new(BusinessLicense)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBusinessLicenseByURL(OCRPhoto, "ENCODE_URL", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBusinessLicenseByURL(dest, OCRPhoto, "ENCODE_URL"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &BusinessLicense{
@@ -272,7 +272,7 @@ func TestOCRDriverLicense(t *testing.T) {
 
 	dest := new(DriverLicense)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRDriverLicense(OCRPhoto, "test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRDriverLicense(dest, OCRPhoto, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &DriverLicense{
@@ -317,7 +317,7 @@ func TestOCRDriverLicenseByURL(t *testing.T) {
 
 	dest := new(DriverLicense)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRDriverLicenseByURL(OCRPhoto, "ENCODE_URL", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRDriverLicenseByURL(dest, OCRPhoto, "ENCODE_URL"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &DriverLicense{
@@ -357,7 +357,7 @@ func TestOCRIDCardFront(t *testing.T) {
 
 	dest := new(IDCardFront)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardFront(OCRPhoto, "test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardFront(dest, OCRPhoto, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &IDCardFront{
@@ -391,7 +391,7 @@ func TestOCRIDCardFrontByURL(t *testing.T) {
 
 	dest := new(IDCardFront)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardFrontByURL(OCRPhoto, "ENCODE_URL", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardFrontByURL(dest, OCRPhoto, "ENCODE_URL"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &IDCardFront{
@@ -421,7 +421,7 @@ func TestOCRIDCardBack(t *testing.T) {
 
 	dest := new(IDCardBack)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardBack(OCRPhoto, "test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardBack(dest, OCRPhoto, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "20070105-20270105", dest.ValidDate)
@@ -445,7 +445,7 @@ func TestOCRIDCardBackByURL(t *testing.T) {
 
 	dest := new(IDCardBack)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardBackByURL(OCRPhoto, "ENCODE_URL", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardBackByURL(dest, OCRPhoto, "ENCODE_URL"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "20070105-20270105", dest.ValidDate)
@@ -515,7 +515,7 @@ func TestOCRPrintedText(t *testing.T) {
 
 	dest := new(PrintedText)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedText(OCRPhoto, "test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedText(dest, OCRPhoto, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &PrintedText{
@@ -634,7 +634,7 @@ func TestOCRPrintedTextByURL(t *testing.T) {
 
 	dest := new(PrintedText)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedTextByURL(OCRPhoto, "ENCODE_URL", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedTextByURL(dest, OCRPhoto, "ENCODE_URL"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &PrintedText{
@@ -717,7 +717,7 @@ func TestOCRVehicleLicense(t *testing.T) {
 
 	dest := new(VehicleLicense)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRVehicleLicense(OCRPhoto, "test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRVehicleLicense(dest, OCRPhoto, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &VehicleLicense{
@@ -766,7 +766,7 @@ func TestOCRVehicleLicenseByURL(t *testing.T) {
 
 	dest := new(VehicleLicense)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRVehicleLicenseByURL(OCRPhoto, "ENCODE_URL", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRVehicleLicenseByURL(dest, OCRPhoto, "ENCODE_URL"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &VehicleLicense{

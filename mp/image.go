@@ -43,14 +43,14 @@ type AICropResult struct {
 }
 
 // AICrop 图片智能裁切
-func AICrop(filename string, dest *AICropResult) wx.Action {
+func AICrop(dest *AICropResult, filename string) wx.Action {
 	return wx.NewOpenUploadAPI(AICropURL, url.Values{}, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
 
 // AICropByURL 图片智能裁切
-func AICropByURL(imgURL string, dest *AICropResult) wx.Action {
+func AICropByURL(dest *AICropResult, imgURL string) wx.Action {
 	query := url.Values{}
 
 	query.Set("img_url", imgURL)
@@ -74,14 +74,14 @@ type QRCodeScanResult struct {
 }
 
 // ScanQRCode 条码/二维码识别
-func ScanQRCode(filename string, dest *QRCodeScanResult) wx.Action {
+func ScanQRCode(dest *QRCodeScanResult, filename string) wx.Action {
 	return wx.NewOpenUploadAPI(ScanQRCodeURL, url.Values{}, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
 
 // ScanQRCodeByURL 条码/二维码识别
-func ScanQRCodeByURL(imgURL string, dest *QRCodeScanResult) wx.Action {
+func ScanQRCodeByURL(dest *QRCodeScanResult, imgURL string) wx.Action {
 	query := url.Values{}
 
 	query.Set("img_url", imgURL)
@@ -97,7 +97,7 @@ type SuperreSolutionResult struct {
 }
 
 // SuperreSolution 图片高清化
-func SuperreSolution(filename string, dest *SuperreSolutionResult) wx.Action {
+func SuperreSolution(dest *SuperreSolutionResult, filename string) wx.Action {
 	return wx.NewOpenUploadAPI(SuperreSolutionURL, url.Values{}, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
 		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
@@ -106,7 +106,7 @@ func SuperreSolution(filename string, dest *SuperreSolutionResult) wx.Action {
 }
 
 // SuperreSolutionByURL 图片高清化
-func SuperreSolutionByURL(imgURL string, dest *SuperreSolutionResult) wx.Action {
+func SuperreSolutionByURL(dest *SuperreSolutionResult, imgURL string) wx.Action {
 	query := url.Values{}
 
 	query.Set("img_url", imgURL)

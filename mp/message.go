@@ -228,7 +228,7 @@ const (
 	CancelTyping TypeCommand = "CancelTyping" // 取消输入
 )
 
-// SetTyping 下发当前输入状态，仅支持客服消息
+// SetTyping 下发当前输入状态（仅支持客服消息）
 func SetTyping(openID string, cmd TypeCommand) wx.Action {
 	return wx.NewOpenPostAPI(SetTypingURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(wx.X{

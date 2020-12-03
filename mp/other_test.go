@@ -37,7 +37,7 @@ func TestInvokeService(t *testing.T) {
 
 	dest := new(InvokeResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", InvokeService(data, dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", InvokeService(dest, data))
 
 	assert.Nil(t, err)
 	assert.Equal(t, `{"idcard_res":{"type":0,"name":{"text":"abc","pos"…0312500}}},"image_width":480,"image_height":304}}`, dest.Data)
@@ -66,7 +66,7 @@ func TestSoterVerify(t *testing.T) {
 
 	dest := new(SoterVerifyResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SoterVerify(sign, dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SoterVerify(dest, sign))
 
 	assert.Nil(t, err)
 	assert.True(t, dest.OK)
@@ -98,7 +98,7 @@ func TestGetUserRiskRank(t *testing.T) {
 
 	dest := new(UserRiskResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUserRiskRank(data, dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUserRiskRank(dest, data))
 
 	assert.Nil(t, err)
 	assert.Equal(t, 0, dest.RiskRank)

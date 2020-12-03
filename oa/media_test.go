@@ -28,7 +28,7 @@ func TestUploadMedia(t *testing.T) {
 
 	dest := new(MediaUploadResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(MediaImage, "test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(dest, MediaImage, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &MediaUploadResult{
@@ -55,21 +55,17 @@ func TestAddNews(t *testing.T) {
 
 	dest := new(MaterialAddResult)
 
-	articles := []*NewsArticle{
-		{
-			Title:              "TITLE",
-			ThumbMediaID:       "THUMB_MEDIA_ID",
-			Author:             "AUTHOR",
-			Digest:             "DIGEST",
-			ShowCoverPic:       1,
-			Content:            "CONTENT",
-			ContentSourceURL:   "CONTENT_SOURCE_URL",
-			NeedOpenComment:    1,
-			OnlyFansCanComment: 1,
-		},
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddNews(articles, dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddNews(dest, &NewsArticle{
+		Title:              "TITLE",
+		ThumbMediaID:       "THUMB_MEDIA_ID",
+		Author:             "AUTHOR",
+		Digest:             "DIGEST",
+		ShowCoverPic:       1,
+		Content:            "CONTENT",
+		ContentSourceURL:   "CONTENT_SOURCE_URL",
+		NeedOpenComment:    1,
+		OnlyFansCanComment: 1,
+	}))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &MaterialAddResult{
@@ -94,7 +90,7 @@ func TestUploadNewsImage(t *testing.T) {
 
 	dest := new(MaterialAddResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadNewsImage("test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadNewsImage(dest, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &MaterialAddResult{
@@ -120,7 +116,7 @@ func TestAddMaterial(t *testing.T) {
 
 	dest := new(MaterialAddResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddMaterial(MediaImage, "test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddMaterial(dest, MediaImage, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &MaterialAddResult{
@@ -147,7 +143,7 @@ func TestUploadVideo(t *testing.T) {
 
 	dest := new(MaterialAddResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadVideo("test.mp4", "TITLE", "INTRODUCTION", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadVideo(dest, "test.mp4", "TITLE", "INTRODUCTION"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &MaterialAddResult{

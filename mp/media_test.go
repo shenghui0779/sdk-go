@@ -28,7 +28,7 @@ func TestUploadMedia(t *testing.T) {
 
 	dest := new(MediaUploadResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(MediaImage, "test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(dest, MediaImage, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &MediaUploadResult{
@@ -51,7 +51,7 @@ func TestGetMedia(t *testing.T) {
 
 	dest := new(Media)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetMedia("MEDIA_ID", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetMedia(dest, "MEDIA_ID"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "BUFFER", string(dest.Buffer))

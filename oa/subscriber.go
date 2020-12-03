@@ -46,7 +46,7 @@ type SubscriberListData struct {
 }
 
 // GetSubscriberInfo 获取微信公众号订阅者信息
-func GetSubscriberInfo(openid string, dest *SubscriberInfo) wx.Action {
+func GetSubscriberInfo(dest *SubscriberInfo, openid string) wx.Action {
 	query := url.Values{}
 
 	query.Set("openid", openid)
@@ -58,7 +58,7 @@ func GetSubscriberInfo(openid string, dest *SubscriberInfo) wx.Action {
 }
 
 // BatchGetSubscriberInfo 批量获取微信公众号订阅者信息
-func BatchGetSubscriberInfo(openids []string, dest *[]SubscriberInfo) wx.Action {
+func BatchGetSubscriberInfo(dest *[]SubscriberInfo, openids ...string) wx.Action {
 	return wx.NewOpenPostAPI(SubscriberBatchGetURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		userList := make([]map[string]string, 0, len(openids))
 
@@ -78,10 +78,12 @@ func BatchGetSubscriberInfo(openids []string, dest *[]SubscriberInfo) wx.Action 
 }
 
 // GetSubscriberList 获取微信公众号订阅者列表
-func GetSubscriberList(nextOpenID string, dest *SubscriberList) wx.Action {
+func GetSubscriberList(dest *SubscriberList, nextOpenID ...string) wx.Action {
 	query := url.Values{}
 
-	query.Set("next_openid", nextOpenID)
+	if len(nextOpenID) != 0 {
+		query.Set("next_openid", nextOpenID[0])
+	}
 
 	return wx.NewOpenGetAPI(SubscriberListURL, query, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
@@ -89,11 +91,17 @@ func GetSubscriberList(nextOpenID string, dest *SubscriberList) wx.Action {
 }
 
 // GetBlackList 获取用户黑名单列表
-func GetBlackList(beginOpenID string, dest *SubscriberList) wx.Action {
+func GetBlackList(dest *SubscriberList, beginOpenID ...string) wx.Action {
 	return wx.NewOpenPostAPI(BlackListGetURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"begin_openid": beginOpenID,
-		})
+		params := wx.X{
+			"begin_openid": "",
+		}
+
+		if len(beginOpenID) != 0 {
+			params["begin_openid"] = beginOpenID[0]
+		}
+
+		return json.Marshal(params)
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})

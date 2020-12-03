@@ -40,9 +40,9 @@ func TestMediaCheckAsync(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(MediaCheckAsyncResult)
+	dest := new(MediaSecAsyncResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", MediaCheckAsync(SecCheckMediaImage, "test.jpg", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", MediaSecCheckAsync(dest, SecMediaImage, "test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "967e945cd8a3e458f3c74dcb886068e9", dest.TraceID)

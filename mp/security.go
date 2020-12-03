@@ -8,13 +8,13 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// SecCheckMediaType 检测的素材类型
-type SecCheckMediaType int
+// SecMediaType 检测的素材类型
+type SecMediaType int
 
 // 微信支持的素材类型
 var (
-	SecCheckMediaAudio SecCheckMediaType = 1 // 音频
-	SecCheckMediaImage SecCheckMediaType = 2 // 图片
+	SecMediaAudio SecMediaType = 1 // 音频
+	SecMediaImage SecMediaType = 2 // 图片
 )
 
 // ImageSecCheck 校验一张图片是否含有违法违规内容
@@ -22,13 +22,13 @@ func ImageSecCheck(filename string) wx.Action {
 	return wx.NewOpenUploadAPI(ImageSecCheckURL, url.Values{}, wx.NewUploadBody("media", filename, nil), nil)
 }
 
-// MediaCheckAsyncResult 异步校验结果
-type MediaCheckAsyncResult struct {
+// MediaSecAsyncResult 异步校验结果
+type MediaSecAsyncResult struct {
 	TraceID string // 任务id，用于匹配异步推送结果
 }
 
-// MediaCheckAsync 异步校验图片/音频是否含有违法违规内容
-func MediaCheckAsync(mediaType SecCheckMediaType, mediaURL string, dest *MediaCheckAsyncResult) wx.Action {
+// MediaSecCheckAsync 异步校验图片/音频是否含有违法违规内容
+func MediaSecCheckAsync(dest *MediaSecAsyncResult, mediaType SecMediaType, mediaURL string) wx.Action {
 	return wx.NewOpenPostAPI(MediaCheckAsyncURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(wx.X{
 			"media_type": mediaType,

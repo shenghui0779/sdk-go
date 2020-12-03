@@ -54,7 +54,7 @@ func TestGetPluginDevApplyList(t *testing.T) {
 
 	dest := make([]PluginDevApplyInfo, 0)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetPluginDevApplyList(1, 10, &dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetPluginDevApplyList(&dest, 1, 10))
 
 	assert.Nil(t, err)
 	assert.Equal(t, []PluginDevApplyInfo{

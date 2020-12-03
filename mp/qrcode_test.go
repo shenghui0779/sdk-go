@@ -48,7 +48,7 @@ func TestCreateQRCode(t *testing.T) {
 
 	dest := new(QRCode)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateQRCode("page/index/index", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateQRCode(dest, "page/index/index"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "BUFFER", string(dest.Buffer))
@@ -67,7 +67,7 @@ func TestGetQRCode(t *testing.T) {
 
 	dest := new(QRCode)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetQRCode("page/index/index", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetQRCode(dest, "page/index/index"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "BUFFER", string(dest.Buffer))
@@ -86,7 +86,7 @@ func TestGetUnlimitQRCode(t *testing.T) {
 
 	dest := new(QRCode)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUnlimitQRCode("a=1", dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUnlimitQRCode(dest, "a=1"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "BUFFER", string(dest.Buffer))

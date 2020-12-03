@@ -27,7 +27,7 @@ type MediaUploadResult struct {
 }
 
 // UploadMedia 上传临时素材到微信服务器
-func UploadMedia(mediaType MediaType, filename string, dest *MediaUploadResult) wx.Action {
+func UploadMedia(dest *MediaUploadResult, mediaType MediaType, filename string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mediaType))
@@ -57,7 +57,7 @@ type NewsArticle struct {
 }
 
 // AddNews 新增永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
-func AddNews(articles []*NewsArticle, dest *MaterialAddResult) wx.Action {
+func AddNews(dest *MaterialAddResult, articles ...*NewsArticle) wx.Action {
 	return wx.NewOpenPostAPI(NewsAddURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(map[string][]*NewsArticle{
 			"articles": articles,
@@ -70,7 +70,7 @@ func AddNews(articles []*NewsArticle, dest *MaterialAddResult) wx.Action {
 }
 
 // UploadNewsImage 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
-func UploadNewsImage(filename string, dest *MaterialAddResult) wx.Action {
+func UploadNewsImage(dest *MaterialAddResult, filename string) wx.Action {
 	return wx.NewOpenUploadAPI(NewsImageUploadURL, url.Values{}, wx.NewUploadBody("media", filename, nil), func(resp []byte) error {
 		dest.URL = gjson.GetBytes(resp, "url").String()
 
@@ -79,7 +79,7 @@ func UploadNewsImage(filename string, dest *MaterialAddResult) wx.Action {
 }
 
 // AddMaterial 新增其他类型永久素材（支持图片、音频、缩略图）
-func AddMaterial(mediaType MediaType, filename string, dest *MaterialAddResult) wx.Action {
+func AddMaterial(dest *MaterialAddResult, mediaType MediaType, filename string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(mediaType))
@@ -90,7 +90,7 @@ func AddMaterial(mediaType MediaType, filename string, dest *MaterialAddResult) 
 }
 
 // UploadVideo 上传视频永久素材
-func UploadVideo(filename, title, introduction string, dest *MaterialAddResult) wx.Action {
+func UploadVideo(dest *MaterialAddResult, filename, title, introduction string) wx.Action {
 	query := url.Values{}
 
 	query.Set("type", string(MediaVideo))
