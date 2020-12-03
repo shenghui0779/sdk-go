@@ -99,8 +99,8 @@ func (r *MusicReply) Bytes(from, to string) ([]byte, error) {
 // NewsReply 公众号图文回复
 type NewsReply struct {
 	ReplyHeader
-	ArticleCount int       `xml:"ArticleCount"`  // 图文消息个数, 限制为10条以内
-	Articles     []Article `xml:"Articles>item"` // 多条图文消息信息, 默认第一个item为大图, 注意, 如果图文数超过10, 则将会无响应
+	ArticleCount int        `xml:"ArticleCount"`  // 图文消息个数, 限制为10条以内
+	Articles     []*Article `xml:"Articles>item"` // 多条图文消息信息, 默认第一个item为大图, 注意, 如果图文数超过10, 则将会无响应
 }
 
 // Article 公众号图文
@@ -213,7 +213,7 @@ func NewMusicReply(thumbMediaID, title, desc, musicURL, HQMusicURL string) event
 }
 
 // NewNewsReply 回复图文消息
-func NewNewsReply(count int, articles ...Article) event.Reply {
+func NewNewsReply(count int, articles ...*Article) event.Reply {
 	r := &NewsReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
