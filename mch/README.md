@@ -134,4 +134,3 @@ wxpay.MinipRedpackJSAPI(package)
 // 查询红包记录
 wxpay.Do(ctx, mch.QueryRedpackByBillNO(billNO))
 ```
-
