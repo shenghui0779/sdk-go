@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io"
 
@@ -57,8 +56,8 @@ func (mp *MP) Code2Session(ctx context.Context, code string, options ...wx.HTTPO
 
 	r := gjson.ParseBytes(resp)
 
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
+	if code := r.Get("errcode").Int(); code != 0 {
+		return nil, fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
 	session := new(AuthSession)
@@ -80,8 +79,8 @@ func (mp *MP) AccessToken(ctx context.Context, options ...wx.HTTPOption) (*Acces
 
 	r := gjson.ParseBytes(resp)
 
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
+	if code := r.Get("errcode").Int(); code != 0 {
+		return nil, fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
 	token := new(AccessToken)
@@ -154,8 +153,8 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 
 	r := gjson.ParseBytes(resp)
 
-	if r.Get("errcode").Int() != 0 {
-		return errors.New(r.Get("errmsg").String())
+	if code := r.Get("errcode").Int(); code != 0 {
+		return fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
 	if action.Decode() == nil {

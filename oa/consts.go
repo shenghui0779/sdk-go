@@ -56,8 +56,10 @@ const (
 
 // media
 const (
-	MediaUploadURL         = "https://api.weixin.qq.com/cgi-bin/media/upload"
-	MediaGetURL            = "https://api.weixin.qq.com/cgi-bin/media/get"
-	MaterialNewsUploadURL  = "https://api.weixin.qq.com/cgi-bin/material/add_news"
-	MaterialImageUploadURL = "https://api.weixin.qq.com/cgi-bin/media/uploadimg"
+	MediaUploadURL     = "https://api.weixin.qq.com/cgi-bin/media/upload"
+	MediaGetURL        = "https://api.weixin.qq.com/cgi-bin/media/get"
+	NewsAddURL         = "https://api.weixin.qq.com/cgi-bin/material/add_news"
+	NewsImageUploadURL = "https://api.weixin.qq.com/cgi-bin/media/uploadimg"
+	MaterialAddURL     = "https://api.weixin.qq.com/cgi-bin/material/add_material"
+	MaterialDeleteURL  = "https://api.weixin.qq.com/cgi-bin/material/del_material"
 )

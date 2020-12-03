@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io"
 
@@ -68,8 +67,8 @@ func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...wx.HTT
 
 	r := gjson.ParseBytes(resp)
 
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
+	if code := r.Get("errcode").Int(); code != 0 {
+		return nil, fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
 	token := new(AuthToken)
@@ -91,8 +90,8 @@ func (oa *OA) RefreshAuthToken(ctx context.Context, refreshToken string, options
 
 	r := gjson.ParseBytes(resp)
 
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
+	if code := r.Get("errcode").Int(); code != 0 {
+		return nil, fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
 	token := new(AuthToken)
@@ -114,8 +113,8 @@ func (oa *OA) AccessToken(ctx context.Context, options ...wx.HTTPOption) (*Acces
 
 	r := gjson.ParseBytes(resp)
 
-	if r.Get("errcode").Int() != 0 {
-		return nil, errors.New(r.Get("errmsg").String())
+	if code := r.Get("errcode").Int(); code != 0 {
+		return nil, fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
 	token := new(AccessToken)
@@ -149,8 +148,8 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 
 	r := gjson.ParseBytes(resp)
 
-	if r.Get("errcode").Int() != 0 {
-		return errors.New(r.Get("errmsg").String())
+	if code := r.Get("errcode").Int(); code != 0 {
+		return fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
 	if action.Decode() == nil {
