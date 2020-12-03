@@ -3,7 +3,6 @@ package mp
 import (
 	"context"
 	"crypto/rand"
-	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -11,8 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"sort"
-	"strings"
 
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
@@ -170,26 +167,14 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 
 // VerifyServer 验证消息来自微信服务器（若验证成功，请原样返回echostr参数内容）
 func (mp *MP) VerifyServer(signature, timestamp, nonce string) bool {
-	signItems := []string{mp.token, timestamp, nonce}
-
-	sort.Strings(signItems)
-
-	h := sha1.New()
-	h.Write([]byte(strings.Join(signItems, "")))
-	signStr := hex.EncodeToString(h.Sum(nil))
+	signStr := event.SignWithSHA1(mp.token, timestamp, nonce)
 
 	return signStr == signature
 }
 
 // VerifyEvent 验证事件签名（注意：务必使用 msg_signature）
 func (mp *MP) VerifyEvent(msgSignature, timestamp, nonce, msgEncrypt string) bool {
-	signItems := []string{mp.token, timestamp, nonce, msgEncrypt}
-
-	sort.Strings(signItems)
-
-	h := sha1.New()
-	h.Write([]byte(strings.Join(signItems, "")))
-	signStr := hex.EncodeToString(h.Sum(nil))
+	signStr := event.SignWithSHA1(mp.token, timestamp, nonce, msgEncrypt)
 
 	return signStr == msgSignature
 }

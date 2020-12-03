@@ -2,7 +2,6 @@ package mp
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -20,9 +19,7 @@ var (
 
 // ImageSecCheck 校验一张图片是否含有违法违规内容
 func ImageSecCheck(filename string) wx.Action {
-	return wx.NewOpenUploadAPI(ImageSecCheckURL, url.Values{}, wx.NewUploadBody("media", filename, func() ([]byte, error) {
-		return ioutil.ReadFile(filename)
-	}), nil)
+	return wx.NewOpenUploadAPI(ImageSecCheckURL, url.Values{}, wx.NewUploadBody("media", filename, nil), nil)
 }
 
 // MediaCheckAsyncResult 异步校验结果

@@ -1,6 +1,12 @@
 package event
 
-import "encoding/xml"
+import (
+	"crypto/sha1"
+	"encoding/hex"
+	"encoding/xml"
+	"sort"
+	"strings"
+)
 
 // MessageType 消息类型
 type MessageType string
@@ -76,4 +82,17 @@ type EncryptMessage struct {
 	XMLName    xml.Name `xml:"xml"`
 	ToUserName string   `xml:"ToUserName"`
 	Encrypt    string   `xml:"Encrypt"`
+}
+
+// SignWithSHA1 事件消息sha1签名
+func SignWithSHA1(token string, items ...string) string {
+	items = append(items, token)
+
+	sort.Strings(items)
+
+	h := sha1.New()
+
+	h.Write([]byte(strings.Join(items, "")))
+
+	return hex.EncodeToString(h.Sum(nil))
 }
