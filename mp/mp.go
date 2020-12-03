@@ -164,22 +164,17 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 	return action.Decode()(resp)
 }
 
-// VerifyServer 验证消息来自微信服务器（若验证成功，请原样返回echostr参数内容）
-func (mp *MP) VerifyServer(signature, timestamp, nonce string) bool {
-	signStr := event.SignWithSHA1(mp.token, timestamp, nonce)
+// VerifyEventSign 验证消息事件签名
+// 验证消息来自微信服务器（signature、timestamp、nonce；若验证成功，请原样返回echostr参数内容）
+// 验证事件消息签名（msg_signature、timestamp、nonce、msg_encrypt）
+func (mp *MP) VerifyEventSign(signature string, items ...string) bool {
+	signStr := event.SignWithSHA1(mp.token, items...)
 
 	return signStr == signature
 }
 
-// VerifyEvent 验证事件签名（注意：务必使用 msg_signature）
-func (mp *MP) VerifyEvent(msgSignature, timestamp, nonce, msgEncrypt string) bool {
-	signStr := event.SignWithSHA1(mp.token, timestamp, nonce, msgEncrypt)
-
-	return signStr == msgSignature
-}
-
-// DecryptEvent 事件消息解密
-func (mp *MP) DecryptEvent(msgEncrypt string) (*event.EventMessage, error) {
+// DecryptEventMessage 事件消息解密
+func (mp *MP) DecryptEventMessage(msgEncrypt string) (*event.EventMessage, error) {
 	b, err := event.Decrypt(mp.appid, mp.encodingAESKey, msgEncrypt)
 
 	if err != nil {
