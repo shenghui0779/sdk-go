@@ -67,14 +67,14 @@ type MenuMatchRule struct {
 	Language           string `json:"language,omitempty"`
 }
 
-// CreateMenu 自定义菜单
+// CreateMenu 创建自定义菜单
 func CreateMenu(buttons ...*MenuButton) wx.Action {
 	return wx.NewOpenPostAPI(MenuCreateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(wx.X{"button": buttons})
 	}), nil)
 }
 
-// CreateConditionalMenu 个性化菜单
+// CreateConditionalMenu 创建个性化菜单
 func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.Action {
 	return wx.NewOpenPostAPI(MenuAddConditionalURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(wx.X{

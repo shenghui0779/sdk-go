@@ -8,10 +8,10 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// MaxSubscriberListCount 公众号订阅者列表的最大数目
+// MaxSubscriberListCount 关注列表的最大数目
 const MaxSubscriberListCount = 10000
 
-// SubscriberInfo 微信公众号订阅者信息
+// SubscriberInfo 关注用户信息
 type SubscriberInfo struct {
 	Subscribe      int     `json:"subscribe"`
 	OpenID         string  `json:"openid"`
@@ -32,7 +32,7 @@ type SubscriberInfo struct {
 	QRSceneStr     string  `json:"qr_scene_str"`
 }
 
-// SubscriberList 微信公众号订阅者列表
+// SubscriberList 关注列表
 type SubscriberList struct {
 	Total      int                `json:"total"`
 	Count      int                `json:"count"`
@@ -40,12 +40,12 @@ type SubscriberList struct {
 	NextOpenID string             `json:"next_openid"`
 }
 
-// SubscriberListData 微信公众号订阅者列表数据
+// SubscriberListData 关注列表数据
 type SubscriberListData struct {
 	OpenID []string `json:"openid"`
 }
 
-// GetSubscriberInfo 获取微信公众号订阅者信息
+// GetSubscriberInfo 获取关注用户信息
 func GetSubscriberInfo(dest *SubscriberInfo, openid string) wx.Action {
 	query := url.Values{}
 
@@ -57,8 +57,8 @@ func GetSubscriberInfo(dest *SubscriberInfo, openid string) wx.Action {
 	})
 }
 
-// BatchGetSubscriberInfo 批量获取微信公众号订阅者信息
-func BatchGetSubscriberInfo(dest *[]SubscriberInfo, openids ...string) wx.Action {
+// BatchGetSubscribers 批量关注用户信息
+func BatchGetSubscribers(dest *[]SubscriberInfo, openids ...string) wx.Action {
 	return wx.NewOpenPostAPI(SubscriberBatchGetURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		userList := make([]map[string]string, 0, len(openids))
 
@@ -77,7 +77,7 @@ func BatchGetSubscriberInfo(dest *[]SubscriberInfo, openids ...string) wx.Action
 	})
 }
 
-// GetSubscriberList 获取微信公众号订阅者列表
+// GetSubscriberList 获取关注用户列表
 func GetSubscriberList(dest *SubscriberList, nextOpenID ...string) wx.Action {
 	query := url.Values{}
 
@@ -107,8 +107,8 @@ func GetBlackList(dest *SubscriberList, beginOpenID ...string) wx.Action {
 	})
 }
 
-// BatchBlackList 拉黑用户
-func BatchBlackList(openids ...string) wx.Action {
+// BlackSubscribers 拉黑用户
+func BlackSubscribers(openids ...string) wx.Action {
 	return wx.NewOpenPostAPI(BatchBlackListURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(wx.X{
 			"openid_list": openids,
@@ -116,8 +116,8 @@ func BatchBlackList(openids ...string) wx.Action {
 	}), nil)
 }
 
-// BatchUnBlackList 取消拉黑用户
-func BatchUnBlackList(openids ...string) wx.Action {
+// UnBlackSubscriber 取消拉黑用户
+func UnBlackSubscribers(openids ...string) wx.Action {
 	return wx.NewOpenPostAPI(BatchUnBlackListURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(wx.X{
 			"openid_list": openids,

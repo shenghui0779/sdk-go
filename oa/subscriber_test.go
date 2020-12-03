@@ -103,7 +103,7 @@ func TestBatchGetSubscriberInfo(t *testing.T) {
 
 	dest := make([]SubscriberInfo, 0)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetSubscriberInfo(&dest, "otvxTs4dckWG7imySrJd6jSi0CWE", "otvxTs_JZ6SEiP0imdhpi50fuSZg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetSubscribers(&dest, "otvxTs4dckWG7imySrJd6jSi0CWE", "otvxTs_JZ6SEiP0imdhpi50fuSZg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, []SubscriberInfo{
@@ -203,7 +203,7 @@ func TestGetBlackList(t *testing.T) {
 	}, dest)
 }
 
-func TestBatchBlackList(t *testing.T) {
+func TestBlackSubscribers(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -214,12 +214,12 @@ func TestBatchBlackList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchBlackList("OPENID1", "OPENID2"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BlackSubscribers("OPENID1", "OPENID2"))
 
 	assert.Nil(t, err)
 }
 
-func TestBatchUnBlackList(t *testing.T) {
+func TestUnBlackSubscribers(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -230,7 +230,7 @@ func TestBatchUnBlackList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchUnBlackList("OPENID1", "OPENID2"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UnBlackSubscribers("OPENID1", "OPENID2"))
 
 	assert.Nil(t, err)
 }

@@ -136,7 +136,7 @@ func (r *Transfer2KFReply) Bytes(from, to string) ([]byte, error) {
 	return xml.Marshal(r)
 }
 
-// NewTextReply returns text reply
+// NewTextReply 回复文本消息
 func NewTextReply(content string) event.Reply {
 	r := &TextReply{
 		ReplyHeader: ReplyHeader{
@@ -150,7 +150,7 @@ func NewTextReply(content string) event.Reply {
 	return r
 }
 
-// NewImageReply returns image reply
+// NewImageReply 回复图片消息
 func NewImageReply(mediaID string) event.Reply {
 	r := &ImageReply{
 		ReplyHeader: ReplyHeader{
@@ -164,7 +164,7 @@ func NewImageReply(mediaID string) event.Reply {
 	return r
 }
 
-// NewVoiceReply returns voice reply
+// NewVoiceReply 回复语音消息
 func NewVoiceReply(mediaID string) event.Reply {
 	r := &VoiceReply{
 		ReplyHeader: ReplyHeader{
@@ -178,7 +178,7 @@ func NewVoiceReply(mediaID string) event.Reply {
 	return r
 }
 
-// NewVideoReply returns video reply
+// NewVideoReply 回复视频消息
 func NewVideoReply(mediaID, title, desc string) event.Reply {
 	r := &VideoReply{
 		ReplyHeader: ReplyHeader{
@@ -194,8 +194,8 @@ func NewVideoReply(mediaID, title, desc string) event.Reply {
 	return r
 }
 
-// NewMusicReply returns music reply
-func NewMusicReply(mediaID, title, desc, url, HQUrl string) event.Reply {
+// NewMusicReply 回复音乐消息
+func NewMusicReply(thumbMediaID, title, desc, musicURL, HQMusicURL string) event.Reply {
 	r := &MusicReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
@@ -205,15 +205,15 @@ func NewMusicReply(mediaID, title, desc, url, HQUrl string) event.Reply {
 
 	r.Music.Title = wx.CDATA(title)
 	r.Music.Description = wx.CDATA(desc)
-	r.Music.MusicURL = wx.CDATA(url)
-	r.Music.HQMusicURL = wx.CDATA(HQUrl)
-	r.Music.ThumbMediaID = wx.CDATA(mediaID)
+	r.Music.MusicURL = wx.CDATA(musicURL)
+	r.Music.HQMusicURL = wx.CDATA(HQMusicURL)
+	r.Music.ThumbMediaID = wx.CDATA(thumbMediaID)
 
 	return r
 }
 
-// NewArticleReply returns article reply
-func NewArticleReply(count int, articles ...Article) event.Reply {
+// NewNewsReply 回复图文消息
+func NewNewsReply(count int, articles ...Article) event.Reply {
 	r := &NewsReply{
 		ReplyHeader: ReplyHeader{
 			CreateTime: time.Now().Unix(),
@@ -227,7 +227,7 @@ func NewArticleReply(count int, articles ...Article) event.Reply {
 	return r
 }
 
-// NewTransfer2KFReply returns transfer to kf reply
+// NewTransfer2KFReply 回复客服消息
 func NewTransfer2KFReply(kfAccount ...string) event.Reply {
 	r := &Transfer2KFReply{
 		ReplyHeader: ReplyHeader{

@@ -26,7 +26,7 @@ type MediaUploadResult struct {
 	CreatedAt int64  `json:"created_at"`
 }
 
-// UploadMedia 上传临时素材到微信服务器
+// UploadMedia 上传临时素材
 func UploadMedia(dest *MediaUploadResult, mediaType MediaType, filename string) wx.Action {
 	query := url.Values{}
 

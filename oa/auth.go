@@ -22,7 +22,7 @@ type AccessToken struct {
 	ExpiresIn int64  `json:"expires_in"`
 }
 
-// CheckAuthToken 校验网页授权AccessToken是否有效
+// CheckAuthToken 检验授权凭证（access_token）是否有效
 func CheckAuthToken(openid string) wx.Action {
 	query := url.Values{}
 
@@ -31,7 +31,7 @@ func CheckAuthToken(openid string) wx.Action {
 	return wx.NewOpenGetAPI(SnsCheckAccessTokenURL, query, nil)
 }
 
-// AuthUser 授权微信用户信息
+// AuthUser 授权用户信息
 type AuthUser struct {
 	OpenID     string   `json:"openid"`
 	UnionID    string   `json:"unionid"`
@@ -44,7 +44,7 @@ type AuthUser struct {
 	Privilege  []string `json:"privilege"`
 }
 
-// GetAuthUser 获取授权微信用户信息（注意：使用网页授权的access_token）
+// GetAuthUser 获取授权用户信息（注意：使用网页授权的access_token）
 func GetAuthUser(dest *AuthUser, openid string) wx.Action {
 	query := url.Values{}
 
