@@ -22,7 +22,9 @@ go get github.com/shenghui0779/gochat
 ## 文档
 
 - [API Reference](https://pkg.go.dev/github.com/shenghui0779/gochat)
-- [Wiki](https://github.com/shenghui0779/gochat/wiki)
+- [支付](https://github.com/shenghui0779/gochat/wiki/支付)
+- [公众号](https://github.com/shenghui0779/gochat/wiki/公众号)
+- [小程序](https://github.com/shenghui0779/gochat/wiki/小程序)
 
 ## 说明
 
