@@ -21,7 +21,7 @@ wxmp.SetServerConfig(token, encodingAESKey)
 wxmp.Code2Session(ctx, code)
 
 // 解密授权信息
-wxmp.DecryptAuthInfo(session_key, iv, encrypted_data, dest)
+wxmp.DecryptAuthInfo(dest, session_key, iv, encrypted_data)
 ```
 
 ### 接口调用凭据
@@ -36,9 +36,9 @@ wxmp.AccessToken(ctx)
 ```go
 // 用户支付完成后，获取该用户的 UnionId，无需用户授权
 // 微信支付订单号
-wxmp.Do(ctx, access_token, mp.GetPaidUnionIDByTransactionID(openid, transactionID, dest))
+wxmp.Do(ctx, access_token, mp.GetPaidUnionIDByTransactionID(dest, openid, transactionID))
 // 微信支付商户订单号和微信支付商户号
-wxmp.Do(ctx, access_token, mp.GetPaidUnionIDByOutTradeNO(openid, mchid, outTradeNO, dest))
+wxmp.Do(ctx, access_token, mp.GetPaidUnionIDByOutTradeNO(dest, openid, mchid, outTradeNO))
 ```
 
 ### 消息
@@ -76,7 +76,7 @@ wxmp.Do(ctx, access_token, mp.SetTyping(openid, msg))
 wxmp.Do(ctx, access_token, mp.ApplyPlugin(pluginAppID, reason))
 
 // 获取当前所有插件使用方（供插件开发者调用）
-wxmp.Do(ctx, access_token, mp.GetPluginDevApplyList(page, num, dest))
+wxmp.Do(ctx, access_token, mp.GetPluginDevApplyList(dest, page, num))
 
 // 查询已添加的插件
 wxmp.Do(ctx, access_token, mp.GetPluginList(dest))
@@ -92,13 +92,13 @@ wxmp.Do(ctx, access_token, mp.UnbindPlugin(pluginAppID))
 
 ```go
 // 创建小程序二维码（数量有限）
-wxmp.Do(ctx, access_token, mp.CreateQRCode(path, dest, options...))
+wxmp.Do(ctx, access_token, mp.CreateQRCode(dest, path, options...))
 
 // 获取小程序二维码（数量有限）
-wxmp.Do(ctx, access_token, mp.GetQRCode(path, dest, options...))
+wxmp.Do(ctx, access_token, mp.GetQRCode(dest, path, options...))
 
 // 获取小程序二维码（数量不限）
-wxmp.Do(ctx, access_token, mp.GetUnlimitQRCode(scene, dest, options...))
+wxmp.Do(ctx, access_token, mp.GetUnlimitQRCode(dest, scene, options...))
 ```
 
 ### 内容安全
@@ -108,7 +108,7 @@ wxmp.Do(ctx, access_token, mp.GetUnlimitQRCode(scene, dest, options...))
 wxmp.Do(ctx, access_token, mp.ImageSecCheck(filename))
 
 // 异步校验图片/音频是否含有违法违规内容
-wxmp.Do(ctx, access_token, mp.MediaSecCheckAsync(mediaType, mediaURL, dest))
+wxmp.Do(ctx, access_token, mp.MediaSecCheckAsync(dest, mediaType, mediaURL))
 
 // 检查一段文本是否含有违法违规内容
 wxmp.Do(ctx, access_token, mp.MsgSecCheck(content))
@@ -118,54 +118,54 @@ wxmp.Do(ctx, access_token, mp.MsgSecCheck(content))
 
 ```go
 // 图片智能裁切
-wxmp.Do(ctx, access_token, mp.AICrop(filename, dest))
-wxmp.Do(ctx, access_token, mp.AICropByURL(imgURL, dest))
+wxmp.Do(ctx, access_token, mp.AICrop(dest, filename))
+wxmp.Do(ctx, access_token, mp.AICropByURL(dest, imgURL))
 
 // 条码/二维码识别
-wxmp.Do(ctx, access_token, mp.ScanQRCode(filename, dest))
-wxmp.Do(ctx, access_token, mp.ScanQRCodeByURL(imgURL, dest))
+wxmp.Do(ctx, access_token, mp.ScanQRCode(dest, filename))
+wxmp.Do(ctx, access_token, mp.ScanQRCodeByURL(dest, imgURL))
 
 // 图片高清化
-wxmp.Do(ctx, access_token, mp.SuperreSolution(filename, dest))
-wxmp.Do(ctx, access_token, mp.SuperreSolutionByURL(imgURL, dest))
+wxmp.Do(ctx, access_token, mp.SuperreSolution(dest, filename))
+wxmp.Do(ctx, access_token, mp.SuperreSolutionByURL(dest, imgURL))
 ```
 
 ### OCR
 
 ```go
 // 银行卡识别
-wxmp.Do(ctx, access_token, mp.OCRBankCard(mode, filename, dest))
-wxmp.Do(ctx, access_token, mp.OCRBankCardByURL(mode, imgURL, dest))
+wxmp.Do(ctx, access_token, mp.OCRBankCard(dest, mode, filename))
+wxmp.Do(ctx, access_token, mp.OCRBankCardByURL(dest, mode, imgURL))
 
 // 营业执照识别
-wxmp.Do(ctx, access_token, mp.OCRBusinessLicense(mode, filename, dest))
-wxmp.Do(ctx, access_token, mp.OCRBusinessLicenseByURL(mode, imgURL, dest))
+wxmp.Do(ctx, access_token, mp.OCRBusinessLicense(dest, mode, filename))
+wxmp.Do(ctx, access_token, mp.OCRBusinessLicenseByURL(dest, mode, imgURL))
 
 // 身份证前面识别
-wxmp.Do(ctx, access_token, mp.OCRIDCardFront(mode, filename, dest))
-wxmp.Do(ctx, access_token, mp.OCRIDCardFrontByURL(mode, imgURL, dest))
+wxmp.Do(ctx, access_token, mp.OCRIDCardFront(dest, mode, filename))
+wxmp.Do(ctx, access_token, mp.OCRIDCardFrontByURL(dest, mode, imgURL))
 
 // 身份证背面识别
-wxmp.Do(ctx, access_token, mp.OCRIDCardBack(mode, filename, dest))
-wxmp.Do(ctx, access_token, mp.OCRIDCardBackByURL(mode, imgURL, dest))
+wxmp.Do(ctx, access_token, mp.OCRIDCardBack(dest, mode, filename))
+wxmp.Do(ctx, access_token, mp.OCRIDCardBackByURL(dest, mode, imgURL))
 
 // 通用印刷体识别
-wxmp.Do(ctx, access_token, mp.OCRPrintedText(mode, filename, dest))
-wxmp.Do(ctx, access_token, mp.OCRPrintedTextByURL(mode, imgURL, dest))
+wxmp.Do(ctx, access_token, mp.OCRPrintedText(dest, mode, filename))
+wxmp.Do(ctx, access_token, mp.OCRPrintedTextByURL(dest, mode, imgURL))
 
 // 行驶证识别
-wxmp.Do(ctx, access_token, mp.OCRVehicleLicense(mode, filename, dest))
-wxmp.Do(ctx, access_token, mp.OCRVehicleLicenseByURL(mode, imgURL, dest))
+wxmp.Do(ctx, access_token, mp.OCRVehicleLicense(dest, mode, filename))
+wxmp.Do(ctx, access_token, mp.OCRVehicleLicenseByURL(dest, mode, imgURL))
 ```
 
 ### 临时素材
 
 ```go
 // 上传临时素材到微信服务器
-wxmp.Do(ctx, access_token, mp.UploadMedia(mediaType, filename, dest))
+wxmp.Do(ctx, access_token, mp.UploadMedia(dest, mediaType, filename))
 
 // 获取客服消息内的临时素材
-wxmp.Do(ctx, access_token, mp.GetMedia(mediaID, dest))
+wxmp.Do(ctx, access_token, mp.GetMedia(dest, mediaID))
 ```
 
 ### 消息事件
@@ -182,11 +182,11 @@ wxmp.DecryptEventMessage(msg_encrypt)
 
 ```go
 // 调用服务平台提供的服务
-wxmp.Do(ctx, access_token, mp.InvokeService(data, dest))
+wxmp.Do(ctx, access_token, mp.InvokeService(dest, data))
 
 // 生物认证秘钥签名验证
-wxmp.Do(ctx, access_token, mp.SoterVerify(sign, dest))
+wxmp.Do(ctx, access_token, mp.SoterVerify(dest, sign))
 
 // 获取用户的安全等级（无需用户授权）
-wxmp.Do(ctx, access_token, mp.GetUserRiskRank(data, dest))
+wxmp.Do(ctx, access_token, mp.GetUserRiskRank(dest, data))
 ```

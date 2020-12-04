@@ -1,4 +1,4 @@
-# 微信公众号（Official Accounts
+# 微信公众号（Official Accounts）
 
 ```go
 "github.com/shenghui0779/gochat"

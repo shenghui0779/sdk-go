@@ -93,7 +93,7 @@ func (mp *MP) AccessToken(ctx context.Context, options ...wx.HTTPOption) (*Acces
 }
 
 // DecryptAuthInfo 解密授权信息
-func (mp *MP) DecryptAuthInfo(sessionKey, iv, encryptedData string, dest AuthInfo) error {
+func (mp *MP) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData string) error {
 	key, err := base64.StdEncoding.DecodeString(sessionKey)
 
 	if err != nil {
