@@ -410,7 +410,7 @@ func TestPappayApply(t *testing.T) {
 	mch.client = client
 	mch.tlsClient = client
 
-	r, err := mch.Do(context.TODO(), PappayApply(&PappayApplyData{
+	r, err := mch.Do(context.TODO(), PappayApply(&PappayData{
 		OutTradeNO:     "217752501201407033233368018",
 		TotalFee:       888,
 		SpbillCreateIP: "8.8.8.8",

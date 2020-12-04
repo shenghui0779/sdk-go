@@ -52,8 +52,8 @@ type ContractOrder struct {
 	OpenID     string // trade_type=JSAPI，此参数必传，用户在商户appid下的唯一标识
 }
 
-// PappayApplyData 扣款申请数据
-type PappayApplyData struct {
+// PappayData 扣款数据
+type PappayData struct {
 	// 必填参数
 	OutTradeNO     string // 商户系统内部的订单号，32个字符内、可包含字母，其他说明见商户订单号
 	TotalFee       int    // 订单总金额，单位为分，详见支付金额
@@ -285,7 +285,7 @@ func QueryContractByCode(planID, contractCode string) wx.Action {
 }
 
 // PappayApply 申请扣款
-func PappayApply(data *PappayApplyData) wx.Action {
+func PappayApply(data *PappayData) wx.Action {
 	return wx.NewMchAPI(PappayApplyURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"appid":            appid,
