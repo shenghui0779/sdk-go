@@ -182,7 +182,7 @@ func H5Entrust(c *Contract) wx.Action {
 	}, false)
 }
 
-// EntrustByOrder 支付中签约下单
+// EntrustByOrder 支付中签约
 func EntrustByOrder(order *ContractOrder) wx.Action {
 	return wx.NewMchAPI(PappayContractOrderURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
