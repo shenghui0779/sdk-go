@@ -96,7 +96,7 @@ func NewUploadBody(fieldname, filename string, description X) *HTTPBody {
 		filename:    filename,
 		description: description,
 		bytes: func() ([]byte, error) {
-			path, err := filepath.Abs(fieldname)
+			path, err := filepath.Abs(filename)
 
 			if err != nil {
 				return nil, err
