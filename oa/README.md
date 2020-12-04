@@ -112,10 +112,10 @@ wxoa.Do(ctx, access_token, oa.GetSubscriberList(dest, next_openid)
 wxoa.Do(ctx, access_token, oa.GetBlackList(dest, begin_openid)
 
 // 拉黑用户
-wxoa.Do(ctx, access_token, oa.BlackSubscriber(openids...))
+wxoa.Do(ctx, access_token, oa.BlackSubscribers(openids...))
 
 // 取消拉黑用户
-wxoa.Do(ctx, access_token, oa.UnBlackSubscriber(openids...))
+wxoa.Do(ctx, access_token, oa.UnBlackSubscribers(openids...))
 
 // 设置用户备注名（该接口暂时开放给微信认证的服务号）
 wxoa.Do(ctx, access_token, oa.SetUserRemark(openid, remark))
