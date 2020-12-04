@@ -85,7 +85,7 @@ wxpay.Do(ctx, mch.QueryContractByID(contractID))
 wxpay.Do(ctx, mch.QueryContractByCode(planID, contractCode))
 
 // 申请扣款
-wxpay.Do(ctx, mch.PappayApply(applyData))
+wxpay.Do(ctx, mch.PappayApply(pappayData))
 
 // 根据微信订单号查询
 wxpay.Do(ctx, mch.QueryPappayByTransactionID(transactionID))
