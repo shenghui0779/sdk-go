@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/tls"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/pem"
 	"errors"
@@ -272,6 +273,28 @@ func (mch *Mch) VerifyWXMLResult(m wx.WXML) error {
 	}
 
 	return nil
+}
+
+// DecryptWithAES256ECB AES-256-ECB解密（主要用于退款结果通知）
+func (mch *Mch) DecryptWithAES256ECB(encrypt string) (wx.WXML, error) {
+	cipherText, err := base64.StdEncoding.DecodeString(encrypt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	h := md5.New()
+	h.Write([]byte(mch.apikey))
+
+	ecb := wx.NewECBCrypto([]byte(hex.EncodeToString(h.Sum(nil))))
+
+	plainText, err := ecb.Decrypt(cipherText, wx.PKCS7)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return wx.ParseXML2Map(plainText)
 }
 
 func (mch *Mch) pkcs12ToPem(p12 []byte) (tls.Certificate, error) {

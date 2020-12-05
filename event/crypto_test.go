@@ -2,9 +2,9 @@ package event
 
 import (
 	"encoding/base64"
-	"encoding/xml"
 	"testing"
 
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,19 +20,15 @@ func TestCrypto(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	msg := new(EventMessage)
+	msg, err := wx.ParseXML2Map(pb)
 
-	assert.Nil(t, xml.Unmarshal(pb, msg))
-	assert.Equal(t, &EventMessage{
-		XMLName: xml.Name{
-			Space: "",
-			Local: "xml",
-		},
-		ToUserName:   "gh_3ad31c0ba9b5",
-		FromUserName: "oB4tA6ANthOfuQ5XSlkdPsWOVUsY",
-		CreateTime:   1606902602,
-		MsgType:      MessageText,
-		MsgID:        10086,
-		Content:      "ILoveGochat",
+	assert.Nil(t, err)
+	assert.Equal(t, wx.WXML{
+		"ToUserName":   "gh_3ad31c0ba9b5",
+		"FromUserName": "oB4tA6ANthOfuQ5XSlkdPsWOVUsY",
+		"CreateTime":   "1606902602",
+		"MsgType":      "text",
+		"MsgId":        "10086",
+		"Content":      "ILoveGochat",
 	}, msg)
 }

@@ -11,32 +11,34 @@ import (
 	"errors"
 )
 
-// AESPaddingMode aes padding mode
-type AESPaddingMode string
+// PaddingMode aes padding mode
+type PaddingMode string
 
 const (
+	// ZERO zero padding mode
+	ZERO PaddingMode = "ZERO"
 	// PKCS5 PKCS#5 padding mode
-	PKCS5 AESPaddingMode = "PKCS#5"
+	PKCS5 PaddingMode = "PKCS#5"
 	// PKCS7 PKCS#7 padding mode
-	PKCS7 AESPaddingMode = "PKCS#7"
+	PKCS7 PaddingMode = "PKCS#7"
 )
 
-// AESCBCCrypto aes-cbc crypto
-type AESCBCCrypto struct {
+// CBCCrypto aes-cbc crypto
+type CBCCrypto struct {
 	key []byte
 	iv  []byte
 }
 
-// NewAESCBCCrypto returns new aes-cbc crypto
-func NewAESCBCCrypto(key, iv []byte) *AESCBCCrypto {
-	return &AESCBCCrypto{
+// NewCBCCrypto returns new aes-cbc crypto
+func NewCBCCrypto(key, iv []byte) *CBCCrypto {
+	return &CBCCrypto{
 		key: key,
 		iv:  iv,
 	}
 }
 
-// Encrypt aes-cbc encrypt with PKCS#7 padding
-func (c *AESCBCCrypto) Encrypt(plainText []byte, mode AESPaddingMode) ([]byte, error) {
+// Encrypt aes-cbc encrypt
+func (c *CBCCrypto) Encrypt(plainText []byte, mode PaddingMode) ([]byte, error) {
 	block, err := aes.NewCipher(c.key)
 
 	if err != nil {
@@ -48,10 +50,12 @@ func (c *AESCBCCrypto) Encrypt(plainText []byte, mode AESPaddingMode) ([]byte, e
 	}
 
 	switch mode {
+	case ZERO:
+		plainText = ZeroPadding(plainText, block.BlockSize())
 	case PKCS5:
-		plainText = c.padding(plainText, block.BlockSize())
+		plainText = PKCS5Padding(plainText, block.BlockSize())
 	case PKCS7:
-		plainText = c.padding(plainText, len(c.key))
+		plainText = PKCS5Padding(plainText, len(c.key))
 	}
 
 	cipherText := make([]byte, len(plainText))
@@ -62,8 +66,8 @@ func (c *AESCBCCrypto) Encrypt(plainText []byte, mode AESPaddingMode) ([]byte, e
 	return cipherText, nil
 }
 
-// Decrypt aes-cbc decrypt with PKCS#7 padding
-func (c *AESCBCCrypto) Decrypt(cipherText []byte, mode AESPaddingMode) ([]byte, error) {
+// Decrypt aes-cbc decrypt
+func (c *CBCCrypto) Decrypt(cipherText []byte, mode PaddingMode) ([]byte, error) {
 	block, err := aes.NewCipher(c.key)
 
 	if err != nil {
@@ -80,36 +84,75 @@ func (c *AESCBCCrypto) Decrypt(cipherText []byte, mode AESPaddingMode) ([]byte, 
 	blockMode.CryptBlocks(plainText, cipherText)
 
 	switch mode {
+	case ZERO:
+		plainText = ZeroUnPadding(plainText)
 	case PKCS5:
-		plainText = c.unpadding(plainText, block.BlockSize())
+		plainText = PKCS5Unpadding(plainText, block.BlockSize())
 	case PKCS7:
-		plainText = c.unpadding(plainText, len(c.key))
+		plainText = PKCS5Unpadding(plainText, len(c.key))
 	}
 
 	return plainText, nil
 }
 
-func (c *AESCBCCrypto) padding(cipherText []byte, blockSize int) []byte {
-	padding := blockSize - len(cipherText)%blockSize
-
-	if padding == 0 {
-		padding = blockSize
-	}
-
-	padText := bytes.Repeat([]byte{byte(padding)}, padding)
-
-	return append(cipherText, padText...)
+// ECBCrypto aes-ecb crypto
+type ECBCrypto struct {
+	key []byte
 }
 
-func (c *AESCBCCrypto) unpadding(plainText []byte, blockSize int) []byte {
-	l := len(plainText)
-	unpadding := int(plainText[l-1])
+// NewECBCrypto returns new aes-ecb crypto
+func NewECBCrypto(key []byte) *ECBCrypto {
+	return &ECBCrypto{key: key}
+}
 
-	if unpadding < 1 || unpadding > blockSize {
-		unpadding = 0
+// Encrypt aes-ecb encrypt
+func (c *ECBCrypto) Encrypt(plainText []byte, mode PaddingMode) ([]byte, error) {
+	block, err := aes.NewCipher(c.key)
+
+	if err != nil {
+		return nil, err
 	}
 
-	return plainText[:(l - unpadding)]
+	switch mode {
+	case ZERO:
+		plainText = ZeroPadding(plainText, block.BlockSize())
+	case PKCS5:
+		plainText = PKCS5Padding(plainText, block.BlockSize())
+	case PKCS7:
+		plainText = PKCS5Padding(plainText, len(c.key))
+	}
+
+	cipherText := make([]byte, len(plainText))
+
+	blockMode := NewECBEncrypter(block)
+	blockMode.CryptBlocks(cipherText, plainText)
+
+	return cipherText, nil
+}
+
+// Decrypt aes-ecb decrypt
+func (c *ECBCrypto) Decrypt(cipherText []byte, mode PaddingMode) ([]byte, error) {
+	block, err := aes.NewCipher(c.key)
+
+	if err != nil {
+		return nil, err
+	}
+
+	plainText := make([]byte, len(cipherText))
+
+	blockMode := NewECBDecrypter(block)
+	blockMode.CryptBlocks(plainText, cipherText)
+
+	switch mode {
+	case ZERO:
+		plainText = ZeroUnPadding(plainText)
+	case PKCS5:
+		plainText = PKCS5Unpadding(plainText, block.BlockSize())
+	case PKCS7:
+		plainText = PKCS5Unpadding(plainText, len(c.key))
+	}
+
+	return plainText, nil
 }
 
 // RSAEncrypt rsa encryption with public key
@@ -150,4 +193,105 @@ func RSADecrypt(cipherText, privateKey []byte) ([]byte, error) {
 	}
 
 	return rsa.DecryptPKCS1v15(rand.Reader, key, cipherText)
+}
+
+func ZeroPadding(cipherText []byte, blockSize int) []byte {
+	padding := blockSize - len(cipherText)%blockSize
+	padText := bytes.Repeat([]byte{0}, padding)
+
+	return append(cipherText, padText...)
+}
+
+func ZeroUnPadding(plainText []byte) []byte {
+	return bytes.TrimRightFunc(plainText, func(r rune) bool {
+		return r == rune(0)
+	})
+}
+
+func PKCS5Padding(cipherText []byte, blockSize int) []byte {
+	padding := blockSize - len(cipherText)%blockSize
+
+	if padding == 0 {
+		padding = blockSize
+	}
+
+	padText := bytes.Repeat([]byte{byte(padding)}, padding)
+
+	return append(cipherText, padText...)
+}
+
+func PKCS5Unpadding(plainText []byte, blockSize int) []byte {
+	l := len(plainText)
+	unpadding := int(plainText[l-1])
+
+	if unpadding < 1 || unpadding > blockSize {
+		unpadding = 0
+	}
+
+	return plainText[:(l - unpadding)]
+}
+
+// --------- AES-256-ECB ---------
+
+type ecb struct {
+	b         cipher.Block
+	blockSize int
+}
+
+func newECB(b cipher.Block) *ecb {
+	return &ecb{
+		b:         b,
+		blockSize: b.BlockSize(),
+	}
+}
+
+type ecbEncrypter ecb
+
+// NewECBEncrypter returns a BlockMode which encrypts in electronic code book mode, using the given Block.
+func NewECBEncrypter(b cipher.Block) cipher.BlockMode {
+	return (*ecbEncrypter)(newECB(b))
+}
+
+func (x *ecbEncrypter) BlockSize() int { return x.blockSize }
+
+func (x *ecbEncrypter) CryptBlocks(dst, src []byte) {
+	if len(src)%x.blockSize != 0 {
+		panic("crypto/cipher: input not full blocks")
+	}
+
+	if len(dst) < len(src) {
+		panic("crypto/cipher: output smaller than input")
+	}
+
+	for len(src) > 0 {
+		x.b.Encrypt(dst, src[:x.blockSize])
+		src = src[x.blockSize:]
+		dst = dst[x.blockSize:]
+	}
+}
+
+type ecbDecrypter ecb
+
+// NewECBDecrypter returns a BlockMode which decrypts in electronic code book mode, using the given Block.
+func NewECBDecrypter(b cipher.Block) cipher.BlockMode {
+	return (*ecbDecrypter)(newECB(b))
+}
+
+func (x *ecbDecrypter) BlockSize() int { return x.blockSize }
+
+func (x *ecbDecrypter) CryptBlocks(dst, src []byte) {
+	if len(src)%x.blockSize != 0 {
+		panic("crypto/cipher: input not full blocks")
+	}
+
+	if len(dst) < len(src) {
+		panic("crypto/cipher: output smaller than input")
+	}
+
+	for len(src) > 0 {
+		x.b.Decrypt(dst, src[:x.blockSize])
+
+		src = src[x.blockSize:]
+		dst = dst[x.blockSize:]
+	}
 }

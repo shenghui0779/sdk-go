@@ -31,54 +31,31 @@ type EventType string
 
 // 微信支持的事件类型
 const (
-	EventSubscribe             EventType = "subscribe"             // 订阅
-	EventUnSubscribe           EventType = "unsubscribe"           // 取消订阅
-	EventScan                  EventType = "SCAN"                  // 扫码
-	EventLocation              EventType = "LOCATION"              // 上报地理位置
-	EventClick                 EventType = "CLICK"                 // 点击自定义菜单
-	EventView                  EventType = "VIEW"                  // 点击菜单跳转链接
-	EventTemplateSendJobFinish EventType = "TEMPLATESENDJOBFINISH" // 模板消息发送完成
-	EventWxaMediaCheck         EventType = "wxa_media_check"       // 校验图片/音频是否含有违法违规内容
+	EventSubscribe                EventType = "subscribe"                    // 订阅
+	EventUnSubscribe              EventType = "unsubscribe"                  // 取消订阅
+	EventScan                     EventType = "SCAN"                         // 扫码
+	EventLocation                 EventType = "LOCATION"                     // 上报地理位置
+	EventClick                    EventType = "CLICK"                        // 点击自定义菜单
+	EventView                     EventType = "VIEW"                         // 点击菜单跳转链接
+	EventTemplateSendJobFinish    EventType = "TEMPLATESENDJOBFINISH"        // 模板消息发送完成
+	EventCardPassCheck            EventType = "card_pass_check"              // 卡券通过审核
+	EventCardNotPassCheck         EventType = "card_not_pass_check"          // 卡券未通过审核
+	EventUserGetCard              EventType = "user_get_card"                // 用户领取卡券
+	EventUserGiftingCard          EventType = "user_gifting_card"            // 用户转赠卡券
+	EventUserDelCard              EventType = "user_del_card"                // 用户删除卡券
+	EventUserConsumeCard          EventType = "user_consume_card"            // 用户核销卡券
+	EventUserPayFromPayCell       EventType = "user_pay_from_pay_cell"       // 用户微信买单
+	EventUserViewCard             EventType = "user_view_card"               // 用户点击会员卡
+	EventUserEnterSessionFromCard EventType = "user_enter_session_from_card" // 用户从卡券进入公众号会话
+	EventUpdateMemberCard         EventType = "update_member_card"           // 会员卡内容更新
+	EventCardSkuRemind            EventType = "card_sku_remind"              // 库存报警
+	EventCardPayOrder             EventType = "card_pay_order"               // 券点流水详情事件
+	EventSubmitMemberCardUserInfo EventType = "submit_membercard_user_info"  // 会员卡激活
+	EventWxaMediaCheck            EventType = "wxa_media_check"              // 校验图片/音频是否含有违法违规内容
 )
 
-// EventMessage 微信公众平台事件推送消息（解密/明文模式）
+// EventMessage 微信公众平台事件推送加密消息（兼容/安全模式）
 type EventMessage struct {
-	XMLName      xml.Name    `xml:"xml"`
-	ToUserName   string      `xml:"ToUserName"`
-	FromUserName string      `xml:"FromUserName"`
-	CreateTime   int64       `xml:"CreateTime"`
-	MsgType      MessageType `xml:"MsgType"`
-	// 普通消息
-	MsgID        int64   `xml:"MsgId"`
-	Content      string  `xml:"Content"`
-	PicURL       string  `xml:"PicUrl"`
-	MediaID      string  `xml:"MediaId"`
-	Format       string  `xml:"Format"`
-	Recognition  string  `xml:"Recognition"`
-	ThumbMediaID string  `xml:"ThumbMediaId"`
-	LocationX    float64 `xml:"Location_X"`
-	LocationY    float64 `xml:"Location_Y"`
-	Scale        int     `xml:"Scale"`
-	Label        string  `xml:"Label"`
-	Title        string  `xml:"Title"`
-	Description  string  `xml:"Description"`
-	URL          string  `xml:"Url"`
-	// 事件消息
-	Event         EventType `xml:"Event"`
-	EventKey      string    `xml:"EventKey"`
-	Ticket        string    `xml:"Ticket"`
-	Latitude      float64   `xml:"Latitude"`
-	Longitude     float64   `xml:"Longitude"`
-	Precision     float64   `xml:"Precision"`
-	IsRisky       int       `xml:"isrisky"`
-	ExtraInfoJSON string    `xml:"extra_info_json"`
-	AppID         string    `xml:"app_id"`
-	TraceID       string    `xml:"trace_id"`
-	StatusCode    int       `xml:"status_code"`
-}
-
-// Message 微信公众平台事件推送加密消息（兼容/安全模式）
-type EncryptMessage struct {
 	XMLName    xml.Name `xml:"xml"`
 	ToUserName string   `xml:"ToUserName"`
 	Encrypt    string   `xml:"Encrypt"`
