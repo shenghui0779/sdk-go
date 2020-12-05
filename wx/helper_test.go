@@ -25,3 +25,10 @@ func TestWXML(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, m, r)
 }
+
+func TestUint32Bytes(t *testing.T) {
+	i := uint32(250)
+	b := EncodeUint32ToBytes(i)
+
+	assert.Equal(t, i, DecodeBytesToUint32(b))
+}
