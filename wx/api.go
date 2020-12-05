@@ -38,8 +38,8 @@ type Body interface {
 	FieldName() string
 	// FieldName returns file name for upload request
 	FileName() string
-	// Description returns file description for upload request
-	Description() X
+	// Description returns extra fields for upload request
+	ExtraFields() map[string]string
 	// Bytes returns body for post request
 	Bytes() func() ([]byte, error)
 }
@@ -64,7 +64,7 @@ type Action interface {
 type HTTPBody struct {
 	fieldname   string
 	filename    string
-	description X
+	extraFields map[string]string
 	bytes       func() ([]byte, error)
 }
 
@@ -76,8 +76,8 @@ func (h *HTTPBody) FileName() string {
 	return h.filename
 }
 
-func (h *HTTPBody) Description() X {
-	return h.description
+func (h *HTTPBody) ExtraFields() map[string]string {
+	return h.extraFields
 }
 
 func (h *HTTPBody) Bytes() func() ([]byte, error) {
@@ -90,11 +90,11 @@ func NewPostBody(f func() ([]byte, error)) *HTTPBody {
 }
 
 // NewUploadBody returns upload body
-func NewUploadBody(fieldname, filename string, description X) *HTTPBody {
+func NewUploadBody(fieldname, filename string, extraFields map[string]string) *HTTPBody {
 	return &HTTPBody{
 		fieldname:   fieldname,
 		filename:    filename,
-		description: description,
+		extraFields: extraFields,
 		bytes: func() ([]byte, error) {
 			path, err := filepath.Abs(filename)
 

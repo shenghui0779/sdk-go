@@ -1,4 +1,4 @@
-package mp
+package oa
 
 import (
 	"context"
@@ -785,4 +785,50 @@ func TestOCRVehicleLicenseByURL(t *testing.T) {
 		TotalQuality:   "2700kg",
 		PrepareQuality: "1995kg",
 	}, dest)
+}
+
+func TestOCRPlateNumber(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := wx.NewMockClient(ctrl)
+
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/platenum?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+		"errcode": 0,
+		"errmsg": "ok",
+		"number": "苏A123456"
+	}`), nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.client = client
+
+	dest := new(PlateNumber)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPlateNumber(dest, OCRPhoto, "test.jpg"))
+
+	assert.Nil(t, err)
+	assert.Equal(t, "苏A123456", dest.ID)
+}
+
+func TestOCRPlateNumberByURL(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := wx.NewMockClient(ctrl)
+
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/platenum?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
+		"errcode": 0,
+		"errmsg": "ok",
+		"number": "苏A123456"
+	}`), nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.client = client
+
+	dest := new(PlateNumber)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPlateNumberByURL(dest, OCRPhoto, "ENCODE_URL"))
+
+	assert.Nil(t, err)
+	assert.Equal(t, "苏A123456", dest.ID)
 }

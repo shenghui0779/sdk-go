@@ -74,28 +74,6 @@ wxoa.Do(ctx, access_token, oa.SendTemplateMessage(openid, msg))
 wxoa.Do(ctx, access_token, oa.SendSubscribeMessage(openid, scene, title, msg))
 ```
 
-### 素材管理
-
-```go
-// 上传临时素材
-wxoa.Do(ctx, access_token, oa.UploadMedia(dest, media_type, filename))
-
-// 新增永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
-wxoa.Do(ctx, access_token, oa.AddNews(dest, articles...))
-
-// 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
-wxoa.Do(ctx, access_token, oa.UploadNewsImage(dest, filename))
-
-// 新增其他类型永久素材（支持图片、音频、缩略图）
-wxoa.Do(ctx, access_token, oa.AddMaterial(dest, media_type, filename))
-
-// 上传视频永久素材
-wxoa.Do(ctx, access_token, oa.UploadVideo(dest, filename, title, introduction))
-
-// 删除永久素材
-wxoa.Do(ctx, access_token, oa.DeleteMaterial(media_id))
-```
-
 ### 用户管理
 
 ```go
@@ -121,6 +99,76 @@ wxoa.Do(ctx, access_token, oa.UnBlackSubscribers(openids...))
 wxoa.Do(ctx, access_token, oa.SetUserRemark(openid, remark))
 ```
 
+### 素材管理
+
+```go
+// 上传临时素材
+wxoa.Do(ctx, access_token, oa.UploadMedia(dest, media_type, filename))
+
+// 新增永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
+wxoa.Do(ctx, access_token, oa.AddNews(dest, articles...))
+
+// 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
+wxoa.Do(ctx, access_token, oa.UploadNewsImage(dest, filename))
+
+// 新增其他类型永久素材（支持图片、音频、缩略图）
+wxoa.Do(ctx, access_token, oa.AddMaterial(dest, media_type, filename))
+
+// 上传视频永久素材
+wxoa.Do(ctx, access_token, oa.UploadVideo(dest, filename, title, introduction))
+
+// 删除永久素材
+wxoa.Do(ctx, access_token, oa.DeleteMaterial(media_id))
+```
+
+### 图像处理
+
+```go
+// 图片智能裁切
+wxoa.Do(ctx, access_token, oa.AICrop(dest, filename))
+wxoa.Do(ctx, access_token, oa.AICropByURL(dest, imgURL))
+
+// 条码/二维码识别
+wxoa.Do(ctx, access_token, oa.ScanQRCode(dest, filename))
+wxoa.Do(ctx, access_token, oa.ScanQRCodeByURL(dest, imgURL))
+
+// 图片高清化
+wxoa.Do(ctx, access_token, oa.SuperreSolution(dest, filename))
+wxoa.Do(ctx, access_token, oa.SuperreSolutionByURL(dest, imgURL))
+```
+
+### OCR
+
+```go
+// 银行卡识别
+wxoa.Do(ctx, access_token, oa.OCRBankCard(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRBankCardByURL(dest, mode, imgURL))
+
+// 营业执照识别
+wxoa.Do(ctx, access_token, oa.OCRBusinessLicense(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRBusinessLicenseByURL(dest, mode, imgURL))
+
+// 身份证前面识别
+wxoa.Do(ctx, access_token, oa.OCRIDCardFront(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRIDCardFrontByURL(dest, mode, imgURL))
+
+// 身份证背面识别
+wxoa.Do(ctx, access_token, oa.OCRIDCardBack(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRIDCardBackByURL(dest, mode, imgURL))
+
+// 通用印刷体识别
+wxoa.Do(ctx, access_token, oa.OCRPrintedText(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRPrintedTextByURL(dest, mode, imgURL))
+
+// 行驶证识别
+wxoa.Do(ctx, access_token, oa.OCRVehicleLicense(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRVehicleLicenseByURL(dest, mode, imgURL))
+
+// 车牌号识别
+wxoa.Do(ctx, access_token, oa.OCRPlateNumber(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRPlateNumberByURL(dest, mode, imgURL))
+```
+
 ### JSSDK
 
 ```go
@@ -135,10 +183,10 @@ wxoa.JSSDKSign(jsapi_ticket, url)
 
 ```go
 // 验证消息事件签名
-wxmp.VerifyEventSign(signature, items...)
+wxoa.VerifyEventSign(signature, items...)
 
 // 事件消息解密
-wxmp.DecryptEventMessage(msg_encrypt)
+wxoa.DecryptEventMessage(msg_encrypt)
 ```
 
 ### 消息回复

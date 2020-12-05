@@ -244,7 +244,7 @@ func (mch *Mch) SignWithHMacSHA256(m wx.WXML, toUpper bool) string {
 	return sign
 }
 
-// VerifyWXMLResult 验证微信请求/回调通知结果
+// VerifyWXMLResult 微信请求/回调通知签名验证
 func (mch *Mch) VerifyWXMLResult(m wx.WXML) error {
 	if wxsign, ok := m["sign"]; ok {
 		signature := ""

@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io"
 
@@ -112,7 +111,7 @@ func (mp *MP) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData strin
 		return err
 	}
 
-	cbc := wx.NewAESCBCCrypto(key, ivb)
+	cbc := wx.NewCBCCrypto(key, ivb)
 
 	b, err := cbc.Decrypt(cipherText, wx.PKCS7)
 
@@ -174,18 +173,12 @@ func (mp *MP) VerifyEventSign(signature string, items ...string) bool {
 }
 
 // DecryptEventMessage 事件消息解密
-func (mp *MP) DecryptEventMessage(msgEncrypt string) (*event.EventMessage, error) {
-	b, err := event.Decrypt(mp.appid, mp.encodingAESKey, msgEncrypt)
+func (mp *MP) DecryptEventMessage(encrypt string) (wx.WXML, error) {
+	b, err := event.Decrypt(mp.appid, mp.encodingAESKey, encrypt)
 
 	if err != nil {
 		return nil, err
 	}
 
-	msg := new(event.EventMessage)
-
-	if err = xml.Unmarshal(b, msg); err != nil {
-		return nil, err
-	}
-
-	return msg, nil
+	return wx.ParseXML2Map(b)
 }

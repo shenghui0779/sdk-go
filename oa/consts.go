@@ -63,3 +63,21 @@ const (
 	MaterialAddURL     = "https://api.weixin.qq.com/cgi-bin/material/add_material"
 	MaterialDeleteURL  = "https://api.weixin.qq.com/cgi-bin/material/del_material"
 )
+
+// image
+const (
+	AICropURL          = "https://api.weixin.qq.com/cv/img/aicrop"
+	ScanQRCodeURL      = "https://api.weixin.qq.com/cv/img/qrcode"
+	SuperreSolutionURL = "https://api.weixin.qq.com/cv/img/superresolution"
+)
+
+// ocr
+const (
+	OCRBankCardURL        = "https://api.weixin.qq.com/cv/ocr/bankcard"
+	OCRBusinessLicenseURL = "https://api.weixin.qq.com/cv/ocr/bizlicense"
+	OCRDriverLicenseURL   = "https://api.weixin.qq.com/cv/ocr/drivinglicense"
+	OCRIDCardURL          = "https://api.weixin.qq.com/cv/ocr/idcard"
+	OCRPrintedTextURL     = "https://api.weixin.qq.com/cv/ocr/comm"
+	OCRVehicleLicenseURL  = "https://api.weixin.qq.com/cv/ocr/driving"
+	OCRPlateNumberURL     = "https://api.weixin.qq.com/cv/ocr/platenum"
+)

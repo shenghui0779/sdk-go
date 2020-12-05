@@ -1,4 +1,4 @@
-package mp
+package oa
 
 import (
 	"encoding/json"
@@ -270,5 +270,37 @@ func OCRVehicleLicenseByURL(dest *VehicleLicense, mode OCRMode, imgURL string) w
 
 	return wx.NewOpenPostAPI(OCRVehicleLicenseURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
+	})
+}
+
+// PlateNumber 车牌号
+type PlateNumber struct {
+	ID string `json:"id"`
+}
+
+// OCRPlateNumber 车牌号识别
+func OCRPlateNumber(dest *PlateNumber, mode OCRMode, filename string) wx.Action {
+	query := url.Values{}
+
+	query.Set("type", string(mode))
+
+	return wx.NewOpenUploadAPI(OCRPlateNumberURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+		dest.ID = gjson.GetBytes(resp, "number").String()
+
+		return nil
+	})
+}
+
+// OCRPlateNumberByURL 车牌号识别
+func OCRPlateNumberByURL(dest *PlateNumber, mode OCRMode, imgURL string) wx.Action {
+	query := url.Values{}
+
+	query.Set("type", string(mode))
+	query.Set("img_url", imgURL)
+
+	return wx.NewOpenPostAPI(OCRPlateNumberURL, query, nil, func(resp []byte) error {
+		dest.ID = gjson.GetBytes(resp, "number").String()
+
+		return nil
 	})
 }

@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io"
 	"time"
@@ -171,20 +170,14 @@ func (oa *OA) VerifyEventSign(signature string, items ...string) bool {
 }
 
 // DecryptEventMessage 事件消息解密
-func (oa *OA) DecryptEventMessage(msgEncrypt string) (*event.EventMessage, error) {
-	b, err := event.Decrypt(oa.appid, oa.encodingAESKey, msgEncrypt)
+func (oa *OA) DecryptEventMessage(encrypt string) (wx.WXML, error) {
+	b, err := event.Decrypt(oa.appid, oa.encodingAESKey, encrypt)
 
 	if err != nil {
 		return nil, err
 	}
 
-	msg := new(event.EventMessage)
-
-	if err = xml.Unmarshal(b, msg); err != nil {
-		return nil, err
-	}
-
-	return msg, nil
+	return wx.ParseXML2Map(b)
 }
 
 // Reply 消息回复

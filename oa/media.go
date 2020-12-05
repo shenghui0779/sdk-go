@@ -2,6 +2,7 @@ package oa
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -95,9 +96,8 @@ func UploadVideo(dest *MaterialAddResult, filename, title, introduction string) 
 
 	query.Set("type", string(MediaVideo))
 
-	return wx.NewOpenUploadAPI(MaterialAddURL, query, wx.NewUploadBody("media", filename, wx.X{
-		"title":        title,
-		"introduction": introduction,
+	return wx.NewOpenUploadAPI(MaterialAddURL, query, wx.NewUploadBody("media", filename, map[string]string{
+		"description": fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, introduction),
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
