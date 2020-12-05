@@ -26,7 +26,8 @@ func TestTransferToBalance(t *testing.T) {
 		"desc":             "节日快乐!",
 		"spbill_create_ip": "10.2.3.10",
 		"nonce_str":        "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS",
-		"sign":             "86557FA2370F4A0897C7DD15D5CDAE1D",
+		"sign_type":        "MD5",
+		"sign":             "97CD9C3C88B189B60C230677CE0FC3BB",
 	}).Return(wx.WXML{
 		"return_code":      "SUCCESS",
 		"mch_appid":        "wx2421b1c4370ec43b",
@@ -80,7 +81,8 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 		"mch_id":           "10000100",
 		"partner_trade_no": "1000005901201407261446939628",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
-		"sign":             "0DE046BCF7FB34BF484C6F42693C11A0",
+		"sign_type":        "MD5",
+		"sign":             "DF0024F9502E233115C0198912B4EB5D",
 	}).Return(wx.WXML{
 		"return_code":      "SUCCESS",
 		"appid":            "wx2421b1c4370ec43b",
@@ -139,6 +141,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 		"enc_true_name":    "ABpj6B97My6jKc2TwbkXM/W55LmlxmldJHhKr3n2cr36UeQCGOKlc3Cc1sQytng4hKrDd+qrXT3fmoRvxc10mnViGKdwq1G6XAmGYMMs2Pm0edzqWicrTi8/dcXoVaxLj4ZwCBm+8OtCpJefxGi9xZjpnXpUvEa2hzlPbghFNoPMHIOdECwzvYMqAM2OoRwqicTZgroRS0jI88NhM5UTn00ZwFSoN3VeFkkDSeKXZ25232l51WjBqyg6JLRGltPtiKwaNhCd5cxkPrCJrMJAzJ8PVQmBrEfRnyHDJiYGIQZ1bGoB9eKTN/+cjcGWuxyXDrpdIc0DJzCy/5Yswrv+qg==",
 // 		"desc":             "test",
 // 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
+// 		"sign_type":        "MD5",
 // 		"sign":             "93FD9CF5C2D3F2D6016A168F69D221D5",
 // 	}).Return(wx.WXML{
 // 		"return_code":      "SUCCESS",
@@ -191,7 +194,8 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 		"mch_id":           "10000100",
 		"partner_trade_no": "1212121221278",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
-		"sign":             "E4E201459D36D29853C951D64545149E",
+		"sign_type":        "MD5",
+		"sign":             "F5F586AE6B1BDB6756D2B1AD0A01BADA",
 	}).Return(wx.WXML{
 		"return_code":      "SUCCESS",
 		"mch_id":           "10000100",

@@ -94,7 +94,7 @@ func TestOAEntrust(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, wx.WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/entrustweb?appid=wx2421b1c4370ec43b&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&sign=EB82C3E01B0DB4639921AE07F5A1E68F&timestamp=1414488825&version=1.0"}, r)
+	assert.Equal(t, wx.WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/entrustweb?appid=wx2421b1c4370ec43b&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&sign=48F3F8F08E560D736E8D0FEFACBB012E&sign_type=MD5&timestamp=1414488825&version=1.0"}, r)
 }
 
 func TestMPEntrust(t *testing.T) {
@@ -130,7 +130,8 @@ func TestMPEntrust(t *testing.T) {
 		"contract_display_account": "张三",
 		"notify_url":               "https://www.qq.com/test/papay",
 		"timestamp":                "1414488825",
-		"sign":                     "1A90937A8F2FF340B42A4ADB806B7D00",
+		"sign_type":                "MD5",
+		"sign":                     "E0EC5B06A03B55F2B1FC754AB04D8381",
 	}, r)
 }
 
@@ -160,7 +161,7 @@ func TestH5Entrust(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, wx.WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/h5entrustweb?appid=wx2421b1c4370ec43b&clientip=12.1.1.12&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&return_appid=wxcbda96de0b165542&sign=211AFAFF9BF4DE757BD281F3BEF39D06EC8BB710B1E2A07A3614CD63CEE08FCF&timestamp=1414488825&version=1.0"}, r)
+	assert.Equal(t, wx.WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/h5entrustweb?appid=wx2421b1c4370ec43b&clientip=12.1.1.12&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&return_appid=wxcbda96de0b165542&sign=CE76472E3C209CB2B3F6FC6A649B6849D4BCC78F4A4A820EEF4D5A55EF3F2660&sign_type=HMAC-SHA256&timestamp=1414488825&version=1.0"}, r)
 }
 
 func TestEntrustByOrder(t *testing.T) {
@@ -189,7 +190,8 @@ func TestEntrustByOrder(t *testing.T) {
 		"contract_display_account": "微信代扣",
 		"contract_notify_url":      "https://yoursite.com",
 		"nonce_str":                "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
-		"sign":                     "0FEB33AF95AEFA8922ADB0753A14BB38",
+		"sign_type":                "MD5",
+		"sign":                     "B59547B883DA4E3E3483DFCD1FC0CB98",
 	}).Return(wx.WXML{
 		"return_code":  "SUCCESS",
 		"result_code":  "SUCCESS",
@@ -255,7 +257,8 @@ func TestQueryContractByID(t *testing.T) {
 		"mch_id":      "10000100",
 		"contract_id": "201509160000028648",
 		"version":     "1.0",
-		"sign":        "D23A52B839DA39302E746FBB1D0E4F7D",
+		"sign_type":   "MD5",
+		"sign":        "423CE9A1BA3B99329D7B9A4ACC8B57EA",
 	}).Return(wx.WXML{
 		"return_code":                 "SUCCESS",
 		"result_code":                 "SUCCESS",
@@ -320,7 +323,8 @@ func TestQueryContractByCode(t *testing.T) {
 		"plan_id":       "123",
 		"contract_code": "1023658866",
 		"version":       "1.0",
-		"sign":          "1FCDD5BAF037DF736096306BB5213920",
+		"sign_type":     "MD5",
+		"sign":          "8657D130240326FF8A9BA9FFD3A22C54",
 	}).Return(wx.WXML{
 		"return_code":                 "SUCCESS",
 		"result_code":                 "SUCCESS",
@@ -391,7 +395,8 @@ func TestPappayApply(t *testing.T) {
 		"trade_type":       "PAP",
 		"contract_id":      "Wx15463511252015071056489715",
 		"nonce_str":        "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
-		"sign":             "94AD0747C8E32D815623D89A051F7DE8",
+		"sign_type":        "MD5",
+		"sign":             "B93354AC5A479C50A85019E8B47C01FE",
 	}).Return(wx.WXML{
 		"return_code": "SUCCESS",
 		"return_msg":  "OK",
@@ -443,7 +448,8 @@ func TestDeleteContractByID(t *testing.T) {
 		"contract_id":                 "100005698",
 		"contract_termination_remark": "原因",
 		"version":                     "1.0",
-		"sign":                        "5E8C697575CC65D77BBE96B5BB39916E",
+		"sign_type":                   "MD5",
+		"sign":                        "9A1F0B64467723BDF0D26CC39ED0B001",
 	}).Return(wx.WXML{
 		"return_code": "SUCCESS",
 		"result_code": "SUCCESS",
@@ -487,7 +493,8 @@ func TestDeleteContractByCode(t *testing.T) {
 		"contract_code":               "1234",
 		"contract_termination_remark": "原因",
 		"version":                     "1.0",
-		"sign":                        "5498EE11E3B24F7AE1308F61FC9A25C2",
+		"sign_type":                   "MD5",
+		"sign":                        "9AA3B7174E2B71DA6268741A70E1DDDF",
 	}).Return(wx.WXML{
 		"return_code": "SUCCESS",
 		"result_code": "SUCCESS",
@@ -529,7 +536,8 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 		"mch_id":         "10000100",
 		"transaction_id": "1008450740201411110005820873",
 		"nonce_str":      "0b9f35f484df17a732e537c37708d1d0",
-		"sign":           "F57DB02F4B69F3E81F26B28EF6FFC484",
+		"sign_type":      "MD5",
+		"sign":           "264E5038F1CB9D66132E769ABB5B745C",
 	}).Return(wx.WXML{
 		"return_code":    "SUCCESS",
 		"return_msg":     "OK",
@@ -597,7 +605,8 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 		"mch_id":       "10000100",
 		"out_trade_no": "1415757673",
 		"nonce_str":    "0b9f35f484df17a732e537c37708d1d0",
-		"sign":         "31A8D85095AE5762A86C1EEC10D1FB7C",
+		"sign_type":    "MD5",
+		"sign":         "5F14ED52C2F179580A1DED73268A1009",
 	}).Return(wx.WXML{
 		"return_code":    "SUCCESS",
 		"return_msg":     "OK",
