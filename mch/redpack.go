@@ -25,7 +25,7 @@ type RedpackData struct {
 
 // SendNormalRedpack 发放普通红包
 func SendNormalRedpack(data *RedpackData) wx.Action {
-	return wx.NewMchAPI(RedpackNormalURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+	return wx.NewMchAPI(RedpackNormalURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
@@ -39,6 +39,7 @@ func SendNormalRedpack(data *RedpackData) wx.Action {
 			"client_ip":    data.ClientIP,
 			"act_name":     data.ActName,
 			"remark":       data.Remark,
+			"sign_type":    SignMD5,
 		}
 
 		if data.SceneID != "" {
@@ -49,15 +50,13 @@ func SendNormalRedpack(data *RedpackData) wx.Action {
 			body["risk_info"] = data.RiskInfo
 		}
 
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
-
 		return body, nil
 	}, true)
 }
 
 // SendGroupRedpack 发放裂变红包
 func SendGroupRedpack(data *RedpackData) wx.Action {
-	return wx.NewMchAPI(RedpackGroupURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+	return wx.NewMchAPI(RedpackGroupURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
@@ -71,6 +70,7 @@ func SendGroupRedpack(data *RedpackData) wx.Action {
 			"wishing":      data.Wishing,
 			"act_name":     data.ActName,
 			"remark":       data.Remark,
+			"sign_type":    SignMD5,
 		}
 
 		if data.SceneID != "" {
@@ -81,15 +81,13 @@ func SendGroupRedpack(data *RedpackData) wx.Action {
 			body["risk_info"] = data.RiskInfo
 		}
 
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
-
 		return body, nil
 	}, true)
 }
 
 // SendMinipRedpack 发放小程序红包
 func SendMinipRedpack(data *RedpackData) wx.Action {
-	return wx.NewMchAPI(RedpackMinipURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+	return wx.NewMchAPI(RedpackMinipURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
@@ -103,13 +101,12 @@ func SendMinipRedpack(data *RedpackData) wx.Action {
 			"act_name":     data.ActName,
 			"remark":       data.Remark,
 			"notify_way":   "MINI_PROGRAM_JSAPI",
+			"sign_type":    SignMD5,
 		}
 
 		if data.SceneID != "" {
 			body["scene_id"] = data.SceneID
 		}
-
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)
@@ -117,17 +114,14 @@ func SendMinipRedpack(data *RedpackData) wx.Action {
 
 // QueryRedpackByBillNO 查询红包记录
 func QueryRedpackByBillNO(billNO string) wx.Action {
-	return wx.NewMchAPI(RedpackQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
-		body := wx.WXML{
+	return wx.NewMchAPI(RedpackQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+		return wx.WXML{
 			"appid":      appid,
 			"mch_id":     mchid,
 			"mch_billno": billNO,
 			"bill_type":  "MCHT",
 			"nonce_str":  nonce,
-		}
-
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
-
-		return body, nil
+			"sign_type":  SignMD5,
+		}, nil
 	}, true)
 }

@@ -2,7 +2,10 @@ package mch
 
 import (
 	"context"
+	"crypto/hmac"
+	"crypto/md5"
 	"crypto/rand"
+	"crypto/sha256"
 	"crypto/tls"
 	"encoding/hex"
 	"encoding/pem"
@@ -11,7 +14,9 @@ import (
 	"io"
 	"io/ioutil"
 	"net/url"
+	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -103,16 +108,40 @@ func (mch *Mch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
 
 // Do exec action
 func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOption) (wx.WXML, error) {
-	body, err := action.WXML()(mch.appid, mch.mchid, mch.apikey, mch.nonce(16))
+	body, err := action.WXML()(mch.appid, mch.mchid, mch.nonce(16))
 
 	if err != nil {
 		return nil, err
 	}
 
+	// 签名
+	if v, ok := body["sign_type"]; ok && v == SignHMacSHA256 {
+		body["sign"] = mch.SignWithHMacSHA256(body, true)
+	} else {
+		body["sign"] = mch.SignWithMD5(body, true)
+	}
+
 	reqURL := action.URL()()
 
-	if len(reqURL) == 0 {
+	switch reqURL {
+	case ContractOAEntrust: // 公众号签约
+		query := url.Values{}
+
+		for k, v := range body {
+			query.Add(k, v)
+		}
+
+		return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayOAEntrustURL, query.Encode())}, nil
+	case ContractMPEntrust: // 小程序签约
 		return body, nil
+	case ContractH5Entrust: // H5签约
+		query := url.Values{}
+
+		for k, v := range body {
+			query.Add(k, v)
+		}
+
+		return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayH5EntrustURL, query.Encode())}, nil
 	}
 
 	var resp wx.WXML
@@ -131,7 +160,7 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOpti
 		return nil, errors.New(resp["return_msg"])
 	}
 
-	if err := mch.VerifyWXReply(resp); err != nil {
+	if err := mch.VerifyWXMLResult(resp); err != nil {
 		return nil, err
 	}
 
@@ -149,7 +178,7 @@ func (mch *Mch) APPAPI(prepayID string) wx.WXML {
 		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	m["sign"] = wx.SignWithMD5(m, mch.apikey, true)
+	m["sign"] = mch.SignWithMD5(m, true)
 
 	return m
 }
@@ -164,7 +193,7 @@ func (mch *Mch) JSAPI(prepayID string) wx.WXML {
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	m["paySign"] = wx.SignWithMD5(m, mch.apikey, true)
+	m["paySign"] = mch.SignWithMD5(m, true)
 
 	return m
 }
@@ -178,7 +207,7 @@ func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	m["paySign"] = wx.SignWithMD5(m, mch.apikey, false)
+	m["paySign"] = mch.SignWithMD5(m, false)
 
 	delete(m, "appId")
 	m["signType"] = SignMD5
@@ -186,15 +215,43 @@ func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 	return m
 }
 
-// VerifyWXReply 验证微信结果
-func (mch *Mch) VerifyWXReply(m wx.WXML) error {
+// SignWithMD5 生成MD5签名
+func (mch *Mch) SignWithMD5(m wx.WXML, toUpper bool) string {
+	h := md5.New()
+	h.Write([]byte(mch.buildSignStr(m)))
+
+	sign := hex.EncodeToString(h.Sum(nil))
+
+	if toUpper {
+		sign = strings.ToUpper(sign)
+	}
+
+	return sign
+}
+
+// SignWithHMacSHA256 生成HMAC-SHA256签名
+func (mch *Mch) SignWithHMacSHA256(m wx.WXML, toUpper bool) string {
+	h := hmac.New(sha256.New, []byte(mch.apikey))
+	h.Write([]byte(mch.buildSignStr(m)))
+
+	sign := hex.EncodeToString(h.Sum(nil))
+
+	if toUpper {
+		sign = strings.ToUpper(sign)
+	}
+
+	return sign
+}
+
+// VerifyWXMLResult 验证微信请求/回调通知结果
+func (mch *Mch) VerifyWXMLResult(m wx.WXML) error {
 	if wxsign, ok := m["sign"]; ok {
 		signature := ""
 
 		if v, ok := m["sign_type"]; ok && v == SignHMacSHA256 {
-			signature = wx.SignWithHMacSHA256(m, mch.apikey, true)
+			signature = mch.SignWithHMacSHA256(m, true)
 		} else {
-			signature = wx.SignWithMD5(m, mch.apikey, true)
+			signature = mch.SignWithMD5(m, true)
 		}
 
 		if wxsign != signature {
@@ -232,4 +289,32 @@ func (mch *Mch) pkcs12ToPem(p12 []byte) (tls.Certificate, error) {
 
 	// then use PEM data for tls to construct tls certificate:
 	return tls.X509KeyPair(pemData, pemData)
+}
+
+// Sign 生成签名
+func (mch *Mch) buildSignStr(m wx.WXML) string {
+	l := len(m)
+
+	ks := make([]string, 0, l)
+	kvs := make([]string, 0, l)
+
+	for k := range m {
+		if k == "sign" {
+			continue
+		}
+
+		ks = append(ks, k)
+	}
+
+	sort.Strings(ks)
+
+	for _, k := range ks {
+		if v, ok := m[k]; ok && v != "" {
+			kvs = append(kvs, fmt.Sprintf("%s=%s", k, v))
+		}
+	}
+
+	kvs = append(kvs, fmt.Sprintf("key=%s", mch.apikey))
+
+	return strings.Join(kvs, "&")
 }

@@ -32,12 +32,11 @@ type OrderData struct {
 
 // UnifyOrder 统一下单
 func UnifyOrder(data *OrderData) wx.Action {
-	return wx.NewMchAPI(OrderUnifyURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+	return wx.NewMchAPI(OrderUnifyURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"appid":            appid,
 			"mch_id":           mchid,
 			"nonce_str":        nonce,
-			"sign_type":        SignMD5,
 			"fee_type":         "CNY",
 			"trade_type":       data.TradeType,
 			"body":             data.Body,
@@ -45,6 +44,7 @@ func UnifyOrder(data *OrderData) wx.Action {
 			"total_fee":        strconv.Itoa(data.TotalFee),
 			"spbill_create_ip": data.SpbillCreateIP,
 			"notify_url":       data.NotifyURL,
+			"sign_type":        SignMD5,
 		}
 
 		if data.DeviceInfo != "" {
@@ -95,59 +95,45 @@ func UnifyOrder(data *OrderData) wx.Action {
 			body["scene_info"] = data.SceneInfo
 		}
 
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
-
 		return body, nil
 	}, false)
 }
 
 // QueryOrderByTransactionID 根据微信订单号查询
 func QueryOrderByTransactionID(transactionID string) wx.Action {
-	return wx.NewMchAPI(OrderQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
-		body := wx.WXML{
+	return wx.NewMchAPI(OrderQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+		return wx.WXML{
 			"appid":          appid,
 			"mch_id":         mchid,
 			"transaction_id": transactionID,
 			"nonce_str":      nonce,
 			"sign_type":      SignMD5,
-		}
-
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
-
-		return body, nil
+		}, nil
 	}, false)
 }
 
 // QueryOrderByOutTradeNO 根据商户订单号查询
 func QueryOrderByOutTradeNO(outTradeNO string) wx.Action {
-	return wx.NewMchAPI(OrderQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
-		body := wx.WXML{
+	return wx.NewMchAPI(OrderQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+		return wx.WXML{
 			"appid":        appid,
 			"mch_id":       mchid,
 			"out_trade_no": outTradeNO,
 			"nonce_str":    nonce,
 			"sign_type":    SignMD5,
-		}
-
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
-
-		return body, nil
+		}, nil
 	}, false)
 }
 
 // CloseOrder 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
 func CloseOrder(outTradeNO string) wx.Action {
-	return wx.NewMchAPI(OrderCloseURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
-		body := wx.WXML{
+	return wx.NewMchAPI(OrderCloseURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+		return wx.WXML{
 			"appid":        appid,
 			"mch_id":       mchid,
 			"out_trade_no": outTradeNO,
 			"nonce_str":    nonce,
 			"sign_type":    SignMD5,
-		}
-
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
-
-		return body, nil
+		}, nil
 	}, false)
 }

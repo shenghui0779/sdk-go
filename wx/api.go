@@ -51,7 +51,7 @@ type Action interface {
 	// Method returns request method
 	Method() HTTPMethod
 	// WXML returns body for xml request
-	WXML() func(appid, mchid, apikey, nonce string) (WXML, error)
+	WXML() func(appid, mchid, nonce string) (WXML, error)
 	// Body returns body for post and upload request
 	Body() Body
 	// Decode decodes http response
@@ -111,7 +111,7 @@ func NewUploadBody(fieldname, filename string, description X) *HTTPBody {
 type API struct {
 	reqURL func(accessToken ...string) string
 	method HTTPMethod
-	wxml   func(appid, mchid, apikey, nonce string) (WXML, error)
+	wxml   func(appid, mchid, nonce string) (WXML, error)
 	body   Body
 	decode func(resp []byte) error
 	tls    bool
@@ -125,7 +125,7 @@ func (a *API) Method() HTTPMethod {
 	return a.method
 }
 
-func (a *API) WXML() func(appid, mchid, apikey, nonce string) (WXML, error) {
+func (a *API) WXML() func(appid, mchid, nonce string) (WXML, error) {
 	return a.wxml
 }
 
@@ -142,7 +142,7 @@ func (a *API) TLS() bool {
 }
 
 // NewMchAPI returns mch api
-func NewMchAPI(reqURL string, wxml func(appid, mchid, apikey, nonce string) (WXML, error), tls bool) *API {
+func NewMchAPI(reqURL string, wxml func(appid, mchid, nonce string) (WXML, error), tls bool) *API {
 	return &API{
 		reqURL: func(accessToken ...string) string {
 			return reqURL

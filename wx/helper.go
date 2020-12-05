@@ -2,15 +2,9 @@ package wx
 
 import (
 	"bytes"
-	"crypto/hmac"
-	"crypto/md5"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/xml"
 	"fmt"
 	"io"
-	"sort"
-	"strings"
 	"sync"
 )
 
@@ -119,62 +113,6 @@ func ParseXML2Map(b []byte) (WXML, error) {
 			depth--
 		}
 	}
-}
-
-// SignWithMD5 生成MD5签名
-func SignWithMD5(m WXML, apikey string, toUpper bool) string {
-	h := md5.New()
-	h.Write([]byte(buildSignStr(m, apikey)))
-
-	sign := hex.EncodeToString(h.Sum(nil))
-
-	if toUpper {
-		sign = strings.ToUpper(sign)
-	}
-
-	return sign
-}
-
-// SignWithHMacSHA256 生成HMAC-SHA256签名
-func SignWithHMacSHA256(m WXML, apikey string, toUpper bool) string {
-	h := hmac.New(sha256.New, []byte(apikey))
-	h.Write([]byte(buildSignStr(m, apikey)))
-
-	sign := hex.EncodeToString(h.Sum(nil))
-
-	if toUpper {
-		sign = strings.ToUpper(sign)
-	}
-
-	return sign
-}
-
-// Sign 生成签名
-func buildSignStr(m WXML, apikey string) string {
-	l := len(m)
-
-	ks := make([]string, 0, l)
-	kvs := make([]string, 0, l)
-
-	for k := range m {
-		if k == "sign" {
-			continue
-		}
-
-		ks = append(ks, k)
-	}
-
-	sort.Strings(ks)
-
-	for _, k := range ks {
-		if v, ok := m[k]; ok && v != "" {
-			kvs = append(kvs, fmt.Sprintf("%s=%s", k, v))
-		}
-	}
-
-	kvs = append(kvs, fmt.Sprintf("key=%s", apikey))
-
-	return strings.Join(kvs, "&")
 }
 
 // EncodeUint32ToBytes 把整数 uint32 格式化成 4 字节的网络字节序

@@ -21,16 +21,16 @@ type RefundData struct {
 
 // RefundByTransactionID 根据微信订单号退款
 func RefundByTransactionID(transactionID string, data *RefundData) wx.Action {
-	return wx.NewMchAPI(RefundApplyURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+	return wx.NewMchAPI(RefundApplyURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"appid":          appid,
 			"mch_id":         mchid,
 			"nonce_str":      nonce,
-			"sign_type":      SignMD5,
 			"transaction_id": transactionID,
 			"out_refund_no":  data.OutRefundNO,
 			"total_fee":      strconv.Itoa(data.TotalFee),
 			"refund_fee":     strconv.Itoa(data.RefundFee),
+			"sign_type":      SignMD5,
 		}
 
 		if data.RefundFeeType != "" {
@@ -48,8 +48,6 @@ func RefundByTransactionID(transactionID string, data *RefundData) wx.Action {
 		if data.NotifyURL != "" {
 			body["notify_url"] = data.NotifyURL
 		}
-
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, true)
@@ -57,16 +55,16 @@ func RefundByTransactionID(transactionID string, data *RefundData) wx.Action {
 
 // RefundByOutTradeNO 根据商户订单号退款
 func RefundByOutTradeNO(outTradeNO string, data *RefundData) wx.Action {
-	return wx.NewMchAPI(RefundApplyURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+	return wx.NewMchAPI(RefundApplyURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"appid":         appid,
 			"mch_id":        mchid,
 			"nonce_str":     nonce,
-			"sign_type":     SignMD5,
 			"out_trade_no":  outTradeNO,
 			"out_refund_no": data.OutRefundNO,
 			"total_fee":     strconv.Itoa(data.TotalFee),
 			"refund_fee":    strconv.Itoa(data.RefundFee),
+			"sign_type":     SignMD5,
 		}
 
 		if data.RefundFeeType != "" {
@@ -85,15 +83,13 @@ func RefundByOutTradeNO(outTradeNO string, data *RefundData) wx.Action {
 			body["notify_url"] = data.NotifyURL
 		}
 
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
-
 		return body, nil
 	}, true)
 }
 
 // QueryRefundByRefundID 根据微信退款单号查询退款信息
 func QueryRefundByRefundID(refundID string, offset ...int) wx.Action {
-	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"appid":     appid,
 			"mch_id":    mchid,
@@ -106,15 +102,13 @@ func QueryRefundByRefundID(refundID string, offset ...int) wx.Action {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
-
 		return body, nil
 	}, false)
 }
 
 // QueryRefundByOutRefundNO 根据商户退款单号查询退款信息
 func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) wx.Action {
-	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"appid":         appid,
 			"mch_id":        mchid,
@@ -127,15 +121,13 @@ func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) wx.Action {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
-
 		return body, nil
 	}, false)
 }
 
 // QueryRefundByTransactionID 根据微信订单号查询退款信息
 func QueryRefundByTransactionID(transactionID string, offset ...int) wx.Action {
-	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"appid":          appid,
 			"mch_id":         mchid,
@@ -148,28 +140,24 @@ func QueryRefundByTransactionID(transactionID string, offset ...int) wx.Action {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
-
 		return body, nil
 	}, false)
 }
 
 // QueryRefundByOutTradeNO 根据商户订单号查询退款信息
 func QueryRefundByOutTradeNO(outTradeNO string, offset ...int) wx.Action {
-	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, apikey, nonce string) (wx.WXML, error) {
+	return wx.NewMchAPI(RefundQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"appid":        appid,
 			"mch_id":       mchid,
 			"out_trade_no": outTradeNO,
 			"nonce_str":    nonce,
-			"sign_type":    "MD5",
+			"sign_type":    SignMD5,
 		}
 
 		if len(offset) > 0 {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
-
-		body["sign"] = wx.SignWithMD5(body, apikey, true)
 
 		return body, nil
 	}, false)
