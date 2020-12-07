@@ -108,7 +108,7 @@ wxoa.Do(ctx, access_token, oa.CreateTempQRCode(dest, sence_id, expire_seconds...
 // 创建永久二维码（expireSeconds：二维码有效时间，最大不超过2592000秒（即30天），不填，则默认有效期为30秒。）
 wxoa.Do(ctx, access_token, oa.CreatePermQRCode(dest, sence_id, expire_seconds...))
 
-// 长链接转短链接（长链接支持http://、https://、weixin://wxpay 格式的url）
+// 长链接转短链接（长链接支持http://、https://、weixin://wxpay格式的url）
 wxoa.Do(ctx, access_token, oa.Long2ShortURL(dest, longURL))
 ```
 

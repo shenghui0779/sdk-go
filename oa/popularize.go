@@ -60,7 +60,7 @@ type ShortURL struct {
 	URL string
 }
 
-// Long2ShortURL 长链接转短链接（长链接支持http://、https://、weixin://wxpay 格式的url）
+// Long2ShortURL 长链接转短链接（长链接支持http://、https://、weixin://wxpay格式的url）
 func Long2ShortURL(dest *ShortURL, longURL string) wx.Action {
 	return wx.NewOpenPostAPI(ShortURLGenerateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		return json.Marshal(wx.X{
