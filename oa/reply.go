@@ -227,7 +227,7 @@ func NewNewsReply(count int, articles ...*Article) event.Reply {
 	return r
 }
 
-// NewTransfer2KFReply 回复客服消息
+// NewTransfer2KFReply 消息转发到客服
 func NewTransfer2KFReply(kfAccount ...string) event.Reply {
 	r := &Transfer2KFReply{
 		ReplyHeader: ReplyHeader{
