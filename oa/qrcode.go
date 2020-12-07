@@ -14,7 +14,7 @@ type QRCode struct {
 	URL           string `json:"url"`
 }
 
-// CreateTempQRCode 创建临时二维码
+// CreateTempQRCode 创建临时二维码（expireSeconds：二维码有效时间，最大不超过2592000秒（即30天），不填，则默认有效期为30秒。）
 func CreateTempQRCode(dest *QRCode, senceID int, expireSeconds ...int) wx.Action {
 	return wx.NewOpenPostAPI(QRCodeCreateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		params := wx.X{
@@ -34,7 +34,7 @@ func CreateTempQRCode(dest *QRCode, senceID int, expireSeconds ...int) wx.Action
 	})
 }
 
-// CreatePermQRCode 创建永久二维码
+// CreatePermQRCode 创建永久二维码（expireSeconds：二维码有效时间，最大不超过2592000秒（即30天），不填，则默认有效期为30秒。）
 func CreatePermQRCode(dest *QRCode, senceID int, expireSeconds ...int) wx.Action {
 	return wx.NewOpenPostAPI(QRCodeCreateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
 		params := wx.X{

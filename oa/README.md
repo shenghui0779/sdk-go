@@ -99,6 +99,16 @@ wxoa.Do(ctx, access_token, oa.UnBlackSubscribers(openids...))
 wxoa.Do(ctx, access_token, oa.SetUserRemark(openid, remark))
 ```
 
+### 二维码
+
+```go
+// 创建临时二维码（expireSeconds：二维码有效时间，最大不超过2592000秒（即30天），不填，则默认有效期为30秒。）
+wxoa.Do(ctx, access_token, oa.CreateTempQRCode(dest, sence_id, expire_seconds...))
+
+// 创建永久二维码（expireSeconds：二维码有效时间，最大不超过2592000秒（即30天），不填，则默认有效期为30秒。）
+wxoa.Do(ctx, access_token, oa.CreatePermQRCode(dest, sence_id, expire_seconds...))
+```
+
 ### 素材管理
 
 ```go
