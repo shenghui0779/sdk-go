@@ -58,22 +58,6 @@ wxoa.Do(ctx, access_token, oa.DeleteMenu())
 wxoa.Do(ctx, access_token, oa.DeleteConditionalMenu(menu_id))
 ```
 
-### 消息
-
-```go
-// 获取模板列表
-wxoa.Do(ctx, access_token, oa.GetTemplateList(dest))
-
-// 删除模板
-wxoa.Do(ctx, access_token, oa.DeleteTemplate(template_id))
-
-// 发送模板消息
-wxoa.Do(ctx, access_token, oa.SendTemplateMessage(openid, msg))
-
-// 发送订阅消息
-wxoa.Do(ctx, access_token, oa.SendSubscribeMessage(openid, scene, title, msg))
-```
-
 ### 用户管理
 
 ```go
@@ -97,6 +81,22 @@ wxoa.Do(ctx, access_token, oa.UnBlackSubscribers(openids...))
 
 // 设置用户备注名（该接口暂时开放给微信认证的服务号）
 wxoa.Do(ctx, access_token, oa.SetUserRemark(openid, remark))
+```
+
+### 消息
+
+```go
+// 获取模板列表
+wxoa.Do(ctx, access_token, oa.GetTemplateList(dest))
+
+// 删除模板
+wxoa.Do(ctx, access_token, oa.DeleteTemplate(template_id))
+
+// 发送模板消息
+wxoa.Do(ctx, access_token, oa.SendTemplateMessage(openid, msg))
+
+// 发送订阅消息
+wxoa.Do(ctx, access_token, oa.SendSubscribeMessage(openid, scene, title, msg))
 ```
 
 ### 推广
@@ -223,6 +223,6 @@ wxoa.Reply(openid, oa.NewMusicReply(media_id, title, desc, music_url, HQ_music_u
 // 回复图文消息
 wxoa.Reply(openid, oa.NewNewsReply(count, articles...))
 
-// 回复客服消息
+// 消息转发到客服
 wxoa.Reply(openid, oa.NewTransfer2KFReply(kf_account...))
 ```
