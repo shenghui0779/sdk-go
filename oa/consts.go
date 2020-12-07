@@ -54,10 +54,11 @@ const (
 	SubscribeMessageSendURL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"
 )
 
-// qrcode
+// popularize
 const (
-	QRCodeCreateURL = "https://api.weixin.qq.com/cgi-bin/qrcode/create"
-	QRCodeShowURL   = "https://mp.weixin.qq.com/cgi-bin/showqrcode"
+	QRCodeCreateURL     = "https://api.weixin.qq.com/cgi-bin/qrcode/create"
+	QRCodeShowURL       = "https://mp.weixin.qq.com/cgi-bin/showqrcode"
+	ShortURLGenerateURL = "https://api.weixin.qq.com/cgi-bin/shorturl"
 )
 
 // media

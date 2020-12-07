@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/tidwall/gjson"
 )
 
 // QRCode 二维码获取信息
@@ -51,5 +52,24 @@ func CreatePermQRCode(dest *QRCode, senceID int, expireSeconds ...int) wx.Action
 		return json.Marshal(params)
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
+	})
+}
+
+// ShortURL 短链接
+type ShortURL struct {
+	URL string
+}
+
+// Long2ShortURL 长链接转短链接（长链接支持http://、https://、weixin://wxpay 格式的url）
+func Long2ShortURL(dest *ShortURL, longURL string) wx.Action {
+	return wx.NewOpenPostAPI(ShortURLGenerateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
+		return json.Marshal(wx.X{
+			"action":   "long2short",
+			"long_url": longURL,
+		})
+	}), func(resp []byte) error {
+		dest.URL = gjson.GetBytes(resp, "short_url").String()
+
+		return nil
 	})
 }

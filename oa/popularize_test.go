@@ -62,3 +62,26 @@ func TestCreatePermQRCode(t *testing.T) {
 		URL:           "http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI",
 	}, dest)
 }
+
+func TestLong2ShortURL(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := wx.NewMockClient(ctrl)
+
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/shorturl?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+		"errcode": 0,
+		"errmsg": "ok",
+		"short_url": "http:\/\/w.url.cn\/s\/AvCo6Ih"
+	}`), nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.client = client
+
+	dest := new(ShortURL)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", Long2ShortURL(dest, "http://wap.koudaitong.com/v2/showcase/goods?alias=128wi9shh&spm=h56083&redirect_count=1"))
+
+	assert.Nil(t, err)
+	assert.Equal(t, "http://w.url.cn/s/AvCo6Ih", dest.URL)
+}
