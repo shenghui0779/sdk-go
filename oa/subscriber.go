@@ -71,9 +71,7 @@ func BatchGetSubscribers(dest *[]SubscriberInfo, openids ...string) wx.Action {
 
 		return json.Marshal(map[string][]map[string]string{"user_list": userList})
 	}), func(resp []byte) error {
-		r := gjson.GetBytes(resp, "user_info_list")
-
-		return json.Unmarshal([]byte(r.Raw), dest)
+		return json.Unmarshal([]byte(gjson.GetBytes(resp, "user_info_list").Raw), dest)
 	})
 }
 

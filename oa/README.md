@@ -153,14 +153,6 @@ wxoa.Do(ctx, access_token, oa.SuperreSolutionByURL(dest, imgURL))
 ### OCR
 
 ```go
-// 银行卡识别
-wxoa.Do(ctx, access_token, oa.OCRBankCard(dest, mode, filename))
-wxoa.Do(ctx, access_token, oa.OCRBankCardByURL(dest, mode, imgURL))
-
-// 营业执照识别
-wxoa.Do(ctx, access_token, oa.OCRBusinessLicense(dest, mode, filename))
-wxoa.Do(ctx, access_token, oa.OCRBusinessLicenseByURL(dest, mode, imgURL))
-
 // 身份证前面识别
 wxoa.Do(ctx, access_token, oa.OCRIDCardFront(dest, mode, filename))
 wxoa.Do(ctx, access_token, oa.OCRIDCardFrontByURL(dest, mode, imgURL))
@@ -169,17 +161,72 @@ wxoa.Do(ctx, access_token, oa.OCRIDCardFrontByURL(dest, mode, imgURL))
 wxoa.Do(ctx, access_token, oa.OCRIDCardBack(dest, mode, filename))
 wxoa.Do(ctx, access_token, oa.OCRIDCardBackByURL(dest, mode, imgURL))
 
-// 通用印刷体识别
-wxoa.Do(ctx, access_token, oa.OCRPrintedText(dest, mode, filename))
-wxoa.Do(ctx, access_token, oa.OCRPrintedTextByURL(dest, mode, imgURL))
+// 银行卡识别
+wxoa.Do(ctx, access_token, oa.OCRBankCard(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRBankCardByURL(dest, mode, imgURL))
+
+// 车牌号识别
+wxoa.Do(ctx, access_token, oa.OCRPlateNumber(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRPlateNumberByURL(dest, mode, imgURL))
+
+// 驾照识别
+wxoa.Do(ctx, access_token, oa.OCRDriverLicense(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRDriverLicenseByURL(dest, mode, imgURL))
 
 // 行驶证识别
 wxoa.Do(ctx, access_token, oa.OCRVehicleLicense(dest, mode, filename))
 wxoa.Do(ctx, access_token, oa.OCRVehicleLicenseByURL(dest, mode, imgURL))
 
-// 车牌号识别
-wxoa.Do(ctx, access_token, oa.OCRPlateNumber(dest, mode, filename))
-wxoa.Do(ctx, access_token, oa.OCRPlateNumberByURL(dest, mode, imgURL))
+// 营业执照识别
+wxoa.Do(ctx, access_token, oa.OCRBusinessLicense(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRBusinessLicenseByURL(dest, mode, imgURL))
+
+// 通用印刷体识别
+wxoa.Do(ctx, access_token, oa.OCRPrintedText(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRPrintedTextByURL(dest, mode, imgURL))
+```
+
+### 客服
+
+```go
+// 获取客服列表
+wxoa.Do(ctx, access_token, oa.GetKFAccountList(dest))
+
+// 获取客服在线列表
+wxoa.Do(ctx, access_token, oa.GetKFOnlineList(dest))
+
+// 添加客服账号
+wxoa.Do(ctx, access_token, oa.AddKFAccount(account, nickname))
+
+// 设置客服信息
+wxoa.Do(ctx, access_token, oa.UpdateKFAccount(account, nickname))
+
+// 邀请绑定客服帐号
+wxoa.Do(ctx, access_token, oa.InviteKFWorker(account, inviteWeixin))
+
+// 上传客服头像
+wxoa.Do(ctx, access_token, oa.UploadKFAvatar(account, filename))
+
+// 删除客服帐号
+wxoa.Do(ctx, access_token, oa.DeleteKFAccount(account))
+
+// 创建会话
+wxoa.Do(ctx, access_token, oa.CreateKFSession(account, openid))
+
+// 关闭会话
+wxoa.Do(ctx, access_token, oa.CloseKFSession(account, openid))
+
+// 获取客户会话状态
+wxoa.Do(ctx, access_token, oa.GetKFSession(dest, openid))
+
+// 获取客服会话列表
+wxoa.Do(ctx, access_token, oa.GetKFSessionList(dest, account))
+
+// 获取未接入会话列表
+wxoa.Do(ctx, access_token, oa.GetKFWaitCase(dest))
+
+// 获取聊天记录（每次查询时段不能超过24小时）
+wxoa.Do(ctx, access_token, oa.GetKFMsgRecordList(dest, msgid, starttime, endtime, number))
 ```
 
 ### JSSDK

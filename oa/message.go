@@ -21,9 +21,7 @@ type TemplateInfo struct {
 // GetTemplateList 获取模板列表
 func GetTemplateList(dest *[]TemplateInfo) wx.Action {
 	return wx.NewOpenGetAPI(TemplateListURL, url.Values{}, func(resp []byte) error {
-		r := gjson.GetBytes(resp, "template_list")
-
-		return json.Unmarshal([]byte(r.Raw), dest)
+		return json.Unmarshal([]byte(gjson.GetBytes(resp, "template_list").Raw), dest)
 	})
 }
 

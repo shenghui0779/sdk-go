@@ -80,11 +80,28 @@ const (
 
 // ocr
 const (
-	OCRBankCardURL        = "https://api.weixin.qq.com/cv/ocr/bankcard"
-	OCRBusinessLicenseURL = "https://api.weixin.qq.com/cv/ocr/bizlicense"
-	OCRDriverLicenseURL   = "https://api.weixin.qq.com/cv/ocr/drivinglicense"
 	OCRIDCardURL          = "https://api.weixin.qq.com/cv/ocr/idcard"
-	OCRPrintedTextURL     = "https://api.weixin.qq.com/cv/ocr/comm"
-	OCRVehicleLicenseURL  = "https://api.weixin.qq.com/cv/ocr/driving"
+	OCRBankCardURL        = "https://api.weixin.qq.com/cv/ocr/bankcard"
 	OCRPlateNumberURL     = "https://api.weixin.qq.com/cv/ocr/platenum"
+	OCRDriverLicenseURL   = "https://api.weixin.qq.com/cv/ocr/drivinglicense"
+	OCRVehicleLicenseURL  = "https://api.weixin.qq.com/cv/ocr/driving"
+	OCRBusinessLicenseURL = "https://api.weixin.qq.com/cv/ocr/bizlicense"
+	OCRPrintedTextURL     = "https://api.weixin.qq.com/cv/ocr/comm"
+)
+
+// KF
+const (
+	KFAccountListURL   = "https://api.weixin.qq.com/cgi-bin/customservice/getkflist"
+	KFOnlineListURL    = "https://api.weixin.qq.com/cgi-bin/customservice/getonlinekflist"
+	KFAccountAddURL    = "https://api.weixin.qq.com/customservice/kfaccount/add"
+	KFInviteURL        = "https://api.weixin.qq.com/customservice/kfaccount/inviteworker"
+	KFAccountUpdateURL = "https://api.weixin.qq.com/customservice/kfaccount/update"
+	KFAvatarUploadURL  = "https://api.weixin.qq.com/customservice/kfaccount/uploadheadimg"
+	KFDeleteURL        = "https://api.weixin.qq.com/customservice/kfaccount/del"
+	KFSessionCreateURL = "https://api.weixin.qq.com/customservice/kfsession/create"
+	KFSessionCloseURL  = "https://api.weixin.qq.com/customservice/kfsession/close"
+	KFSessionGetURL    = "https://api.weixin.qq.com/customservice/kfsession/getsession"
+	KFSessionListURL   = "https://api.weixin.qq.com/customservice/kfsession/getsessionlist"
+	KFWaitCaseURL      = "https://api.weixin.qq.com/customservice/kfsession/getwaitcase"
+	KFMsgRecordListURL = "https://api.weixin.qq.com/customservice/msgrecord/getmsglist"
 )

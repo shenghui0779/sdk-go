@@ -133,14 +133,6 @@ wxmp.Do(ctx, access_token, mp.SuperreSolutionByURL(dest, imgURL))
 ### OCR
 
 ```go
-// 银行卡识别
-wxmp.Do(ctx, access_token, mp.OCRBankCard(dest, mode, filename))
-wxmp.Do(ctx, access_token, mp.OCRBankCardByURL(dest, mode, imgURL))
-
-// 营业执照识别
-wxmp.Do(ctx, access_token, mp.OCRBusinessLicense(dest, mode, filename))
-wxmp.Do(ctx, access_token, mp.OCRBusinessLicenseByURL(dest, mode, imgURL))
-
 // 身份证前面识别
 wxmp.Do(ctx, access_token, mp.OCRIDCardFront(dest, mode, filename))
 wxmp.Do(ctx, access_token, mp.OCRIDCardFrontByURL(dest, mode, imgURL))
@@ -149,13 +141,29 @@ wxmp.Do(ctx, access_token, mp.OCRIDCardFrontByURL(dest, mode, imgURL))
 wxmp.Do(ctx, access_token, mp.OCRIDCardBack(dest, mode, filename))
 wxmp.Do(ctx, access_token, mp.OCRIDCardBackByURL(dest, mode, imgURL))
 
-// 通用印刷体识别
-wxmp.Do(ctx, access_token, mp.OCRPrintedText(dest, mode, filename))
-wxmp.Do(ctx, access_token, mp.OCRPrintedTextByURL(dest, mode, imgURL))
+// 银行卡识别
+wxmp.Do(ctx, access_token, mp.OCRBankCard(dest, mode, filename))
+wxmp.Do(ctx, access_token, mp.OCRBankCardByURL(dest, mode, imgURL))
+
+// 车牌号识别
+wxoa.Do(ctx, access_token, oa.OCRPlateNumber(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRPlateNumberByURL(dest, mode, imgURL))
+
+// 驾照识别
+wxoa.Do(ctx, access_token, oa.OCRDriverLicense(dest, mode, filename))
+wxoa.Do(ctx, access_token, oa.OCRDriverLicenseByURL(dest, mode, imgURL))
 
 // 行驶证识别
 wxmp.Do(ctx, access_token, mp.OCRVehicleLicense(dest, mode, filename))
 wxmp.Do(ctx, access_token, mp.OCRVehicleLicenseByURL(dest, mode, imgURL))
+
+// 营业执照识别
+wxmp.Do(ctx, access_token, mp.OCRBusinessLicense(dest, mode, filename))
+wxmp.Do(ctx, access_token, mp.OCRBusinessLicenseByURL(dest, mode, imgURL))
+
+// 通用印刷体识别
+wxmp.Do(ctx, access_token, mp.OCRPrintedText(dest, mode, filename))
+wxmp.Do(ctx, access_token, mp.OCRPrintedTextByURL(dest, mode, imgURL))
 ```
 
 ### 临时素材

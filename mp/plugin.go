@@ -54,9 +54,7 @@ func GetPluginDevApplyList(dest *[]PluginDevApplyInfo, page, num int) wx.Action 
 			"num":    num,
 		})
 	}), func(resp []byte) error {
-		r := gjson.GetBytes(resp, "apply_list")
-
-		return json.Unmarshal([]byte(r.Raw), dest)
+		return json.Unmarshal([]byte(gjson.GetBytes(resp, "apply_list").Raw), dest)
 	})
 }
 
@@ -75,9 +73,7 @@ func GetPluginList(dest *[]PluginInfo) wx.Action {
 			"action": PluginList,
 		})
 	}), func(resp []byte) error {
-		r := gjson.GetBytes(resp, "plugin_list")
-
-		return json.Unmarshal([]byte(r.Raw), dest)
+		return json.Unmarshal([]byte(gjson.GetBytes(resp, "plugin_list").Raw), dest)
 	})
 }
 

@@ -51,12 +51,13 @@ const (
 
 // ocr
 const (
-	OCRBankCardURL        = "https://api.weixin.qq.com/cv/ocr/bankcard"
-	OCRBusinessLicenseURL = "https://api.weixin.qq.com/cv/ocr/bizlicense"
-	OCRDriverLicenseURL   = "https://api.weixin.qq.com/cv/ocr/drivinglicense"
 	OCRIDCardURL          = "https://api.weixin.qq.com/cv/ocr/idcard"
-	OCRPrintedTextURL     = "https://api.weixin.qq.com/cv/ocr/comm"
+	OCRBankCardURL        = "https://api.weixin.qq.com/cv/ocr/bankcard"
+	OCRPlateNumberURL     = "https://api.weixin.qq.com/cv/ocr/platenum"
+	OCRDriverLicenseURL   = "https://api.weixin.qq.com/cv/ocr/drivinglicense"
 	OCRVehicleLicenseURL  = "https://api.weixin.qq.com/cv/ocr/driving"
+	OCRBusinessLicenseURL = "https://api.weixin.qq.com/cv/ocr/bizlicense"
+	OCRPrintedTextURL     = "https://api.weixin.qq.com/cv/ocr/comm"
 )
 
 // other
