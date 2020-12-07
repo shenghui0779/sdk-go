@@ -164,6 +164,20 @@ func (mr *MockBodyMockRecorder) FileName() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FileName", reflect.TypeOf((*MockBody)(nil).FileName))
 }
 
+// ExtraFields mocks base method
+func (m *MockBody) ExtraFields() map[string]string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExtraFields")
+	ret0, _ := ret[0].(map[string]string)
+	return ret0
+}
+
+// ExtraFields indicates an expected call of ExtraFields
+func (mr *MockBodyMockRecorder) ExtraFields() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExtraFields", reflect.TypeOf((*MockBody)(nil).ExtraFields))
+}
+
 // Bytes mocks base method
 func (m *MockBody) Bytes() func() ([]byte, error) {
 	m.ctrl.T.Helper()
@@ -230,10 +244,10 @@ func (mr *MockActionMockRecorder) Method() *gomock.Call {
 }
 
 // WXML mocks base method
-func (m *MockAction) WXML() func(string, string, string, string) (WXML, error) {
+func (m *MockAction) WXML() func(string, string, string) (WXML, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WXML")
-	ret0, _ := ret[0].(func(string, string, string, string) (WXML, error))
+	ret0, _ := ret[0].(func(string, string, string) (WXML, error))
 	return ret0
 }
 

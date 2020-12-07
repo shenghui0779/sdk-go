@@ -54,6 +54,12 @@ const (
 	SubscribeMessageSendURL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"
 )
 
+// qrcode
+const (
+	QRCodeCreateURL = "https://api.weixin.qq.com/cgi-bin/qrcode/create"
+	QRCodeShowURL   = "https://mp.weixin.qq.com/cgi-bin/showqrcode"
+)
+
 // media
 const (
 	MediaUploadURL     = "https://api.weixin.qq.com/cgi-bin/media/upload"
