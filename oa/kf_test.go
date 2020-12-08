@@ -59,7 +59,7 @@ func TestGetKFAccountList(t *testing.T) {
 			HeadImgURL:       "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
 			InviteWeixin:     "kfwx2",
 			InviteExpireTime: 123456789,
-			InviteStatus:     "waiting",
+			InviteStatus:     InviteWaiting,
 		},
 	}, dest)
 }

@@ -137,7 +137,7 @@ func TestGetMenu(t *testing.T) {
 		Menu: Menu{
 			Button: []*MenuButton{
 				{
-					Type:      "click",
+					Type:      ButtonClick,
 					Name:      "今日歌曲",
 					Key:       "V1001_TODAY_MUSIC",
 					URL:       "",
@@ -153,7 +153,7 @@ func TestGetMenu(t *testing.T) {
 			{
 				Button: []*MenuButton{
 					{
-						Type:      "click",
+						Type:      ButtonClick,
 						Name:      "今日歌曲",
 						Key:       "V1001_TODAY_MUSIC",
 						URL:       "",
@@ -172,7 +172,7 @@ func TestGetMenu(t *testing.T) {
 						MediaID:  "",
 						SubButton: []*MenuButton{
 							{
-								Type:      "view",
+								Type:      ButtonView,
 								Name:      "搜索",
 								Key:       "",
 								URL:       "http://www.soso.com/",
@@ -182,7 +182,7 @@ func TestGetMenu(t *testing.T) {
 								SubButton: []*MenuButton{},
 							},
 							{
-								Type:      "view",
+								Type:      ButtonView,
 								Name:      "视频",
 								Key:       "",
 								URL:       "http://v.qq.com/",
@@ -192,7 +192,7 @@ func TestGetMenu(t *testing.T) {
 								SubButton: []*MenuButton{},
 							},
 							{
-								Type:      "click",
+								Type:      ButtonClick,
 								Name:      "赞一下我们",
 								Key:       "V1001_GOOD",
 								URL:       "",
