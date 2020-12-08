@@ -1,7 +1,6 @@
 package mp
 
 import (
-	"encoding/json"
 	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -46,108 +45,102 @@ type OATemplateMessage struct {
 
 // Uniform 发送统一服务消息
 func SendUniformMessage(openID string, msg *UniformMessage) wx.Action {
-	return wx.NewOpenPostAPI(UniformMessageSendURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		params := wx.X{
-			"touser": openID,
+	params := wx.X{
+		"touser": openID,
+	}
+
+	// 小程序模板消息
+	if msg.MPTemplateMessage != nil {
+		tplMsg := wx.X{
+			"template_id": msg.MPTemplateMessage.TemplateID,
+			"form_id":     msg.MPTemplateMessage.FormID,
 		}
 
-		// 小程序模板消息
-		if msg.MPTemplateMessage != nil {
-			tplMsg := wx.X{
-				"template_id": msg.MPTemplateMessage.TemplateID,
-				"form_id":     msg.MPTemplateMessage.FormID,
-			}
-
-			if msg.MPTemplateMessage.Page != "" {
-				params["page"] = msg.MPTemplateMessage.Page
-			}
-
-			if msg.MPTemplateMessage.Data != nil {
-				params["data"] = msg.MPTemplateMessage.Data
-			}
-
-			if msg.MPTemplateMessage.EmphasisKeyword != "" {
-				params["emphasis_keyword"] = msg.MPTemplateMessage.EmphasisKeyword
-			}
-
-			params["weapp_template_msg"] = tplMsg
+		if msg.MPTemplateMessage.Page != "" {
+			params["page"] = msg.MPTemplateMessage.Page
 		}
 
-		// 公众号模板消息
-		if msg.OATemplateMessage != nil {
-			tplMsg := wx.X{
-				"appid":       msg.OATemplateMessage.AppID,
-				"template_id": msg.OATemplateMessage.TemplateID,
-				"data":        msg.OATemplateMessage.Data,
-			}
-
-			if msg.OATemplateMessage.RedirectURL != "" {
-				tplMsg["url"] = msg.OATemplateMessage.RedirectURL
-			}
-
-			// 公众号模板消息所要跳转的小程序，小程序的必须与公众号具有绑定关系
-			if msg.OATemplateMessage.MinipAppID != "" {
-				tplMsg["miniprogram"] = map[string]string{
-					"appid":    msg.OATemplateMessage.MinipAppID,
-					"pagepath": msg.OATemplateMessage.MinipPage,
-				}
-			}
-
-			params["mp_template_msg"] = tplMsg
+		if msg.MPTemplateMessage.Data != nil {
+			params["data"] = msg.MPTemplateMessage.Data
 		}
 
-		return json.Marshal(params)
-	}), nil)
+		if msg.MPTemplateMessage.EmphasisKeyword != "" {
+			params["emphasis_keyword"] = msg.MPTemplateMessage.EmphasisKeyword
+		}
+
+		params["weapp_template_msg"] = tplMsg
+	}
+
+	// 公众号模板消息
+	if msg.OATemplateMessage != nil {
+		tplMsg := wx.X{
+			"appid":       msg.OATemplateMessage.AppID,
+			"template_id": msg.OATemplateMessage.TemplateID,
+			"data":        msg.OATemplateMessage.Data,
+		}
+
+		if msg.OATemplateMessage.RedirectURL != "" {
+			tplMsg["url"] = msg.OATemplateMessage.RedirectURL
+		}
+
+		// 公众号模板消息所要跳转的小程序，小程序的必须与公众号具有绑定关系
+		if msg.OATemplateMessage.MinipAppID != "" {
+			tplMsg["miniprogram"] = map[string]string{
+				"appid":    msg.OATemplateMessage.MinipAppID,
+				"pagepath": msg.OATemplateMessage.MinipPage,
+			}
+		}
+
+		params["mp_template_msg"] = tplMsg
+	}
+
+	return wx.NewOpenPostAPI(UniformMessageSendURL, url.Values{}, wx.NewPostBody(params), nil)
 }
 
 // SendSubscribeMessage 发送订阅消息
 func SendSubscribeMessage(openID string, msg *SubscribeMessage) wx.Action {
-	return wx.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		params := wx.X{
-			"touser":      openID,
-			"template_id": msg.TemplateID,
-			"data":        msg.Data,
-		}
+	params := wx.X{
+		"touser":      openID,
+		"template_id": msg.TemplateID,
+		"data":        msg.Data,
+	}
 
-		if msg.Page != "" {
-			params["page"] = msg.Page
-		}
+	if msg.Page != "" {
+		params["page"] = msg.Page
+	}
 
-		if msg.MinipState != "" {
-			params["miniprogram_state"] = msg.MinipState
-		}
+	if msg.MinipState != "" {
+		params["miniprogram_state"] = msg.MinipState
+	}
 
-		if msg.Lang != "" {
-			params["lang"] = msg.Lang
-		}
+	if msg.Lang != "" {
+		params["lang"] = msg.Lang
+	}
 
-		return json.Marshal(params)
-	}), nil)
+	return wx.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, wx.NewPostBody(params), nil)
 }
 
 // SendTemplateMessage 发送模板消息（已废弃，请使用订阅消息）
 func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
-	return wx.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		params := wx.X{
-			"touser":      openID,
-			"template_id": msg.TemplateID,
-			"form_id":     msg.FormID,
-		}
+	params := wx.X{
+		"touser":      openID,
+		"template_id": msg.TemplateID,
+		"form_id":     msg.FormID,
+	}
 
-		if msg.Page != "" {
-			params["page"] = msg.Page
-		}
+	if msg.Page != "" {
+		params["page"] = msg.Page
+	}
 
-		if msg.Data != nil {
-			params["data"] = msg.Data
-		}
+	if msg.Data != nil {
+		params["data"] = msg.Data
+	}
 
-		if msg.EmphasisKeyword != "" {
-			params["emphasis_keyword"] = msg.EmphasisKeyword
-		}
+	if msg.EmphasisKeyword != "" {
+		params["emphasis_keyword"] = msg.EmphasisKeyword
+	}
 
-		return json.Marshal(params)
-	}), nil)
+	return wx.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, wx.NewPostBody(params), nil)
 }
 
 // KFTextMessage 客服文本消息
@@ -157,12 +150,10 @@ type KFTextMessage struct {
 
 // SendKFTextMessage 发送客服文本消息
 func SendKFTextMessage(openID string, msg *KFTextMessage) wx.Action {
-	return wx.NewOpenPostAPI(KFMessageSendURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"touser":  openID,
-			"msgtype": "text",
-			"text":    msg,
-		})
+	return wx.NewOpenPostAPI(KFMessageSendURL, url.Values{}, wx.NewPostBody(wx.X{
+		"touser":  openID,
+		"msgtype": "text",
+		"text":    msg,
 	}), nil)
 }
 
@@ -173,12 +164,10 @@ type KFImageMessage struct {
 
 // SendKFImageMessage 发送客服图片消息
 func SendKFImageMessage(openID string, msg *KFImageMessage) wx.Action {
-	return wx.NewOpenPostAPI(KFMessageSendURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"touser":  openID,
-			"msgtype": "image",
-			"image":   msg,
-		})
+	return wx.NewOpenPostAPI(KFMessageSendURL, url.Values{}, wx.NewPostBody(wx.X{
+		"touser":  openID,
+		"msgtype": "image",
+		"image":   msg,
 	}), nil)
 }
 
@@ -192,12 +181,10 @@ type KFLinkMessage struct {
 
 // SendKFLinkMessage 发送客服图文链接消息
 func SendKFLinkMessage(openID string, msg *KFLinkMessage) wx.Action {
-	return wx.NewOpenPostAPI(KFMessageSendURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"touser":  openID,
-			"msgtype": "link",
-			"link":    msg,
-		})
+	return wx.NewOpenPostAPI(KFMessageSendURL, url.Values{}, wx.NewPostBody(wx.X{
+		"touser":  openID,
+		"msgtype": "link",
+		"link":    msg,
 	}), nil)
 }
 
@@ -210,12 +197,10 @@ type KFMinipMessage struct {
 
 // SendKFMinipMessage 发送客服小程序卡片消息
 func SendKFMinipMessage(openID string, msg *KFMinipMessage) wx.Action {
-	return wx.NewOpenPostAPI(KFMessageSendURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"touser":          openID,
-			"msgtype":         "miniprogrampage",
-			"miniprogrampage": msg,
-		})
+	return wx.NewOpenPostAPI(KFMessageSendURL, url.Values{}, wx.NewPostBody(wx.X{
+		"touser":          openID,
+		"msgtype":         "miniprogrampage",
+		"miniprogrampage": msg,
 	}), nil)
 }
 
@@ -230,10 +215,8 @@ const (
 
 // SetTyping 下发当前输入状态（仅支持客服消息）
 func SetTyping(openID string, cmd TypeCommand) wx.Action {
-	return wx.NewOpenPostAPI(SetTypingURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"touser":  openID,
-			"command": cmd,
-		})
+	return wx.NewOpenPostAPI(SetTypingURL, url.Values{}, wx.NewPostBody(wx.X{
+		"touser":  openID,
+		"command": cmd,
 	}), nil)
 }

@@ -17,40 +17,36 @@ type QRCode struct {
 
 // CreateTempQRCode 创建临时二维码（expireSeconds：二维码有效时间，最大不超过2592000秒（即30天），不填，则默认有效期为30秒。）
 func CreateTempQRCode(dest *QRCode, senceID int, expireSeconds ...int) wx.Action {
-	return wx.NewOpenPostAPI(QRCodeCreateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		params := wx.X{
-			"action_name": "QR_SCENE",
-			"action_info": map[string]map[string]int{
-				"scene": {"scene_id": senceID},
-			},
-		}
+	params := wx.X{
+		"action_name": "QR_SCENE",
+		"action_info": map[string]map[string]int{
+			"scene": {"scene_id": senceID},
+		},
+	}
 
-		if len(expireSeconds) != 0 {
-			params["expire_seconds"] = expireSeconds[0]
-		}
+	if len(expireSeconds) != 0 {
+		params["expire_seconds"] = expireSeconds[0]
+	}
 
-		return json.Marshal(params)
-	}), func(resp []byte) error {
+	return wx.NewOpenPostAPI(QRCodeCreateURL, url.Values{}, wx.NewPostBody(params), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
 
 // CreatePermQRCode 创建永久二维码（expireSeconds：二维码有效时间，最大不超过2592000秒（即30天），不填，则默认有效期为30秒。）
 func CreatePermQRCode(dest *QRCode, senceID int, expireSeconds ...int) wx.Action {
-	return wx.NewOpenPostAPI(QRCodeCreateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		params := wx.X{
-			"action_name": "QR_LIMIT_SCENE",
-			"action_info": map[string]map[string]int{
-				"scene": {"scene_id": senceID},
-			},
-		}
+	params := wx.X{
+		"action_name": "QR_LIMIT_SCENE",
+		"action_info": map[string]map[string]int{
+			"scene": {"scene_id": senceID},
+		},
+	}
 
-		if len(expireSeconds) != 0 {
-			params["expire_seconds"] = expireSeconds[0]
-		}
+	if len(expireSeconds) != 0 {
+		params["expire_seconds"] = expireSeconds[0]
+	}
 
-		return json.Marshal(params)
-	}), func(resp []byte) error {
+	return wx.NewOpenPostAPI(QRCodeCreateURL, url.Values{}, wx.NewPostBody(params), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -62,11 +58,9 @@ type ShortURL struct {
 
 // Long2ShortURL 长链接转短链接（长链接支持http://、https://、weixin://wxpay格式的url）
 func Long2ShortURL(dest *ShortURL, longURL string) wx.Action {
-	return wx.NewOpenPostAPI(ShortURLGenerateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"action":   "long2short",
-			"long_url": longURL,
-		})
+	return wx.NewOpenPostAPI(ShortURLGenerateURL, url.Values{}, wx.NewPostBody(wx.X{
+		"action":   "long2short",
+		"long_url": longURL,
 	}), func(resp []byte) error {
 		dest.URL = gjson.GetBytes(resp, "short_url").String()
 

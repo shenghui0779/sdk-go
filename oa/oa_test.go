@@ -161,9 +161,7 @@ func TestDecryptEventMessage(t *testing.T) {
 var postBody wx.Body
 
 func TestMain(m *testing.M) {
-	postBody = wx.NewPostBody(func() ([]byte, error) {
-		return nil, nil
-	})
+	postBody = wx.NewPostBody(wx.X{})
 
 	m.Run()
 }

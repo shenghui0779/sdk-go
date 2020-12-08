@@ -59,11 +59,7 @@ type NewsArticle struct {
 
 // AddNews 新增永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
 func AddNews(dest *MaterialAddResult, articles ...*NewsArticle) wx.Action {
-	return wx.NewOpenPostAPI(NewsAddURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(map[string][]*NewsArticle{
-			"articles": articles,
-		})
-	}), func(resp []byte) error {
+	return wx.NewOpenPostAPI(NewsAddURL, url.Values{}, wx.NewPostBody(wx.X{"articles": articles}), func(resp []byte) error {
 		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
 		return nil
@@ -105,9 +101,5 @@ func UploadVideo(dest *MaterialAddResult, filename, title, introduction string) 
 
 // DeleteMaterial 删除永久素材
 func DeleteMaterial(mediaID string) wx.Action {
-	return wx.NewOpenPostAPI(MaterialDeleteURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"media_id": mediaID,
-		})
-	}), nil)
+	return wx.NewOpenPostAPI(MaterialDeleteURL, url.Values{}, wx.NewPostBody(wx.X{"media_id": mediaID}), nil)
 }

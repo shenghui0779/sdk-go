@@ -2,6 +2,7 @@ package wx
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/url"
@@ -22,76 +23,39 @@ const (
 
 // Client is the interface that do http request
 type Client interface {
-	// Get do http get request
 	Get(ctx context.Context, reqURL string, options ...HTTPOption) ([]byte, error)
-	// Post do http post request
-	Post(ctx context.Context, reqURL string, body Body, options ...HTTPOption) ([]byte, error)
-	// PostXML do http xml request
+	Post(ctx context.Context, reqURL string, body []byte, options ...HTTPOption) ([]byte, error)
 	PostXML(ctx context.Context, reqURL string, body WXML, options ...HTTPOption) (WXML, error)
-	// Upload do http upload request
-	Upload(ctx context.Context, reqURL string, body Body, options ...HTTPOption) ([]byte, error)
+	Upload(ctx context.Context, reqURL string, form *UploadForm, options ...HTTPOption) ([]byte, error)
 }
 
-// Body is the interface that defines request body
-type Body interface {
-	// FieldName returns field name for upload request
-	FieldName() string
-	// FieldName returns file name for upload request
-	FileName() string
-	// Description returns extra fields for upload request
-	ExtraFields() map[string]string
-	// Bytes returns body for post request
-	Bytes() func() ([]byte, error)
-}
-
-// Action is the interface that handle wechat api
-type Action interface {
-	// URL returns url for request
-	URL() func(accessToken ...string) string
-	// Method returns request method
-	Method() HTTPMethod
-	// WXML returns body for xml request
-	WXML() func(appid, mchid, nonce string) (WXML, error)
-	// Body returns body for post and upload request
-	Body() Body
-	// Decode decodes http response
-	Decode() func(resp []byte) error
-	// TLS specifies use tls client
-	TLS() bool
-}
-
-// HTTPBody is a Body implementation for http request body
-type HTTPBody struct {
+// UploadForm http upload form
+type UploadForm struct {
 	fieldname   string
 	filename    string
 	extraFields map[string]string
-	bytes       func() ([]byte, error)
+	buffer      func() ([]byte, error)
 }
 
-func (h *HTTPBody) FieldName() string {
-	return h.fieldname
+func (f *UploadForm) FieldName() string {
+	return f.fieldname
 }
 
-func (h *HTTPBody) FileName() string {
-	return h.filename
+func (f *UploadForm) FileName() string {
+	return f.filename
 }
 
-func (h *HTTPBody) ExtraFields() map[string]string {
-	return h.extraFields
+func (f *UploadForm) ExtraFields() map[string]string {
+	return f.extraFields
 }
 
-func (h *HTTPBody) Bytes() func() ([]byte, error) {
-	return h.bytes
+func (f *UploadForm) Buffer() ([]byte, error) {
+	return f.buffer()
 }
 
-// NewPostBody returns post body
-func NewPostBody(f func() ([]byte, error)) *HTTPBody {
-	return &HTTPBody{bytes: f}
-}
-
-// NewUploadBody returns upload body
-func NewUploadBody(fieldname, filename string, extraFields map[string]string) *HTTPBody {
-	return &HTTPBody{
+// NewUploadForm returns new uplod form
+func NewUploadBody(fieldname, filename string, extraFields map[string]string) *UploadForm {
+	return &UploadForm{
 		fieldname:   fieldname,
 		filename:    filename,
 		extraFields: extraFields,
@@ -107,29 +71,61 @@ func NewUploadBody(fieldname, filename string, extraFields map[string]string) *H
 	}
 }
 
-// API is a Action implementation for handle wechat api
+// HTTPBody is a Body implementation
+type HTTPBody struct {
+	wxml       func(appid, mchid, nonce string) (WXML, error)
+	bytes      func() ([]byte, error)
+	uploadForm *UploadForm
+}
+
+func (h *HTTPBody) WXML(appid, mchid, nonce string) (WXML, error) {
+	return h.wxml(appid, mchid, nonce)
+}
+
+func (h *HTTPBody) Bytes() ([]byte, error) {
+	return h.bytes()
+}
+
+func (h *HTTPBody) UploadForm() *UploadForm {
+	return h.uploadForm
+}
+
+// Action is the interface that handle wechat api
+type Action interface {
+	URL(accessToken ...string) string
+	Method() HTTPMethod
+	Body() *HTTPBody
+	Decode() func(resp []byte) error
+	TLS() bool
+}
+
+// API is a Action implementation
 type API struct {
 	reqURL func(accessToken ...string) string
 	method HTTPMethod
-	wxml   func(appid, mchid, nonce string) (WXML, error)
-	body   Body
+	query  url.Values
+	body   *HTTPBody
 	decode func(resp []byte) error
 	tls    bool
 }
 
-func (a *API) URL() func(accessToken ...string) string {
-	return a.reqURL
+func (a *API) URL(accessToken ...string) func(accessToken ...string) string {
+	if len(accessToken) != 0 {
+		a.query.Set("access_token", accessToken[0])
+	}
+
+	if len(query) == 0 {
+		return a.reqURL
+	}
+
+	return fmt.Sprintf("%s?%s", reqURL, query.Encode())
 }
 
 func (a *API) Method() HTTPMethod {
 	return a.method
 }
 
-func (a *API) WXML() func(appid, mchid, nonce string) (WXML, error) {
-	return a.wxml
-}
-
-func (a *API) Body() Body {
+func (a *API) Body() *HTTPBody {
 	return a.body
 }
 
@@ -141,45 +137,47 @@ func (a *API) TLS() bool {
 	return a.tls
 }
 
-// NewMchAPI returns mch api
-func NewMchAPI(reqURL string, wxml func(appid, mchid, nonce string) (WXML, error), tls bool) *API {
+// NewAction returns a new action
+func NewAction(reqURL string, method HTTPMethod, query url.Values, body *HTTPBody, decode func(resp []byte) error, tls bool) Action {
 	return &API{
-		reqURL: func(accessToken ...string) string {
-			return reqURL
-		},
-		method: MethodPost,
-		wxml:   wxml,
+		reqURL: reqURL,
+		method: method,
+		query:  query,
+		body:   body,
+		decode: decode,
 		tls:    tls,
 	}
 }
 
-// NewOpenAPI returns open api
-func NewOpenAPI(reqURL string, method HTTPMethod, query url.Values, body Body, decode func(resp []byte) error) *API {
-	return &API{
-		reqURL: func(accessToken ...string) string {
-			if len(accessToken) != 0 {
-				query.Set("access_token", accessToken[0])
+// NewMchAPI returns mch action
+func NewMchAPI(reqURL string, f func(appid, mchid, nonce string) (WXML, error)) Action {
+	return NewAction(reqURL, MethodPost, url.Values{}, &HTTPBody{wxml: f}, nil, false)
+}
+
+// NewMchTLSAPI return mch action
+func NewMchTLSAPI(reqURL string, f func(appid, mchid, nonce string) (WXML, error)) Action {
+	return NewAction(reqURL, MethodPost, url.Values{}, &HTTPBody{wxml: f}, nil, true)
+}
+
+// NewGetAPI returns get action
+func NewGetAPI(reqURL string, query url.Values, decode func(resp []byte) error) Action {
+	return NewOpenAPI(reqURL, MethodGet, query, nil, decode, false)
+}
+
+// NewPostAPI returns post action
+func NewPostAPI(reqURL string, query url.Values, params interface{}, decode func(resp []byte) error) Action {
+	return NewOpenAPI(reqURL, MethodPost, query, &HTTPBody{
+		bytes: func() ([]byte, error) {
+			if params == nil {
+				return nil, nil
 			}
 
-			return fmt.Sprintf("%s?%s", reqURL, query.Encode())
+			return json.Marshal(body)
 		},
-		method: method,
-		body:   body,
-		decode: decode,
-	}
+	}, decode, false)
 }
 
-// NewOpenGetAPI returns open get api
-func NewOpenGetAPI(reqURL string, query url.Values, decode func(resp []byte) error) *API {
-	return NewOpenAPI(reqURL, MethodGet, query, nil, decode)
-}
-
-// NewOpenPostAPI returns open post api
-func NewOpenPostAPI(reqURL string, query url.Values, body Body, decode func(resp []byte) error) *API {
-	return NewOpenAPI(reqURL, MethodPost, query, body, decode)
-}
-
-// NewOpenUploadAPI returns open upload api
-func NewOpenUploadAPI(reqURL string, query url.Values, body Body, decode func(resp []byte) error) *API {
-	return NewOpenAPI(reqURL, MethodUpload, query, body, decode)
+// NewUploadAPI returns upload action
+func NewUploadAPI(reqURL string, query url.Values, form *UploadForm, decode func(resp []byte) error) Action {
+	return NewOpenAPI(reqURL, MethodUpload, query, &HTTPBody{uploadForm: form}, decode, false)
 }

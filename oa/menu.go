@@ -69,18 +69,14 @@ type MenuMatchRule struct {
 
 // CreateMenu 创建自定义菜单
 func CreateMenu(buttons ...*MenuButton) wx.Action {
-	return wx.NewOpenPostAPI(MenuCreateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{"button": buttons})
-	}), nil)
+	return wx.NewOpenPostAPI(MenuCreateURL, url.Values{}, wx.NewPostBody(wx.X{"button": buttons}), nil)
 }
 
 // CreateConditionalMenu 创建个性化菜单
 func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.Action {
-	return wx.NewOpenPostAPI(MenuAddConditionalURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"button":    buttons,
-			"matchrule": matchRule,
-		})
+	return wx.NewOpenPostAPI(MenuAddConditionalURL, url.Values{}, wx.NewPostBody(wx.X{
+		"button":    buttons,
+		"matchrule": matchRule,
 	}), nil)
 }
 
@@ -98,9 +94,7 @@ func DeleteMenu() wx.Action {
 
 // DeleteConditional 删除个性化菜单
 func DeleteConditionalMenu(menuID string) wx.Action {
-	return wx.NewOpenPostAPI(MenuDeleteConditionalURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{"menuid": menuID})
-	}), nil)
+	return wx.NewOpenPostAPI(MenuDeleteConditionalURL, url.Values{}, wx.NewPostBody(wx.X{"menuid": menuID}), nil)
 }
 
 // GroupButton 组合按钮

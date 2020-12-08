@@ -56,11 +56,9 @@ func GetKFOnlineList(dest *[]KFOnline) wx.Action {
 // 完整客服帐号，格式为：帐号前缀@公众号微信号，帐号前缀最多10个字符，必须是英文、数字字符或者下划线，后缀为公众号微信号，长度不超过30个字符
 // 客服昵称，最长16个字
 func AddKFAccount(account, nickname string) wx.Action {
-	return wx.NewOpenPostAPI(KFAccountAddURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"kf_account": account,
-			"nickname":   nickname,
-		})
+	return wx.NewOpenPostAPI(KFAccountAddURL, url.Values{}, wx.NewPostBody(wx.X{
+		"kf_account": account,
+		"nickname":   nickname,
 	}), nil)
 }
 
@@ -68,11 +66,9 @@ func AddKFAccount(account, nickname string) wx.Action {
 // 完整客服帐号，格式为：帐号前缀@公众号微信号，帐号前缀最多10个字符，必须是英文、数字字符或者下划线，后缀为公众号微信号，长度不超过30个字符
 // 客服昵称，最长16个字
 func UpdateKFAccount(account, nickname string) wx.Action {
-	return wx.NewOpenPostAPI(KFAccountUpdateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"kf_account": account,
-			"nickname":   nickname,
-		})
+	return wx.NewOpenPostAPI(KFAccountUpdateURL, url.Values{}, wx.NewPostBody(wx.X{
+		"kf_account": account,
+		"nickname":   nickname,
 	}), nil)
 }
 
@@ -82,11 +78,9 @@ func UpdateKFAccount(account, nickname string) wx.Action {
 // 尚未绑定微信号的帐号可以进行绑定邀请操作，邀请未失效时不能对该帐号进行再次绑定微信号邀请。
 // 完整客服帐号，格式为：帐号前缀@公众号微信号
 func InviteKFWorker(account, inviteWeixin string) wx.Action {
-	return wx.NewOpenPostAPI(KFInviteURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"kf_account": account,
-			"invite_wx":  inviteWeixin,
-		})
+	return wx.NewOpenPostAPI(KFInviteURL, url.Values{}, wx.NewPostBody(wx.X{
+		"kf_account": account,
+		"invite_wx":  inviteWeixin,
 	}), nil)
 }
 
@@ -121,22 +115,18 @@ type KFSession struct {
 // CreateKFSession 创建会话
 // 完整客服帐号，格式为：帐号前缀@公众号微信号
 func CreateKFSession(account, openid string) wx.Action {
-	return wx.NewOpenPostAPI(KFSessionCreateURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"kf_account": account,
-			"openid":     openid,
-		})
+	return wx.NewOpenPostAPI(KFSessionCreateURL, url.Values{}, wx.NewPostBody(wx.X{
+		"kf_account": account,
+		"openid":     openid,
 	}), nil)
 }
 
 // CloseKFSession 关闭会话
 // 完整客服帐号，格式为：帐号前缀@公众号微信号
 func CloseKFSession(account, openid string) wx.Action {
-	return wx.NewOpenPostAPI(KFSessionCloseURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"kf_account": account,
-			"openid":     openid,
-		})
+	return wx.NewOpenPostAPI(KFSessionCloseURL, url.Values{}, wx.NewPostBody(wx.X{
+		"kf_account": account,
+		"openid":     openid,
 	}), nil)
 }
 
@@ -197,13 +187,11 @@ type KFMsgRecordList struct {
 // GetKFMsgRecordList 获取聊天记录（每次查询时段不能超过24小时）
 // 聊天记录中，对于图片、语音、视频，分别展示成文本格式的[image]、[voice]、[video]。
 func GetKFMsgRecordList(dest *KFMsgRecordList, msgid, starttime, endtime int64, number int) wx.Action {
-	return wx.NewOpenPostAPI(KFMsgRecordListURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"msgid":     msgid,
-			"starttime": starttime,
-			"endtime":   endtime,
-			"number":    number,
-		})
+	return wx.NewOpenPostAPI(KFMsgRecordListURL, url.Values{}, wx.NewPostBody(wx.X{
+		"msgid":     msgid,
+		"starttime": starttime,
+		"endtime":   endtime,
+		"number":    number,
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})

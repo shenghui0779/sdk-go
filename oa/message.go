@@ -27,9 +27,7 @@ func GetTemplateList(dest *[]TemplateInfo) wx.Action {
 
 // DeleteTemplate 删除模板
 func DeleteTemplate(templateID string) wx.Action {
-	return wx.NewOpenPostAPI(TemplateDeleteURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{"template_id": templateID})
-	}), nil)
+	return wx.NewOpenPostAPI(TemplateDeleteURL, url.Values{}, wx.NewPostBody(wx.X{"template_id": templateID}), nil)
 }
 
 // MessageBody 消息内容体
@@ -46,50 +44,46 @@ type TemplateMessage struct {
 
 // SendTemplateMessage 发送模板消息
 func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
-	return wx.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		params := wx.X{
-			"touser":      openID,
-			"template_id": msg.TemplateID,
-			"data":        msg.Data,
-		}
+	params := wx.X{
+		"touser":      openID,
+		"template_id": msg.TemplateID,
+		"data":        msg.Data,
+	}
 
-		if msg.RedirectURL != "" {
-			params["url"] = msg.RedirectURL
-		}
+	if msg.RedirectURL != "" {
+		params["url"] = msg.RedirectURL
+	}
 
-		if msg.MinipAppID != "" {
-			params["miniprogram"] = map[string]string{
-				"appid":    msg.MinipAppID,
-				"pagepath": msg.MinipPage,
-			}
+	if msg.MinipAppID != "" {
+		params["miniprogram"] = map[string]string{
+			"appid":    msg.MinipAppID,
+			"pagepath": msg.MinipPage,
 		}
+	}
 
-		return json.Marshal(params)
-	}), nil)
+	return wx.NewOpenPostAPI(TemplateMessageSendURL, url.Values{}, wx.NewPostBody(params), nil)
 }
 
 // SendSubscribeMessage 发送订阅消息
 func SendSubscribeMessage(openID, scene, title string, msg *TemplateMessage) wx.Action {
-	return wx.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		params := wx.X{
-			"scene":       scene,
-			"title":       title,
-			"touser":      openID,
-			"template_id": msg.TemplateID,
-			"data":        msg.Data,
-		}
+	params := wx.X{
+		"scene":       scene,
+		"title":       title,
+		"touser":      openID,
+		"template_id": msg.TemplateID,
+		"data":        msg.Data,
+	}
 
-		if msg.RedirectURL != "" {
-			params["url"] = msg.RedirectURL
-		}
+	if msg.RedirectURL != "" {
+		params["url"] = msg.RedirectURL
+	}
 
-		if msg.MinipAppID != "" {
-			params["miniprogram"] = map[string]string{
-				"appid":    msg.MinipAppID,
-				"pagepath": msg.MinipPage,
-			}
+	if msg.MinipAppID != "" {
+		params["miniprogram"] = map[string]string{
+			"appid":    msg.MinipAppID,
+			"pagepath": msg.MinipPage,
 		}
+	}
 
-		return json.Marshal(params)
-	}), nil)
+	return wx.NewOpenPostAPI(SubscribeMessageSendURL, url.Values{}, wx.NewPostBody(params), nil)
 }
