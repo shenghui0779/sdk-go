@@ -35,14 +35,14 @@ func ApplyPlugin(pluginAppID, reason string) wx.Action {
 
 // PluginDevApplyInfo 插件使用方信息
 type PluginDevApplyInfo struct {
-	AppID      string `json:"appid"`
-	Status     int    `json:"status"`
-	Nickname   string `json:"nickname"`
-	HeadImgURL string `json:"headimgurl"`
-	Categories []wx.X `json:"categories"`
-	CreateTime string `json:"create_time"`
-	ApplyURL   string `json:"apply_url"`
-	Reason     string `json:"reason"`
+	AppID      string `json:"appid"`       // 使用者的appid
+	Status     int    `json:"status"`      // 插件状态
+	Nickname   string `json:"nickname"`    // 使用者的昵称
+	HeadImgURL string `json:"headimgurl"`  // 使用者的头像
+	Categories []wx.X `json:"categories"`  // 使用者的类目
+	CreateTime string `json:"create_time"` // 使用者的申请时间
+	ApplyURL   string `json:"apply_url"`   // 使用者的小程序码
+	Reason     string `json:"reason"`      // 使用者的申请说明
 }
 
 // GetPluginDevApplyList 获取当前所有插件使用方（供插件开发者调用）
@@ -60,10 +60,10 @@ func GetPluginDevApplyList(dest *[]PluginDevApplyInfo, page, num int) wx.Action 
 
 // PluginInfo 插件信息
 type PluginInfo struct {
-	AppID      string `json:"appid"`
-	Status     int    `json:"status"`
-	Nickname   string `json:"nickname"`
-	HeadImgURL string `json:"headimgurl"`
+	AppID      string `json:"appid"`      // 插件 appId
+	Status     int    `json:"status"`     // 插件状态
+	Nickname   string `json:"nickname"`   // 插件昵称
+	HeadImgURL string `json:"headimgurl"` // 插件头像
 }
 
 // GetPluginList 查询已添加的插件
