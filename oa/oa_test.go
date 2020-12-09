@@ -157,11 +157,3 @@ func TestDecryptEventMessage(t *testing.T) {
 
 // 	assert.Equal(t, "0f9de62fce790f9a083d5c99e95740ceb90c27ed", sign.Signature)
 // }
-
-var postBody wx.Body
-
-func TestMain(m *testing.M) {
-	postBody = wx.NewPostBody(wx.X{})
-
-	m.Run()
-}

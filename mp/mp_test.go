@@ -85,13 +85,3 @@ func TestDecryptEventMessage(t *testing.T) {
 		"URL":          "http://182.92.100.180/webhook",
 	}, msg)
 }
-
-var postBody wx.Body
-
-func TestMain(m *testing.M) {
-	postBody = wx.NewPostBody(func() ([]byte, error) {
-		return nil, nil
-	})
-
-	m.Run()
-}
