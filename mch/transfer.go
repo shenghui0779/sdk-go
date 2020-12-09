@@ -35,7 +35,7 @@ type TransferBankCardData struct {
 
 // TransferToBalance 付款到零钱【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
 func TransferToBalance(data *TransferBalanceData) wx.Action {
-	return wx.NewMchAPI(TransferToBalanceURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+	return wx.NewMchTLSAPI(TransferToBalanceURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"mch_appid":        appid,
 			"mchid":            mchid,
@@ -61,12 +61,12 @@ func TransferToBalance(data *TransferBalanceData) wx.Action {
 		}
 
 		return body, nil
-	}, true)
+	})
 }
 
 // QueryTransferBalanceOrder 查询付款到零钱订单
 func QueryTransferBalanceOrder(partnerTradeNO string) wx.Action {
-	return wx.NewMchAPI(TransferBalanceOrderQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+	return wx.NewMchTLSAPI(TransferBalanceOrderQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		return wx.WXML{
 			"appid":            appid,
 			"mch_id":           mchid,
@@ -74,12 +74,12 @@ func QueryTransferBalanceOrder(partnerTradeNO string) wx.Action {
 			"nonce_str":        nonce,
 			"sign_type":        SignMD5,
 		}, nil
-	}, true)
+	})
 }
 
 // TransferToBankCard 付款到银行卡【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
 func TransferToBankCard(data *TransferBankCardData, publicKey []byte) wx.Action {
-	return wx.NewMchAPI(TransferToBankCardURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+	return wx.NewMchTLSAPI(TransferToBankCardURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"mch_id":           mchid,
 			"nonce_str":        nonce,
@@ -112,28 +112,28 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) wx.Action 
 		}
 
 		return body, nil
-	}, true)
+	})
 }
 
 // QueryTransferBankCardOrder 查询付款到银行卡订单
 func QueryTransferBankCardOrder(partnerTradeNO string) wx.Action {
-	return wx.NewMchAPI(TransferBankCardOrderQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+	return wx.NewMchTLSAPI(TransferBankCardOrderQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		return wx.WXML{
 			"mch_id":           mchid,
 			"partner_trade_no": partnerTradeNO,
 			"nonce_str":        nonce,
 			"sign_type":        SignMD5,
 		}, nil
-	}, true)
+	})
 }
 
 // RSAPublicKey 获取RSA加密公钥
 func RSAPublicKey() wx.Action {
-	return wx.NewMchAPI(RSAPublicKeyURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+	return wx.NewMchTLSAPI(RSAPublicKeyURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		return wx.WXML{
 			"mch_id":    mchid,
 			"nonce_str": nonce,
 			"sign_type": SignMD5,
 		}, nil
-	}, true)
+	})
 }

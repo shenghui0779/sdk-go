@@ -21,7 +21,7 @@ type RefundData struct {
 
 // RefundByTransactionID 根据微信订单号退款
 func RefundByTransactionID(transactionID string, data *RefundData) wx.Action {
-	return wx.NewMchAPI(RefundApplyURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+	return wx.NewMchTLSAPI(RefundApplyURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"appid":          appid,
 			"mch_id":         mchid,
@@ -50,12 +50,12 @@ func RefundByTransactionID(transactionID string, data *RefundData) wx.Action {
 		}
 
 		return body, nil
-	}, true)
+	})
 }
 
 // RefundByOutTradeNO 根据商户订单号退款
 func RefundByOutTradeNO(outTradeNO string, data *RefundData) wx.Action {
-	return wx.NewMchAPI(RefundApplyURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+	return wx.NewMchTLSAPI(RefundApplyURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"appid":         appid,
 			"mch_id":        mchid,
@@ -84,7 +84,7 @@ func RefundByOutTradeNO(outTradeNO string, data *RefundData) wx.Action {
 		}
 
 		return body, nil
-	}, true)
+	})
 }
 
 // QueryRefundByRefundID 根据微信退款单号查询退款信息
@@ -103,7 +103,7 @@ func QueryRefundByRefundID(refundID string, offset ...int) wx.Action {
 		}
 
 		return body, nil
-	}, false)
+	})
 }
 
 // QueryRefundByOutRefundNO 根据商户退款单号查询退款信息
@@ -122,7 +122,7 @@ func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) wx.Action {
 		}
 
 		return body, nil
-	}, false)
+	})
 }
 
 // QueryRefundByTransactionID 根据微信订单号查询退款信息
@@ -141,7 +141,7 @@ func QueryRefundByTransactionID(transactionID string, offset ...int) wx.Action {
 		}
 
 		return body, nil
-	}, false)
+	})
 }
 
 // QueryRefundByOutTradeNO 根据商户订单号查询退款信息
@@ -160,5 +160,5 @@ func QueryRefundByOutTradeNO(outTradeNO string, offset ...int) wx.Action {
 		}
 
 		return body, nil
-	}, false)
+	})
 }

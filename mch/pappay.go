@@ -88,7 +88,7 @@ func APPEntrust(c *Contract) wx.Action {
 		}
 
 		return body, nil
-	}, false)
+	})
 }
 
 // OAEntrust 公众号纯签约
@@ -112,7 +112,7 @@ func OAEntrust(c *Contract) wx.Action {
 		}
 
 		return body, nil
-	}, false)
+	})
 }
 
 // MPEntrust 小程序纯签约，返回小程序所需的 extraData 数据
@@ -135,7 +135,7 @@ func MPEntrust(c *Contract) wx.Action {
 		}
 
 		return extraData, nil
-	}, false)
+	})
 }
 
 // H5Entrust H5纯签约
@@ -160,7 +160,7 @@ func H5Entrust(c *Contract) wx.Action {
 		}
 
 		return body, nil
-	}, false)
+	})
 }
 
 // EntrustByOrder 支付中签约
@@ -228,7 +228,7 @@ func EntrustByOrder(order *ContractOrder) wx.Action {
 		}
 
 		return body, nil
-	}, false)
+	})
 }
 
 // QueryContractByID 根据微信返回的委托代扣协议id查询签约关系
@@ -241,7 +241,7 @@ func QueryContractByID(contractID string) wx.Action {
 			"version":     "1.0",
 			"sign_type":   SignMD5,
 		}, nil
-	}, false)
+	})
 }
 
 // QueryContractByCode 根据签约协议号查询签约关系，需要商户平台配置的代扣模版id
@@ -255,7 +255,7 @@ func QueryContractByCode(planID, contractCode string) wx.Action {
 			"version":       "1.0",
 			"sign_type":     SignMD5,
 		}, nil
-	}, false)
+	})
 }
 
 // PappayApply 申请扣款
@@ -297,7 +297,7 @@ func PappayApply(data *PappayData) wx.Action {
 		}
 
 		return body, nil
-	}, false)
+	})
 }
 
 // DeleteContractByID 根据微信返回的委托代扣协议id解约
@@ -311,7 +311,7 @@ func DeleteContractByID(contractID, remark string) wx.Action {
 			"contract_termination_remark": remark,
 			"sign_type":                   SignMD5,
 		}, nil
-	}, false)
+	})
 }
 
 // DeleteContractByCode 根据签约协议号解约，需要商户平台配置的代扣模版id
@@ -326,7 +326,7 @@ func DeleteContractByCode(planID, contractCode, remark string) wx.Action {
 			"contract_termination_remark": remark,
 			"sign_type":                   SignMD5,
 		}, nil
-	}, false)
+	})
 }
 
 // QueryPappayByTransactionID 根据微信订单号查询扣款信息
@@ -339,7 +339,7 @@ func QueryPappayByTransactionID(transactionID string) wx.Action {
 			"nonce_str":      nonce,
 			"sign_type":      SignMD5,
 		}, nil
-	}, false)
+	})
 }
 
 // QueryPappayByOutTradeNO 根据商户订单号查询扣款信息
@@ -352,5 +352,5 @@ func QueryPappayByOutTradeNO(outTradeNO string) wx.Action {
 			"nonce_str":    nonce,
 			"sign_type":    SignMD5,
 		}, nil
-	}, false)
+	})
 }

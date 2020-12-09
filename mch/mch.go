@@ -109,36 +109,38 @@ func (mch *Mch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
 
 // Do exec action
 func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOption) (wx.WXML, error) {
-	body, err := action.WXML()(mch.appid, mch.mchid, mch.nonce(16))
+	body := action.Body()
+
+	m, err := body.WXML(mch.appid, mch.mchid, mch.nonce(16))
 
 	if err != nil {
 		return nil, err
 	}
 
 	// 签名
-	if v, ok := body["sign_type"]; ok && v == SignHMacSHA256 {
-		body["sign"] = mch.SignWithHMacSHA256(body, true)
+	if v, ok := m["sign_type"]; ok && v == SignHMacSHA256 {
+		m["sign"] = mch.SignWithHMacSHA256(m, true)
 	} else {
-		body["sign"] = mch.SignWithMD5(body, true)
+		m["sign"] = mch.SignWithMD5(m, true)
 	}
 
-	reqURL := action.URL()()
+	reqURL := action.URL()
 
 	switch reqURL {
 	case ContractOAEntrust: // 公众号签约
 		query := url.Values{}
 
-		for k, v := range body {
+		for k, v := range m {
 			query.Add(k, v)
 		}
 
 		return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayOAEntrustURL, query.Encode())}, nil
 	case ContractMPEntrust: // 小程序签约
-		return body, nil
+		return m, nil
 	case ContractH5Entrust: // H5签约
 		query := url.Values{}
 
-		for k, v := range body {
+		for k, v := range m {
 			query.Add(k, v)
 		}
 
@@ -148,9 +150,9 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOpti
 	var resp wx.WXML
 
 	if action.TLS() {
-		resp, err = mch.tlsClient.PostXML(ctx, reqURL, body, options...)
+		resp, err = mch.tlsClient.PostXML(ctx, reqURL, m, options...)
 	} else {
-		resp, err = mch.client.PostXML(ctx, reqURL, body, options...)
+		resp, err = mch.client.PostXML(ctx, reqURL, m, options...)
 	}
 
 	if err != nil {

@@ -25,7 +25,7 @@ type RedpackData struct {
 
 // SendNormalRedpack 发放普通红包
 func SendNormalRedpack(data *RedpackData) wx.Action {
-	return wx.NewMchAPI(RedpackNormalURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+	return wx.NewMchTLSAPI(RedpackNormalURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
@@ -51,12 +51,12 @@ func SendNormalRedpack(data *RedpackData) wx.Action {
 		}
 
 		return body, nil
-	}, true)
+	})
 }
 
 // SendGroupRedpack 发放裂变红包
 func SendGroupRedpack(data *RedpackData) wx.Action {
-	return wx.NewMchAPI(RedpackGroupURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+	return wx.NewMchTLSAPI(RedpackGroupURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
@@ -82,12 +82,12 @@ func SendGroupRedpack(data *RedpackData) wx.Action {
 		}
 
 		return body, nil
-	}, true)
+	})
 }
 
 // SendMinipRedpack 发放小程序红包
 func SendMinipRedpack(data *RedpackData) wx.Action {
-	return wx.NewMchAPI(RedpackMinipURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+	return wx.NewMchTLSAPI(RedpackMinipURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		body := wx.WXML{
 			"wxappid":      appid,
 			"mch_id":       mchid,
@@ -109,12 +109,12 @@ func SendMinipRedpack(data *RedpackData) wx.Action {
 		}
 
 		return body, nil
-	}, true)
+	})
 }
 
 // QueryRedpackByBillNO 查询红包记录
 func QueryRedpackByBillNO(billNO string) wx.Action {
-	return wx.NewMchAPI(RedpackQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
+	return wx.NewMchTLSAPI(RedpackQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
 		return wx.WXML{
 			"appid":      appid,
 			"mch_id":     mchid,
@@ -123,5 +123,5 @@ func QueryRedpackByBillNO(billNO string) wx.Action {
 			"nonce_str":  nonce,
 			"sign_type":  SignMD5,
 		}, nil
-	}, true)
+	})
 }

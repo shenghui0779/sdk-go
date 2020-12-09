@@ -96,7 +96,7 @@ func UnifyOrder(data *OrderData) wx.Action {
 		}
 
 		return body, nil
-	}, false)
+	})
 }
 
 // QueryOrderByTransactionID 根据微信订单号查询
@@ -109,7 +109,7 @@ func QueryOrderByTransactionID(transactionID string) wx.Action {
 			"nonce_str":      nonce,
 			"sign_type":      SignMD5,
 		}, nil
-	}, false)
+	})
 }
 
 // QueryOrderByOutTradeNO 根据商户订单号查询
@@ -122,7 +122,7 @@ func QueryOrderByOutTradeNO(outTradeNO string) wx.Action {
 			"nonce_str":    nonce,
 			"sign_type":    SignMD5,
 		}, nil
-	}, false)
+	})
 }
 
 // CloseOrder 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
@@ -135,5 +135,5 @@ func CloseOrder(outTradeNO string) wx.Action {
 			"nonce_str":    nonce,
 			"sign_type":    SignMD5,
 		}, nil
-	}, false)
+	})
 }
