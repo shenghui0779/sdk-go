@@ -8,9 +8,6 @@ import (
 	"path/filepath"
 )
 
-// WXML deal with xml for wechat
-type WXML map[string]string
-
 // HTTPMethod http request method
 type HTTPMethod string
 

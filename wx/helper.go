@@ -9,6 +9,9 @@ import (
 	"strings"
 )
 
+// WXML deal with xml for wechat
+type WXML map[string]string
+
 // X is a convenient alias for a map[string]interface{}.
 type X map[string]interface{}
 
