@@ -38,8 +38,8 @@ type CropPosition struct {
 
 // AICropResult 图片裁切结果
 type AICropResult struct {
-	Results []CropPosition `json:"results"`
-	ImgSize ImageSize      `json:"img_size"`
+	Results []*CropPosition `json:"results"`
+	ImgSize ImageSize       `json:"img_size"`
 }
 
 // AICrop 图片智能裁切
@@ -69,8 +69,8 @@ type QRCodeScanData struct {
 
 // QRCodeScanResult 二维码扫描结果
 type QRCodeScanResult struct {
-	CodeResults []QRCodeScanData `json:"code_results"`
-	ImgSize     ImageSize        `json:"img_size"`
+	CodeResults []*QRCodeScanData `json:"code_results"`
+	ImgSize     ImageSize         `json:"img_size"`
 }
 
 // ScanQRCode 条码/二维码识别

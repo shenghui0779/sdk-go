@@ -276,8 +276,8 @@ func OCRBusinessLicenseByURL(dest *BusinessLicense, mode OCRMode, imgURL string)
 
 // PrintedText 通用印刷体
 type PrintedText struct {
-	Items   []PrintedTextItem `json:"items"`
-	ImgSize ImageSize         `json:"img_size"`
+	Items   []*PrintedTextItem `json:"items"`
+	ImgSize ImageSize          `json:"img_size"`
 }
 
 // PrintedTextItem 通用印刷体内容项

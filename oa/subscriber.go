@@ -74,7 +74,7 @@ func GetSubscriberInfo(dest *SubscriberInfo, openid string) wx.Action {
 }
 
 // BatchGetSubscribers 批量关注用户信息
-func BatchGetSubscribers(dest *[]SubscriberInfo, openids ...string) wx.Action {
+func BatchGetSubscribers(dest *[]*SubscriberInfo, openids ...string) wx.Action {
 	userList := make([]map[string]string, 0, len(openids))
 
 	for _, v := range openids {

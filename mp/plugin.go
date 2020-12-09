@@ -46,7 +46,7 @@ type PluginDevApplyInfo struct {
 }
 
 // GetPluginDevApplyList 获取当前所有插件使用方（供插件开发者调用）
-func GetPluginDevApplyList(dest *[]PluginDevApplyInfo, page, num int) wx.Action {
+func GetPluginDevApplyList(dest *[]*PluginDevApplyInfo, page, num int) wx.Action {
 	return wx.NewPostAPI(PluginDevManageURL, url.Values{}, func() ([]byte, error) {
 		return json.Marshal(wx.X{
 			"action": PluginDevApplyList,
@@ -67,7 +67,7 @@ type PluginInfo struct {
 }
 
 // GetPluginList 查询已添加的插件
-func GetPluginList(dest *[]PluginInfo) wx.Action {
+func GetPluginList(dest *[]*PluginInfo) wx.Action {
 	return wx.NewPostAPI(PluginManageURL, url.Values{}, func() ([]byte, error) {
 		return json.Marshal(wx.X{"action": PluginList})
 	}, func(resp []byte) error {

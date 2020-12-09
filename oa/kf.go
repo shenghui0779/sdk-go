@@ -31,7 +31,7 @@ type KFAccount struct {
 }
 
 // GetKFAccountList 获取客服列表
-func GetKFAccountList(dest *[]KFAccount) wx.Action {
+func GetKFAccountList(dest *[]*KFAccount) wx.Action {
 	return wx.NewGetAPI(KFAccountListURL, url.Values{}, func(resp []byte) error {
 		return json.Unmarshal([]byte(gjson.GetBytes(resp, "kf_list").Raw), dest)
 	})
@@ -46,7 +46,7 @@ type KFOnline struct {
 }
 
 // GetKFOnlineList 获取客服在线列表
-func GetKFOnlineList(dest *[]KFOnline) wx.Action {
+func GetKFOnlineList(dest *[]*KFOnline) wx.Action {
 	return wx.NewGetAPI(KFOnlineListURL, url.Values{}, func(resp []byte) error {
 		return json.Unmarshal([]byte(gjson.GetBytes(resp, "kf_online_list").Raw), dest)
 	})
@@ -154,7 +154,7 @@ func GetKFSession(dest *KFSession, openid string) wx.Action {
 
 // GetKFSessionList 获取客服会话列表
 // 完整客服帐号，格式为：帐号前缀@公众号微信号
-func GetKFSessionList(dest *[]KFSession, account string) wx.Action {
+func GetKFSessionList(dest *[]*KFSession, account string) wx.Action {
 	query := url.Values{}
 
 	query.Set("kf_account", account)
