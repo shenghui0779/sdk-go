@@ -69,32 +69,38 @@ type MenuMatchRule struct {
 
 // CreateMenu 创建自定义菜单
 func CreateMenu(buttons ...*MenuButton) wx.Action {
-	return wx.NewOpenPostAPI(MenuCreateURL, url.Values{}, wx.NewPostBody(wx.X{"button": buttons}), nil)
+	return wx.NewPostAPI(MenuCreateURL, url.Values{}, func() ([]byte, error) {
+		return json.Marshal(wx.X{"button": buttons})
+	}, nil)
 }
 
 // CreateConditionalMenu 创建个性化菜单
 func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.Action {
-	return wx.NewOpenPostAPI(MenuAddConditionalURL, url.Values{}, wx.NewPostBody(wx.X{
-		"button":    buttons,
-		"matchrule": matchRule,
-	}), nil)
+	return wx.NewPostAPI(MenuAddConditionalURL, url.Values{}, func() ([]byte, error) {
+		return json.Marshal(wx.X{
+			"button":    buttons,
+			"matchrule": matchRule,
+		})
+	}, nil)
 }
 
 // GetMenu 查询自定义菜单
 func GetMenu(dest *MenuInfo) wx.Action {
-	return wx.NewOpenGetAPI(MenuListURL, url.Values{}, func(resp []byte) error {
+	return wx.NewGetAPI(MenuListURL, url.Values{}, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
 
 // DeleteMenu 删除自定义菜单
 func DeleteMenu() wx.Action {
-	return wx.NewOpenGetAPI(MenuDeleteURL, url.Values{}, nil)
+	return wx.NewGetAPI(MenuDeleteURL, url.Values{}, nil)
 }
 
 // DeleteConditional 删除个性化菜单
 func DeleteConditionalMenu(menuID string) wx.Action {
-	return wx.NewOpenPostAPI(MenuDeleteConditionalURL, url.Values{}, wx.NewPostBody(wx.X{"menuid": menuID}), nil)
+	return wx.NewPostAPI(MenuDeleteConditionalURL, url.Values{}, func() ([]byte, error) {
+		return json.Marshal(wx.X{"menuid": menuID})
+	}, nil)
 }
 
 // GroupButton 组合按钮

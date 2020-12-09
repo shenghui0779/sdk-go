@@ -54,7 +54,7 @@ func (mr *MockClientMockRecorder) Get(ctx, reqURL interface{}, options ...interf
 }
 
 // Post mocks base method
-func (m *MockClient) Post(ctx context.Context, reqURL string, body Body, options ...HTTPOption) ([]byte, error) {
+func (m *MockClient) Post(ctx context.Context, reqURL string, body []byte, options ...HTTPOption) ([]byte, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, reqURL, body}
 	for _, a := range options {
@@ -94,9 +94,9 @@ func (mr *MockClientMockRecorder) PostXML(ctx, reqURL, body interface{}, options
 }
 
 // Upload mocks base method
-func (m *MockClient) Upload(ctx context.Context, reqURL string, body Body, options ...HTTPOption) ([]byte, error) {
+func (m *MockClient) Upload(ctx context.Context, reqURL string, form *UploadForm, options ...HTTPOption) ([]byte, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, reqURL, body}
+	varargs := []interface{}{ctx, reqURL, form}
 	for _, a := range options {
 		varargs = append(varargs, a)
 	}
@@ -107,89 +107,10 @@ func (m *MockClient) Upload(ctx context.Context, reqURL string, body Body, optio
 }
 
 // Upload indicates an expected call of Upload
-func (mr *MockClientMockRecorder) Upload(ctx, reqURL, body interface{}, options ...interface{}) *gomock.Call {
+func (mr *MockClientMockRecorder) Upload(ctx, reqURL, form interface{}, options ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, reqURL, body}, options...)
+	varargs := append([]interface{}{ctx, reqURL, form}, options...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upload", reflect.TypeOf((*MockClient)(nil).Upload), varargs...)
-}
-
-// MockBody is a mock of Body interface
-type MockBody struct {
-	ctrl     *gomock.Controller
-	recorder *MockBodyMockRecorder
-}
-
-// MockBodyMockRecorder is the mock recorder for MockBody
-type MockBodyMockRecorder struct {
-	mock *MockBody
-}
-
-// NewMockBody creates a new mock instance
-func NewMockBody(ctrl *gomock.Controller) *MockBody {
-	mock := &MockBody{ctrl: ctrl}
-	mock.recorder = &MockBodyMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockBody) EXPECT() *MockBodyMockRecorder {
-	return m.recorder
-}
-
-// FieldName mocks base method
-func (m *MockBody) FieldName() string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FieldName")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// FieldName indicates an expected call of FieldName
-func (mr *MockBodyMockRecorder) FieldName() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FieldName", reflect.TypeOf((*MockBody)(nil).FieldName))
-}
-
-// FileName mocks base method
-func (m *MockBody) FileName() string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FileName")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// FileName indicates an expected call of FileName
-func (mr *MockBodyMockRecorder) FileName() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FileName", reflect.TypeOf((*MockBody)(nil).FileName))
-}
-
-// ExtraFields mocks base method
-func (m *MockBody) ExtraFields() map[string]string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ExtraFields")
-	ret0, _ := ret[0].(map[string]string)
-	return ret0
-}
-
-// ExtraFields indicates an expected call of ExtraFields
-func (mr *MockBodyMockRecorder) ExtraFields() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExtraFields", reflect.TypeOf((*MockBody)(nil).ExtraFields))
-}
-
-// Bytes mocks base method
-func (m *MockBody) Bytes() func() ([]byte, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Bytes")
-	ret0, _ := ret[0].(func() ([]byte, error))
-	return ret0
-}
-
-// Bytes indicates an expected call of Bytes
-func (mr *MockBodyMockRecorder) Bytes() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Bytes", reflect.TypeOf((*MockBody)(nil).Bytes))
 }
 
 // MockAction is a mock of Action interface
@@ -216,17 +137,21 @@ func (m *MockAction) EXPECT() *MockActionMockRecorder {
 }
 
 // URL mocks base method
-func (m *MockAction) URL() func(...string) string {
+func (m *MockAction) URL(accessToken ...string) string {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "URL")
-	ret0, _ := ret[0].(func(...string) string)
+	varargs := []interface{}{}
+	for _, a := range accessToken {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "URL", varargs...)
+	ret0, _ := ret[0].(string)
 	return ret0
 }
 
 // URL indicates an expected call of URL
-func (mr *MockActionMockRecorder) URL() *gomock.Call {
+func (mr *MockActionMockRecorder) URL(accessToken ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "URL", reflect.TypeOf((*MockAction)(nil).URL))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "URL", reflect.TypeOf((*MockAction)(nil).URL), accessToken...)
 }
 
 // Method mocks base method
@@ -243,25 +168,11 @@ func (mr *MockActionMockRecorder) Method() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Method", reflect.TypeOf((*MockAction)(nil).Method))
 }
 
-// WXML mocks base method
-func (m *MockAction) WXML() func(string, string, string) (WXML, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "WXML")
-	ret0, _ := ret[0].(func(string, string, string) (WXML, error))
-	return ret0
-}
-
-// WXML indicates an expected call of WXML
-func (mr *MockActionMockRecorder) WXML() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WXML", reflect.TypeOf((*MockAction)(nil).WXML))
-}
-
 // Body mocks base method
-func (m *MockAction) Body() Body {
+func (m *MockAction) Body() *HTTPBody {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Body")
-	ret0, _ := ret[0].(Body)
+	ret0, _ := ret[0].(*HTTPBody)
 	return ret0
 }
 

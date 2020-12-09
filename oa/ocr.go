@@ -37,7 +37,7 @@ func OCRIDCardFront(dest *IDCardFront, mode OCRMode, filename string) wx.Action 
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRIDCardURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(OCRIDCardURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -49,7 +49,7 @@ func OCRIDCardFrontByURL(dest *IDCardFront, mode OCRMode, imgURL string) wx.Acti
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(OCRIDCardURL, query, nil, func(resp []byte) error {
+	return wx.NewPostAPI(OCRIDCardURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -65,7 +65,7 @@ func OCRIDCardBack(dest *IDCardBack, mode OCRMode, filename string) wx.Action {
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRIDCardURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(OCRIDCardURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
 		dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
 
 		return nil
@@ -79,7 +79,7 @@ func OCRIDCardBackByURL(dest *IDCardBack, mode OCRMode, imgURL string) wx.Action
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(OCRIDCardURL, query, nil, func(resp []byte) error {
+	return wx.NewPostAPI(OCRIDCardURL, query, nil, func(resp []byte) error {
 		dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
 
 		return nil
@@ -97,7 +97,7 @@ func OCRBankCard(dest *BankCard, mode OCRMode, filename string) wx.Action {
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRBankCardURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(OCRBankCardURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
 		dest.ID = gjson.GetBytes(resp, "number").String()
 
 		return nil
@@ -111,7 +111,7 @@ func OCRBankCardByURL(dest *BankCard, mode OCRMode, imgURL string) wx.Action {
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(OCRBankCardURL, query, nil, func(resp []byte) error {
+	return wx.NewPostAPI(OCRBankCardURL, query, nil, func(resp []byte) error {
 		dest.ID = gjson.GetBytes(resp, "number").String()
 
 		return nil
@@ -129,7 +129,7 @@ func OCRPlateNumber(dest *PlateNumber, mode OCRMode, filename string) wx.Action 
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRPlateNumberURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(OCRPlateNumberURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
 		dest.ID = gjson.GetBytes(resp, "number").String()
 
 		return nil
@@ -143,7 +143,7 @@ func OCRPlateNumberByURL(dest *PlateNumber, mode OCRMode, imgURL string) wx.Acti
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(OCRPlateNumberURL, query, nil, func(resp []byte) error {
+	return wx.NewPostAPI(OCRPlateNumberURL, query, nil, func(resp []byte) error {
 		dest.ID = gjson.GetBytes(resp, "number").String()
 
 		return nil
@@ -171,7 +171,7 @@ func OCRDriverLicense(dest *DriverLicense, mode OCRMode, filename string) wx.Act
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRDriverLicenseURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(OCRDriverLicenseURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -183,7 +183,7 @@ func OCRDriverLicenseByURL(dest *DriverLicense, mode OCRMode, imgURL string) wx.
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(OCRDriverLicenseURL, query, nil, func(resp []byte) error {
+	return wx.NewPostAPI(OCRDriverLicenseURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -216,7 +216,7 @@ func OCRVehicleLicense(dest *VehicleLicense, mode OCRMode, filename string) wx.A
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRVehicleLicenseURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(OCRVehicleLicenseURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -228,7 +228,7 @@ func OCRVehicleLicenseByURL(dest *VehicleLicense, mode OCRMode, imgURL string) w
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(OCRVehicleLicenseURL, query, nil, func(resp []byte) error {
+	return wx.NewPostAPI(OCRVehicleLicenseURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -257,7 +257,7 @@ func OCRBusinessLicense(dest *BusinessLicense, mode OCRMode, filename string) wx
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRBusinessLicenseURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(OCRBusinessLicenseURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -269,7 +269,7 @@ func OCRBusinessLicenseByURL(dest *BusinessLicense, mode OCRMode, imgURL string)
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(OCRBusinessLicenseURL, query, nil, func(resp []byte) error {
+	return wx.NewPostAPI(OCRBusinessLicenseURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -292,7 +292,7 @@ func OCRPrintedText(dest *PrintedText, mode OCRMode, filename string) wx.Action 
 
 	query.Set("type", string(mode))
 
-	return wx.NewOpenUploadAPI(OCRPrintedTextURL, query, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(OCRPrintedTextURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -304,7 +304,7 @@ func OCRPrintedTextByURL(dest *PrintedText, mode OCRMode, imgURL string) wx.Acti
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(OCRPrintedTextURL, query, nil, func(resp []byte) error {
+	return wx.NewPostAPI(OCRPrintedTextURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }

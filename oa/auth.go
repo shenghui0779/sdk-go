@@ -28,7 +28,7 @@ func CheckAuthToken(openid string) wx.Action {
 
 	query.Set("openid", openid)
 
-	return wx.NewOpenGetAPI(SnsCheckAccessTokenURL, query, nil)
+	return wx.NewGetAPI(SnsCheckAccessTokenURL, query, nil)
 }
 
 // AuthUser 授权用户信息
@@ -51,7 +51,7 @@ func GetAuthUser(dest *AuthUser, openid string) wx.Action {
 	query.Set("openid", openid)
 	query.Set("lang", "zh_CN")
 
-	return wx.NewOpenGetAPI(SnsUserInfoURL, query, func(resp []byte) error {
+	return wx.NewGetAPI(SnsUserInfoURL, query, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -84,7 +84,7 @@ func GetJSSDKTicket(dest *JSSDKTicket, t TicketType) wx.Action {
 
 	query.Set("type", string(t))
 
-	return wx.NewOpenGetAPI(CgiBinTicketURL, query, func(resp []byte) error {
+	return wx.NewGetAPI(CgiBinTicketURL, query, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }

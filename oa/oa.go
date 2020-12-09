@@ -134,13 +134,21 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 		err  error
 	)
 
+	body := action.Body()
+
 	switch action.Method() {
 	case wx.MethodGet:
-		resp, err = oa.client.Get(ctx, action.URL()(accessToken), options...)
+		resp, err = oa.client.Get(ctx, action.URL(accessToken), options...)
 	case wx.MethodPost:
-		resp, err = oa.client.Post(ctx, action.URL()(accessToken), action.Body(), options...)
+		b, err := body.Bytes()
+
+		if err != nil {
+			return err
+		}
+
+		resp, err = oa.client.Post(ctx, action.URL(accessToken), b, options...)
 	case wx.MethodUpload:
-		resp, err = oa.client.Upload(ctx, action.URL()(accessToken), action.Body(), options...)
+		resp, err = oa.client.Upload(ctx, action.URL(accessToken), body.UploadForm(), options...)
 	}
 
 	if err != nil {

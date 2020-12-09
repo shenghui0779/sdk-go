@@ -26,7 +26,7 @@ func UploadMedia(dest *MediaUploadResult, mediaType MediaType, filename string) 
 
 	query.Set("type", string(mediaType))
 
-	return wx.NewOpenUploadAPI(MediaUploadURL, query, wx.NewUploadBody("media", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(MediaUploadURL, query, wx.NewUploadForm("media", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -42,7 +42,7 @@ func GetMedia(dest *Media, mediaID string) wx.Action {
 
 	query.Set("media_id", mediaID)
 
-	return wx.NewOpenGetAPI(MediaGetURL, query, func(resp []byte) error {
+	return wx.NewGetAPI(MediaGetURL, query, func(resp []byte) error {
 		dest.Buffer = make([]byte, len(resp))
 
 		copy(dest.Buffer, resp)

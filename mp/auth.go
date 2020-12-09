@@ -73,7 +73,7 @@ func GetPaidUnionIDByTransactionID(dest *PaidUnionID, openid, transactionID stri
 	query.Set("openid", openid)
 	query.Set("transaction_id", transactionID)
 
-	return wx.NewOpenGetAPI(PaidUnionURL, query, func(resp []byte) error {
+	return wx.NewGetAPI(PaidUnionURL, query, func(resp []byte) error {
 		dest.UnionID = gjson.GetBytes(resp, "unionid").String()
 
 		return nil
@@ -88,7 +88,7 @@ func GetPaidUnionIDByOutTradeNO(dest *PaidUnionID, openid, mchid, outTradeNO str
 	query.Set("mch_id", mchid)
 	query.Set("out_trade_no", outTradeNO)
 
-	return wx.NewOpenGetAPI(PaidUnionURL, query, func(resp []byte) error {
+	return wx.NewGetAPI(PaidUnionURL, query, func(resp []byte) error {
 		dest.UnionID = gjson.GetBytes(resp, "unionid").String()
 
 		return nil

@@ -137,13 +137,21 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 		err  error
 	)
 
+	body := action.Body()
+
 	switch action.Method() {
 	case wx.MethodGet:
-		resp, err = mp.client.Get(ctx, action.URL()(accessToken), options...)
+		resp, err = mp.client.Get(ctx, action.URL(accessToken), options...)
 	case wx.MethodPost:
-		resp, err = mp.client.Post(ctx, action.URL()(accessToken), action.Body(), options...)
+		b, err := body.Bytes()
+
+		if err != nil {
+			return err
+		}
+
+		resp, err = mp.client.Post(ctx, action.URL(accessToken), b, options...)
 	case wx.MethodUpload:
-		resp, err = mp.client.Upload(ctx, action.URL()(accessToken), action.Body(), options...)
+		resp, err = mp.client.Upload(ctx, action.URL(accessToken), body.UploadForm(), options...)
 	}
 
 	if err != nil {

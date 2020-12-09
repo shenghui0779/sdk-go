@@ -33,7 +33,7 @@ func UploadMedia(dest *MediaUploadResult, mediaType MediaType, filename string) 
 
 	query.Set("type", string(mediaType))
 
-	return wx.NewOpenUploadAPI(MediaUploadURL, query, wx.NewUploadBody("media", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(MediaUploadURL, query, wx.NewUploadForm("media", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -59,7 +59,9 @@ type NewsArticle struct {
 
 // AddNews 新增永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
 func AddNews(dest *MaterialAddResult, articles ...*NewsArticle) wx.Action {
-	return wx.NewOpenPostAPI(NewsAddURL, url.Values{}, wx.NewPostBody(wx.X{"articles": articles}), func(resp []byte) error {
+	return wx.NewPostAPI(NewsAddURL, url.Values{}, func() ([]byte, error) {
+		return json.Marshal(wx.X{"articles": articles})
+	}, func(resp []byte) error {
 		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
 		return nil
@@ -68,7 +70,7 @@ func AddNews(dest *MaterialAddResult, articles ...*NewsArticle) wx.Action {
 
 // UploadNewsImage 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
 func UploadNewsImage(dest *MaterialAddResult, filename string) wx.Action {
-	return wx.NewOpenUploadAPI(NewsImageUploadURL, url.Values{}, wx.NewUploadBody("media", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(NewsImageUploadURL, url.Values{}, wx.NewUploadForm("media", filename, nil), func(resp []byte) error {
 		dest.URL = gjson.GetBytes(resp, "url").String()
 
 		return nil
@@ -81,7 +83,7 @@ func AddMaterial(dest *MaterialAddResult, mediaType MediaType, filename string) 
 
 	query.Set("type", string(mediaType))
 
-	return wx.NewOpenUploadAPI(MaterialAddURL, query, wx.NewUploadBody("media", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(MaterialAddURL, query, wx.NewUploadForm("media", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -92,7 +94,7 @@ func UploadVideo(dest *MaterialAddResult, filename, title, introduction string) 
 
 	query.Set("type", string(MediaVideo))
 
-	return wx.NewOpenUploadAPI(MaterialAddURL, query, wx.NewUploadBody("media", filename, map[string]string{
+	return wx.NewUploadAPI(MaterialAddURL, query, wx.NewUploadForm("media", filename, map[string]string{
 		"description": fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, introduction),
 	}), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
@@ -101,5 +103,7 @@ func UploadVideo(dest *MaterialAddResult, filename, title, introduction string) 
 
 // DeleteMaterial 删除永久素材
 func DeleteMaterial(mediaID string) wx.Action {
-	return wx.NewOpenPostAPI(MaterialDeleteURL, url.Values{}, wx.NewPostBody(wx.X{"media_id": mediaID}), nil)
+	return wx.NewPostAPI(MaterialDeleteURL, url.Values{}, func() ([]byte, error) {
+		return json.Marshal(wx.X{"media_id": mediaID})
+	}, nil)
 }

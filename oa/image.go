@@ -44,7 +44,7 @@ type AICropResult struct {
 
 // AICrop 图片智能裁切
 func AICrop(dest *AICropResult, filename string) wx.Action {
-	return wx.NewOpenUploadAPI(AICropURL, url.Values{}, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(AICropURL, url.Values{}, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -55,7 +55,7 @@ func AICropByURL(dest *AICropResult, imgURL string) wx.Action {
 
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(AICropURL, query, nil, func(resp []byte) error {
+	return wx.NewPostAPI(AICropURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -75,7 +75,7 @@ type QRCodeScanResult struct {
 
 // ScanQRCode 条码/二维码识别
 func ScanQRCode(dest *QRCodeScanResult, filename string) wx.Action {
-	return wx.NewOpenUploadAPI(ScanQRCodeURL, url.Values{}, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(ScanQRCodeURL, url.Values{}, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -86,7 +86,7 @@ func ScanQRCodeByURL(dest *QRCodeScanResult, imgURL string) wx.Action {
 
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(ScanQRCodeURL, query, nil, func(resp []byte) error {
+	return wx.NewPostAPI(ScanQRCodeURL, query, nil, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -98,7 +98,7 @@ type SuperreSolutionResult struct {
 
 // SuperreSolution 图片高清化
 func SuperreSolution(dest *SuperreSolutionResult, filename string) wx.Action {
-	return wx.NewOpenUploadAPI(SuperreSolutionURL, url.Values{}, wx.NewUploadBody("img", filename, nil), func(resp []byte) error {
+	return wx.NewUploadAPI(SuperreSolutionURL, url.Values{}, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
 		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
 		return nil
@@ -111,7 +111,7 @@ func SuperreSolutionByURL(dest *SuperreSolutionResult, imgURL string) wx.Action 
 
 	query.Set("img_url", imgURL)
 
-	return wx.NewOpenPostAPI(SuperreSolutionURL, query, nil, func(resp []byte) error {
+	return wx.NewPostAPI(SuperreSolutionURL, query, nil, func(resp []byte) error {
 		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
 		return nil

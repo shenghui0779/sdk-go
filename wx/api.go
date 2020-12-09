@@ -2,7 +2,6 @@ package wx
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/url"
@@ -34,7 +33,6 @@ type UploadForm struct {
 	fieldname   string
 	filename    string
 	extraFields map[string]string
-	buffer      func() ([]byte, error)
 }
 
 func (f *UploadForm) FieldName() string {
@@ -50,24 +48,21 @@ func (f *UploadForm) ExtraFields() map[string]string {
 }
 
 func (f *UploadForm) Buffer() ([]byte, error) {
-	return f.buffer()
+	path, err := filepath.Abs(f.filename)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ioutil.ReadFile(path)
 }
 
 // NewUploadForm returns new uplod form
-func NewUploadBody(fieldname, filename string, extraFields map[string]string) *UploadForm {
+func NewUploadForm(fieldname, filename string, extraFields map[string]string) *UploadForm {
 	return &UploadForm{
 		fieldname:   fieldname,
 		filename:    filename,
 		extraFields: extraFields,
-		bytes: func() ([]byte, error) {
-			path, err := filepath.Abs(filename)
-
-			if err != nil {
-				return nil, err
-			}
-
-			return ioutil.ReadFile(path)
-		},
 	}
 }
 
@@ -83,6 +78,10 @@ func (h *HTTPBody) WXML(appid, mchid, nonce string) (WXML, error) {
 }
 
 func (h *HTTPBody) Bytes() ([]byte, error) {
+	if h.bytes == nil {
+		return nil, nil
+	}
+
 	return h.bytes()
 }
 
@@ -101,7 +100,7 @@ type Action interface {
 
 // API is a Action implementation
 type API struct {
-	reqURL func(accessToken ...string) string
+	reqURL string
 	method HTTPMethod
 	query  url.Values
 	body   *HTTPBody
@@ -109,16 +108,16 @@ type API struct {
 	tls    bool
 }
 
-func (a *API) URL(accessToken ...string) func(accessToken ...string) string {
+func (a *API) URL(accessToken ...string) string {
 	if len(accessToken) != 0 {
 		a.query.Set("access_token", accessToken[0])
 	}
 
-	if len(query) == 0 {
+	if len(a.query) == 0 {
 		return a.reqURL
 	}
 
-	return fmt.Sprintf("%s?%s", reqURL, query.Encode())
+	return fmt.Sprintf("%s?%s", a.reqURL, a.query.Encode())
 }
 
 func (a *API) Method() HTTPMethod {
@@ -161,23 +160,15 @@ func NewMchTLSAPI(reqURL string, f func(appid, mchid, nonce string) (WXML, error
 
 // NewGetAPI returns get action
 func NewGetAPI(reqURL string, query url.Values, decode func(resp []byte) error) Action {
-	return NewOpenAPI(reqURL, MethodGet, query, nil, decode, false)
+	return NewAction(reqURL, MethodGet, query, nil, decode, false)
 }
 
 // NewPostAPI returns post action
-func NewPostAPI(reqURL string, query url.Values, params interface{}, decode func(resp []byte) error) Action {
-	return NewOpenAPI(reqURL, MethodPost, query, &HTTPBody{
-		bytes: func() ([]byte, error) {
-			if params == nil {
-				return nil, nil
-			}
-
-			return json.Marshal(body)
-		},
-	}, decode, false)
+func NewPostAPI(reqURL string, query url.Values, body func() ([]byte, error), decode func(resp []byte) error) Action {
+	return NewAction(reqURL, MethodPost, query, &HTTPBody{bytes: body}, decode, false)
 }
 
 // NewUploadAPI returns upload action
 func NewUploadAPI(reqURL string, query url.Values, form *UploadForm, decode func(resp []byte) error) Action {
-	return NewOpenAPI(reqURL, MethodUpload, query, &HTTPBody{uploadForm: form}, decode, false)
+	return NewAction(reqURL, MethodUpload, query, &HTTPBody{uploadForm: form}, decode, false)
 }

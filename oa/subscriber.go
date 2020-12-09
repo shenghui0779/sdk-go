@@ -68,7 +68,7 @@ func GetSubscriberInfo(dest *SubscriberInfo, openid string) wx.Action {
 	query.Set("openid", openid)
 	query.Set("lang", "zh_CN")
 
-	return wx.NewOpenGetAPI(SubscriberGetURL, query, func(resp []byte) error {
+	return wx.NewGetAPI(SubscriberGetURL, query, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
@@ -84,7 +84,9 @@ func BatchGetSubscribers(dest *[]SubscriberInfo, openids ...string) wx.Action {
 		})
 	}
 
-	return wx.NewOpenPostAPI(SubscriberBatchGetURL, url.Values{}, wx.NewPostBody(wx.X{"user_list": userList}), func(resp []byte) error {
+	return wx.NewPostAPI(SubscriberBatchGetURL, url.Values{}, func() ([]byte, error) {
+		return json.Marshal(wx.X{"user_list": userList})
+	}, func(resp []byte) error {
 		return json.Unmarshal([]byte(gjson.GetBytes(resp, "user_info_list").Raw), dest)
 	})
 }
@@ -97,40 +99,48 @@ func GetSubscriberList(dest *SubscriberList, nextOpenID ...string) wx.Action {
 		query.Set("next_openid", nextOpenID[0])
 	}
 
-	return wx.NewOpenGetAPI(SubscriberListURL, query, func(resp []byte) error {
+	return wx.NewGetAPI(SubscriberListURL, query, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
 
 // GetBlackList 获取用户黑名单列表
 func GetBlackList(dest *SubscriberList, beginOpenID ...string) wx.Action {
-	params := wx.X{
-		"begin_openid": "",
-	}
+	return wx.NewPostAPI(BlackListGetURL, url.Values{}, func() ([]byte, error) {
+		params := wx.X{
+			"begin_openid": "",
+		}
 
-	if len(beginOpenID) != 0 {
-		params["begin_openid"] = beginOpenID[0]
-	}
+		if len(beginOpenID) != 0 {
+			params["begin_openid"] = beginOpenID[0]
+		}
 
-	return wx.NewOpenPostAPI(BlackListGetURL, url.Values{}, wx.NewPostBody(params), func(resp []byte) error {
+		return json.Marshal(params)
+	}, func(resp []byte) error {
 		return json.Unmarshal(resp, dest)
 	})
 }
 
 // BlackSubscribers 拉黑用户
 func BlackSubscribers(openids ...string) wx.Action {
-	return wx.NewOpenPostAPI(BatchBlackListURL, url.Values{}, wx.NewPostBody(wx.X{"openid_list": openids}), nil)
+	return wx.NewPostAPI(BatchBlackListURL, url.Values{}, func() ([]byte, error) {
+		return json.Marshal(wx.X{"openid_list": openids})
+	}, nil)
 }
 
 // UnBlackSubscriber 取消拉黑用户
 func UnBlackSubscribers(openids ...string) wx.Action {
-	return wx.NewOpenPostAPI(BatchUnBlackListURL, url.Values{}, wx.NewPostBody(wx.X{"openid_list": openids}), nil)
+	return wx.NewPostAPI(BatchUnBlackListURL, url.Values{}, func() ([]byte, error) {
+		return json.Marshal(wx.X{"openid_list": openids})
+	}, nil)
 }
 
 // SetUserRemark 设置用户备注名（该接口暂时开放给微信认证的服务号）
 func SetUserRemark(openid, remark string) wx.Action {
-	return wx.NewOpenPostAPI(UserRemarkSetURL, url.Values{}, wx.NewPostBody(wx.X{
-		"openid": openid,
-		"remark": remark,
-	}), nil)
+	return wx.NewPostAPI(UserRemarkSetURL, url.Values{}, func() ([]byte, error) {
+		return json.Marshal(wx.X{
+			"openid": openid,
+			"remark": remark,
+		})
+	}, nil)
 }

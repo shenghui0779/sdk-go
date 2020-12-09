@@ -10,6 +10,7 @@ import (
 	"mime/multipart"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -155,23 +156,10 @@ func (h *HTTPClient) Get(ctx context.Context, url string, options ...HTTPOption)
 }
 
 // Post http post request
-func (h *HTTPClient) Post(ctx context.Context, url string, body Body, options ...HTTPOption) ([]byte, error) {
-	var (
-		b   []byte
-		err error
-	)
-
-	if f := body.Bytes(); f != nil {
-		b, err = f()
-
-		if err != nil {
-			return nil, err
-		}
-	}
-
+func (h *HTTPClient) Post(ctx context.Context, url string, body []byte, options ...HTTPOption) ([]byte, error) {
 	options = append(options, WithHTTPHeader("Content-Type", "application/json; charset=utf-8"))
 
-	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
+	req, err := http.NewRequest("POST", url, bytes.NewReader(body))
 
 	if err != nil {
 		return nil, err
@@ -184,9 +172,13 @@ func (h *HTTPClient) Post(ctx context.Context, url string, body Body, options ..
 func (h *HTTPClient) PostXML(ctx context.Context, url string, body WXML, options ...HTTPOption) (WXML, error) {
 	xmlStr, err := FormatMap2XML(body)
 
+	if err != nil {
+		return nil, err
+	}
+
 	options = append(options, WithHTTPHeader("Content-Type", "text/xml; charset=utf-8"))
 
-	req, err := http.NewRequest("POST", url, bytes.NewReader([]byte(xmlStr)))
+	req, err := http.NewRequest("POST", url, strings.NewReader(xmlStr))
 
 	if err != nil {
 		return nil, err
@@ -208,17 +200,17 @@ func (h *HTTPClient) PostXML(ctx context.Context, url string, body WXML, options
 }
 
 // Upload http upload media
-func (h *HTTPClient) Upload(ctx context.Context, url string, body Body, options ...HTTPOption) ([]byte, error) {
-	media, err := body.Bytes()()
+func (h *HTTPClient) Upload(ctx context.Context, url string, form *UploadForm, options ...HTTPOption) ([]byte, error) {
+	media, err := form.Buffer()
 
 	if err != nil {
 		return nil, err
 	}
 
-	buf := new(bytes.Buffer)
+	buf := bytes.NewBuffer(make([]byte, 0, 4<<10)) // 4kb
 	w := multipart.NewWriter(buf)
 
-	fw, err := w.CreateFormFile(body.FieldName(), body.FileName())
+	fw, err := w.CreateFormFile(form.FieldName(), form.FileName())
 
 	if err != nil {
 		return nil, err
@@ -229,9 +221,11 @@ func (h *HTTPClient) Upload(ctx context.Context, url string, body Body, options 
 	}
 
 	// add extra fields
-	if extraFields := body.ExtraFields(); len(extraFields) != 0 {
+	if extraFields := form.ExtraFields(); len(extraFields) != 0 {
 		for k, v := range extraFields {
-			w.WriteField(k, v)
+			if err = w.WriteField(k, v); err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -241,7 +235,7 @@ func (h *HTTPClient) Upload(ctx context.Context, url string, body Body, options 
 	// If you don't close it, your request will be missing the terminating boundary.
 	w.Close()
 
-	req, err := http.NewRequest("POST", url, bytes.NewReader([]byte(buf.String())))
+	req, err := http.NewRequest("POST", url, buf)
 
 	if err != nil {
 		return nil, err
