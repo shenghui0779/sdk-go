@@ -78,11 +78,17 @@ func GetPluginList(dest *[]*PluginInfo) wx.Action {
 // SetDevPluginApplyStatus 修改插件使用申请的状态（供插件开发者调用）
 func SetDevPluginApplyStatus(action PluginAction, appid, reason string) wx.Action {
 	return wx.NewPostAPI(PluginDevManageURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"action": action,
-			"appid":  appid,
-			"reason": reason,
-		})
+		params := wx.X{"action": action}
+
+		if len(appid) != 0 {
+			params["appid"] = appid
+		}
+
+		if len(reason) != 0 {
+			params["reason"] = reason
+		}
+
+		return json.Marshal(params)
 	}, nil)
 }
 

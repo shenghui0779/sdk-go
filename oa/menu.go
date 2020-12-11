@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/url"
 
+	"github.com/tidwall/gjson"
+
 	"github.com/shenghui0779/gochat/wx"
 )
 
@@ -27,33 +29,33 @@ const (
 
 // MenuInfo 自定义菜单信息
 type MenuInfo struct {
-	Menu            Menu               `json:"menu"`
-	ConditionalMenu []*ConditionalMenu `json:"conditionalmenu"`
+	Menu            Menu               `json:"menu"`            // 普通菜单
+	ConditionalMenu []*ConditionalMenu `json:"conditionalmenu"` // 个性化菜单
 }
 
 // Menu 普通菜单
 type Menu struct {
-	Button []*MenuButton `json:"button"`
-	MenuID int64         `json:"menuid"`
+	Button []*MenuButton `json:"button"` // 菜单按钮
+	MenuID int64         `json:"menuid"` // 菜单ID（有个性化菜单时返回）
 }
 
 // ConditionalMenu 个性化菜单
 type ConditionalMenu struct {
-	Button    []*MenuButton `json:"button"`
-	MatchRule MenuMatchRule `json:"matchrule"`
-	MenuID    int64         `json:"menuid"`
+	Button    []*MenuButton `json:"button"`    // 菜单按钮
+	MatchRule MenuMatchRule `json:"matchrule"` // 菜单匹配规则
+	MenuID    int64         `json:"menuid"`    // 菜单ID
 }
 
 // MenuButton 菜单按钮
 type MenuButton struct {
-	Type      MenuButtonType `json:"type,omitempty"`
-	Name      string         `json:"name,omitempty"`
-	Key       string         `json:"key,omitempty"`
-	URL       string         `json:"url,omitempty"`
-	AppID     string         `json:"appid,omitempty"`
-	PagePath  string         `json:"page_path,omitempty"`
-	MediaID   string         `json:"media_id,omitempty"`
-	SubButton []*MenuButton  `json:"sub_button,omitempty"`
+	Type      MenuButtonType `json:"type,omitempty"`       // 菜单的响应动作类型，view表示网页类型，click表示点击类型，miniprogram表示小程序类型
+	Name      string         `json:"name,omitempty"`       // 菜单标题，不超过16个字节，子菜单不超过60个字节
+	Key       string         `json:"key,omitempty"`        // click等点击类型必须，菜单KEY值，用于消息接口推送，不超过128字节
+	URL       string         `json:"url,omitempty"`        // view、miniprogram类型必须，网页 链接，用户点击菜单可打开链接，不超过1024字节。 type为miniprogram时，不支持小程序的老版本客户端将打开本url。
+	AppID     string         `json:"appid,omitempty"`      // miniprogram类型必须，小程序的appid（仅认证公众号可配置）
+	Pagepath  string         `json:"pagepath,omitempty"`   // miniprogram类型必须，小程序的页面路径
+	MediaID   string         `json:"media_id,omitempty"`   // media_id类型和view_limited类型必须，调用新增永久素材接口返回的合法media_id
+	SubButton []*MenuButton  `json:"sub_button,omitempty"` // 二级菜单数组，个数应为1~5个
 }
 
 // MenuMatchRule 菜单匹配规则
@@ -82,6 +84,16 @@ func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.
 			"matchrule": matchRule,
 		})
 	}, nil)
+}
+
+// TryMatchMenu 测试匹配个性化菜单
+// 注意：user_id可以是粉丝的OpenID，也可以是粉丝的微信号。
+func TryMatchMenu(dest *[]*MenuButton, userID string) wx.Action {
+	return wx.NewPostAPI(MenuTryMatchURL, url.Values{}, func() ([]byte, error) {
+		return json.Marshal(wx.X{"user_id": userID})
+	}, func(resp []byte) error {
+		return json.Unmarshal([]byte(gjson.GetBytes(resp, "button").Raw), dest)
+	})
 }
 
 // GetMenu 查询自定义菜单
@@ -211,6 +223,6 @@ func MinipButton(name, appid, pagepath, redirectURL string) *MenuButton {
 		Name:     name,
 		URL:      redirectURL,
 		AppID:    appid,
-		PagePath: pagepath,
+		Pagepath: pagepath,
 	}
 }

@@ -134,5 +134,13 @@ func MarshalWithNoEscapeHTML(v interface{}) ([]byte, error) {
 		return nil, err
 	}
 
-	return buf.Bytes(), nil
+	b := buf.Bytes()
+
+	// 去掉 go std 给末尾加的 '\n'
+	// @see https://github.com/golang/go/issues/7767
+	if l := len(b); l != 0 && b[l-1] == '\n' {
+		b = b[:l-1]
+	}
+
+	return b, nil
 }

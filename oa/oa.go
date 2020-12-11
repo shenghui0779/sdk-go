@@ -146,6 +146,8 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 			return err
 		}
 
+		fmt.Println(string(b))
+
 		resp, err = oa.client.Post(ctx, action.URL(accessToken), b, options...)
 	case wx.MethodUpload:
 		resp, err = oa.client.Upload(ctx, action.URL(accessToken), body.UploadForm(), options...)

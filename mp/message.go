@@ -10,6 +10,12 @@ import (
 // MessageBody 消息内容体
 type MessageBody map[string]map[string]string
 
+// MessageMinip 跳转小程序
+type MessageMinip struct {
+	AppID    string `json:"appid"`    // 所需跳转到的小程序appid（该小程序appid必须与发模板消息的公众号是绑定关联关系，暂不支持小游戏）
+	Pagepath string `json:"pagepath"` // 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar），要求该小程序已发布，暂不支持小游戏
+}
+
 // UniformMessage 统一服务消息
 type UniformMessage struct {
 	MPTemplateMessage *TemplateMessage   // 小程序模板消息相关的信息，可以参考小程序模板消息接口; 有此节点则优先发送小程序模板消息
@@ -36,12 +42,11 @@ type TemplateMessage struct {
 
 // OATemplateMessage 公众号模板消息
 type OATemplateMessage struct {
-	AppID       string      // 公众号appid，要求与小程序有绑定且同主体
-	TemplateID  string      // 模板ID
-	RedirectURL string      // 模板跳转链接（海外帐号没有跳转能力）
-	MinipAppID  string      // 所需跳转到的小程序appid（该小程序appid必须与发模板消息的公众号是绑定关联关系，暂不支持小游戏）
-	MinipPage   string      // 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar），要求该小程序已发布，暂不支持小游戏
-	Data        MessageBody // 模板内容，格式形如：{"key1": {"value": any}, "key2": {"value": any}}
+	AppID       string        // 公众号appid，要求与小程序有绑定且同主体
+	TemplateID  string        // 模板ID
+	RedirectURL string        // 模板跳转链接（海外帐号没有跳转能力）
+	MiniProgram *MessageMinip // 跳转小程序
+	Data        MessageBody   // 模板内容，格式形如：{"key1": {"value": any}, "key2": {"value": any}}
 }
 
 // Uniform 发送统一服务消息
@@ -59,15 +64,15 @@ func SendUniformMessage(openID string, msg *UniformMessage) wx.Action {
 			}
 
 			if msg.MPTemplateMessage.Page != "" {
-				params["page"] = msg.MPTemplateMessage.Page
+				tplMsg["page"] = msg.MPTemplateMessage.Page
 			}
 
 			if msg.MPTemplateMessage.Data != nil {
-				params["data"] = msg.MPTemplateMessage.Data
+				tplMsg["data"] = msg.MPTemplateMessage.Data
 			}
 
 			if msg.MPTemplateMessage.EmphasisKeyword != "" {
-				params["emphasis_keyword"] = msg.MPTemplateMessage.EmphasisKeyword
+				tplMsg["emphasis_keyword"] = msg.MPTemplateMessage.EmphasisKeyword
 			}
 
 			params["weapp_template_msg"] = tplMsg
@@ -86,11 +91,8 @@ func SendUniformMessage(openID string, msg *UniformMessage) wx.Action {
 			}
 
 			// 公众号模板消息所要跳转的小程序，小程序的必须与公众号具有绑定关系
-			if msg.OATemplateMessage.MinipAppID != "" {
-				tplMsg["miniprogram"] = map[string]string{
-					"appid":    msg.OATemplateMessage.MinipAppID,
-					"pagepath": msg.OATemplateMessage.MinipPage,
-				}
+			if msg.OATemplateMessage.MiniProgram != nil {
+				tplMsg["miniprogram"] = msg.OATemplateMessage.MiniProgram
 			}
 
 			params["mp_template_msg"] = tplMsg

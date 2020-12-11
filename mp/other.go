@@ -34,7 +34,7 @@ func InvokeService(dest *InvokeResult, data *InvokeData) wx.Action {
 
 // SoterSignature 生物认证秘钥签名
 type SoterSignature struct {
-	OpenID        string `json:"open_id"`        // 用户 openid
+	OpenID        string `json:"openid"`         // 用户 openid
 	JSONString    string `json:"json_string"`    // 通过 wx.startSoterAuthentication 成功回调获得的 resultJSON 字段
 	JSONSignature string `json:"json_signature"` // 通过 wx.startSoterAuthentication 成功回调获得的 resultJSONSignature 字段
 }
@@ -66,13 +66,14 @@ const (
 
 // UserRiskData 用户风控数据
 type UserRiskData struct {
-	AppID        string    `json:"appid"`
-	OpenID       string    `json:"openid"`
-	Scene        RiskScene `json:"scene"`
-	MobileNO     string    `json:"mobile_no,omitempty"`
-	ClientIP     string    `json:"client_ip"`
-	EmailAddress string    `json:"email_address,omitempty"`
-	ExtendedInfo string    `json:"extended_info,omitempty"`
+	AppID        string    `json:"appid"`                   // 小程序appid
+	OpenID       string    `json:"openid"`                  // 用户的openid
+	Scene        RiskScene `json:"scene"`                   // 场景值，0:注册，1:营销作弊
+	MobileNO     string    `json:"mobile_no,omitempty"`     // 用户手机号
+	ClientIP     string    `json:"client_ip"`               // 用户访问源ip
+	EmailAddress string    `json:"email_address,omitempty"` // 用户邮箱地址
+	ExtendedInfo string    `json:"extended_info,omitempty"` // 额外补充信息
+	IsTest       bool      `json:"is_test,omitempty"`       // false：正式调用，true：测试调用
 }
 
 // UserRiskRank 用户风控结果

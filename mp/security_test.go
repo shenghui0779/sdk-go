@@ -15,7 +15,7 @@ func TestImageSecCheck(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/img_sec_check?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/img_sec_check?access_token=ACCESS_TOKEN", wx.NewUploadForm("media", "test.jpg", nil)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -31,7 +31,7 @@ func TestMediaCheckAsync(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/media_check_async?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/media_check_async?access_token=ACCESS_TOKEN", []byte(`{"media_type":2,"media_url":"https://developers.weixin.qq.com/miniprogram/assets/images/head_global_z_@all.png"}`)).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"trace_id": "967e945cd8a3e458f3c74dcb886068e9"
@@ -42,7 +42,7 @@ func TestMediaCheckAsync(t *testing.T) {
 
 	dest := new(MediaSecAsyncResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", MediaSecCheckAsync(dest, SecMediaImage, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", MediaSecCheckAsync(dest, SecMediaImage, "https://developers.weixin.qq.com/miniprogram/assets/images/head_global_z_@all.png"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "967e945cd8a3e458f3c74dcb886068e9", dest.TraceID)
@@ -54,7 +54,7 @@ func TestMsgSecCheck(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/msg_sec_check?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/msg_sec_check?access_token=ACCESS_TOKEN", []byte(`{"content":"hello world!"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
