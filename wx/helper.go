@@ -41,7 +41,7 @@ func FormatMap2XML(m WXML) (string, error) {
 		builder.WriteString(fmt.Sprintf("</%s>", k))
 	}
 
-	builder.WriteString("<xml>")
+	builder.WriteString("</xml>")
 
 	return builder.String(), nil
 }
