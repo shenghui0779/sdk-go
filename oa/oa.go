@@ -47,7 +47,7 @@ func (oa *OA) SetOriginID(originid string) {
 	oa.originid = originid
 }
 
-// SetServerConfig 设置服务器配置
+// SetServerConfig 设置服务器配置，[参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
 func (oa *OA) SetServerConfig(token, encodingAESKey string) {
 	oa.token = token
 	oa.encodingAESKey = encodingAESKey
@@ -168,9 +168,9 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 	return action.Decode()(resp)
 }
 
-// VerifyEventSign 验证消息事件签名
-// 验证消息来自微信服务器（signature、timestamp、nonce；若验证成功，请原样返回echostr参数内容）
-// 验证事件消息签名（msg_signature、timestamp、nonce、msg_encrypt）
+// VerifyEventSign 验证消息事件签名，[参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
+// 验证消息来自微信服务器，使用：signature、timestamp、nonce；若验证成功，请原样返回echostr参数内容
+// 验证事件消息签名，使用：msg_signature、timestamp、nonce、msg_encrypt
 func (oa *OA) VerifyEventSign(signature string, items ...string) bool {
 	signStr := event.SignWithSHA1(oa.token, items...)
 
