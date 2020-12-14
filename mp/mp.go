@@ -39,7 +39,8 @@ func New(appid, appsecret string) *MP {
 	}
 }
 
-// SetServerConfig 设置服务器配置，[参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
+// SetServerConfig 设置服务器配置
+// [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
 func (mp *MP) SetServerConfig(token, encodingAESKey string) {
 	mp.token = token
 	mp.encodingAESKey = encodingAESKey
@@ -171,9 +172,10 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 	return action.Decode()(resp)
 }
 
-// VerifyEventSign 验证事件消息签名，[参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
+// VerifyEventSign 验证事件消息签名
 // 验证消息来自微信服务器，使用：signature、timestamp、nonce；若验证成功，请原样返回echostr参数内容
 // 验证事件消息签名，使用：msg_signature、timestamp、nonce、msg_encrypt
+// [参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
 func (mp *MP) VerifyEventSign(signature string, items ...string) bool {
 	signStr := event.SignWithSHA1(mp.token, items...)
 
