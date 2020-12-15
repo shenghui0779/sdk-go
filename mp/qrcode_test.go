@@ -18,21 +18,21 @@ func TestQRCodeOption(t *testing.T) {
 		WithQRCodeIsHyaline(),
 	}
 
-	o := new(qrcodeOptions)
+	settings := new(qrcodeSettings)
 
-	for _, option := range options {
-		option.apply(o)
+	for _, f := range options {
+		f(settings)
 	}
 
-	assert.Equal(t, 430, o.width)
-	assert.Equal(t, "pages/index", o.page)
-	assert.True(t, o.autoColor)
+	assert.Equal(t, 430, settings.width)
+	assert.Equal(t, "pages/index", settings.page)
+	assert.True(t, settings.autoColor)
 	assert.Equal(t, map[string]int{
 		"r": 1,
 		"g": 2,
 		"b": 3,
-	}, o.lineColor)
-	assert.True(t, o.isHyaline)
+	}, settings.lineColor)
+	assert.True(t, settings.isHyaline)
 }
 
 func TestCreateQRCode(t *testing.T) {
