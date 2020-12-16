@@ -98,7 +98,7 @@ func QueryRefundByRefundID(refundID string, offset ...int) wx.Action {
 			"sign_type": SignMD5,
 		}
 
-		if len(offset) > 0 {
+		if len(offset) != 0 {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
@@ -117,7 +117,7 @@ func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) wx.Action {
 			"sign_type":     SignMD5,
 		}
 
-		if len(offset) > 0 {
+		if len(offset) != 0 {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
@@ -136,7 +136,7 @@ func QueryRefundByTransactionID(transactionID string, offset ...int) wx.Action {
 			"sign_type":      SignMD5,
 		}
 
-		if len(offset) > 0 {
+		if len(offset) != 0 {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 
@@ -155,7 +155,7 @@ func QueryRefundByOutTradeNO(outTradeNO string, offset ...int) wx.Action {
 			"sign_type":    SignMD5,
 		}
 
-		if len(offset) > 0 {
+		if len(offset) != 0 {
 			body["offset"] = strconv.Itoa(offset[0])
 		}
 

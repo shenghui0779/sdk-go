@@ -66,7 +66,7 @@ func CreateQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action 
 	return wx.NewPostAPI(QRCodeCreateURL, url.Values{}, func() ([]byte, error) {
 		settings := new(qrcodeSettings)
 
-		if len(options) > 0 {
+		if len(options) != 0 {
 			for _, f := range options {
 				f(settings)
 			}
@@ -92,7 +92,7 @@ func GetQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action {
 	return wx.NewPostAPI(QRCodeGetURL, url.Values{}, func() ([]byte, error) {
 		settings := new(qrcodeSettings)
 
-		if len(options) > 0 {
+		if len(options) != 0 {
 			for _, f := range options {
 				f(settings)
 			}
@@ -130,7 +130,7 @@ func GetUnlimitQRCode(dest *QRCode, scene string, options ...QRCodeOption) wx.Ac
 	return wx.NewPostAPI(QRCodeGetUnlimitURL, url.Values{}, func() ([]byte, error) {
 		settings := new(qrcodeSettings)
 
-		if len(options) > 0 {
+		if len(options) != 0 {
 			for _, f := range options {
 				f(settings)
 			}
