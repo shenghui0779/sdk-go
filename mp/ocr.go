@@ -33,25 +33,26 @@ type IDCardFront struct {
 
 // OCRIDCardFront 身份证前面识别
 func OCRIDCardFront(dest *IDCardFront, mode OCRMode, filename string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
-
-	return wx.NewUploadAPI(OCRIDCardURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(OCRIDCardURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mode)),
+		wx.WithUploadForm("img", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // OCRIDCardFrontByURL 身份证前面识别
 func OCRIDCardFrontByURL(dest *IDCardFront, mode OCRMode, imgURL string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
-	query.Set("img_url", imgURL)
-
-	return wx.NewPostAPI(OCRIDCardURL, query, nil, func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(OCRIDCardURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithQuery("type", string(mode)),
+		wx.WithQuery("img_url", imgURL),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // IDCardBack 身份证背面
@@ -65,11 +66,16 @@ func OCRIDCardBack(dest *IDCardBack, mode OCRMode, filename string) wx.Action {
 
 	query.Set("type", string(mode))
 
-	return wx.NewUploadAPI(OCRIDCardURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
-		dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
+	return wx.NewAPI(OCRIDCardURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mode)),
+		wx.WithUploadForm("img", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // OCRIDCardBackByURL 身份证背面识别
@@ -79,11 +85,16 @@ func OCRIDCardBackByURL(dest *IDCardBack, mode OCRMode, imgURL string) wx.Action
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewPostAPI(OCRIDCardURL, query, nil, func(resp []byte) error {
-		dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
+	return wx.NewAPI(OCRIDCardURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithQuery("type", string(mode)),
+		wx.WithQuery("img_url", imgURL),
+		wx.WithDecode(func(resp []byte) error {
+			dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // BankCard 银行卡
@@ -97,11 +108,16 @@ func OCRBankCard(dest *BankCard, mode OCRMode, filename string) wx.Action {
 
 	query.Set("type", string(mode))
 
-	return wx.NewUploadAPI(OCRBankCardURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
-		dest.ID = gjson.GetBytes(resp, "number").String()
+	return wx.NewAPI(OCRBankCardURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mode)),
+		wx.WithUploadForm("img", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			dest.ID = gjson.GetBytes(resp, "number").String()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // OCRBankCardByURL 银行卡识别
@@ -111,11 +127,16 @@ func OCRBankCardByURL(dest *BankCard, mode OCRMode, imgURL string) wx.Action {
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewPostAPI(OCRBankCardURL, query, nil, func(resp []byte) error {
-		dest.ID = gjson.GetBytes(resp, "number").String()
+	return wx.NewAPI(OCRBankCardURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithQuery("type", string(mode)),
+		wx.WithQuery("img_url", imgURL),
+		wx.WithDecode(func(resp []byte) error {
+			dest.ID = gjson.GetBytes(resp, "number").String()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // PlateNumber 车牌号
@@ -129,11 +150,16 @@ func OCRPlateNumber(dest *PlateNumber, mode OCRMode, filename string) wx.Action 
 
 	query.Set("type", string(mode))
 
-	return wx.NewUploadAPI(OCRPlateNumberURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
-		dest.ID = gjson.GetBytes(resp, "number").String()
+	return wx.NewAPI(OCRPlateNumberURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mode)),
+		wx.WithUploadForm("img", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			dest.ID = gjson.GetBytes(resp, "number").String()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // OCRPlateNumberByURL 车牌号识别
@@ -143,11 +169,16 @@ func OCRPlateNumberByURL(dest *PlateNumber, mode OCRMode, imgURL string) wx.Acti
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewPostAPI(OCRPlateNumberURL, query, nil, func(resp []byte) error {
-		dest.ID = gjson.GetBytes(resp, "number").String()
+	return wx.NewAPI(OCRPlateNumberURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithQuery("type", string(mode)),
+		wx.WithQuery("img_url", imgURL),
+		wx.WithDecode(func(resp []byte) error {
+			dest.ID = gjson.GetBytes(resp, "number").String()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // DriverLicense 驾照
@@ -171,9 +202,14 @@ func OCRDriverLicense(dest *DriverLicense, mode OCRMode, filename string) wx.Act
 
 	query.Set("type", string(mode))
 
-	return wx.NewUploadAPI(OCRDriverLicenseURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(OCRDriverLicenseURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mode)),
+		wx.WithUploadForm("img", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // OCRDriverLicenseByURL 驾照识别
@@ -183,9 +219,14 @@ func OCRDriverLicenseByURL(dest *DriverLicense, mode OCRMode, imgURL string) wx.
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewPostAPI(OCRDriverLicenseURL, query, nil, func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(OCRDriverLicenseURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithQuery("type", string(mode)),
+		wx.WithQuery("img_url", imgURL),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // VehicleLicense 行驶证
@@ -216,9 +257,14 @@ func OCRVehicleLicense(dest *VehicleLicense, mode OCRMode, filename string) wx.A
 
 	query.Set("type", string(mode))
 
-	return wx.NewUploadAPI(OCRVehicleLicenseURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(OCRVehicleLicenseURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mode)),
+		wx.WithUploadForm("img", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // OCRVehicleLicenseByURL 行驶证识别
@@ -228,9 +274,14 @@ func OCRVehicleLicenseByURL(dest *VehicleLicense, mode OCRMode, imgURL string) w
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewPostAPI(OCRVehicleLicenseURL, query, nil, func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(OCRVehicleLicenseURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithQuery("type", string(mode)),
+		wx.WithQuery("img_url", imgURL),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // BusinessLicense 营业执照
@@ -257,9 +308,14 @@ func OCRBusinessLicense(dest *BusinessLicense, mode OCRMode, filename string) wx
 
 	query.Set("type", string(mode))
 
-	return wx.NewUploadAPI(OCRBusinessLicenseURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(OCRBusinessLicenseURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mode)),
+		wx.WithUploadForm("img", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // OCRBusinessLicenseByURL 营业执照识别
@@ -269,9 +325,14 @@ func OCRBusinessLicenseByURL(dest *BusinessLicense, mode OCRMode, imgURL string)
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewPostAPI(OCRBusinessLicenseURL, query, nil, func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(OCRBusinessLicenseURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithQuery("type", string(mode)),
+		wx.WithQuery("img_url", imgURL),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // PrintedText 通用印刷体
@@ -288,13 +349,14 @@ type PrintedTextItem struct {
 
 // OCRPrintedText 通用印刷体识别
 func OCRPrintedText(dest *PrintedText, mode OCRMode, filename string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
-
-	return wx.NewUploadAPI(OCRPrintedTextURL, query, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(OCRPrintedTextURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mode)),
+		wx.WithUploadForm("img", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // OCRPrintedTextByURL 通用印刷体识别
@@ -304,7 +366,12 @@ func OCRPrintedTextByURL(dest *PrintedText, mode OCRMode, imgURL string) wx.Acti
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewPostAPI(OCRPrintedTextURL, query, nil, func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(OCRPrintedTextURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithQuery("type", string(mode)),
+		wx.WithQuery("img_url", imgURL),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }

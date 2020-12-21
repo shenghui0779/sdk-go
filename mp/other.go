@@ -2,7 +2,6 @@ package mp
 
 import (
 	"encoding/json"
-	"net/url"
 
 	"github.com/tidwall/gjson"
 
@@ -23,13 +22,17 @@ type InvokeResult struct {
 
 // InvokeService 调用服务平台提供的服务
 func InvokeService(dest *InvokeResult, data *InvokeData) wx.Action {
-	return wx.NewPostAPI(InvokeServiceURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(data)
-	}, func(resp []byte) error {
-		dest.Data = gjson.GetBytes(resp, "data").String()
+	return wx.NewAPI(InvokeServiceURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(data)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.Data = gjson.GetBytes(resp, "data").String()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // SoterSignature 生物认证秘钥签名
@@ -46,13 +49,17 @@ type SoterVerifyResult struct {
 
 // SoterVerify 生物认证秘钥签名验证
 func SoterVerify(dest *SoterVerifyResult, sign *SoterSignature) wx.Action {
-	return wx.NewPostAPI(SoterVerifyURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(sign)
-	}, func(resp []byte) error {
-		dest.OK = gjson.GetBytes(resp, "is_ok").Bool()
+	return wx.NewAPI(SoterVerifyURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(sign)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.OK = gjson.GetBytes(resp, "is_ok").Bool()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // 风控场景
@@ -83,11 +90,15 @@ type UserRiskResult struct {
 
 // GetUserRiskRank 获取用户的安全等级（无需用户授权）
 func GetUserRiskRank(dest *UserRiskResult, data *UserRiskData) wx.Action {
-	return wx.NewPostAPI(UserRiskRankURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(data)
-	}, func(resp []byte) error {
-		dest.RiskRank = int(gjson.GetBytes(resp, "risk_rank").Int())
+	return wx.NewAPI(UserRiskRankURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(data)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.RiskRank = int(gjson.GetBytes(resp, "risk_rank").Int())
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }

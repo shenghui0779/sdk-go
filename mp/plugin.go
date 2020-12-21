@@ -2,7 +2,6 @@ package mp
 
 import (
 	"encoding/json"
-	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
@@ -24,13 +23,16 @@ var (
 
 // ApplyPlugin 向插件开发者发起使用插件的申请
 func ApplyPlugin(pluginAppID, reason string) wx.Action {
-	return wx.NewPostAPI(PluginManageURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"action":       PluginApply,
-			"plugin_appid": pluginAppID,
-			"reason":       reason,
-		})
-	}, nil)
+	return wx.NewAPI(PluginManageURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(wx.X{
+				"action":       PluginApply,
+				"plugin_appid": pluginAppID,
+				"reason":       reason,
+			})
+		}),
+	)
 }
 
 // PluginDevApplyInfo 插件使用方信息
@@ -47,15 +49,19 @@ type PluginDevApplyInfo struct {
 
 // GetPluginDevApplyList 获取当前所有插件使用方（供插件开发者调用）
 func GetPluginDevApplyList(dest *[]*PluginDevApplyInfo, page, num int) wx.Action {
-	return wx.NewPostAPI(PluginDevManageURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"action": PluginDevApplyList,
-			"page":   page,
-			"num":    num,
-		})
-	}, func(resp []byte) error {
-		return json.Unmarshal([]byte(gjson.GetBytes(resp, "apply_list").Raw), dest)
-	})
+	return wx.NewAPI(PluginDevManageURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(wx.X{
+				"action": PluginDevApplyList,
+				"page":   page,
+				"num":    num,
+			})
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal([]byte(gjson.GetBytes(resp, "apply_list").Raw), dest)
+		}),
+	)
 }
 
 // PluginInfo 插件信息
@@ -68,36 +74,46 @@ type PluginInfo struct {
 
 // GetPluginList 查询已添加的插件
 func GetPluginList(dest *[]*PluginInfo) wx.Action {
-	return wx.NewPostAPI(PluginManageURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(wx.X{"action": PluginList})
-	}, func(resp []byte) error {
-		return json.Unmarshal([]byte(gjson.GetBytes(resp, "plugin_list").Raw), dest)
-	})
+	return wx.NewAPI(PluginManageURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(wx.X{"action": PluginList})
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal([]byte(gjson.GetBytes(resp, "plugin_list").Raw), dest)
+		}),
+	)
 }
 
 // SetDevPluginApplyStatus 修改插件使用申请的状态（供插件开发者调用）
 func SetDevPluginApplyStatus(action PluginAction, appid, reason string) wx.Action {
-	return wx.NewPostAPI(PluginDevManageURL, url.Values{}, func() ([]byte, error) {
-		params := wx.X{"action": action}
+	return wx.NewAPI(PluginDevManageURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			params := wx.X{"action": action}
 
-		if len(appid) != 0 {
-			params["appid"] = appid
-		}
+			if len(appid) != 0 {
+				params["appid"] = appid
+			}
 
-		if len(reason) != 0 {
-			params["reason"] = reason
-		}
+			if len(reason) != 0 {
+				params["reason"] = reason
+			}
 
-		return json.Marshal(params)
-	}, nil)
+			return json.Marshal(params)
+		}),
+	)
 }
 
 // UnbindPlugin 删除已添加的插件
 func UnbindPlugin(pluginAppID string) wx.Action {
-	return wx.NewPostAPI(PluginManageURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"action":       PluginUnbind,
-			"plugin_appid": pluginAppID,
-		})
-	}, nil)
+	return wx.NewAPI(PluginManageURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(wx.X{
+				"action":       PluginUnbind,
+				"plugin_appid": pluginAppID,
+			})
+		}),
+	)
 }

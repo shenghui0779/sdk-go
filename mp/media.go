@@ -2,7 +2,6 @@ package mp
 
 import (
 	"encoding/json"
-	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -22,13 +21,14 @@ type MediaUploadResult struct {
 
 // UploadMedia 上传临时素材到微信服务器
 func UploadMedia(dest *MediaUploadResult, mediaType MediaType, filename string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mediaType))
-
-	return wx.NewUploadAPI(MediaUploadURL, query, wx.NewUploadForm("media", filename, nil), func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(MediaUploadURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mediaType)),
+		wx.WithUploadForm("media", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // Media 临时素材
@@ -38,15 +38,15 @@ type Media struct {
 
 // GetMedia 获取客服消息内的临时素材
 func GetMedia(dest *Media, mediaID string) wx.Action {
-	query := url.Values{}
+	return wx.NewAPI(MediaGetURL,
+		wx.WithMethod(wx.MethodGet),
+		wx.WithQuery("media_id", mediaID),
+		wx.WithDecode(func(resp []byte) error {
+			dest.Buffer = make([]byte, len(resp))
 
-	query.Set("media_id", mediaID)
+			copy(dest.Buffer, resp)
 
-	return wx.NewGetAPI(MediaGetURL, query, func(resp []byte) error {
-		dest.Buffer = make([]byte, len(resp))
-
-		copy(dest.Buffer, resp)
-
-		return nil
-	})
+			return nil
+		}),
+	)
 }

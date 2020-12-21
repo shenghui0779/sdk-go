@@ -1,8 +1,6 @@
 package mp
 
 import (
-	"net/url"
-
 	"github.com/shenghui0779/gochat/wx"
 )
 
@@ -63,106 +61,118 @@ type QRCode struct {
 
 // CreateQRCode 创建小程序二维码（数量有限）
 func CreateQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action {
-	return wx.NewPostAPI(QRCodeCreateURL, url.Values{}, func() ([]byte, error) {
-		settings := new(qrcodeSettings)
+	return wx.NewAPI(QRCodeCreateURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			settings := new(qrcodeSettings)
 
-		if len(options) != 0 {
-			for _, f := range options {
-				f(settings)
+			if len(options) != 0 {
+				for _, f := range options {
+					f(settings)
+				}
 			}
-		}
 
-		params := wx.X{"path": path}
+			params := wx.X{"path": path}
 
-		if settings.width != 0 {
-			params["width"] = settings.width
-		}
+			if settings.width != 0 {
+				params["width"] = settings.width
+			}
 
-		return wx.MarshalWithNoEscapeHTML(params)
-	}, func(resp []byte) error {
-		dest.Buffer = make([]byte, len(resp))
-		copy(dest.Buffer, resp)
+			return wx.MarshalWithNoEscapeHTML(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.Buffer = make([]byte, len(resp))
+			copy(dest.Buffer, resp)
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // GetQRCode 获取小程序二维码（数量有限）
 func GetQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action {
-	return wx.NewPostAPI(QRCodeGetURL, url.Values{}, func() ([]byte, error) {
-		settings := new(qrcodeSettings)
+	return wx.NewAPI(QRCodeGetURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			settings := new(qrcodeSettings)
 
-		if len(options) != 0 {
-			for _, f := range options {
-				f(settings)
+			if len(options) != 0 {
+				for _, f := range options {
+					f(settings)
+				}
 			}
-		}
 
-		params := wx.X{"path": path}
+			params := wx.X{"path": path}
 
-		if settings.width != 0 {
-			params["width"] = settings.width
-		}
+			if settings.width != 0 {
+				params["width"] = settings.width
+			}
 
-		if settings.autoColor {
-			params["auto_color"] = true
-		}
+			if settings.autoColor {
+				params["auto_color"] = true
+			}
 
-		if len(settings.lineColor) != 0 {
-			params["line_color"] = settings.lineColor
-		}
+			if len(settings.lineColor) != 0 {
+				params["line_color"] = settings.lineColor
+			}
 
-		if settings.isHyaline {
-			params["is_hyaline"] = true
-		}
+			if settings.isHyaline {
+				params["is_hyaline"] = true
+			}
 
-		return wx.MarshalWithNoEscapeHTML(params)
-	}, func(resp []byte) error {
-		dest.Buffer = make([]byte, len(resp))
-		copy(dest.Buffer, resp)
+			return wx.MarshalWithNoEscapeHTML(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.Buffer = make([]byte, len(resp))
+			copy(dest.Buffer, resp)
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // GetUnlimitQRCode 获取小程序二维码（数量不限）
 func GetUnlimitQRCode(dest *QRCode, scene string, options ...QRCodeOption) wx.Action {
-	return wx.NewPostAPI(QRCodeGetUnlimitURL, url.Values{}, func() ([]byte, error) {
-		settings := new(qrcodeSettings)
+	return wx.NewAPI(QRCodeGetUnlimitURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			settings := new(qrcodeSettings)
 
-		if len(options) != 0 {
-			for _, f := range options {
-				f(settings)
+			if len(options) != 0 {
+				for _, f := range options {
+					f(settings)
+				}
 			}
-		}
 
-		params := wx.X{"scene": scene}
+			params := wx.X{"scene": scene}
 
-		if settings.page != "" {
-			params["page"] = settings.page
-		}
+			if settings.page != "" {
+				params["page"] = settings.page
+			}
 
-		if settings.width != 0 {
-			params["width"] = settings.width
-		}
+			if settings.width != 0 {
+				params["width"] = settings.width
+			}
 
-		if settings.autoColor {
-			params["auto_color"] = true
-		}
+			if settings.autoColor {
+				params["auto_color"] = true
+			}
 
-		if len(settings.lineColor) != 0 {
-			params["line_color"] = settings.lineColor
-		}
+			if len(settings.lineColor) != 0 {
+				params["line_color"] = settings.lineColor
+			}
 
-		if settings.isHyaline {
-			params["is_hyaline"] = true
-		}
+			if settings.isHyaline {
+				params["is_hyaline"] = true
+			}
 
-		return wx.MarshalWithNoEscapeHTML(params)
-	}, func(resp []byte) error {
-		dest.Buffer = make([]byte, len(resp))
-		copy(dest.Buffer, resp)
+			return wx.MarshalWithNoEscapeHTML(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.Buffer = make([]byte, len(resp))
+			copy(dest.Buffer, resp)
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
