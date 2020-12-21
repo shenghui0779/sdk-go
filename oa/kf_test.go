@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	gomock "github.com/golang/mock/gomock"
+	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
@@ -39,12 +39,12 @@ func TestGetKFAccountList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]KFAccount, 0)
+	dest := make([]*KFAccount, 0)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFAccountList(&dest))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []KFAccount{
+	assert.Equal(t, []*KFAccount{
 		{
 			ID:         "1001",
 			Account:    "test1@test",
@@ -90,12 +90,12 @@ func TestGetKFOnlineList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]KFOnline, 0)
+	dest := make([]*KFOnline, 0)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFOnlineList(&dest))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []KFOnline{
+	assert.Equal(t, []*KFOnline{
 		{
 			ID:           "1001",
 			Account:      "test1@test",
@@ -117,7 +117,7 @@ func TestAddKFAccount(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/add?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/add?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","nickname":"客服1"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -133,7 +133,7 @@ func TestUpdateKFAccount(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/update?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/update?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","nickname":"客服1"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -149,7 +149,7 @@ func TestInviteKFWorker(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/inviteworker?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/inviteworker?access_token=ACCESS_TOKEN", []byte(`{"invite_wx":"test_kfwx","kf_account":"test1@test"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -165,7 +165,7 @@ func TestUploadKFAvatar(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/uploadheadimg?access_token=ACCESS_TOKEN&kf_account=KFACCOUNT", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/uploadheadimg?access_token=ACCESS_TOKEN&kf_account=KFACCOUNT", wx.NewUploadForm("media", "test.jpg", nil)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -197,7 +197,7 @@ func TestCreateKFSession(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfsession/create?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfsession/create?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","openid":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -213,7 +213,7 @@ func TestCloseKFSession(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfsession/close?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfsession/close?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","openid":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -270,12 +270,12 @@ func TestGetKFSessionList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]KFSession, 0)
+	dest := make([]*KFSession, 0)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFSessionList(&dest, "KFACCOUNT"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []KFSession{
+	assert.Equal(t, []*KFSession{
 		{
 			OpenID:     "OPENID1",
 			CreateTime: 123456789,
@@ -336,7 +336,7 @@ func TestGetKFMsgRecordList(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/msgrecord/getmsglist?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/msgrecord/getmsglist?access_token=ACCESS_TOKEN", []byte(`{"endtime":987654321,"msgid":1,"number":10000,"starttime":987654321}`)).Return([]byte(`{
 		"recordlist": [
 			{
 				"openid": "oDF3iY9WMaswOPWjCIp_f3Bnpljk",

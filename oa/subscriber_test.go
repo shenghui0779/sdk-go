@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	gomock "github.com/golang/mock/gomock"
+	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
@@ -70,7 +70,7 @@ func TestBatchGetSubscriberInfo(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=ACCESS_TOKEN", []byte(`{"user_list":[{"lang":"zh_CN","openid":"otvxTs4dckWG7imySrJd6jSi0CWE"},{"lang":"zh_CN","openid":"otvxTs_JZ6SEiP0imdhpi50fuSZg"}]}`)).Return([]byte(`{
 		"user_info_list": [
 			{
 				"subscribe": 1,
@@ -101,12 +101,12 @@ func TestBatchGetSubscriberInfo(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]SubscriberInfo, 0)
+	dest := make([]*SubscriberInfo, 0)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetSubscribers(&dest, "otvxTs4dckWG7imySrJd6jSi0CWE", "otvxTs_JZ6SEiP0imdhpi50fuSZg"))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []SubscriberInfo{
+	assert.Equal(t, []*SubscriberInfo{
 		{
 			Subscribe:      1,
 			OpenID:         "otvxTs4dckWG7imySrJd6jSi0CWE",
@@ -172,7 +172,7 @@ func TestGetBlackList(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/getblacklist?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/getblacklist?access_token=ACCESS_TOKEN", []byte(`{"begin_openid":"OPENID1"}`)).Return([]byte(`{
 		"total": 3,
 		"count": 3,
 		"data": {
@@ -190,7 +190,7 @@ func TestGetBlackList(t *testing.T) {
 
 	dest := new(SubscriberList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetBlackList(dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetBlackList(dest, "OPENID1"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &SubscriberList{
@@ -209,7 +209,7 @@ func TestBlackSubscribers(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/batchblacklist?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/batchblacklist?access_token=ACCESS_TOKEN", []byte(`{"openid_list":["OPENID1","OPENID2"]}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -225,7 +225,7 @@ func TestUnBlackSubscribers(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/batchunblacklist?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/batchunblacklist?access_token=ACCESS_TOKEN", []byte(`{"openid_list":["OPENID1","OPENID2"]}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -241,7 +241,7 @@ func TestSetUserRemark(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=ACCESS_TOKEN", []byte(`{"openid":"oDF3iY9ffA-hqb2vVvbr7qxf6A0Q","remark":"pangzi"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client

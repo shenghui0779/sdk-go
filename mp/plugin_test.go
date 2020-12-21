@@ -15,7 +15,7 @@ func TestApplyPlugin(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", []byte(`{"action":"apply","plugin_appid":"aaaa","reason":"hello"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -31,7 +31,7 @@ func TestGetPluginDevApplyList(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", []byte(`{"action":"dev_apply_list","num":10,"page":1}`)).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"apply_list": [{
@@ -52,12 +52,12 @@ func TestGetPluginDevApplyList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]PluginDevApplyInfo, 0)
+	dest := make([]*PluginDevApplyInfo, 0)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetPluginDevApplyList(&dest, 1, 10))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []PluginDevApplyInfo{
+	assert.Equal(t, []*PluginDevApplyInfo{
 		{
 			AppID:      "xxxxxxxxxxxxx",
 			Status:     1,
@@ -82,7 +82,7 @@ func TestGetPluginList(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", []byte(`{"action":"list"}`)).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"plugin_list": [{
@@ -96,12 +96,12 @@ func TestGetPluginList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]PluginInfo, 0)
+	dest := make([]*PluginInfo, 0)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetPluginList(&dest))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []PluginInfo{
+	assert.Equal(t, []*PluginInfo{
 		{
 			AppID:      "aaaa",
 			Status:     1,
@@ -117,12 +117,12 @@ func TestSetDevPluginApplyStatus(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", []byte(`{"action":"dev_agree","appid":"APPID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetDevPluginApplyStatus("dev_agree", "aaaa", ""))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetDevPluginApplyStatus("dev_agree", "APPID", ""))
 
 	assert.Nil(t, err)
 }
@@ -133,12 +133,12 @@ func TestUnbindPlugin(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", []byte(`{"action":"unbind","plugin_appid":"APPID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UnbindPlugin("aaaa"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UnbindPlugin("APPID"))
 
 	assert.Nil(t, err)
 }

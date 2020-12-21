@@ -15,7 +15,7 @@ func TestInvokeService(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/servicemarket?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/servicemarket?access_token=ACCESS_TOKEN", []byte(`{"service":"wx79ac3de8be320b71","api":"OcrAllInOne","data":{"data_type":3,"img_url":"http://mmbiz.qpic.cn/mmbiz_jpg/7UFjuNbYxibu66xSqsQqKcuoGBZM77HIyibdiczeWibdMeA2XMt5oibWVQMgDibriazJSOibLqZxcO6DVVcZMxDKgeAtbQ/0","ocr_type":1},"client_msg_id":"id123"}`)).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"data": "{\"idcard_res\":{\"type\":0,\"name\":{\"text\":\"abc\",\"pos\"…0312500}}},\"image_width\":480,\"image_height\":304}}",
@@ -49,7 +49,7 @@ func TestSoterVerify(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/soter/verify_signature?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/soter/verify_signature?access_token=ACCESS_TOKEN", []byte(`{"openid":"$openid","json_string":"$resultJSON","json_signature":"$resultJSONSignature"}`)).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"is_ok": true
@@ -78,7 +78,7 @@ func TestGetUserRiskRank(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/getuserriskrank?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/getuserriskrank?access_token=ACCESS_TOKEN", []byte(`{"appid":"APPID","openid":"OPENID","scene":1,"mobile_no":"12345678","client_ip":"******","email_address":"****@qq.com"}`)).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"risk_rank": 0
@@ -90,7 +90,7 @@ func TestGetUserRiskRank(t *testing.T) {
 	data := &UserRiskData{
 		AppID:        "APPID",
 		OpenID:       "OPENID",
-		Scene:        RiskRegister,
+		Scene:        RiskCheat,
 		MobileNO:     "12345678",
 		ClientIP:     "******",
 		EmailAddress: "****@qq.com",

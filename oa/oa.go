@@ -48,6 +48,7 @@ func (oa *OA) SetOriginID(originid string) {
 }
 
 // SetServerConfig 设置服务器配置
+// [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
 func (oa *OA) SetServerConfig(token, encodingAESKey string) {
 	oa.token = token
 	oa.encodingAESKey = encodingAESKey
@@ -136,11 +137,17 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 
 	switch action.Method() {
 	case wx.MethodGet:
-		resp, err = oa.client.Get(ctx, action.URL()(accessToken), options...)
+		resp, err = oa.client.Get(ctx, action.URL(accessToken), options...)
 	case wx.MethodPost:
-		resp, err = oa.client.Post(ctx, action.URL()(accessToken), action.Body(), options...)
+		body, err := action.Body()
+
+		if err != nil {
+			return err
+		}
+
+		resp, err = oa.client.Post(ctx, action.URL(accessToken), body, options...)
 	case wx.MethodUpload:
-		resp, err = oa.client.Upload(ctx, action.URL()(accessToken), action.Body(), options...)
+		resp, err = oa.client.Upload(ctx, action.URL(accessToken), action.UploadForm(), options...)
 	}
 
 	if err != nil {
@@ -161,8 +168,9 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 }
 
 // VerifyEventSign 验证消息事件签名
-// 验证消息来自微信服务器（signature、timestamp、nonce；若验证成功，请原样返回echostr参数内容）
-// 验证事件消息签名（msg_signature、timestamp、nonce、msg_encrypt）
+// 验证消息来自微信服务器，使用：signature、timestamp、nonce；若验证成功，请原样返回echostr参数内容
+// 验证事件消息签名，使用：msg_signature、timestamp、nonce、msg_encrypt
+// [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
 func (oa *OA) VerifyEventSign(signature string, items ...string) bool {
 	signStr := event.SignWithSHA1(oa.token, items...)
 

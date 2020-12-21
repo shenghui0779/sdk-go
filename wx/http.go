@@ -10,14 +10,15 @@ import (
 	"mime/multipart"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 )
 
 // defaultTimeout default http request timeout
 const defaultTimeout = 10 * time.Second
 
-// httpOptions http request options
-type httpOptions struct {
+// httpSettings http request options
+type httpSettings struct {
 	headers map[string]string
 	cookies []*http.Cookie
 	close   bool
@@ -25,51 +26,36 @@ type httpOptions struct {
 }
 
 // HTTPOption configures how we set up the http request
-type HTTPOption interface {
-	apply(*httpOptions)
-}
-
-// funcHTTPOption implements request option
-type funcHTTPOption struct {
-	f func(*httpOptions)
-}
-
-func (fo *funcHTTPOption) apply(o *httpOptions) {
-	fo.f(o)
-}
-
-func newFuncHTTPOption(f func(*httpOptions)) *funcHTTPOption {
-	return &funcHTTPOption{f: f}
-}
+type HTTPOption func(s *httpSettings)
 
 // WithHTTPHeader specifies the headers to http request.
 func WithHTTPHeader(key, value string) HTTPOption {
-	return newFuncHTTPOption(func(o *httpOptions) {
-		o.headers[key] = value
-	})
+	return func(s *httpSettings) {
+		s.headers[key] = value
+	}
 }
 
 // WithHTTPCookies specifies the cookies to http request.
 func WithHTTPCookies(cookies ...*http.Cookie) HTTPOption {
-	return newFuncHTTPOption(func(o *httpOptions) {
-		o.cookies = cookies
-	})
+	return func(s *httpSettings) {
+		s.cookies = cookies
+	}
 }
 
 // WithHTTPClose specifies close the connection after
 // replying to this request (for servers) or after sending this
 // request and reading its response (for clients).
 func WithHTTPClose() HTTPOption {
-	return newFuncHTTPOption(func(o *httpOptions) {
-		o.close = true
-	})
+	return func(s *httpSettings) {
+		s.close = true
+	}
 }
 
 // WithHTTPTimeout specifies the timeout to http request.
-func WithHTTPTimeout(d time.Duration) HTTPOption {
-	return newFuncHTTPOption(func(o *httpOptions) {
-		o.timeout = d
-	})
+func WithHTTPTimeout(timeout time.Duration) HTTPOption {
+	return func(s *httpSettings) {
+		s.timeout = timeout
+	}
 }
 
 // HTTPClient is a Client implementation for wechat http request
@@ -79,37 +65,37 @@ type HTTPClient struct {
 }
 
 func (h *HTTPClient) do(ctx context.Context, req *http.Request, options ...HTTPOption) ([]byte, error) {
-	o := &httpOptions{
+	settings := &httpSettings{
 		headers: make(map[string]string),
 		timeout: h.timeout,
 	}
 
-	if len(options) > 0 {
-		for _, option := range options {
-			option.apply(o)
+	if len(options) != 0 {
+		for _, f := range options {
+			f(settings)
 		}
 	}
 
 	// headers
-	if len(o.headers) > 0 {
-		for k, v := range o.headers {
+	if len(settings.headers) != 0 {
+		for k, v := range settings.headers {
 			req.Header.Set(k, v)
 		}
 	}
 
 	// cookies
-	if len(o.cookies) > 0 {
-		for _, v := range o.cookies {
+	if len(settings.cookies) != 0 {
+		for _, v := range settings.cookies {
 			req.AddCookie(v)
 		}
 	}
 
-	if o.close {
+	if settings.close {
 		req.Close = true
 	}
 
 	// timeout
-	ctx, cancel := context.WithTimeout(ctx, o.timeout)
+	ctx, cancel := context.WithTimeout(ctx, settings.timeout)
 
 	defer cancel()
 
@@ -155,23 +141,10 @@ func (h *HTTPClient) Get(ctx context.Context, url string, options ...HTTPOption)
 }
 
 // Post http post request
-func (h *HTTPClient) Post(ctx context.Context, url string, body Body, options ...HTTPOption) ([]byte, error) {
-	var (
-		b   []byte
-		err error
-	)
-
-	if f := body.Bytes(); f != nil {
-		b, err = f()
-
-		if err != nil {
-			return nil, err
-		}
-	}
-
+func (h *HTTPClient) Post(ctx context.Context, url string, body []byte, options ...HTTPOption) ([]byte, error) {
 	options = append(options, WithHTTPHeader("Content-Type", "application/json; charset=utf-8"))
 
-	req, err := http.NewRequest("POST", url, bytes.NewReader(b))
+	req, err := http.NewRequest("POST", url, bytes.NewReader(body))
 
 	if err != nil {
 		return nil, err
@@ -184,9 +157,13 @@ func (h *HTTPClient) Post(ctx context.Context, url string, body Body, options ..
 func (h *HTTPClient) PostXML(ctx context.Context, url string, body WXML, options ...HTTPOption) (WXML, error) {
 	xmlStr, err := FormatMap2XML(body)
 
+	if err != nil {
+		return nil, err
+	}
+
 	options = append(options, WithHTTPHeader("Content-Type", "text/xml; charset=utf-8"))
 
-	req, err := http.NewRequest("POST", url, bytes.NewReader([]byte(xmlStr)))
+	req, err := http.NewRequest("POST", url, strings.NewReader(xmlStr))
 
 	if err != nil {
 		return nil, err
@@ -208,17 +185,17 @@ func (h *HTTPClient) PostXML(ctx context.Context, url string, body WXML, options
 }
 
 // Upload http upload media
-func (h *HTTPClient) Upload(ctx context.Context, url string, body Body, options ...HTTPOption) ([]byte, error) {
-	media, err := body.Bytes()()
+func (h *HTTPClient) Upload(ctx context.Context, url string, form *UploadForm, options ...HTTPOption) ([]byte, error) {
+	media, err := form.Buffer()
 
 	if err != nil {
 		return nil, err
 	}
 
-	buf := new(bytes.Buffer)
+	buf := bytes.NewBuffer(make([]byte, 0, 4<<10)) // 4kb
 	w := multipart.NewWriter(buf)
 
-	fw, err := w.CreateFormFile(body.FieldName(), body.FileName())
+	fw, err := w.CreateFormFile(form.FieldName(), form.FileName())
 
 	if err != nil {
 		return nil, err
@@ -229,9 +206,11 @@ func (h *HTTPClient) Upload(ctx context.Context, url string, body Body, options 
 	}
 
 	// add extra fields
-	if extraFields := body.ExtraFields(); len(extraFields) != 0 {
+	if extraFields := form.ExtraFields(); len(extraFields) != 0 {
 		for k, v := range extraFields {
-			w.WriteField(k, v)
+			if err = w.WriteField(k, v); err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -241,7 +220,7 @@ func (h *HTTPClient) Upload(ctx context.Context, url string, body Body, options 
 	// If you don't close it, your request will be missing the terminating boundary.
 	w.Close()
 
-	req, err := http.NewRequest("POST", url, bytes.NewReader([]byte(buf.String())))
+	req, err := http.NewRequest("POST", url, buf)
 
 	if err != nil {
 		return nil, err

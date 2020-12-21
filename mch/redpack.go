@@ -25,103 +25,119 @@ type RedpackData struct {
 
 // SendNormalRedpack 发放普通红包
 func SendNormalRedpack(data *RedpackData) wx.Action {
-	return wx.NewMchAPI(RedpackNormalURL, func(appid, mchid, nonce string) (wx.WXML, error) {
-		body := wx.WXML{
-			"wxappid":      appid,
-			"mch_id":       mchid,
-			"nonce_str":    nonce,
-			"mch_billno":   data.MchBillNO,
-			"send_name":    data.SendName,
-			"re_openid":    data.ReOpenID,
-			"total_amount": strconv.Itoa(data.TotalAmount),
-			"total_num":    strconv.Itoa(data.TotalNum),
-			"wishing":      data.Wishing,
-			"client_ip":    data.ClientIP,
-			"act_name":     data.ActName,
-			"remark":       data.Remark,
-			"sign_type":    SignMD5,
-		}
+	return wx.NewAPI(RedpackNormalURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithTLS(),
+		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+			body := wx.WXML{
+				"wxappid":      appid,
+				"mch_id":       mchid,
+				"nonce_str":    nonce,
+				"mch_billno":   data.MchBillNO,
+				"send_name":    data.SendName,
+				"re_openid":    data.ReOpenID,
+				"total_amount": strconv.Itoa(data.TotalAmount),
+				"total_num":    strconv.Itoa(data.TotalNum),
+				"wishing":      data.Wishing,
+				"client_ip":    data.ClientIP,
+				"act_name":     data.ActName,
+				"remark":       data.Remark,
+				"sign_type":    SignMD5,
+			}
 
-		if data.SceneID != "" {
-			body["scene_id"] = data.SceneID
-		}
+			if data.SceneID != "" {
+				body["scene_id"] = data.SceneID
+			}
 
-		if data.RiskInfo != "" {
-			body["risk_info"] = data.RiskInfo
-		}
+			if data.RiskInfo != "" {
+				body["risk_info"] = data.RiskInfo
+			}
 
-		return body, nil
-	}, true)
+			return body, nil
+		}),
+	)
 }
 
 // SendGroupRedpack 发放裂变红包
 func SendGroupRedpack(data *RedpackData) wx.Action {
-	return wx.NewMchAPI(RedpackGroupURL, func(appid, mchid, nonce string) (wx.WXML, error) {
-		body := wx.WXML{
-			"wxappid":      appid,
-			"mch_id":       mchid,
-			"nonce_str":    nonce,
-			"mch_billno":   data.MchBillNO,
-			"send_name":    data.SendName,
-			"re_openid":    data.ReOpenID,
-			"total_amount": strconv.Itoa(data.TotalAmount),
-			"total_num":    strconv.Itoa(data.TotalNum),
-			"amt_type":     "ALL_RAND",
-			"wishing":      data.Wishing,
-			"act_name":     data.ActName,
-			"remark":       data.Remark,
-			"sign_type":    SignMD5,
-		}
+	return wx.NewAPI(RedpackGroupURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithTLS(),
+		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+			body := wx.WXML{
+				"wxappid":      appid,
+				"mch_id":       mchid,
+				"nonce_str":    nonce,
+				"mch_billno":   data.MchBillNO,
+				"send_name":    data.SendName,
+				"re_openid":    data.ReOpenID,
+				"total_amount": strconv.Itoa(data.TotalAmount),
+				"total_num":    strconv.Itoa(data.TotalNum),
+				"amt_type":     "ALL_RAND",
+				"wishing":      data.Wishing,
+				"act_name":     data.ActName,
+				"remark":       data.Remark,
+				"sign_type":    SignMD5,
+			}
 
-		if data.SceneID != "" {
-			body["scene_id"] = data.SceneID
-		}
+			if data.SceneID != "" {
+				body["scene_id"] = data.SceneID
+			}
 
-		if data.RiskInfo != "" {
-			body["risk_info"] = data.RiskInfo
-		}
+			if data.RiskInfo != "" {
+				body["risk_info"] = data.RiskInfo
+			}
 
-		return body, nil
-	}, true)
+			return body, nil
+		}),
+	)
 }
 
 // SendMinipRedpack 发放小程序红包
 func SendMinipRedpack(data *RedpackData) wx.Action {
-	return wx.NewMchAPI(RedpackMinipURL, func(appid, mchid, nonce string) (wx.WXML, error) {
-		body := wx.WXML{
-			"wxappid":      appid,
-			"mch_id":       mchid,
-			"nonce_str":    nonce,
-			"mch_billno":   data.MchBillNO,
-			"send_name":    data.SendName,
-			"re_openid":    data.ReOpenID,
-			"total_amount": strconv.Itoa(data.TotalAmount),
-			"total_num":    strconv.Itoa(data.TotalNum),
-			"wishing":      data.Wishing,
-			"act_name":     data.ActName,
-			"remark":       data.Remark,
-			"notify_way":   "MINI_PROGRAM_JSAPI",
-			"sign_type":    SignMD5,
-		}
+	return wx.NewAPI(RedpackMinipURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithTLS(),
+		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+			body := wx.WXML{
+				"wxappid":      appid,
+				"mch_id":       mchid,
+				"nonce_str":    nonce,
+				"mch_billno":   data.MchBillNO,
+				"send_name":    data.SendName,
+				"re_openid":    data.ReOpenID,
+				"total_amount": strconv.Itoa(data.TotalAmount),
+				"total_num":    strconv.Itoa(data.TotalNum),
+				"wishing":      data.Wishing,
+				"act_name":     data.ActName,
+				"remark":       data.Remark,
+				"notify_way":   "MINI_PROGRAM_JSAPI",
+				"sign_type":    SignMD5,
+			}
 
-		if data.SceneID != "" {
-			body["scene_id"] = data.SceneID
-		}
+			if data.SceneID != "" {
+				body["scene_id"] = data.SceneID
+			}
 
-		return body, nil
-	}, true)
+			return body, nil
+		}),
+	)
 }
 
 // QueryRedpackByBillNO 查询红包记录
 func QueryRedpackByBillNO(billNO string) wx.Action {
-	return wx.NewMchAPI(RedpackQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
-		return wx.WXML{
-			"appid":      appid,
-			"mch_id":     mchid,
-			"mch_billno": billNO,
-			"bill_type":  "MCHT",
-			"nonce_str":  nonce,
-			"sign_type":  SignMD5,
-		}, nil
-	}, true)
+	return wx.NewAPI(RedpackQueryURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithTLS(),
+		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+			return wx.WXML{
+				"appid":      appid,
+				"mch_id":     mchid,
+				"mch_billno": billNO,
+				"bill_type":  "MCHT",
+				"nonce_str":  nonce,
+				"sign_type":  SignMD5,
+			}, nil
+		}),
+	)
 }

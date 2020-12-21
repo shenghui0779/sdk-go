@@ -236,7 +236,7 @@ func NewTransfer2KFReply(kfAccount ...string) event.Reply {
 		},
 	}
 
-	if len(kfAccount) > 0 {
+	if len(kfAccount) != 0 {
 		r.TransInfo = &TransInfo{KFAccount: wx.CDATA(kfAccount[0])}
 	}
 

@@ -1,8 +1,10 @@
 # 微信支付（普通商户直连模式）
 
 ```go
-"github.com/shenghui0779/gochat"
-"github.com/shenghui0779/gochat/mch"
+import (
+    "github.com/shenghui0779/gochat"
+    "github.com/shenghui0779/gochat/mch"
+)
 ```
 
 ### 初始化商户实例

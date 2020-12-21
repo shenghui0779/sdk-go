@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	gomock "github.com/golang/mock/gomock"
+	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )

@@ -40,6 +40,7 @@ func New(appid, appsecret string) *MP {
 }
 
 // SetServerConfig 设置服务器配置
+// [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
 func (mp *MP) SetServerConfig(token, encodingAESKey string) {
 	mp.token = token
 	mp.encodingAESKey = encodingAESKey
@@ -139,11 +140,17 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 
 	switch action.Method() {
 	case wx.MethodGet:
-		resp, err = mp.client.Get(ctx, action.URL()(accessToken), options...)
+		resp, err = mp.client.Get(ctx, action.URL(accessToken), options...)
 	case wx.MethodPost:
-		resp, err = mp.client.Post(ctx, action.URL()(accessToken), action.Body(), options...)
+		body, err := action.Body()
+
+		if err != nil {
+			return err
+		}
+
+		resp, err = mp.client.Post(ctx, action.URL(accessToken), body, options...)
 	case wx.MethodUpload:
-		resp, err = mp.client.Upload(ctx, action.URL()(accessToken), action.Body(), options...)
+		resp, err = mp.client.Upload(ctx, action.URL(accessToken), action.UploadForm(), options...)
 	}
 
 	if err != nil {
@@ -163,9 +170,10 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 	return action.Decode()(resp)
 }
 
-// VerifyEventSign 验证消息事件签名
-// 验证消息来自微信服务器（signature、timestamp、nonce；若验证成功，请原样返回echostr参数内容）
-// 验证事件消息签名（msg_signature、timestamp、nonce、msg_encrypt）
+// VerifyEventSign 验证事件消息签名
+// 验证消息来自微信服务器，使用：signature、timestamp、nonce；若验证成功，请原样返回echostr参数内容
+// 验证事件消息签名，使用：msg_signature、timestamp、nonce、msg_encrypt
+// [参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
 func (mp *MP) VerifyEventSign(signature string, items ...string) bool {
 	signStr := event.SignWithSHA1(mp.token, items...)
 

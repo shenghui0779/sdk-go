@@ -2,11 +2,15 @@ package wx
 
 import (
 	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"io"
-	"sync"
+	"strings"
 )
+
+// WXML deal with xml for wechat
+type WXML map[string]string
 
 // X is a convenient alias for a map[string]interface{}.
 type X map[string]interface{}
@@ -21,42 +25,25 @@ func (c CDATA) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	}{string(c)}, start)
 }
 
-var BufferPool = sync.Pool{
-	New: func() interface{} {
-		return bytes.NewBuffer(make([]byte, 0, 4<<10)) // 4kb
-	},
-}
-
 // FormatMap2XML format map to xml
 func FormatMap2XML(m WXML) (string, error) {
-	buf := BufferPool.Get().(*bytes.Buffer)
-	buf.Reset()
+	var builder strings.Builder
 
-	defer BufferPool.Put(buf)
-
-	if _, err := io.WriteString(buf, "<xml>"); err != nil {
-		return "", err
-	}
+	builder.WriteString("<xml>")
 
 	for k, v := range m {
-		if _, err := io.WriteString(buf, fmt.Sprintf("<%s>", k)); err != nil {
+		builder.WriteString(fmt.Sprintf("<%s>", k))
+
+		if err := xml.EscapeText(&builder, []byte(v)); err != nil {
 			return "", err
 		}
 
-		if err := xml.EscapeText(buf, []byte(v)); err != nil {
-			return "", err
-		}
-
-		if _, err := io.WriteString(buf, fmt.Sprintf("</%s>", k)); err != nil {
-			return "", err
-		}
+		builder.WriteString(fmt.Sprintf("</%s>", k))
 	}
 
-	if _, err := io.WriteString(buf, "</xml>"); err != nil {
-		return "", err
-	}
+	builder.WriteString("</xml>")
 
-	return buf.String(), nil
+	return builder.String(), nil
 }
 
 // ParseXML2Map parse xml to map
@@ -134,4 +121,26 @@ func DecodeBytesToUint32(b []byte) uint32 {
 	}
 
 	return uint32(b[0])<<24 | uint32(b[1])<<16 | uint32(b[2])<<8 | uint32(b[3])
+}
+
+// MarshalWithNoEscapeHTML marshal with no escape HTML
+func MarshalWithNoEscapeHTML(v interface{}) ([]byte, error) {
+	var buf bytes.Buffer
+
+	jsonEncoder := json.NewEncoder(&buf)
+	jsonEncoder.SetEscapeHTML(false)
+
+	if err := jsonEncoder.Encode(v); err != nil {
+		return nil, err
+	}
+
+	b := buf.Bytes()
+
+	// 去掉 go std 给末尾加的 '\n'
+	// @see https://github.com/golang/go/issues/7767
+	if l := len(b); l != 0 && b[l-1] == '\n' {
+		b = b[:l-1]
+	}
+
+	return b, nil
 }

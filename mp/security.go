@@ -2,7 +2,6 @@ package mp
 
 import (
 	"encoding/json"
-	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
@@ -19,7 +18,10 @@ var (
 
 // ImageSecCheck 校验一张图片是否含有违法违规内容
 func ImageSecCheck(filename string) wx.Action {
-	return wx.NewOpenUploadAPI(ImageSecCheckURL, url.Values{}, wx.NewUploadBody("media", filename, nil), nil)
+	return wx.NewAPI(ImageSecCheckURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithUploadForm("media", filename, nil),
+	)
 }
 
 // MediaSecAsyncResult 异步校验结果
@@ -29,23 +31,30 @@ type MediaSecAsyncResult struct {
 
 // MediaSecCheckAsync 异步校验图片/音频是否含有违法违规内容
 func MediaSecCheckAsync(dest *MediaSecAsyncResult, mediaType SecMediaType, mediaURL string) wx.Action {
-	return wx.NewOpenPostAPI(MediaCheckAsyncURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"media_type": mediaType,
-			"media_url":  mediaURL,
-		})
-	}), func(resp []byte) error {
-		dest.TraceID = gjson.GetBytes(resp, "trace_id").String()
+	return wx.NewAPI(MediaCheckAsyncURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(wx.X{
+				"media_type": mediaType,
+				"media_url":  mediaURL,
+			})
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.TraceID = gjson.GetBytes(resp, "trace_id").String()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // MsgSecCheck 检查一段文本是否含有违法违规内容
 func MsgSecCheck(content string) wx.Action {
-	return wx.NewOpenPostAPI(MsgSecCheckURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"content": content,
-		})
-	}), nil)
+	return wx.NewAPI(MsgSecCheckURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(wx.X{
+				"content": content,
+			})
+		}),
+	)
 }

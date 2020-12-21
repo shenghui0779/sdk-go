@@ -2,10 +2,10 @@ package mp
 
 import (
 	"encoding/json"
-	"net/url"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/tidwall/gjson"
 )
 
 // InvokeData 服务调用数据
@@ -22,18 +22,22 @@ type InvokeResult struct {
 
 // InvokeService 调用服务平台提供的服务
 func InvokeService(dest *InvokeResult, data *InvokeData) wx.Action {
-	return wx.NewOpenPostAPI(InvokeServiceURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(data)
-	}), func(resp []byte) error {
-		dest.Data = gjson.GetBytes(resp, "data").String()
+	return wx.NewAPI(InvokeServiceURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(data)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.Data = gjson.GetBytes(resp, "data").String()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // SoterSignature 生物认证秘钥签名
 type SoterSignature struct {
-	OpenID        string `json:"open_id"`        // 用户 openid
+	OpenID        string `json:"openid"`         // 用户 openid
 	JSONString    string `json:"json_string"`    // 通过 wx.startSoterAuthentication 成功回调获得的 resultJSON 字段
 	JSONSignature string `json:"json_signature"` // 通过 wx.startSoterAuthentication 成功回调获得的 resultJSONSignature 字段
 }
@@ -45,13 +49,17 @@ type SoterVerifyResult struct {
 
 // SoterVerify 生物认证秘钥签名验证
 func SoterVerify(dest *SoterVerifyResult, sign *SoterSignature) wx.Action {
-	return wx.NewOpenPostAPI(SoterVerifyURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(sign)
-	}), func(resp []byte) error {
-		dest.OK = gjson.GetBytes(resp, "is_ok").Bool()
+	return wx.NewAPI(SoterVerifyURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(sign)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.OK = gjson.GetBytes(resp, "is_ok").Bool()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // 风控场景
@@ -65,13 +73,14 @@ const (
 
 // UserRiskData 用户风控数据
 type UserRiskData struct {
-	AppID        string    `json:"appid"`
-	OpenID       string    `json:"openid"`
-	Scene        RiskScene `json:"scene"`
-	MobileNO     string    `json:"mobile_no,omitempty"`
-	ClientIP     string    `json:"client_ip"`
-	EmailAddress string    `json:"email_address,omitempty"`
-	ExtendedInfo string    `json:"extended_info,omitempty"`
+	AppID        string    `json:"appid"`                   // 小程序appid
+	OpenID       string    `json:"openid"`                  // 用户的openid
+	Scene        RiskScene `json:"scene"`                   // 场景值，0:注册，1:营销作弊
+	MobileNO     string    `json:"mobile_no,omitempty"`     // 用户手机号
+	ClientIP     string    `json:"client_ip"`               // 用户访问源ip
+	EmailAddress string    `json:"email_address,omitempty"` // 用户邮箱地址
+	ExtendedInfo string    `json:"extended_info,omitempty"` // 额外补充信息
+	IsTest       bool      `json:"is_test,omitempty"`       // false：正式调用，true：测试调用
 }
 
 // UserRiskRank 用户风控结果
@@ -81,11 +90,15 @@ type UserRiskResult struct {
 
 // GetUserRiskRank 获取用户的安全等级（无需用户授权）
 func GetUserRiskRank(dest *UserRiskResult, data *UserRiskData) wx.Action {
-	return wx.NewOpenPostAPI(UserRiskRankURL, url.Values{}, wx.NewPostBody(func() ([]byte, error) {
-		return json.Marshal(data)
-	}), func(resp []byte) error {
-		dest.RiskRank = int(gjson.GetBytes(resp, "risk_rank").Int())
+	return wx.NewAPI(UserRiskRankURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(data)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.RiskRank = int(gjson.GetBytes(resp, "risk_rank").Int())
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }

@@ -8,9 +8,6 @@ import (
 	"path/filepath"
 )
 
-// WXML deal with xml for wechat
-type WXML map[string]string
-
 // HTTPMethod http request method
 type HTTPMethod string
 
@@ -22,115 +19,111 @@ const (
 
 // Client is the interface that do http request
 type Client interface {
-	// Get do http get request
 	Get(ctx context.Context, reqURL string, options ...HTTPOption) ([]byte, error)
-	// Post do http post request
-	Post(ctx context.Context, reqURL string, body Body, options ...HTTPOption) ([]byte, error)
-	// PostXML do http xml request
+	Post(ctx context.Context, reqURL string, body []byte, options ...HTTPOption) ([]byte, error)
 	PostXML(ctx context.Context, reqURL string, body WXML, options ...HTTPOption) (WXML, error)
-	// Upload do http upload request
-	Upload(ctx context.Context, reqURL string, body Body, options ...HTTPOption) ([]byte, error)
+	Upload(ctx context.Context, reqURL string, form *UploadForm, options ...HTTPOption) ([]byte, error)
 }
 
-// Body is the interface that defines request body
-type Body interface {
-	// FieldName returns field name for upload request
-	FieldName() string
-	// FieldName returns file name for upload request
-	FileName() string
-	// Description returns extra fields for upload request
-	ExtraFields() map[string]string
-	// Bytes returns body for post request
-	Bytes() func() ([]byte, error)
+// UploadForm http upload form
+type UploadForm struct {
+	fieldname   string
+	filename    string
+	extraFields map[string]string
+}
+
+func (f *UploadForm) FieldName() string {
+	return f.fieldname
+}
+
+func (f *UploadForm) FileName() string {
+	return f.filename
+}
+
+func (f *UploadForm) ExtraFields() map[string]string {
+	return f.extraFields
+}
+
+func (f *UploadForm) Buffer() ([]byte, error) {
+	path, err := filepath.Abs(f.filename)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ioutil.ReadFile(path)
+}
+
+// NewUploadForm returns new uplod form
+func NewUploadForm(fieldname, filename string, extraFields map[string]string) *UploadForm {
+	return &UploadForm{
+		fieldname:   fieldname,
+		filename:    filename,
+		extraFields: extraFields,
+	}
 }
 
 // Action is the interface that handle wechat api
 type Action interface {
-	// URL returns url for request
-	URL() func(accessToken ...string) string
-	// Method returns request method
+	URL(accessToken ...string) string
 	Method() HTTPMethod
-	// WXML returns body for xml request
-	WXML() func(appid, mchid, nonce string) (WXML, error)
-	// Body returns body for post and upload request
-	Body() Body
-	// Decode decodes http response
+	WXML(appid, mchid, nonce string) (WXML, error)
+	Body() ([]byte, error)
+	UploadForm() *UploadForm
 	Decode() func(resp []byte) error
-	// TLS specifies use tls client
 	TLS() bool
 }
 
-// HTTPBody is a Body implementation for http request body
-type HTTPBody struct {
-	fieldname   string
-	filename    string
-	extraFields map[string]string
-	bytes       func() ([]byte, error)
-}
-
-func (h *HTTPBody) FieldName() string {
-	return h.fieldname
-}
-
-func (h *HTTPBody) FileName() string {
-	return h.filename
-}
-
-func (h *HTTPBody) ExtraFields() map[string]string {
-	return h.extraFields
-}
-
-func (h *HTTPBody) Bytes() func() ([]byte, error) {
-	return h.bytes
-}
-
-// NewPostBody returns post body
-func NewPostBody(f func() ([]byte, error)) *HTTPBody {
-	return &HTTPBody{bytes: f}
-}
-
-// NewUploadBody returns upload body
-func NewUploadBody(fieldname, filename string, extraFields map[string]string) *HTTPBody {
-	return &HTTPBody{
-		fieldname:   fieldname,
-		filename:    filename,
-		extraFields: extraFields,
-		bytes: func() ([]byte, error) {
-			path, err := filepath.Abs(filename)
-
-			if err != nil {
-				return nil, err
-			}
-
-			return ioutil.ReadFile(path)
-		},
-	}
-}
-
-// API is a Action implementation for handle wechat api
+// API is a Action implementation
 type API struct {
-	reqURL func(accessToken ...string) string
-	method HTTPMethod
-	wxml   func(appid, mchid, nonce string) (WXML, error)
-	body   Body
-	decode func(resp []byte) error
-	tls    bool
+	reqURL     string
+	method     HTTPMethod
+	query      url.Values
+	wxml       func(appid, mchid, nonce string) (WXML, error)
+	body       func() ([]byte, error)
+	uploadForm *UploadForm
+	decode     func(resp []byte) error
+	tls        bool
 }
 
-func (a *API) URL() func(accessToken ...string) string {
-	return a.reqURL
+func (a *API) URL(accessToken ...string) string {
+	if len(accessToken) != 0 {
+		a.query.Set("access_token", accessToken[0])
+	}
+
+	if len(a.query) == 0 {
+		return a.reqURL
+	}
+
+	return fmt.Sprintf("%s?%s", a.reqURL, a.query.Encode())
 }
 
 func (a *API) Method() HTTPMethod {
 	return a.method
 }
 
-func (a *API) WXML() func(appid, mchid, nonce string) (WXML, error) {
-	return a.wxml
+func (a *API) WXML(appid, mchid, nonce string) (WXML, error) {
+	if a.wxml == nil {
+		return WXML{}, nil
+	}
+
+	return a.wxml(appid, mchid, nonce)
 }
 
-func (a *API) Body() Body {
-	return a.body
+func (a *API) Body() ([]byte, error) {
+	if a.body == nil {
+		return nil, nil
+	}
+
+	return a.body()
+}
+
+func (a *API) UploadForm() *UploadForm {
+	if a.uploadForm == nil {
+		return new(UploadForm)
+	}
+
+	return a.uploadForm
 }
 
 func (a *API) Decode() func(resp []byte) error {
@@ -141,45 +134,68 @@ func (a *API) TLS() bool {
 	return a.tls
 }
 
-// NewMchAPI returns mch api
-func NewMchAPI(reqURL string, wxml func(appid, mchid, nonce string) (WXML, error), tls bool) *API {
-	return &API{
-		reqURL: func(accessToken ...string) string {
-			return reqURL
-		},
-		method: MethodPost,
-		wxml:   wxml,
-		tls:    tls,
+// APIOption configures how we set up the wechat API
+type APIOption func(api *API)
+
+// WithMethod specifies the `method` to API.
+func WithMethod(method HTTPMethod) APIOption {
+	return func(api *API) {
+		api.method = method
 	}
 }
 
-// NewOpenAPI returns open api
-func NewOpenAPI(reqURL string, method HTTPMethod, query url.Values, body Body, decode func(resp []byte) error) *API {
-	return &API{
-		reqURL: func(accessToken ...string) string {
-			if len(accessToken) != 0 {
-				query.Set("access_token", accessToken[0])
-			}
-
-			return fmt.Sprintf("%s?%s", reqURL, query.Encode())
-		},
-		method: method,
-		body:   body,
-		decode: decode,
+// WithQuery specifies the `query` to API.
+func WithQuery(key, value string) APIOption {
+	return func(api *API) {
+		api.query.Set(key, value)
 	}
 }
 
-// NewOpenGetAPI returns open get api
-func NewOpenGetAPI(reqURL string, query url.Values, decode func(resp []byte) error) *API {
-	return NewOpenAPI(reqURL, MethodGet, query, nil, decode)
+// WithBody specifies the `body` to API.
+func WithBody(f func() ([]byte, error)) APIOption {
+	return func(api *API) {
+		api.body = f
+	}
 }
 
-// NewOpenPostAPI returns open post api
-func NewOpenPostAPI(reqURL string, query url.Values, body Body, decode func(resp []byte) error) *API {
-	return NewOpenAPI(reqURL, MethodPost, query, body, decode)
+// WithWXML specifies the `wxml` to API.
+func WithWXML(f func(appid, mchid, nonce string) (WXML, error)) APIOption {
+	return func(api *API) {
+		api.wxml = f
+	}
 }
 
-// NewOpenUploadAPI returns open upload api
-func NewOpenUploadAPI(reqURL string, query url.Values, body Body, decode func(resp []byte) error) *API {
-	return NewOpenAPI(reqURL, MethodUpload, query, body, decode)
+// WithUploadForm specifies the `upload form` to API.
+func WithUploadForm(fieldname, filename string, extraFields map[string]string) APIOption {
+	return func(api *API) {
+		api.uploadForm = NewUploadForm(fieldname, filename, extraFields)
+	}
+}
+
+// WithDecode specifies the `decode` to API.
+func WithDecode(f func(resp []byte) error) APIOption {
+	return func(api *API) {
+		api.decode = f
+	}
+}
+
+// WithTLS specifies the `tls` to API.
+func WithTLS() APIOption {
+	return func(api *API) {
+		api.tls = true
+	}
+}
+
+// NewAPI returns a new action
+func NewAPI(reqURL string, options ...APIOption) Action {
+	api := &API{
+		reqURL: reqURL,
+		query:  url.Values{},
+	}
+
+	for _, f := range options {
+		f(api)
+	}
+
+	return api
 }

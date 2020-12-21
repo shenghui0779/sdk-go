@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	gomock "github.com/golang/mock/gomock"
+	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,12 +29,12 @@ func TestGetTemplateList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]TemplateInfo, 0)
+	dest := make([]*TemplateInfo, 0)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetTemplateList(&dest))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []TemplateInfo{
+	assert.Equal(t, []*TemplateInfo{
 		{
 			TemplateID:      "iPk5sOIt5X_flOVKn5GrTFpncEYTojx6ddbt8WYoV5s",
 			Title:           "领取奖金提醒",
@@ -52,7 +52,7 @@ func TestDeleteTemplate(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token=ACCESS_TOKEN", []byte(`{"template_id":"Dyvp3-Ff0cnail_CDSzk1fIc6-9lOkxsQE7exTJbwUE"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -68,19 +68,25 @@ func TestSendTemplateMessage(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN", []byte(`{"data":{"first":{"color":"#173177","value":"恭喜你购买成功！"},"keyword1":{"color":"#173177","value":"巧克力"},"remark":{"color":"#173177","value":"欢迎再次购买！"}},"miniprogram":{"appid":"xiaochengxuappid12345","pagepath":"index?foo=bar"},"template_id":"ngqIpbwh8bUfcSsECmogfXcV14J0tQlEpBO27izEYtY","touser":"OPENID","url":"http://weixin.qq.com/download"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	message := &TemplateMessage{
-		TemplateID:  "ngqIpbwh8bUfcSsECmogfXcV14J0tQlEpBO27izEYtY",
-		RedirectURL: "http://weixin.qq.com/download",
-		MinipAppID:  "xiaochengxuappid12345",
-		MinipPage:   "index?foo=bar",
+		TemplateID: "ngqIpbwh8bUfcSsECmogfXcV14J0tQlEpBO27izEYtY",
+		URL:        "http://weixin.qq.com/download",
+		MiniProgram: &MessageMinip{
+			AppID:    "xiaochengxuappid12345",
+			Pagepath: "index?foo=bar",
+		},
 		Data: MessageBody{
 			"first": {
 				"value": "恭喜你购买成功！",
+				"color": "#173177",
+			},
+			"keyword1": {
+				"value": "巧克力",
 				"color": "#173177",
 			},
 			"remark": {
@@ -101,24 +107,22 @@ func TestSendSubscribeMessage(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=ACCESS_TOKEN", []byte(`{"data":{"content":{"color":"COLOR","value":"VALUE"}},"miniprogram":{"appid":"xiaochengxuappid12345","pagepath":"index?foo=bar"},"scene":"SCENE","template_id":"TEMPLATE_ID","title":"TITLE","touser":"OPENID","url":"URL"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
 	message := &TemplateMessage{
-		TemplateID:  "ngqIpbwh8bUfcSsECmogfXcV14J0tQlEpBO27izEYtY",
-		RedirectURL: "http://weixin.qq.com/download",
-		MinipAppID:  "xiaochengxuappid12345",
-		MinipPage:   "index?foo=bar",
+		TemplateID: "TEMPLATE_ID",
+		URL:        "URL",
+		MiniProgram: &MessageMinip{
+			AppID:    "xiaochengxuappid12345",
+			Pagepath: "index?foo=bar",
+		},
 		Data: MessageBody{
-			"first": {
-				"value": "恭喜你购买成功！",
-				"color": "#173177",
-			},
-			"remark": {
-				"value": "欢迎再次购买！",
-				"color": "#173177",
+			"content": {
+				"value": "VALUE",
+				"color": "COLOR",
 			},
 		},
 	}

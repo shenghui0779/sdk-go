@@ -15,7 +15,7 @@ func TestAICrop(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN", wx.NewUploadForm("img", "test.jpg", nil)).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"results": [
@@ -47,7 +47,7 @@ func TestAICrop(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &AICropResult{
-		Results: []CropPosition{
+		Results: []*CropPosition{
 			{
 				CropLeft:   112,
 				CropTop:    0,
@@ -106,7 +106,7 @@ func TestAICropByURL(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &AICropResult{
-		Results: []CropPosition{
+		Results: []*CropPosition{
 			{
 				CropLeft:   112,
 				CropTop:    0,
@@ -133,7 +133,7 @@ func TestScanQRCode(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN", wx.NewUploadForm("img", "test.jpg", nil)).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"code_results": [
@@ -205,7 +205,7 @@ func TestScanQRCode(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &QRCodeScanResult{
-		CodeResults: []QRCodeScanData{
+		CodeResults: []*QRCodeScanData{
 			{
 				TypeName: "QR_CODE",
 				Data:     "http://www.qq.com",
@@ -380,7 +380,7 @@ func TestScanQRCodeByURL(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &QRCodeScanResult{
-		CodeResults: []QRCodeScanData{
+		CodeResults: []*QRCodeScanData{
 			{
 				TypeName: "QR_CODE",
 				Data:     "http://www.qq.com",
@@ -483,7 +483,7 @@ func TestSuperreSolution(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(postBody)).Return([]byte(`{
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN", wx.NewUploadForm("img", "test.jpg", nil)).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"media_id": "6WXsIXkG7lXuDLspD9xfm5dsvHzb0EFl0li6ySxi92ap8Vl3zZoD9DpOyNudeJGB"

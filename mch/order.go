@@ -32,108 +32,119 @@ type OrderData struct {
 
 // UnifyOrder 统一下单
 func UnifyOrder(data *OrderData) wx.Action {
-	return wx.NewMchAPI(OrderUnifyURL, func(appid, mchid, nonce string) (wx.WXML, error) {
-		body := wx.WXML{
-			"appid":            appid,
-			"mch_id":           mchid,
-			"nonce_str":        nonce,
-			"fee_type":         "CNY",
-			"trade_type":       data.TradeType,
-			"body":             data.Body,
-			"out_trade_no":     data.OutTradeNO,
-			"total_fee":        strconv.Itoa(data.TotalFee),
-			"spbill_create_ip": data.SpbillCreateIP,
-			"notify_url":       data.NotifyURL,
-			"sign_type":        SignMD5,
-		}
+	return wx.NewAPI(OrderUnifyURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+			body := wx.WXML{
+				"appid":            appid,
+				"mch_id":           mchid,
+				"nonce_str":        nonce,
+				"fee_type":         "CNY",
+				"trade_type":       data.TradeType,
+				"body":             data.Body,
+				"out_trade_no":     data.OutTradeNO,
+				"total_fee":        strconv.Itoa(data.TotalFee),
+				"spbill_create_ip": data.SpbillCreateIP,
+				"notify_url":       data.NotifyURL,
+				"sign_type":        SignMD5,
+			}
 
-		if data.DeviceInfo != "" {
-			body["device_info"] = data.DeviceInfo
-		}
+			if data.DeviceInfo != "" {
+				body["device_info"] = data.DeviceInfo
+			}
 
-		if data.Detail != "" {
-			body["detail"] = data.Detail
-		}
+			if data.Detail != "" {
+				body["detail"] = data.Detail
+			}
 
-		if data.Attach != "" {
-			body["attach"] = data.Attach
-		}
+			if data.Attach != "" {
+				body["attach"] = data.Attach
+			}
 
-		if data.FeeType != "" {
-			body["fee_type"] = data.FeeType
-		}
+			if data.FeeType != "" {
+				body["fee_type"] = data.FeeType
+			}
 
-		if data.TimeStart != "" {
-			body["time_start"] = data.TimeStart
-		}
+			if data.TimeStart != "" {
+				body["time_start"] = data.TimeStart
+			}
 
-		if data.TimeExpire != "" {
-			body["time_expire"] = data.TimeExpire
-		}
+			if data.TimeExpire != "" {
+				body["time_expire"] = data.TimeExpire
+			}
 
-		if data.GoodsTag != "" {
-			body["goods_tag"] = data.GoodsTag
-		}
+			if data.GoodsTag != "" {
+				body["goods_tag"] = data.GoodsTag
+			}
 
-		if data.ProductID != "" {
-			body["product_id"] = data.ProductID
-		}
+			if data.ProductID != "" {
+				body["product_id"] = data.ProductID
+			}
 
-		if data.LimitPay != "" {
-			body["limit_pay"] = data.LimitPay
-		}
+			if data.LimitPay != "" {
+				body["limit_pay"] = data.LimitPay
+			}
 
-		if data.OpenID != "" {
-			body["openid"] = data.OpenID
-		}
+			if data.OpenID != "" {
+				body["openid"] = data.OpenID
+			}
 
-		if data.Receipt {
-			body["receipt"] = "Y"
-		}
+			if data.Receipt {
+				body["receipt"] = "Y"
+			}
 
-		if data.SceneInfo != "" {
-			body["scene_info"] = data.SceneInfo
-		}
+			if data.SceneInfo != "" {
+				body["scene_info"] = data.SceneInfo
+			}
 
-		return body, nil
-	}, false)
+			return body, nil
+		}))
 }
 
 // QueryOrderByTransactionID 根据微信订单号查询
 func QueryOrderByTransactionID(transactionID string) wx.Action {
-	return wx.NewMchAPI(OrderQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
-		return wx.WXML{
-			"appid":          appid,
-			"mch_id":         mchid,
-			"transaction_id": transactionID,
-			"nonce_str":      nonce,
-			"sign_type":      SignMD5,
-		}, nil
-	}, false)
+	return wx.NewAPI(OrderQueryURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+			return wx.WXML{
+				"appid":          appid,
+				"mch_id":         mchid,
+				"transaction_id": transactionID,
+				"nonce_str":      nonce,
+				"sign_type":      SignMD5,
+			}, nil
+		}),
+	)
 }
 
 // QueryOrderByOutTradeNO 根据商户订单号查询
 func QueryOrderByOutTradeNO(outTradeNO string) wx.Action {
-	return wx.NewMchAPI(OrderQueryURL, func(appid, mchid, nonce string) (wx.WXML, error) {
-		return wx.WXML{
-			"appid":        appid,
-			"mch_id":       mchid,
-			"out_trade_no": outTradeNO,
-			"nonce_str":    nonce,
-			"sign_type":    SignMD5,
-		}, nil
-	}, false)
+	return wx.NewAPI(OrderQueryURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+			return wx.WXML{
+				"appid":        appid,
+				"mch_id":       mchid,
+				"out_trade_no": outTradeNO,
+				"nonce_str":    nonce,
+				"sign_type":    SignMD5,
+			}, nil
+		}),
+	)
 }
 
 // CloseOrder 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
 func CloseOrder(outTradeNO string) wx.Action {
-	return wx.NewMchAPI(OrderCloseURL, func(appid, mchid, nonce string) (wx.WXML, error) {
-		return wx.WXML{
-			"appid":        appid,
-			"mch_id":       mchid,
-			"out_trade_no": outTradeNO,
-			"nonce_str":    nonce,
-			"sign_type":    SignMD5,
-		}, nil
-	}, false)
+	return wx.NewAPI(OrderCloseURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+			return wx.WXML{
+				"appid":        appid,
+				"mch_id":       mchid,
+				"out_trade_no": outTradeNO,
+				"nonce_str":    nonce,
+				"sign_type":    SignMD5,
+			}, nil
+		}),
+	)
 }

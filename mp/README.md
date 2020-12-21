@@ -1,8 +1,10 @@
 # 微信小程序（Mini Program）
 
 ```go
-"github.com/shenghui0779/gochat"
-"github.com/shenghui0779/gochat/mp"
+import (
+    "github.com/shenghui0779/gochat"
+    "github.com/shenghui0779/gochat/mp"
+)
 ```
 
 ### 初始化小程序实例

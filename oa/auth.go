@@ -2,7 +2,6 @@ package oa
 
 import (
 	"encoding/json"
-	"net/url"
 
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -24,11 +23,10 @@ type AccessToken struct {
 
 // CheckAuthToken 检验授权凭证（access_token）是否有效
 func CheckAuthToken(openid string) wx.Action {
-	query := url.Values{}
-
-	query.Set("openid", openid)
-
-	return wx.NewOpenGetAPI(SnsCheckAccessTokenURL, query, nil)
+	return wx.NewAPI(SnsCheckAccessTokenURL,
+		wx.WithMethod(wx.MethodGet),
+		wx.WithQuery("openid", openid),
+	)
 }
 
 // AuthUser 授权用户信息
@@ -46,14 +44,14 @@ type AuthUser struct {
 
 // GetAuthUser 获取授权用户信息（注意：使用网页授权的access_token）
 func GetAuthUser(dest *AuthUser, openid string) wx.Action {
-	query := url.Values{}
-
-	query.Set("openid", openid)
-	query.Set("lang", "zh_CN")
-
-	return wx.NewOpenGetAPI(SnsUserInfoURL, query, func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(SnsUserInfoURL,
+		wx.WithMethod(wx.MethodGet),
+		wx.WithQuery("openid", openid),
+		wx.WithQuery("lang", "zh_CN"),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // JS-SDK ticket 类型
@@ -80,11 +78,11 @@ type JSSDKTicket struct {
 
 // GetJSSDKTicket 获取 JS-SDK ticket (注意：使用普通access_token)
 func GetJSSDKTicket(dest *JSSDKTicket, t TicketType) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(t))
-
-	return wx.NewOpenGetAPI(CgiBinTicketURL, query, func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(CgiBinTicketURL,
+		wx.WithMethod(wx.MethodGet),
+		wx.WithQuery("type", string(t)),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }

@@ -1,8 +1,10 @@
 # 微信公众号（Official Accounts）
 
 ```go
-"github.com/shenghui0779/gochat"
-"github.com/shenghui0779/gochat/oa"
+import (
+    "github.com/shenghui0779/gochat"
+    "github.com/shenghui0779/gochat/oa"
+)
 ```
 
 ### 初始化公众号实例

@@ -22,6 +22,7 @@ const (
 const (
 	MenuCreateURL            = "https://api.weixin.qq.com/cgi-bin/menu/create"
 	MenuAddConditionalURL    = "https://api.weixin.qq.com/cgi-bin/menu/addconditional"
+	MenuTryMatchURL          = "https://api.weixin.qq.com/cgi-bin/menu/trymatch"
 	MenuListURL              = "https://api.weixin.qq.com/cgi-bin/menu/get"
 	MenuDeleteURL            = "https://api.weixin.qq.com/cgi-bin/menu/delete"
 	MenuDeleteConditionalURL = "https://api.weixin.qq.com/cgi-bin/menu/delconditional"

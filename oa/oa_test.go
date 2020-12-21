@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	gomock "github.com/golang/mock/gomock"
+	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
@@ -157,13 +157,3 @@ func TestDecryptEventMessage(t *testing.T) {
 
 // 	assert.Equal(t, "0f9de62fce790f9a083d5c99e95740ceb90c27ed", sign.Signature)
 // }
-
-var postBody wx.Body
-
-func TestMain(m *testing.M) {
-	postBody = wx.NewPostBody(func() ([]byte, error) {
-		return nil, nil
-	})
-
-	m.Run()
-}
