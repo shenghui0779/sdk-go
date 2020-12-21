@@ -6,5 +6,5 @@ require (
 	github.com/golang/mock v1.4.4
 	github.com/stretchr/testify v1.6.1
 	github.com/tidwall/gjson v1.6.4
-	golang.org/x/crypto v0.0.0-20201208171446-5f87f3452ae9
+	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620
 )
