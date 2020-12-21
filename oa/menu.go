@@ -2,7 +2,6 @@ package oa
 
 import (
 	"encoding/json"
-	"net/url"
 
 	"github.com/tidwall/gjson"
 
@@ -71,48 +70,64 @@ type MenuMatchRule struct {
 
 // CreateMenu 创建自定义菜单
 func CreateMenu(buttons ...*MenuButton) wx.Action {
-	return wx.NewPostAPI(MenuCreateURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(wx.X{"button": buttons})
-	}, nil)
+	return wx.NewAPI(MenuCreateURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(wx.X{"button": buttons})
+		}),
+	)
 }
 
 // CreateConditionalMenu 创建个性化菜单
 func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.Action {
-	return wx.NewPostAPI(MenuAddConditionalURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(wx.X{
-			"button":    buttons,
-			"matchrule": matchRule,
-		})
-	}, nil)
+	return wx.NewAPI(MenuAddConditionalURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(wx.X{
+				"button":    buttons,
+				"matchrule": matchRule,
+			})
+		}),
+	)
 }
 
 // TryMatchMenu 测试匹配个性化菜单
 // 注意：user_id可以是粉丝的OpenID，也可以是粉丝的微信号。
 func TryMatchMenu(dest *[]*MenuButton, userID string) wx.Action {
-	return wx.NewPostAPI(MenuTryMatchURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(wx.X{"user_id": userID})
-	}, func(resp []byte) error {
-		return json.Unmarshal([]byte(gjson.GetBytes(resp, "button").Raw), dest)
-	})
+	return wx.NewAPI(MenuTryMatchURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(wx.X{"user_id": userID})
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal([]byte(gjson.GetBytes(resp, "button").Raw), dest)
+		}),
+	)
 }
 
 // GetMenu 查询自定义菜单
 func GetMenu(dest *MenuInfo) wx.Action {
-	return wx.NewGetAPI(MenuListURL, url.Values{}, func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(MenuListURL,
+		wx.WithMethod(wx.MethodGet),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // DeleteMenu 删除自定义菜单
 func DeleteMenu() wx.Action {
-	return wx.NewGetAPI(MenuDeleteURL, url.Values{}, nil)
+	return wx.NewAPI(MenuDeleteURL, wx.WithMethod(wx.MethodGet))
 }
 
 // DeleteConditional 删除个性化菜单
 func DeleteConditionalMenu(menuID string) wx.Action {
-	return wx.NewPostAPI(MenuDeleteConditionalURL, url.Values{}, func() ([]byte, error) {
-		return json.Marshal(wx.X{"menuid": menuID})
-	}, nil)
+	return wx.NewAPI(MenuDeleteConditionalURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(wx.X{"menuid": menuID})
+		}),
+	)
 }
 
 // GroupButton 组合按钮

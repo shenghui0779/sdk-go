@@ -2,10 +2,10 @@ package oa
 
 import (
 	"encoding/json"
-	"net/url"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/tidwall/gjson"
 )
 
 // ImageSize 图片尺寸
@@ -44,20 +44,24 @@ type AICropResult struct {
 
 // AICrop 图片智能裁切
 func AICrop(dest *AICropResult, filename string) wx.Action {
-	return wx.NewUploadAPI(AICropURL, url.Values{}, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(AICropURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithUploadForm("img", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // AICropByURL 图片智能裁切
 func AICropByURL(dest *AICropResult, imgURL string) wx.Action {
-	query := url.Values{}
-
-	query.Set("img_url", imgURL)
-
-	return wx.NewPostAPI(AICropURL, query, nil, func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(AICropURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithQuery("img_url", imgURL),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // QRCodeScanData 二维码扫描数据
@@ -75,20 +79,24 @@ type QRCodeScanResult struct {
 
 // ScanQRCode 条码/二维码识别
 func ScanQRCode(dest *QRCodeScanResult, filename string) wx.Action {
-	return wx.NewUploadAPI(ScanQRCodeURL, url.Values{}, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(ScanQRCodeURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithUploadForm("img", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // ScanQRCodeByURL 条码/二维码识别
 func ScanQRCodeByURL(dest *QRCodeScanResult, imgURL string) wx.Action {
-	query := url.Values{}
-
-	query.Set("img_url", imgURL)
-
-	return wx.NewPostAPI(ScanQRCodeURL, query, nil, func(resp []byte) error {
-		return json.Unmarshal(resp, dest)
-	})
+	return wx.NewAPI(ScanQRCodeURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithQuery("img_url", imgURL),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }
 
 // SuperreSolutionResult 图片高清化结果
@@ -98,22 +106,26 @@ type SuperreSolutionResult struct {
 
 // SuperreSolution 图片高清化
 func SuperreSolution(dest *SuperreSolutionResult, filename string) wx.Action {
-	return wx.NewUploadAPI(SuperreSolutionURL, url.Values{}, wx.NewUploadForm("img", filename, nil), func(resp []byte) error {
-		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
+	return wx.NewAPI(SuperreSolutionURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithUploadForm("img", filename, nil),
+		wx.WithDecode(func(resp []byte) error {
+			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
-		return nil
-	})
+			return nil
+		}),
+	)
 }
 
 // SuperreSolutionByURL 图片高清化
 func SuperreSolutionByURL(dest *SuperreSolutionResult, imgURL string) wx.Action {
-	query := url.Values{}
+	return wx.NewAPI(SuperreSolutionURL,
+		wx.WithMethod(wx.MethodPost),
+		wx.WithQuery("img_url", imgURL),
+		wx.WithDecode(func(resp []byte) error {
+			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
-	query.Set("img_url", imgURL)
-
-	return wx.NewPostAPI(SuperreSolutionURL, query, nil, func(resp []byte) error {
-		dest.MediaID = gjson.GetBytes(resp, "media_id").String()
-
-		return nil
-	})
+			return nil
+		}),
+	)
 }
