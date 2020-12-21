@@ -109,9 +109,7 @@ func (mch *Mch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
 
 // Do exec action
 func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOption) (wx.WXML, error) {
-	body := action.Body()
-
-	m, err := body.WXML(mch.appid, mch.mchid, mch.nonce(16))
+	m, err := action.WXML(mch.appid, mch.mchid, mch.nonce(16))
 
 	if err != nil {
 		return nil, err
