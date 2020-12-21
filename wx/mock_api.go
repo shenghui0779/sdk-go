@@ -168,18 +168,48 @@ func (mr *MockActionMockRecorder) Method() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Method", reflect.TypeOf((*MockAction)(nil).Method))
 }
 
+// WXML mocks base method
+func (m *MockAction) WXML(appid, mchid, nonce string) (WXML, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WXML", appid, mchid, nonce)
+	ret0, _ := ret[0].(WXML)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// WXML indicates an expected call of WXML
+func (mr *MockActionMockRecorder) WXML(appid, mchid, nonce interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WXML", reflect.TypeOf((*MockAction)(nil).WXML), appid, mchid, nonce)
+}
+
 // Body mocks base method
-func (m *MockAction) Body() *HTTPBody {
+func (m *MockAction) Body() ([]byte, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Body")
-	ret0, _ := ret[0].(*HTTPBody)
-	return ret0
+	ret0, _ := ret[0].([]byte)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Body indicates an expected call of Body
 func (mr *MockActionMockRecorder) Body() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Body", reflect.TypeOf((*MockAction)(nil).Body))
+}
+
+// UploadForm mocks base method
+func (m *MockAction) UploadForm() *UploadForm {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UploadForm")
+	ret0, _ := ret[0].(*UploadForm)
+	return ret0
+}
+
+// UploadForm indicates an expected call of UploadForm
+func (mr *MockActionMockRecorder) UploadForm() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadForm", reflect.TypeOf((*MockAction)(nil).UploadForm))
 }
 
 // Decode mocks base method

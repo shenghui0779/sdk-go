@@ -54,46 +54,36 @@ func (f *UploadForm) Buffer() ([]byte, error) {
 	return ioutil.ReadFile(path)
 }
 
-// HTTPBody is a Body implementation
-type HTTPBody struct {
-	wxml       func(appid, mchid, nonce string) (WXML, error)
-	bytes      func() ([]byte, error)
-	uploadForm *UploadForm
-}
-
-func (h *HTTPBody) WXML(appid, mchid, nonce string) (WXML, error) {
-	return h.wxml(appid, mchid, nonce)
-}
-
-func (h *HTTPBody) Bytes() ([]byte, error) {
-	if h.bytes == nil {
-		return nil, nil
+// NewUploadForm returns new uplod form
+func NewUploadForm(fieldname, filename string, extraFields map[string]string) *UploadForm {
+	return &UploadForm{
+		fieldname:   fieldname,
+		filename:    filename,
+		extraFields: extraFields,
 	}
-
-	return h.bytes()
-}
-
-func (h *HTTPBody) UploadForm() *UploadForm {
-	return h.uploadForm
 }
 
 // Action is the interface that handle wechat api
 type Action interface {
 	URL(accessToken ...string) string
 	Method() HTTPMethod
-	Body() *HTTPBody
+	WXML(appid, mchid, nonce string) (WXML, error)
+	Body() ([]byte, error)
+	UploadForm() *UploadForm
 	Decode() func(resp []byte) error
 	TLS() bool
 }
 
 // API is a Action implementation
 type API struct {
-	reqURL string
-	method HTTPMethod
-	query  url.Values
-	body   *HTTPBody
-	decode func(resp []byte) error
-	tls    bool
+	reqURL     string
+	method     HTTPMethod
+	query      url.Values
+	wxml       func(appid, mchid, nonce string) (WXML, error)
+	body       func() ([]byte, error)
+	uploadForm *UploadForm
+	decode     func(resp []byte) error
+	tls        bool
 }
 
 func (a *API) URL(accessToken ...string) string {
@@ -112,8 +102,28 @@ func (a *API) Method() HTTPMethod {
 	return a.method
 }
 
-func (a *API) Body() *HTTPBody {
-	return a.body
+func (a *API) WXML(appid, mchid, nonce string) (WXML, error) {
+	if a.wxml == nil {
+		return WXML{}, nil
+	}
+
+	return a.wxml(appid, mchid, nonce)
+}
+
+func (a *API) Body() ([]byte, error) {
+	if a.body == nil {
+		return nil, nil
+	}
+
+	return a.body()
+}
+
+func (a *API) UploadForm() *UploadForm {
+	if a.uploadForm == nil {
+		return new(UploadForm)
+	}
+
+	return a.uploadForm
 }
 
 func (a *API) Decode() func(resp []byte) error {
@@ -144,25 +154,21 @@ func WithQuery(key, value string) APIOption {
 // WithBody specifies the `body` to API.
 func WithBody(f func() ([]byte, error)) APIOption {
 	return func(api *API) {
-		api.body = &HTTPBody{bytes: f}
+		api.body = f
 	}
 }
 
 // WithWXML specifies the `wxml` to API.
 func WithWXML(f func(appid, mchid, nonce string) (WXML, error)) APIOption {
 	return func(api *API) {
-		api.body = &HTTPBody{wxml: f}
+		api.wxml = f
 	}
 }
 
 // WithUploadForm specifies the `upload form` to API.
 func WithUploadForm(fieldname, filename string, extraFields map[string]string) APIOption {
 	return func(api *API) {
-		api.body = &HTTPBody{uploadForm: &UploadForm{
-			fieldname:   fieldname,
-			filename:    filename,
-			extraFields: extraFields,
-		}}
+		api.uploadForm = NewUploadForm(fieldname, filename, extraFields)
 	}
 }
 
