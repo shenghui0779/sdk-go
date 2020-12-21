@@ -54,15 +54,6 @@ func (f *UploadForm) Buffer() ([]byte, error) {
 	return ioutil.ReadFile(path)
 }
 
-// NewUploadForm returns new uplod form
-func NewUploadForm(fieldname, filename string, extraFields map[string]string) *UploadForm {
-	return &UploadForm{
-		fieldname:   fieldname,
-		filename:    filename,
-		extraFields: extraFields,
-	}
-}
-
 // HTTPBody is a Body implementation
 type HTTPBody struct {
 	wxml       func(appid, mchid, nonce string) (WXML, error)
@@ -165,9 +156,13 @@ func WithWXML(f func(appid, mchid, nonce string) (WXML, error)) APIOption {
 }
 
 // WithUploadForm specifies the `upload form` to API.
-func WithUploadForm(form *UploadForm) APIOption {
+func WithUploadForm(fieldname, filename string, extraFields map[string]string) APIOption {
 	return func(api *API) {
-		api.body = &HTTPBody{uploadForm: form}
+		api.body = &HTTPBody{uploadForm: &UploadForm{
+			fieldname:   fieldname,
+			filename:    filename,
+			extraFields: extraFields,
+		}}
 	}
 }
 
