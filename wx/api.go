@@ -133,39 +133,68 @@ func (a *API) TLS() bool {
 	return a.tls
 }
 
-// NewAction returns a new action
-func NewAction(reqURL string, method HTTPMethod, query url.Values, body *HTTPBody, decode func(resp []byte) error, tls bool) Action {
-	return &API{
-		reqURL: reqURL,
-		method: method,
-		query:  query,
-		body:   body,
-		decode: decode,
-		tls:    tls,
+// APIOption configures how we set up the wechat API
+type APIOption func(api *API)
+
+// WithMethod specifies the `method` to API.
+func WithMethod(method HTTPMethod) APIOption {
+	return func(api *API) {
+		api.method = method
 	}
 }
 
-// NewMchAPI returns mch action
-func NewMchAPI(reqURL string, f func(appid, mchid, nonce string) (WXML, error)) Action {
-	return NewAction(reqURL, MethodPost, url.Values{}, &HTTPBody{wxml: f}, nil, false)
+// WithQuery specifies the `query` to API.
+func WithQuery(key, value string) APIOption {
+	return func(api *API) {
+		api.query.Set(key, value)
+	}
 }
 
-// NewMchTLSAPI return mch action
-func NewMchTLSAPI(reqURL string, f func(appid, mchid, nonce string) (WXML, error)) Action {
-	return NewAction(reqURL, MethodPost, url.Values{}, &HTTPBody{wxml: f}, nil, true)
+// WithBody specifies the `body` to API.
+func WithBody(f func() ([]byte, error)) APIOption {
+	return func(api *API) {
+		api.body = &HTTPBody{bytes: f}
+	}
 }
 
-// NewGetAPI returns get action
-func NewGetAPI(reqURL string, query url.Values, decode func(resp []byte) error) Action {
-	return NewAction(reqURL, MethodGet, query, nil, decode, false)
+// WithWXML specifies the `wxml` to API.
+func WithWXML(f func(appid, mchid, nonce string) (WXML, error)) APIOption {
+	return func(api *API) {
+		api.body = &HTTPBody{wxml: f}
+	}
 }
 
-// NewPostAPI returns post action
-func NewPostAPI(reqURL string, query url.Values, body func() ([]byte, error), decode func(resp []byte) error) Action {
-	return NewAction(reqURL, MethodPost, query, &HTTPBody{bytes: body}, decode, false)
+// WithUploadForm specifies the `upload form` to API.
+func WithUploadForm(form *UploadForm) APIOption {
+	return func(api *API) {
+		api.body = &HTTPBody{uploadForm: form}
+	}
 }
 
-// NewUploadAPI returns upload action
-func NewUploadAPI(reqURL string, query url.Values, form *UploadForm, decode func(resp []byte) error) Action {
-	return NewAction(reqURL, MethodUpload, query, &HTTPBody{uploadForm: form}, decode, false)
+// WithDecode specifies the `decode` to API.
+func WithDecode(f func(resp []byte) error) APIOption {
+	return func(api *API) {
+		api.decode = f
+	}
+}
+
+// WithTLS specifies the `tls` to API.
+func WithTLS() APIOption {
+	return func(api *API) {
+		api.tls = true
+	}
+}
+
+// NewAPI returns a new action
+func NewAPI(reqURL string, options ...APIOption) Action {
+	api := &API{
+		reqURL: reqURL,
+		query:  url.Values{},
+	}
+
+	for _, f := range options {
+		f(api)
+	}
+
+	return api
 }
