@@ -12,9 +12,9 @@ import (
 type HTTPMethod string
 
 const (
-	MethodGet    = "GET"
-	MethodPost   = "POST"
-	MethodUpload = "UPLOAD"
+	MethodGet    HTTPMethod = "GET"
+	MethodPost   HTTPMethod = "POST"
+	MethodUpload HTTPMethod = "UPLOAD"
 )
 
 // Client is the interface that do http request
