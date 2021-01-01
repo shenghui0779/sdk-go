@@ -16,7 +16,7 @@
 ## 获取
 
 ```sh
-go get github.com/shenghui0779/gochat
+go get -u github.com/shenghui0779/gochat
 ```
 
 ## 文档
