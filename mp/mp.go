@@ -112,9 +112,9 @@ func (mp *MP) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData strin
 		return err
 	}
 
-	cbc := wx.NewCBCCrypto(key, ivb)
+	cbc := wx.NewCBCCrypto(key, ivb, wx.PKCS7)
 
-	b, err := cbc.Decrypt(cipherText, wx.PKCS7)
+	b, err := cbc.Decrypt(cipherText)
 
 	if err != nil {
 		return err
