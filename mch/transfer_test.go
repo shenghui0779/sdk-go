@@ -28,16 +28,16 @@ func TestTransferToBalance(t *testing.T) {
 		"nonce_str":        "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS",
 		"sign_type":        "MD5",
 		"sign":             "97CD9C3C88B189B60C230677CE0FC3BB",
-	}).Return(wx.WXML{
-		"return_code":      "SUCCESS",
-		"mch_appid":        "wx2421b1c4370ec43b",
-		"mchid":            "10000100",
-		"nonce_str":        "lxuDzMnRjpcXzxLx0q",
-		"result_code":      "SUCCESS",
-		"partner_trade_no": "10013574201505191526582441",
-		"payment_no":       "1000018301201505190181489473",
-		"payment_time":     "2015-05-19 15:26:59",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<mch_appid>wx2421b1c4370ec43b</mch_appid>
+	<mchid>10000100</mchid>
+	<nonce_str>lxuDzMnRjpcXzxLx0q</nonce_str>
+	<result_code>SUCCESS</result_code>
+	<partner_trade_no>10013574201505191526582441</partner_trade_no>
+	<payment_no>1000018301201505190181489473</payment_no>
+	<payment_time>2015-05-19 15:26:59</payment_time>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -83,20 +83,20 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
 		"sign_type":        "MD5",
 		"sign":             "DF0024F9502E233115C0198912B4EB5D",
-	}).Return(wx.WXML{
-		"return_code":      "SUCCESS",
-		"appid":            "wx2421b1c4370ec43b",
-		"mch_id":           "10000100",
-		"result_code":      "SUCCESS",
-		"detail_id":        "1000000000201503283103439304",
-		"partner_trade_no": "1000005901201407261446939628",
-		"status":           "SUCCESS",
-		"payment_amount":   "1000018301201505190181489473",
-		"openid":           "oxTWIuGaIt6gTKsQRLau2M0yL16E",
-		"transfer_name":    "测试",
-		"transfer_time":    "2015-04-21 20:00:00",
-		"desc":             "福利测试",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<result_code>SUCCESS</result_code>
+	<detail_id>1000000000201503283103439304</detail_id>
+	<partner_trade_no>1000005901201407261446939628</partner_trade_no>
+	<status>SUCCESS</status>
+	<payment_amount>650</payment_amount>
+	<openid>oxTWIuGaIt6gTKsQRLau2M0yL16E</openid>
+	<transfer_name>测试</transfer_name>
+	<transfer_time>2015-04-21 20:00:00</transfer_time>
+	<desc>福利测试</desc>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -117,7 +117,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 		"detail_id":        "1000000000201503283103439304",
 		"partner_trade_no": "1000005901201407261446939628",
 		"status":           "SUCCESS",
-		"payment_amount":   "1000018301201505190181489473",
+		"payment_amount":   "650",
 		"openid":           "oxTWIuGaIt6gTKsQRLau2M0yL16E",
 		"transfer_name":    "测试",
 		"transfer_time":    "2015-04-21 20:00:00",
@@ -196,20 +196,20 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
 		"sign_type":        "MD5",
 		"sign":             "F5F586AE6B1BDB6756D2B1AD0A01BADA",
-	}).Return(wx.WXML{
-		"return_code":      "SUCCESS",
-		"mch_id":           "10000100",
-		"result_code":      "SUCCESS",
-		"partner_trade_no": "1212121221278",
-		"payment_no":       "10000600500852017030900000020006012",
-		"bank_no_md5":      "2260AB5EF3D290E28EFD3F74FF7A29A0",
-		"true_name_md5":    "7F25B325D37790764ABA55DAD8D09B76",
-		"amount":           "500",
-		"status":           "PROCESSING",
-		"cmms_amt":         "0",
-		"create_time":      "2017-03-09 15:04:04",
-		"reason":           "福利测试",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<mch_id>10000100</mch_id>
+	<result_code>SUCCESS</result_code>
+	<partner_trade_no>1212121221278</partner_trade_no>
+	<payment_no>10000600500852017030900000020006012</payment_no>
+	<bank_no_md5>2260AB5EF3D290E28EFD3F74FF7A29A0</bank_no_md5>
+	<true_name_md5>7F25B325D37790764ABA55DAD8D09B76</true_name_md5>
+	<amount>500</amount>
+	<status>PROCESSING</status>
+	<cmms_amt>0</cmms_amt>
+	<create_time>2017-03-09 15:04:04</create_time>
+	<reason>福利测试</reason>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -249,11 +249,11 @@ func TestRSAPublicKey(t *testing.T) {
 		"nonce_str": "50780e0cca98c8c8e814883e5caa672e",
 		"sign_type": "MD5",
 		"sign":      "CA227C435D88EE017A9457B657FCA515",
-	}).Return(wx.WXML{
-		"return_code": "SUCCESS",
-		"mch_id":      "10000100",
-		"result_code": "SUCCESS",
-		"pub_key": `-----BEGIN PUBLIC KEY-----
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<mch_id>10000100</mch_id>
+	<result_code>SUCCESS</result_code>
+	<pub_key>-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl1c+37GJSFSqbuHJ/wge
 LzxLp7C2GYrjzVAnEF3xgjJVTltkQzdu3u+fcB3c/dgHX/Zdv5fqVoOqvoOMk4N4
 zdGeaxN+Cm19c1gsxigNJDtm6Qno1s1T/qPph/zRArylM0N9Z3vWVEq4xI4B4NXk
@@ -261,8 +261,8 @@ zdGeaxN+Cm19c1gsxigNJDtm6Qno1s1T/qPph/zRArylM0N9Z3vWVEq4xI4B4NXk
 wvGYLBSAn+oNw/uSAu6B3c6dh+pslgORCzrIRs68GWsARGZkI/lmOJWEgzQ9KC7b
 yHVqEnDDaWQFyQpq30JdP6YTXR/xlKyo8f1DingoSDXAhKMGRKaT4oIFkE6OA3jt
 DQIDAQAB
------END PUBLIC KEY-----`,
-	}, nil)
+-----END PUBLIC KEY-----</pub_key>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 

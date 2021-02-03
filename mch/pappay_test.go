@@ -28,16 +28,16 @@ func TestAPPEntrust(t *testing.T) {
 		"return_app":               "Y",
 		"sign_type":                "MD5",
 		"sign":                     "588134C9FA5B9D4E89E44FA303F6CB6F",
-	}).Return(wx.WXML{
-		"return_code":       "SUCCESS",
-		"return_msg":        "OK",
-		"appid":             "wx2421b1c4370ec43b",
-		"mch_id":            "10000100",
-		"nonce_str":         "IITRi8Iabbblz1Jc",
-		"sign":              "A07C2571BA6F4FBFDB82490C97776AB4",
-		"result_code":       "SUCCESS",
-		"pre_entrustweb_id": "5778aadY9nltAsZzXixCkFIGYnV2V",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<return_msg>OK</return_msg>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<nonce_str>IITRi8Iabbblz1Jc</nonce_str>
+	<sign>A07C2571BA6F4FBFDB82490C97776AB4</sign>
+	<result_code>SUCCESS</result_code>
+	<pre_entrustweb_id>5778aadY9nltAsZzXixCkFIGYnV2V</pre_entrustweb_id>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -192,19 +192,19 @@ func TestEntrustByOrder(t *testing.T) {
 		"nonce_str":                "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
 		"sign_type":                "MD5",
 		"sign":                     "B59547B883DA4E3E3483DFCD1FC0CB98",
-	}).Return(wx.WXML{
-		"return_code":  "SUCCESS",
-		"result_code":  "SUCCESS",
-		"appid":        "wx2421b1c4370ec43b",
-		"mch_id":       "10000100",
-		"nonce_str":    "IITRi8Iabbblz1Jc",
-		"sign":         "27CB53BB1FD0528DB119910CB1A456E0",
-		"prepay_id":    "wx201410272009395522657a690389285100",
-		"trade_type":   "JSAPI",
-		"code_url":     "weixin://wxpay/s/An4baqw",
-		"plan_id":      "123",
-		"out_trade_no": "123456",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<result_code>SUCCESS</result_code>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<nonce_str>IITRi8Iabbblz1Jc</nonce_str>
+	<sign>27CB53BB1FD0528DB119910CB1A456E0</sign>
+	<prepay_id>wx201410272009395522657a690389285100</prepay_id>
+	<trade_type>JSAPI</trade_type>
+	<code_url>weixin://wxpay/s/An4baqw</code_url>
+	<plan_id>123</plan_id>
+	<out_trade_no>123456</out_trade_no>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -259,25 +259,25 @@ func TestQueryContractByID(t *testing.T) {
 		"version":     "1.0",
 		"sign_type":   "MD5",
 		"sign":        "423CE9A1BA3B99329D7B9A4ACC8B57EA",
-	}).Return(wx.WXML{
-		"return_code":                 "SUCCESS",
-		"result_code":                 "SUCCESS",
-		"appid":                       "wx2421b1c4370ec43b",
-		"mch_id":                      "10000100",
-		"contract_id":                 "201509160000028648",
-		"plan_id":                     "123",
-		"openid":                      "oHZx6uMbIG46UXQ3SKxVYEgw1LZs",
-		"request_serial":              "1000",
-		"contract_code":               "1023658866",
-		"contract_display_account":    "test",
-		"contract_state":              "1",
-		"contract_signed_time":        "1438141845",
-		"contract_expired_time":       "1453953047",
-		"contract_terminated_time":    "1438157486",
-		"contract_termination_mode":   "3",
-		"contract_termination_remark": "delete ....",
-		"sign":                        "35B3B9261A6A4E75BFB560FE0D6EA8CE",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<result_code>SUCCESS</result_code>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<contract_id>201509160000028648</contract_id>
+	<plan_id>123</plan_id>
+	<openid>oHZx6uMbIG46UXQ3SKxVYEgw1LZs</openid>
+	<request_serial>1000</request_serial>
+	<contract_code>1023658866</contract_code>
+	<contract_display_account>test</contract_display_account>
+	<contract_state>1</contract_state>
+	<contract_signed_time>1438141845</contract_signed_time>
+	<contract_expired_time>1453953047</contract_expired_time>
+	<contract_terminated_time>1438157486</contract_terminated_time>
+	<contract_termination_mode>3</contract_termination_mode>
+	<contract_termination_remark>delete ....</contract_termination_remark>
+	<sign>35B3B9261A6A4E75BFB560FE0D6EA8CE</sign>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -325,25 +325,25 @@ func TestQueryContractByCode(t *testing.T) {
 		"version":       "1.0",
 		"sign_type":     "MD5",
 		"sign":          "8657D130240326FF8A9BA9FFD3A22C54",
-	}).Return(wx.WXML{
-		"return_code":                 "SUCCESS",
-		"result_code":                 "SUCCESS",
-		"appid":                       "wx2421b1c4370ec43b",
-		"mch_id":                      "10000100",
-		"contract_id":                 "201509160000028648",
-		"plan_id":                     "123",
-		"openid":                      "oHZx6uMbIG46UXQ3SKxVYEgw1LZs",
-		"request_serial":              "1000",
-		"contract_code":               "1023658866",
-		"contract_display_account":    "test",
-		"contract_state":              "1",
-		"contract_signed_time":        "1438141845",
-		"contract_expired_time":       "1453953047",
-		"contract_terminated_time":    "1438157486",
-		"contract_termination_mode":   "3",
-		"contract_termination_remark": "delete ....",
-		"sign":                        "35B3B9261A6A4E75BFB560FE0D6EA8CE",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<result_code>SUCCESS</result_code>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<contract_id>201509160000028648</contract_id>
+	<plan_id>123</plan_id>
+	<openid>oHZx6uMbIG46UXQ3SKxVYEgw1LZs</openid>
+	<request_serial>1000</request_serial>
+	<contract_code>1023658866</contract_code>
+	<contract_display_account>test</contract_display_account>
+	<contract_state>1</contract_state>
+	<contract_signed_time>1438141845</contract_signed_time>
+	<contract_expired_time>1453953047</contract_expired_time>
+	<contract_terminated_time>1438157486</contract_terminated_time>
+	<contract_termination_mode>3</contract_termination_mode>
+	<contract_termination_remark>delete ....</contract_termination_remark>
+	<sign>35B3B9261A6A4E75BFB560FE0D6EA8CE</sign>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -397,15 +397,15 @@ func TestPappayApply(t *testing.T) {
 		"nonce_str":        "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
 		"sign_type":        "MD5",
 		"sign":             "B93354AC5A479C50A85019E8B47C01FE",
-	}).Return(wx.WXML{
-		"return_code": "SUCCESS",
-		"return_msg":  "OK",
-		"appid":       "wx2421b1c4370ec43b",
-		"mch_id":      "10000100",
-		"nonce_str":   "IITRi8Iabbblz1Jc",
-		"sign":        "1D001A3A187A984976FDB371813F898F",
-		"result_code": "SUCCESS",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<return_msg>OK</return_msg>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<nonce_str>IITRi8Iabbblz1Jc</nonce_str>
+	<sign>1D001A3A187A984976FDB371813F898F</sign>
+	<result_code>SUCCESS</result_code>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -450,14 +450,14 @@ func TestDeleteContractByID(t *testing.T) {
 		"version":                     "1.0",
 		"sign_type":                   "MD5",
 		"sign":                        "9A1F0B64467723BDF0D26CC39ED0B001",
-	}).Return(wx.WXML{
-		"return_code": "SUCCESS",
-		"result_code": "SUCCESS",
-		"appid":       "wx2421b1c4370ec43b",
-		"mch_id":      "10000100",
-		"contract_id": "100005698",
-		"sign":        "D1F898877B9FC523A6F2FC993BE5B78F",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<result_code>SUCCESS</result_code>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<contract_id>100005698</contract_id>
+	<sign>D1F898877B9FC523A6F2FC993BE5B78F</sign>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -495,14 +495,14 @@ func TestDeleteContractByCode(t *testing.T) {
 		"version":                     "1.0",
 		"sign_type":                   "MD5",
 		"sign":                        "9AA3B7174E2B71DA6268741A70E1DDDF",
-	}).Return(wx.WXML{
-		"return_code": "SUCCESS",
-		"result_code": "SUCCESS",
-		"appid":       "wx2421b1c4370ec43b",
-		"mch_id":      "10000100",
-		"contract_id": "100005698",
-		"sign":        "D1F898877B9FC523A6F2FC993BE5B78F",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<result_code>SUCCESS</result_code>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<contract_id>100005698</contract_id>
+	<sign>D1F898877B9FC523A6F2FC993BE5B78F</sign>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -538,27 +538,27 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 		"nonce_str":      "0b9f35f484df17a732e537c37708d1d0",
 		"sign_type":      "MD5",
 		"sign":           "264E5038F1CB9D66132E769ABB5B745C",
-	}).Return(wx.WXML{
-		"return_code":    "SUCCESS",
-		"return_msg":     "OK",
-		"appid":          "wx2421b1c4370ec43b",
-		"mch_id":         "10000100",
-		"result_code":    "SUCCESS",
-		"device_info":    "1000",
-		"openid":         "oUpF8uN95-Ptaags6E_roPHg7AG0",
-		"is_subscribe":   "Y",
-		"trade_type":     "MICROPAY",
-		"bank_type":      "CCB_DEBIT",
-		"total_fee":      "1",
-		"fee_type":       "CNY",
-		"transaction_id": "1008450740201411110005820873",
-		"out_trade_no":   "1415757673",
-		"attach":         "订单额外描述",
-		"time_end":       "20141111170043",
-		"trade_state":    "SUCCESS",
-		"nonce_str":      "TN55wO9Pba5yENl8",
-		"sign":           "9C2A03FD2D080D1B9618946C73C7608D",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<return_msg>OK</return_msg>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<result_code>SUCCESS</result_code>
+	<device_info>1000</device_info>
+	<openid>oUpF8uN95-Ptaags6E_roPHg7AG0</openid>
+	<is_subscribe>Y</is_subscribe>
+	<trade_type>MICROPAY</trade_type>
+	<bank_type>CCB_DEBIT</bank_type>
+	<total_fee>1</total_fee>
+	<fee_type>CNY</fee_type>
+	<transaction_id>1008450740201411110005820873</transaction_id>
+	<out_trade_no>1415757673</out_trade_no>
+	<attach>订单额外描述</attach>
+	<time_end>20141111170043</time_end>
+	<trade_state>SUCCESS</trade_state>
+	<nonce_str>TN55wO9Pba5yENl8</nonce_str>
+	<sign>9C2A03FD2D080D1B9618946C73C7608D</sign>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -607,27 +607,27 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 		"nonce_str":    "0b9f35f484df17a732e537c37708d1d0",
 		"sign_type":    "MD5",
 		"sign":         "5F14ED52C2F179580A1DED73268A1009",
-	}).Return(wx.WXML{
-		"return_code":    "SUCCESS",
-		"return_msg":     "OK",
-		"appid":          "wx2421b1c4370ec43b",
-		"mch_id":         "10000100",
-		"result_code":    "SUCCESS",
-		"device_info":    "1000",
-		"openid":         "oUpF8uN95-Ptaags6E_roPHg7AG0",
-		"is_subscribe":   "Y",
-		"trade_type":     "MICROPAY",
-		"bank_type":      "CCB_DEBIT",
-		"total_fee":      "1",
-		"fee_type":       "CNY",
-		"transaction_id": "1008450740201411110005820873",
-		"out_trade_no":   "1415757673",
-		"attach":         "订单额外描述",
-		"time_end":       "20141111170043",
-		"trade_state":    "SUCCESS",
-		"nonce_str":      "TN55wO9Pba5yENl8",
-		"sign":           "9C2A03FD2D080D1B9618946C73C7608D",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<return_msg>OK</return_msg>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<result_code>SUCCESS</result_code>
+	<device_info>1000</device_info>
+	<openid>oUpF8uN95-Ptaags6E_roPHg7AG0</openid>
+	<is_subscribe>Y</is_subscribe>
+	<trade_type>MICROPAY</trade_type>
+	<bank_type>CCB_DEBIT</bank_type>
+	<total_fee>1</total_fee>
+	<fee_type>CNY</fee_type>
+	<transaction_id>1008450740201411110005820873</transaction_id>
+	<out_trade_no>1415757673</out_trade_no>
+	<attach>订单额外描述</attach>
+	<time_end>20141111170043</time_end>
+	<trade_state>SUCCESS</trade_state>
+	<nonce_str>TN55wO9Pba5yENl8</nonce_str>
+	<sign>9C2A03FD2D080D1B9618946C73C7608D</sign>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 

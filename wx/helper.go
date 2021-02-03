@@ -61,6 +61,8 @@ func ParseXML2Map(b []byte) (WXML, error) {
 		err   error
 	)
 
+	d.Strict = false
+
 	for {
 		tk, err = d.Token()
 

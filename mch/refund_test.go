@@ -25,20 +25,20 @@ func TestRefundByTransactionID(t *testing.T) {
 		"nonce_str":      "6cefdb308e1e2e8aabd48cf79e546a02",
 		"sign_type":      "MD5",
 		"sign":           "29261AD6EC439F4286BF2F959EBC699D",
-	}).Return(wx.WXML{
-		"return_code":    "SUCCESS",
-		"return_msg":     "OK",
-		"appid":          "wx2421b1c4370ec43b",
-		"mch_id":         "10000100",
-		"nonce_str":      "NfsMFbUFpdbEhPXP",
-		"sign":           "DF0FE19C59F29CA163DDEC52CD1346A9",
-		"result_code":    "SUCCESS",
-		"transaction_id": "4008450740201411110005820873",
-		"out_trade_no":   "1415757673",
-		"out_refund_no":  "1415701182",
-		"refund_id":      "2008450740201411110000174436",
-		"refund_fee":     "1",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<return_msg>OK</return_msg>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<nonce_str>NfsMFbUFpdbEhPXP</nonce_str>
+	<sign>DF0FE19C59F29CA163DDEC52CD1346A9</sign>
+	<result_code>SUCCESS</result_code>
+	<transaction_id>4008450740201411110005820873</transaction_id>
+	<out_trade_no>1415757673</out_trade_no>
+	<out_refund_no>1415701182</out_refund_no>
+	<refund_id>2008450740201411110000174436</refund_id>
+	<refund_fee>1</refund_fee>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -87,20 +87,20 @@ func TestRefundByOutTradeNO(t *testing.T) {
 		"nonce_str":     "6cefdb308e1e2e8aabd48cf79e546a02",
 		"sign_type":     "MD5",
 		"sign":          "D5E6945E988003E6462ACFF8D7B2DA75",
-	}).Return(wx.WXML{
-		"return_code":    "SUCCESS",
-		"return_msg":     "OK",
-		"appid":          "wx2421b1c4370ec43b",
-		"mch_id":         "10000100",
-		"nonce_str":      "NfsMFbUFpdbEhPXP",
-		"sign":           "DF0FE19C59F29CA163DDEC52CD1346A9",
-		"result_code":    "SUCCESS",
-		"transaction_id": "4008450740201411110005820873",
-		"out_trade_no":   "1415757673",
-		"out_refund_no":  "1415701182",
-		"refund_id":      "2008450740201411110000174436",
-		"refund_fee":     "1",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<return_msg>OK</return_msg>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<nonce_str>NfsMFbUFpdbEhPXP</nonce_str>
+	<sign>DF0FE19C59F29CA163DDEC52CD1346A9</sign>
+	<result_code>SUCCESS</result_code>
+	<transaction_id>4008450740201411110005820873</transaction_id>
+	<out_trade_no>1415757673</out_trade_no>
+	<out_refund_no>1415701182</out_refund_no>
+	<refund_id>2008450740201411110000174436</refund_id>
+	<refund_fee>1</refund_fee>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -146,22 +146,22 @@ func TestQueryRefundByRefundID(t *testing.T) {
 		"nonce_str": "0b9f35f484df17a732e537c37708d1d0",
 		"sign_type": "MD5",
 		"sign":      "8086A266B3C667377A3AE64E3F547B91",
-	}).Return(wx.WXML{
-		"return_code":     "SUCCESS",
-		"return_msg":      "OK",
-		"appid":           "wx2421b1c4370ec43b",
-		"mch_id":          "10000100",
-		"nonce_str":       "TeqClE3i0mvn3DrK",
-		"sign":            "68D267B5AEA32EAB799174129F6131EE",
-		"result_code":     "SUCCESS",
-		"out_refund_no_0": "1415701182",
-		"out_trade_no":    "1415757673",
-		"refund_count":    "1",
-		"refund_fee_0":    "1",
-		"refund_id_0":     "2008450740201411110000174436",
-		"refund_status_0": "PROCESSING",
-		"transaction_id":  "1008450740201411110005820873",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<return_msg>OK</return_msg>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<nonce_str>TeqClE3i0mvn3DrK</nonce_str>
+	<sign>68D267B5AEA32EAB799174129F6131EE</sign>
+	<result_code>SUCCESS</result_code>
+	<out_refund_no_0>1415701182</out_refund_no_0>
+	<out_trade_no>1415757673</out_trade_no>
+	<refund_count>1</refund_count>
+	<refund_fee_0>1</refund_fee_0>
+	<refund_id_0>2008450740201411110000174436</refund_id_0>
+	<refund_status_0>PROCESSING</refund_status_0>
+	<transaction_id>1008450740201411110005820873</transaction_id>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -205,22 +205,22 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 		"nonce_str":     "0b9f35f484df17a732e537c37708d1d0",
 		"sign_type":     "MD5",
 		"sign":          "46F57A796BFF54295FB163CA68CB439D",
-	}).Return(wx.WXML{
-		"return_code":     "SUCCESS",
-		"return_msg":      "OK",
-		"appid":           "wx2421b1c4370ec43b",
-		"mch_id":          "10000100",
-		"nonce_str":       "TeqClE3i0mvn3DrK",
-		"sign":            "68D267B5AEA32EAB799174129F6131EE",
-		"result_code":     "SUCCESS",
-		"out_refund_no_0": "1415701182",
-		"out_trade_no":    "1415757673",
-		"refund_count":    "1",
-		"refund_fee_0":    "1",
-		"refund_id_0":     "2008450740201411110000174436",
-		"refund_status_0": "PROCESSING",
-		"transaction_id":  "1008450740201411110005820873",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<return_msg>OK</return_msg>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<nonce_str>TeqClE3i0mvn3DrK</nonce_str>
+	<sign>68D267B5AEA32EAB799174129F6131EE</sign>
+	<result_code>SUCCESS</result_code>
+	<out_refund_no_0>1415701182</out_refund_no_0>
+	<out_trade_no>1415757673</out_trade_no>
+	<refund_count>1</refund_count>
+	<refund_fee_0>1</refund_fee_0>
+	<refund_id_0>2008450740201411110000174436</refund_id_0>
+	<refund_status_0>PROCESSING</refund_status_0>
+	<transaction_id>1008450740201411110005820873</transaction_id>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -264,22 +264,22 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 		"nonce_str":      "0b9f35f484df17a732e537c37708d1d0",
 		"sign_type":      "MD5",
 		"sign":           "264E5038F1CB9D66132E769ABB5B745C",
-	}).Return(wx.WXML{
-		"return_code":     "SUCCESS",
-		"return_msg":      "OK",
-		"appid":           "wx2421b1c4370ec43b",
-		"mch_id":          "10000100",
-		"nonce_str":       "TeqClE3i0mvn3DrK",
-		"sign":            "68D267B5AEA32EAB799174129F6131EE",
-		"result_code":     "SUCCESS",
-		"out_refund_no_0": "1415701182",
-		"out_trade_no":    "1415757673",
-		"refund_count":    "1",
-		"refund_fee_0":    "1",
-		"refund_id_0":     "2008450740201411110000174436",
-		"refund_status_0": "PROCESSING",
-		"transaction_id":  "1008450740201411110005820873",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<return_msg>OK</return_msg>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<nonce_str>TeqClE3i0mvn3DrK</nonce_str>
+	<sign>68D267B5AEA32EAB799174129F6131EE</sign>
+	<result_code>SUCCESS</result_code>
+	<out_refund_no_0>1415701182</out_refund_no_0>
+	<out_trade_no>1415757673</out_trade_no>
+	<refund_count>1</refund_count>
+	<refund_fee_0>1</refund_fee_0>
+	<refund_id_0>2008450740201411110000174436</refund_id_0>
+	<refund_status_0>PROCESSING</refund_status_0>
+	<transaction_id>1008450740201411110005820873</transaction_id>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
@@ -323,22 +323,22 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 		"nonce_str":    "0b9f35f484df17a732e537c37708d1d0",
 		"sign_type":    "MD5",
 		"sign":         "5F14ED52C2F179580A1DED73268A1009",
-	}).Return(wx.WXML{
-		"return_code":     "SUCCESS",
-		"return_msg":      "OK",
-		"appid":           "wx2421b1c4370ec43b",
-		"mch_id":          "10000100",
-		"nonce_str":       "TeqClE3i0mvn3DrK",
-		"sign":            "68D267B5AEA32EAB799174129F6131EE",
-		"result_code":     "SUCCESS",
-		"out_refund_no_0": "1415701182",
-		"out_trade_no":    "1415757673",
-		"refund_count":    "1",
-		"refund_fee_0":    "1",
-		"refund_id_0":     "2008450740201411110000174436",
-		"refund_status_0": "PROCESSING",
-		"transaction_id":  "1008450740201411110005820873",
-	}, nil)
+	}).Return([]byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<return_msg>OK</return_msg>
+	<appid>wx2421b1c4370ec43b</appid>
+	<mch_id>10000100</mch_id>
+	<nonce_str>TeqClE3i0mvn3DrK</nonce_str>
+	<sign>68D267B5AEA32EAB799174129F6131EE</sign>
+	<result_code>SUCCESS</result_code>
+	<out_refund_no_0>1415701182</out_refund_no_0>
+	<out_trade_no>1415757673</out_trade_no>
+	<refund_count>1</refund_count>
+	<refund_fee_0>1</refund_fee_0>
+	<refund_id_0>2008450740201411110000174436</refund_id_0>
+	<refund_status_0>PROCESSING</refund_status_0>
+	<transaction_id>1008450740201411110005820873</transaction_id>
+</xml>`), nil)
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
