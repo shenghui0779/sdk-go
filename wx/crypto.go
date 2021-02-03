@@ -23,30 +23,22 @@ const (
 	PKCS7 PaddingMode = "PKCS#7"
 )
 
-// AESCrypto aes crypto
+// AESCrypto is the interface for aes crypto
 type AESCrypto interface {
+	// Encrypt encrypts the plain text
 	Encrypt(plainText []byte) ([]byte, error)
+
+	// Decrypt decrypts the cipher text
 	Decrypt(cipherText []byte) ([]byte, error)
 }
 
-// CBCCrypto aes-cbc crypto
-type CBCCrypto struct {
+type cbccrypto struct {
 	key  []byte
 	iv   []byte
 	mode PaddingMode
 }
 
-// NewCBCCrypto returns new aes-cbc crypto
-func NewCBCCrypto(key, iv []byte, mode PaddingMode) AESCrypto {
-	return &CBCCrypto{
-		key:  key,
-		iv:   iv,
-		mode: mode,
-	}
-}
-
-// Encrypt aes-cbc encrypt
-func (c *CBCCrypto) Encrypt(plainText []byte) ([]byte, error) {
+func (c *cbccrypto) Encrypt(plainText []byte) ([]byte, error) {
 	block, err := aes.NewCipher(c.key)
 
 	if err != nil {
@@ -74,8 +66,7 @@ func (c *CBCCrypto) Encrypt(plainText []byte) ([]byte, error) {
 	return cipherText, nil
 }
 
-// Decrypt aes-cbc decrypt
-func (c *CBCCrypto) Decrypt(cipherText []byte) ([]byte, error) {
+func (c *cbccrypto) Decrypt(cipherText []byte) ([]byte, error) {
 	block, err := aes.NewCipher(c.key)
 
 	if err != nil {
@@ -103,22 +94,21 @@ func (c *CBCCrypto) Decrypt(cipherText []byte) ([]byte, error) {
 	return plainText, nil
 }
 
-// ECBCrypto aes-ecb crypto
-type ECBCrypto struct {
-	key  []byte
-	mode PaddingMode
-}
-
-// NewECBCrypto returns new aes-ecb crypto
-func NewECBCrypto(key []byte, mode PaddingMode) AESCrypto {
-	return &ECBCrypto{
+// NewCBCCrypto returns a new aes-cbc crypto
+func NewCBCCrypto(key, iv []byte, mode PaddingMode) AESCrypto {
+	return &cbccrypto{
 		key:  key,
+		iv:   iv,
 		mode: mode,
 	}
 }
 
-// Encrypt aes-ecb encrypt
-func (c *ECBCrypto) Encrypt(plainText []byte) ([]byte, error) {
+type ecbcrypto struct {
+	key  []byte
+	mode PaddingMode
+}
+
+func (c *ecbcrypto) Encrypt(plainText []byte) ([]byte, error) {
 	block, err := aes.NewCipher(c.key)
 
 	if err != nil {
@@ -142,8 +132,7 @@ func (c *ECBCrypto) Encrypt(plainText []byte) ([]byte, error) {
 	return cipherText, nil
 }
 
-// Decrypt aes-ecb decrypt
-func (c *ECBCrypto) Decrypt(cipherText []byte) ([]byte, error) {
+func (c *ecbcrypto) Decrypt(cipherText []byte) ([]byte, error) {
 	block, err := aes.NewCipher(c.key)
 
 	if err != nil {
@@ -165,6 +154,14 @@ func (c *ECBCrypto) Decrypt(cipherText []byte) ([]byte, error) {
 	}
 
 	return plainText, nil
+}
+
+// NewECBCrypto returns a new aes-ecb crypto
+func NewECBCrypto(key []byte, mode PaddingMode) AESCrypto {
+	return &ecbcrypto{
+		key:  key,
+		mode: mode,
+	}
 }
 
 // RSAEncrypt rsa encryption with public key

@@ -17,34 +17,52 @@ const (
 	MethodUpload HTTPMethod = "UPLOAD"
 )
 
-// Client is the interface that do http request
-type Client interface {
+// HTTPClient is the interface that do http request
+type HTTPClient interface {
+	// Get sends an HTTP get request
 	Get(ctx context.Context, reqURL string, options ...HTTPOption) ([]byte, error)
+	// Post sends an HTTP post request
 	Post(ctx context.Context, reqURL string, body []byte, options ...HTTPOption) ([]byte, error)
-	PostXML(ctx context.Context, reqURL string, body WXML, options ...HTTPOption) (WXML, error)
-	Upload(ctx context.Context, reqURL string, form *UploadForm, options ...HTTPOption) ([]byte, error)
+	// Upload sends an HTTP post request with xml
+	PostXML(ctx context.Context, reqURL string, body WXML, options ...HTTPOption) ([]byte, error)
+	// Upload sends an HTTP post request for uploading media
+	Upload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) ([]byte, error)
 }
 
-// UploadForm http upload form
-type UploadForm struct {
+// UploadForm is the interface for http upload
+type UploadForm interface {
+	// FieldName returns field name for upload
+	FieldName() string
+
+	// FileName returns filename for upload
+	FileName() string
+
+	// ExtraFields returns extra fields for upload
+	ExtraFields() map[string]string
+
+	// Buffer returns the buffer of media
+	Buffer() ([]byte, error)
+}
+
+type httpUploadForm struct {
 	fieldname   string
 	filename    string
 	extraFields map[string]string
 }
 
-func (f *UploadForm) FieldName() string {
+func (f *httpUploadForm) FieldName() string {
 	return f.fieldname
 }
 
-func (f *UploadForm) FileName() string {
+func (f *httpUploadForm) FileName() string {
 	return f.filename
 }
 
-func (f *UploadForm) ExtraFields() map[string]string {
+func (f *httpUploadForm) ExtraFields() map[string]string {
 	return f.extraFields
 }
 
-func (f *UploadForm) Buffer() ([]byte, error) {
+func (f *httpUploadForm) Buffer() ([]byte, error) {
 	path, err := filepath.Abs(f.filename)
 
 	if err != nil {
@@ -54,9 +72,9 @@ func (f *UploadForm) Buffer() ([]byte, error) {
 	return ioutil.ReadFile(path)
 }
 
-// NewUploadForm returns new uplod form
-func NewUploadForm(fieldname, filename string, extraFields map[string]string) *UploadForm {
-	return &UploadForm{
+// NewUploadForm returns new upload form
+func NewUploadForm(fieldname, filename string, extraFields map[string]string) UploadForm {
+	return &httpUploadForm{
 		fieldname:   fieldname,
 		filename:    filename,
 		extraFields: extraFields,
@@ -69,7 +87,7 @@ type Action interface {
 	Method() HTTPMethod
 	WXML(appid, mchid, nonce string) (WXML, error)
 	Body() ([]byte, error)
-	UploadForm() *UploadForm
+	UploadForm() UploadForm
 	Decode() func(resp []byte) error
 	TLS() bool
 }
@@ -81,7 +99,7 @@ type API struct {
 	query      url.Values
 	wxml       func(appid, mchid, nonce string) (WXML, error)
 	body       func() ([]byte, error)
-	uploadForm *UploadForm
+	uploadForm UploadForm
 	decode     func(resp []byte) error
 	tls        bool
 }
@@ -118,9 +136,9 @@ func (a *API) Body() ([]byte, error) {
 	return a.body()
 }
 
-func (a *API) UploadForm() *UploadForm {
+func (a *API) UploadForm() UploadForm {
 	if a.uploadForm == nil {
-		return new(UploadForm)
+		return new(httpUploadForm)
 	}
 
 	return a.uploadForm

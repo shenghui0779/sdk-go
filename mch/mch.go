@@ -30,8 +30,8 @@ type Mch struct {
 	mchid     string
 	apikey    string
 	nonce     func(size int) string
-	client    wx.Client
-	tlsClient wx.Client
+	client    wx.HTTPClient
+	tlsClient wx.HTTPClient
 }
 
 // New returns new wechat pay
@@ -145,7 +145,7 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOpti
 		return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayH5EntrustURL, query.Encode())}, nil
 	}
 
-	var resp wx.WXML
+	var resp []byte
 
 	if action.TLS() {
 		resp, err = mch.tlsClient.PostXML(ctx, reqURL, m, options...)
@@ -157,15 +157,23 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOpti
 		return nil, err
 	}
 
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
+	// XML解析
+	result, err := wx.ParseXML2Map(resp)
 
-	if err := mch.VerifyWXMLResult(resp); err != nil {
+	if err != nil {
 		return nil, err
 	}
 
-	return resp, nil
+	if result["return_code"] != ResultSuccess {
+		return nil, errors.New(result["return_msg"])
+	}
+
+	// 签名验证
+	if err := mch.VerifyWXMLResult(result); err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 // APPAPI 用于APP拉起支付

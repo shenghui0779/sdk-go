@@ -13,7 +13,7 @@ func TestOCRIDCardFront(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&type=photo", wx.NewUploadForm("img", "test.jpg", nil)).Return([]byte(`{
 		"errcode": 0,
@@ -47,7 +47,7 @@ func TestOCRIDCardFrontByURL(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
 		"errcode": 0,
@@ -81,7 +81,7 @@ func TestOCRIDCardBack(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&type=photo", wx.NewUploadForm("img", "test.jpg", nil)).Return([]byte(`{
 		"errcode": 0,
@@ -105,7 +105,7 @@ func TestOCRIDCardBackByURL(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
 		"errcode": 0,
@@ -129,7 +129,7 @@ func TestOCRBankCard(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/bankcard?access_token=ACCESS_TOKEN&type=photo", wx.NewUploadForm("img", "test.jpg", nil)).Return([]byte(`{
 		"errcode": 0,
@@ -152,7 +152,7 @@ func TestOCRBankCardByURL(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/bankcard?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
 		"errcode": 0,
@@ -175,7 +175,7 @@ func TestOCRPlateNumber(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/platenum?access_token=ACCESS_TOKEN&type=photo", wx.NewUploadForm("img", "test.jpg", nil)).Return([]byte(`{
 		"errcode": 0,
@@ -198,7 +198,7 @@ func TestOCRPlateNumberByURL(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/platenum?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
 		"errcode": 0,
@@ -221,7 +221,7 @@ func TestOCRDriverLicense(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/drivinglicense?access_token=ACCESS_TOKEN&type=photo", wx.NewUploadForm("img", "test.jpg", nil)).Return([]byte(`{
 		"errcode": 0,
@@ -266,7 +266,7 @@ func TestOCRDriverLicenseByURL(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/drivinglicense?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
 		"errcode": 0,
@@ -311,7 +311,7 @@ func TestOCRVehicleLicense(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/driving?access_token=ACCESS_TOKEN&type=photo", wx.NewUploadForm("img", "test.jpg", nil)).Return([]byte(`{
 		"vhicle_type": "小型普通客⻋",
@@ -360,7 +360,7 @@ func TestOCRVehicleLicenseByURL(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/driving?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
 		"vhicle_type": "小型普通客⻋",
@@ -409,7 +409,7 @@ func TestOCRBusinessLicense(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/bizlicense?access_token=ACCESS_TOKEN&type=photo", wx.NewUploadForm("img", "test.jpg", nil)).Return([]byte(`{
 		"errcode": 0,
@@ -504,7 +504,7 @@ func TestOCRBusinessLicenseByURL(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/bizlicense?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
 		"errcode": 0,
@@ -599,7 +599,7 @@ func TestOCRPrintedText(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/comm?access_token=ACCESS_TOKEN&type=photo", wx.NewUploadForm("img", "test.jpg", nil)).Return([]byte(`{
 		"errcode": 0,
@@ -718,7 +718,7 @@ func TestOCRPrintedTextByURL(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/comm?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
 		"errcode": 0,
