@@ -146,3 +146,16 @@ wxpay.VerifyWXMLResult(wxml)
 // 退款信息解密
 wxpay.DecryptWithAES256ECB(encrypt)
 ```
+
+### 账单&评论
+
+```go
+// 下载交易账单
+wxpay.DownloadBill(ctx, billDate, billType)
+
+// 下载资金账单
+wxpay.DownloadFundFlow(ctx, billDate, accountType)
+
+// 拉取订单评价数据
+wxpay.BatchQueryComment(ctx, beginTime, endTime, offset, limit)
+```
