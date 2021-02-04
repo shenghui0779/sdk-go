@@ -32,7 +32,7 @@ type OrderData struct {
 
 // UnifyOrder 统一下单
 func UnifyOrder(data *OrderData) wx.Action {
-	return wx.NewAPI(OrderUnifyURL,
+	return wx.NewAction(OrderUnifyURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
@@ -103,7 +103,7 @@ func UnifyOrder(data *OrderData) wx.Action {
 
 // QueryOrderByTransactionID 根据微信订单号查询
 func QueryOrderByTransactionID(transactionID string) wx.Action {
-	return wx.NewAPI(OrderQueryURL,
+	return wx.NewAction(OrderQueryURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
@@ -119,7 +119,7 @@ func QueryOrderByTransactionID(transactionID string) wx.Action {
 
 // QueryOrderByOutTradeNO 根据商户订单号查询
 func QueryOrderByOutTradeNO(outTradeNO string) wx.Action {
-	return wx.NewAPI(OrderQueryURL,
+	return wx.NewAction(OrderQueryURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
@@ -135,7 +135,7 @@ func QueryOrderByOutTradeNO(outTradeNO string) wx.Action {
 
 // CloseOrder 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
 func CloseOrder(outTradeNO string) wx.Action {
-	return wx.NewAPI(OrderCloseURL,
+	return wx.NewAction(OrderCloseURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{

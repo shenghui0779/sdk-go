@@ -70,7 +70,7 @@ type MenuMatchRule struct {
 
 // CreateMenu 创建自定义菜单
 func CreateMenu(buttons ...*MenuButton) wx.Action {
-	return wx.NewAPI(MenuCreateURL,
+	return wx.NewAction(MenuCreateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{"button": buttons})
@@ -80,7 +80,7 @@ func CreateMenu(buttons ...*MenuButton) wx.Action {
 
 // CreateConditionalMenu 创建个性化菜单
 func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.Action {
-	return wx.NewAPI(MenuAddConditionalURL,
+	return wx.NewAction(MenuAddConditionalURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{
@@ -94,7 +94,7 @@ func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.
 // TryMatchMenu 测试匹配个性化菜单
 // 注意：user_id可以是粉丝的OpenID，也可以是粉丝的微信号。
 func TryMatchMenu(dest *[]*MenuButton, userID string) wx.Action {
-	return wx.NewAPI(MenuTryMatchURL,
+	return wx.NewAction(MenuTryMatchURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{"user_id": userID})
@@ -107,7 +107,7 @@ func TryMatchMenu(dest *[]*MenuButton, userID string) wx.Action {
 
 // GetMenu 查询自定义菜单
 func GetMenu(dest *MenuInfo) wx.Action {
-	return wx.NewAPI(MenuListURL,
+	return wx.NewAction(MenuListURL,
 		wx.WithMethod(wx.MethodGet),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -117,12 +117,12 @@ func GetMenu(dest *MenuInfo) wx.Action {
 
 // DeleteMenu 删除自定义菜单
 func DeleteMenu() wx.Action {
-	return wx.NewAPI(MenuDeleteURL, wx.WithMethod(wx.MethodGet))
+	return wx.NewAction(MenuDeleteURL, wx.WithMethod(wx.MethodGet))
 }
 
 // DeleteConditional 删除个性化菜单
 func DeleteConditionalMenu(menuID string) wx.Action {
-	return wx.NewAPI(MenuDeleteConditionalURL,
+	return wx.NewAction(MenuDeleteConditionalURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{"menuid": menuID})

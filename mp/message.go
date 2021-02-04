@@ -50,7 +50,7 @@ type OATemplateMessage struct {
 
 // Uniform 发送统一服务消息
 func SendUniformMessage(openID string, msg *UniformMessage) wx.Action {
-	return wx.NewAPI(UniformMessageSendURL,
+	return wx.NewAction(UniformMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			params := wx.X{
@@ -106,7 +106,7 @@ func SendUniformMessage(openID string, msg *UniformMessage) wx.Action {
 
 // SendSubscribeMessage 发送订阅消息
 func SendSubscribeMessage(openID string, msg *SubscribeMessage) wx.Action {
-	return wx.NewAPI(SubscribeMessageSendURL,
+	return wx.NewAction(SubscribeMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			params := wx.X{
@@ -134,7 +134,7 @@ func SendSubscribeMessage(openID string, msg *SubscribeMessage) wx.Action {
 
 // SendTemplateMessage 发送模板消息（已废弃，请使用订阅消息）
 func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
-	return wx.NewAPI(TemplateMessageSendURL,
+	return wx.NewAction(TemplateMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			params := wx.X{
@@ -167,7 +167,7 @@ type KFTextMessage struct {
 
 // SendKFTextMessage 发送客服文本消息
 func SendKFTextMessage(openID string, msg *KFTextMessage) wx.Action {
-	return wx.NewAPI(KFMessageSendURL,
+	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{
@@ -186,7 +186,7 @@ type KFImageMessage struct {
 
 // SendKFImageMessage 发送客服图片消息
 func SendKFImageMessage(openID string, msg *KFImageMessage) wx.Action {
-	return wx.NewAPI(KFMessageSendURL,
+	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{
@@ -208,7 +208,7 @@ type KFLinkMessage struct {
 
 // SendKFLinkMessage 发送客服图文链接消息
 func SendKFLinkMessage(openID string, msg *KFLinkMessage) wx.Action {
-	return wx.NewAPI(KFMessageSendURL,
+	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{
@@ -229,7 +229,7 @@ type KFMinipMessage struct {
 
 // SendKFMinipMessage 发送客服小程序卡片消息
 func SendKFMinipMessage(openID string, msg *KFMinipMessage) wx.Action {
-	return wx.NewAPI(KFMessageSendURL,
+	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{
@@ -252,7 +252,7 @@ const (
 
 // SetTyping 下发当前输入状态（仅支持客服消息）
 func SetTyping(openID string, cmd TypeCommand) wx.Action {
-	return wx.NewAPI(SetTypingURL,
+	return wx.NewAction(SetTypingURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{

@@ -224,6 +224,21 @@ func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 	return m
 }
 
+// DownloadBill 下载交易账单
+func (mch *Mch) DownloadBill() ([]byte, error) {
+	return nil, nil
+}
+
+// DownloadFundFlow 下载资金账单
+func (mch *Mch) DownloadFundFlow() ([]byte, error) {
+	return nil, nil
+}
+
+// BatchQueryComment 拉取订单评价数据
+func (mch *Mch) BatchQueryComment() ([]byte, error) {
+	return nil, nil
+}
+
 // SignWithMD5 生成MD5签名
 func (mch *Mch) SignWithMD5(m wx.WXML, toUpper bool) string {
 	h := md5.New()

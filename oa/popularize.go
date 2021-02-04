@@ -16,7 +16,7 @@ type QRCode struct {
 
 // CreateTempQRCode 创建临时二维码（expireSeconds：二维码有效时间，最大不超过2592000秒（即30天），不填，则默认有效期为30秒。）
 func CreateTempQRCode(dest *QRCode, senceID int, expireSeconds ...int) wx.Action {
-	return wx.NewAPI(QRCodeCreateURL,
+	return wx.NewAction(QRCodeCreateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			params := wx.X{
@@ -40,7 +40,7 @@ func CreateTempQRCode(dest *QRCode, senceID int, expireSeconds ...int) wx.Action
 
 // CreatePermQRCode 创建永久二维码（expireSeconds：二维码有效时间，最大不超过2592000秒（即30天），不填，则默认有效期为30秒。）
 func CreatePermQRCode(dest *QRCode, senceID int) wx.Action {
-	return wx.NewAPI(QRCodeCreateURL,
+	return wx.NewAction(QRCodeCreateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			params := wx.X{
@@ -65,7 +65,7 @@ type ShortURL struct {
 
 // Long2ShortURL 长链接转短链接（长链接支持http://、https://、weixin://wxpay格式的url）
 func Long2ShortURL(dest *ShortURL, longURL string) wx.Action {
-	return wx.NewAPI(ShortURLGenerateURL,
+	return wx.NewAction(ShortURLGenerateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalWithNoEscapeHTML(wx.X{
