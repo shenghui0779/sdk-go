@@ -130,6 +130,21 @@ const (
 	RedpackSendTypeActivity = "ACTIVITY" // 通过活动方式发放
 )
 
+// 账单类型
+const (
+	BillTypeAll            = "ALL"             // 当日所有订单信息（不含充值退款订单）
+	BillTypeSuccess        = "SUCCESS"         // 当日成功支付的订单（不含充值退款订单）
+	BillTypeRefund         = "REFUND"          // 当日退款订单（不含充值退款订单）
+	BillTypeRechargeRefund = "RECHARGE_REFUND" // 当日充值退款订单
+)
+
+// 资金账户类型
+const (
+	AccountTypeBasic     = "Basic"     // 基本账户
+	AccountTypeOperation = "Operation" // 运营账户
+	AccountTypeFees      = "Fees"      // 手续费账户
+)
+
 const RSAPublicKeyURL = "https://fraud.mch.weixin.qq.com/risk/getpublickey"
 
 // URL - order
@@ -171,4 +186,11 @@ const (
 	RedpackGroupURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack"  // 裂变红包
 	RedpackMinipURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendminiprogramhb" // 小程序红包
 	RedpackQueryURL  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo"         // 红包查询
+)
+
+// URL - other
+const (
+	DownloadBillURL      = "https://api.mch.weixin.qq.com/pay/downloadbill"                // 下载交易账单
+	DownloadFundFlowURL  = "https://api.mch.weixin.qq.com/pay/downloadfundflow"            // 下载资金账单
+	BatchQueryCommentURL = "https://api.mch.weixin.qq.com/billcommentsp/batchquerycomment" // 拉取订单评价数据
 )

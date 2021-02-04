@@ -225,18 +225,108 @@ func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 }
 
 // DownloadBill 下载交易账单
-func (mch *Mch) DownloadBill() ([]byte, error) {
-	return nil, nil
+// 账单日期格式：20140603
+func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]byte, error) {
+	m := wx.WXML{
+		"appid":     mch.appid,
+		"mch_id":    mch.mchid,
+		"bill_date": billDate,
+		"bill_type": billType,
+		"nonce_str": mch.nonce(16),
+	}
+
+	m["sign"] = mch.SignWithMD5(m, true)
+
+	resp, err := mch.client.PostXML(ctx, DownloadBillURL, m, wx.WithHTTPClose())
+
+	if err != nil {
+		return nil, err
+	}
+
+	// XML解析
+	result, err := wx.ParseXML2Map(resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(result) != 0 && result["return_code"] != ResultSuccess {
+		return nil, errors.New(result["return_msg"])
+	}
+
+	return resp, nil
 }
 
 // DownloadFundFlow 下载资金账单
-func (mch *Mch) DownloadFundFlow() ([]byte, error) {
-	return nil, nil
+// 账单日期格式：20140603
+func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType string) ([]byte, error) {
+	m := wx.WXML{
+		"appid":        mch.appid,
+		"mch_id":       mch.mchid,
+		"bill_date":    billDate,
+		"account_type": accountType,
+		"nonce_str":    mch.nonce(16),
+	}
+
+	m["sign"] = mch.SignWithHMacSHA256(m, true)
+
+	resp, err := mch.tlsClient.PostXML(ctx, DownloadFundFlowURL, m, wx.WithHTTPClose())
+
+	if err != nil {
+		return nil, err
+	}
+
+	// XML解析
+	result, err := wx.ParseXML2Map(resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(result) != 0 && result["return_code"] != ResultSuccess {
+		return nil, errors.New(result["return_msg"])
+	}
+
+	return resp, nil
 }
 
 // BatchQueryComment 拉取订单评价数据
-func (mch *Mch) BatchQueryComment() ([]byte, error) {
-	return nil, nil
+// 时间格式：yyyyMMddHHmmss
+// 默认一次且最多拉取200条
+func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string, offset int, limit ...int) ([]byte, error) {
+	m := wx.WXML{
+		"appid":      mch.appid,
+		"mch_id":     mch.mchid,
+		"begin_time": beginTime,
+		"end_time":   endTime,
+		"offset":     strconv.Itoa(offset),
+		"nonce_str":  mch.nonce(16),
+	}
+
+	if len(limit) != 0 {
+		m["limit"] = strconv.Itoa(limit[0])
+	}
+
+	m["sign"] = mch.SignWithHMacSHA256(m, true)
+
+	resp, err := mch.tlsClient.PostXML(ctx, BatchQueryCommentURL, m, wx.WithHTTPClose())
+
+	if err != nil {
+		return nil, err
+	}
+
+	// XML解析
+	result, err := wx.ParseXML2Map(resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(result) != 0 && result["return_code"] != ResultSuccess {
+		return nil, errors.New(result["return_msg"])
+	}
+
+	return resp, nil
 }
 
 // SignWithMD5 生成MD5签名
