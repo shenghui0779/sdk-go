@@ -24,7 +24,7 @@ type OA struct {
 	token          string
 	encodingAESKey string
 	nonce          func(size int) string
-	client         wx.Client
+	client         wx.HTTPClient
 }
 
 // New returns new OA

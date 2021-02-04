@@ -22,7 +22,7 @@ type InvokeResult struct {
 
 // InvokeService 调用服务平台提供的服务
 func InvokeService(dest *InvokeResult, data *InvokeData) wx.Action {
-	return wx.NewAPI(InvokeServiceURL,
+	return wx.NewAction(InvokeServiceURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
@@ -49,7 +49,7 @@ type SoterVerifyResult struct {
 
 // SoterVerify 生物认证秘钥签名验证
 func SoterVerify(dest *SoterVerifyResult, sign *SoterSignature) wx.Action {
-	return wx.NewAPI(SoterVerifyURL,
+	return wx.NewAction(SoterVerifyURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(sign)
@@ -90,7 +90,7 @@ type UserRiskResult struct {
 
 // GetUserRiskRank 获取用户的安全等级（无需用户授权）
 func GetUserRiskRank(dest *UserRiskResult, data *UserRiskData) wx.Action {
-	return wx.NewAPI(UserRiskRankURL,
+	return wx.NewAction(UserRiskRankURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)

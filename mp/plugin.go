@@ -23,7 +23,7 @@ var (
 
 // ApplyPlugin 向插件开发者发起使用插件的申请
 func ApplyPlugin(pluginAppID, reason string) wx.Action {
-	return wx.NewAPI(PluginManageURL,
+	return wx.NewAction(PluginManageURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{
@@ -49,7 +49,7 @@ type PluginDevApplyInfo struct {
 
 // GetPluginDevApplyList 获取当前所有插件使用方（供插件开发者调用）
 func GetPluginDevApplyList(dest *[]*PluginDevApplyInfo, page, num int) wx.Action {
-	return wx.NewAPI(PluginDevManageURL,
+	return wx.NewAction(PluginDevManageURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{
@@ -74,7 +74,7 @@ type PluginInfo struct {
 
 // GetPluginList 查询已添加的插件
 func GetPluginList(dest *[]*PluginInfo) wx.Action {
-	return wx.NewAPI(PluginManageURL,
+	return wx.NewAction(PluginManageURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{"action": PluginList})
@@ -87,7 +87,7 @@ func GetPluginList(dest *[]*PluginInfo) wx.Action {
 
 // SetDevPluginApplyStatus 修改插件使用申请的状态（供插件开发者调用）
 func SetDevPluginApplyStatus(action PluginAction, appid, reason string) wx.Action {
-	return wx.NewAPI(PluginDevManageURL,
+	return wx.NewAction(PluginDevManageURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			params := wx.X{"action": action}
@@ -107,7 +107,7 @@ func SetDevPluginApplyStatus(action PluginAction, appid, reason string) wx.Actio
 
 // UnbindPlugin 删除已添加的插件
 func UnbindPlugin(pluginAppID string) wx.Action {
-	return wx.NewAPI(PluginManageURL,
+	return wx.NewAction(PluginManageURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{

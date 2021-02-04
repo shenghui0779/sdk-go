@@ -13,7 +13,7 @@ func TestUploadMedia(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", wx.NewUploadForm("media", "test.jpg", nil)).Return([]byte(`{
 		"errcode": 0,
@@ -42,7 +42,7 @@ func TestGetMedia(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID").Return([]byte("BUFFER"), nil)
 

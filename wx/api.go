@@ -17,34 +17,55 @@ const (
 	MethodUpload HTTPMethod = "UPLOAD"
 )
 
-// Client is the interface that do http request
-type Client interface {
+// HTTPClient is the interface that do http request
+type HTTPClient interface {
+	// Get sends an HTTP get request
 	Get(ctx context.Context, reqURL string, options ...HTTPOption) ([]byte, error)
+
+	// Post sends an HTTP post request
 	Post(ctx context.Context, reqURL string, body []byte, options ...HTTPOption) ([]byte, error)
-	PostXML(ctx context.Context, reqURL string, body WXML, options ...HTTPOption) (WXML, error)
-	Upload(ctx context.Context, reqURL string, form *UploadForm, options ...HTTPOption) ([]byte, error)
+
+	// Upload sends an HTTP post request with xml
+	PostXML(ctx context.Context, reqURL string, body WXML, options ...HTTPOption) ([]byte, error)
+
+	// Upload sends an HTTP post request for uploading media
+	Upload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) ([]byte, error)
 }
 
-// UploadForm http upload form
-type UploadForm struct {
+// UploadForm is the interface for http upload
+type UploadForm interface {
+	// FieldName returns field name for upload
+	FieldName() string
+
+	// FileName returns filename for upload
+	FileName() string
+
+	// ExtraFields returns extra fields for upload
+	ExtraFields() map[string]string
+
+	// Buffer returns the buffer of media
+	Buffer() ([]byte, error)
+}
+
+type httpUploadForm struct {
 	fieldname   string
 	filename    string
 	extraFields map[string]string
 }
 
-func (f *UploadForm) FieldName() string {
+func (f *httpUploadForm) FieldName() string {
 	return f.fieldname
 }
 
-func (f *UploadForm) FileName() string {
+func (f *httpUploadForm) FileName() string {
 	return f.filename
 }
 
-func (f *UploadForm) ExtraFields() map[string]string {
+func (f *httpUploadForm) ExtraFields() map[string]string {
 	return f.extraFields
 }
 
-func (f *UploadForm) Buffer() ([]byte, error) {
+func (f *httpUploadForm) Buffer() ([]byte, error) {
 	path, err := filepath.Abs(f.filename)
 
 	if err != nil {
@@ -54,9 +75,9 @@ func (f *UploadForm) Buffer() ([]byte, error) {
 	return ioutil.ReadFile(path)
 }
 
-// NewUploadForm returns new uplod form
-func NewUploadForm(fieldname, filename string, extraFields map[string]string) *UploadForm {
-	return &UploadForm{
+// NewUploadForm returns new upload form
+func NewUploadForm(fieldname, filename string, extraFields map[string]string) UploadForm {
+	return &httpUploadForm{
 		fieldname:   fieldname,
 		filename:    filename,
 		extraFields: extraFields,
@@ -65,28 +86,40 @@ func NewUploadForm(fieldname, filename string, extraFields map[string]string) *U
 
 // Action is the interface that handle wechat api
 type Action interface {
+	// URL returns request url
 	URL(accessToken ...string) string
+
+	// Method returns request method
 	Method() HTTPMethod
+
+	// WXML returns body for xml request
 	WXML(appid, mchid, nonce string) (WXML, error)
+
+	// Body returns body for post request
 	Body() ([]byte, error)
-	UploadForm() *UploadForm
+
+	// UploadForm returns form for uploading media
+	UploadForm() UploadForm
+
+	// Decode decodes response
 	Decode() func(resp []byte) error
+
+	// TLS specifies the request with certificate
 	TLS() bool
 }
 
-// API is a Action implementation
-type API struct {
+type wxapi struct {
 	reqURL     string
 	method     HTTPMethod
 	query      url.Values
 	wxml       func(appid, mchid, nonce string) (WXML, error)
 	body       func() ([]byte, error)
-	uploadForm *UploadForm
+	uploadForm UploadForm
 	decode     func(resp []byte) error
 	tls        bool
 }
 
-func (a *API) URL(accessToken ...string) string {
+func (a *wxapi) URL(accessToken ...string) string {
 	if len(accessToken) != 0 {
 		a.query.Set("access_token", accessToken[0])
 	}
@@ -98,11 +131,11 @@ func (a *API) URL(accessToken ...string) string {
 	return fmt.Sprintf("%s?%s", a.reqURL, a.query.Encode())
 }
 
-func (a *API) Method() HTTPMethod {
+func (a *wxapi) Method() HTTPMethod {
 	return a.method
 }
 
-func (a *API) WXML(appid, mchid, nonce string) (WXML, error) {
+func (a *wxapi) WXML(appid, mchid, nonce string) (WXML, error) {
 	if a.wxml == nil {
 		return WXML{}, nil
 	}
@@ -110,7 +143,7 @@ func (a *API) WXML(appid, mchid, nonce string) (WXML, error) {
 	return a.wxml(appid, mchid, nonce)
 }
 
-func (a *API) Body() ([]byte, error) {
+func (a *wxapi) Body() ([]byte, error) {
 	if a.body == nil {
 		return nil, nil
 	}
@@ -118,77 +151,77 @@ func (a *API) Body() ([]byte, error) {
 	return a.body()
 }
 
-func (a *API) UploadForm() *UploadForm {
+func (a *wxapi) UploadForm() UploadForm {
 	if a.uploadForm == nil {
-		return new(UploadForm)
+		return new(httpUploadForm)
 	}
 
 	return a.uploadForm
 }
 
-func (a *API) Decode() func(resp []byte) error {
+func (a *wxapi) Decode() func(resp []byte) error {
 	return a.decode
 }
 
-func (a *API) TLS() bool {
+func (a *wxapi) TLS() bool {
 	return a.tls
 }
 
-// APIOption configures how we set up the wechat API
-type APIOption func(api *API)
+// ActionOption configures how we set up the action
+type ActionOption func(api *wxapi)
 
-// WithMethod specifies the `method` to API.
-func WithMethod(method HTTPMethod) APIOption {
-	return func(api *API) {
+// WithMethod specifies the `method` to Action.
+func WithMethod(method HTTPMethod) ActionOption {
+	return func(api *wxapi) {
 		api.method = method
 	}
 }
 
-// WithQuery specifies the `query` to API.
-func WithQuery(key, value string) APIOption {
-	return func(api *API) {
+// WithQuery specifies the `query` to Action.
+func WithQuery(key, value string) ActionOption {
+	return func(api *wxapi) {
 		api.query.Set(key, value)
 	}
 }
 
-// WithBody specifies the `body` to API.
-func WithBody(f func() ([]byte, error)) APIOption {
-	return func(api *API) {
+// WithBody specifies the `body` to Action.
+func WithBody(f func() ([]byte, error)) ActionOption {
+	return func(api *wxapi) {
 		api.body = f
 	}
 }
 
-// WithWXML specifies the `wxml` to API.
-func WithWXML(f func(appid, mchid, nonce string) (WXML, error)) APIOption {
-	return func(api *API) {
+// WithWXML specifies the `wxml` to Action.
+func WithWXML(f func(appid, mchid, nonce string) (WXML, error)) ActionOption {
+	return func(api *wxapi) {
 		api.wxml = f
 	}
 }
 
-// WithUploadForm specifies the `upload form` to API.
-func WithUploadForm(fieldname, filename string, extraFields map[string]string) APIOption {
-	return func(api *API) {
+// WithUploadForm specifies the `upload form` to Action.
+func WithUploadForm(fieldname, filename string, extraFields map[string]string) ActionOption {
+	return func(api *wxapi) {
 		api.uploadForm = NewUploadForm(fieldname, filename, extraFields)
 	}
 }
 
-// WithDecode specifies the `decode` to API.
-func WithDecode(f func(resp []byte) error) APIOption {
-	return func(api *API) {
+// WithDecode specifies the `decode` to Action.
+func WithDecode(f func(resp []byte) error) ActionOption {
+	return func(api *wxapi) {
 		api.decode = f
 	}
 }
 
-// WithTLS specifies the `tls` to API.
-func WithTLS() APIOption {
-	return func(api *API) {
+// WithTLS specifies the `tls` to Action.
+func WithTLS() ActionOption {
+	return func(api *wxapi) {
 		api.tls = true
 	}
 }
 
-// NewAPI returns a new action
-func NewAPI(reqURL string, options ...APIOption) Action {
-	api := &API{
+// NewAction returns a new action
+func NewAction(reqURL string, options ...ActionOption) Action {
+	api := &wxapi{
 		reqURL: reqURL,
 		query:  url.Values{},
 	}

@@ -23,7 +23,7 @@ type AccessToken struct {
 
 // CheckAuthToken 检验授权凭证（access_token）是否有效
 func CheckAuthToken(openid string) wx.Action {
-	return wx.NewAPI(SnsCheckAccessTokenURL,
+	return wx.NewAction(SnsCheckAccessTokenURL,
 		wx.WithMethod(wx.MethodGet),
 		wx.WithQuery("openid", openid),
 	)
@@ -44,7 +44,7 @@ type AuthUser struct {
 
 // GetAuthUser 获取授权用户信息（注意：使用网页授权的access_token）
 func GetAuthUser(dest *AuthUser, openid string) wx.Action {
-	return wx.NewAPI(SnsUserInfoURL,
+	return wx.NewAction(SnsUserInfoURL,
 		wx.WithMethod(wx.MethodGet),
 		wx.WithQuery("openid", openid),
 		wx.WithQuery("lang", "zh_CN"),
@@ -78,7 +78,7 @@ type JSSDKTicket struct {
 
 // GetJSSDKTicket 获取 JS-SDK ticket (注意：使用普通access_token)
 func GetJSSDKTicket(dest *JSSDKTicket, t TicketType) wx.Action {
-	return wx.NewAPI(CgiBinTicketURL,
+	return wx.NewAction(CgiBinTicketURL,
 		wx.WithMethod(wx.MethodGet),
 		wx.WithQuery("type", string(t)),
 		wx.WithDecode(func(resp []byte) error {

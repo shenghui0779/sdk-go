@@ -44,7 +44,7 @@ type AICropResult struct {
 
 // AICrop 图片智能裁切
 func AICrop(dest *AICropResult, filename string) wx.Action {
-	return wx.NewAPI(AICropURL,
+	return wx.NewAction(AICropURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithUploadForm("img", filename, nil),
 		wx.WithDecode(func(resp []byte) error {
@@ -55,7 +55,7 @@ func AICrop(dest *AICropResult, filename string) wx.Action {
 
 // AICropByURL 图片智能裁切
 func AICropByURL(dest *AICropResult, imgURL string) wx.Action {
-	return wx.NewAPI(AICropURL,
+	return wx.NewAction(AICropURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
@@ -79,7 +79,7 @@ type QRCodeScanResult struct {
 
 // ScanQRCode 条码/二维码识别
 func ScanQRCode(dest *QRCodeScanResult, filename string) wx.Action {
-	return wx.NewAPI(ScanQRCodeURL,
+	return wx.NewAction(ScanQRCodeURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithUploadForm("img", filename, nil),
 		wx.WithDecode(func(resp []byte) error {
@@ -90,7 +90,7 @@ func ScanQRCode(dest *QRCodeScanResult, filename string) wx.Action {
 
 // ScanQRCodeByURL 条码/二维码识别
 func ScanQRCodeByURL(dest *QRCodeScanResult, imgURL string) wx.Action {
-	return wx.NewAPI(ScanQRCodeURL,
+	return wx.NewAction(ScanQRCodeURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
@@ -106,7 +106,7 @@ type SuperreSolutionResult struct {
 
 // SuperreSolution 图片高清化
 func SuperreSolution(dest *SuperreSolutionResult, filename string) wx.Action {
-	return wx.NewAPI(SuperreSolutionURL,
+	return wx.NewAction(SuperreSolutionURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithUploadForm("img", filename, nil),
 		wx.WithDecode(func(resp []byte) error {
@@ -119,7 +119,7 @@ func SuperreSolution(dest *SuperreSolutionResult, filename string) wx.Action {
 
 // SuperreSolutionByURL 图片高清化
 func SuperreSolutionByURL(dest *SuperreSolutionResult, imgURL string) wx.Action {
-	return wx.NewAPI(SuperreSolutionURL,
+	return wx.NewAction(SuperreSolutionURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {

@@ -30,8 +30,8 @@ type Mch struct {
 	mchid     string
 	apikey    string
 	nonce     func(size int) string
-	client    wx.Client
-	tlsClient wx.Client
+	client    wx.HTTPClient
+	tlsClient wx.HTTPClient
 }
 
 // New returns new wechat pay
@@ -145,7 +145,7 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOpti
 		return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayH5EntrustURL, query.Encode())}, nil
 	}
 
-	var resp wx.WXML
+	var resp []byte
 
 	if action.TLS() {
 		resp, err = mch.tlsClient.PostXML(ctx, reqURL, m, options...)
@@ -157,15 +157,23 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOpti
 		return nil, err
 	}
 
-	if resp["return_code"] != ResultSuccess {
-		return nil, errors.New(resp["return_msg"])
-	}
+	// XML解析
+	result, err := wx.ParseXML2Map(resp)
 
-	if err := mch.VerifyWXMLResult(resp); err != nil {
+	if err != nil {
 		return nil, err
 	}
 
-	return resp, nil
+	if result["return_code"] != ResultSuccess {
+		return nil, errors.New(result["return_msg"])
+	}
+
+	// 签名验证
+	if err := mch.VerifyWXMLResult(result); err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 // APPAPI 用于APP拉起支付
@@ -214,6 +222,111 @@ func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 	m["signType"] = SignMD5
 
 	return m
+}
+
+// DownloadBill 下载交易账单
+// 账单日期格式：20140603
+func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]byte, error) {
+	m := wx.WXML{
+		"appid":     mch.appid,
+		"mch_id":    mch.mchid,
+		"bill_date": billDate,
+		"bill_type": billType,
+		"nonce_str": mch.nonce(16),
+	}
+
+	m["sign"] = mch.SignWithMD5(m, true)
+
+	resp, err := mch.client.PostXML(ctx, DownloadBillURL, m, wx.WithHTTPClose())
+
+	if err != nil {
+		return nil, err
+	}
+
+	// XML解析
+	result, err := wx.ParseXML2Map(resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(result) != 0 && result["return_code"] != ResultSuccess {
+		return nil, errors.New(result["return_msg"])
+	}
+
+	return resp, nil
+}
+
+// DownloadFundFlow 下载资金账单
+// 账单日期格式：20140603
+func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType string) ([]byte, error) {
+	m := wx.WXML{
+		"appid":        mch.appid,
+		"mch_id":       mch.mchid,
+		"bill_date":    billDate,
+		"account_type": accountType,
+		"nonce_str":    mch.nonce(16),
+	}
+
+	m["sign"] = mch.SignWithHMacSHA256(m, true)
+
+	resp, err := mch.tlsClient.PostXML(ctx, DownloadFundFlowURL, m, wx.WithHTTPClose())
+
+	if err != nil {
+		return nil, err
+	}
+
+	// XML解析
+	result, err := wx.ParseXML2Map(resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(result) != 0 && result["return_code"] != ResultSuccess {
+		return nil, errors.New(result["return_msg"])
+	}
+
+	return resp, nil
+}
+
+// BatchQueryComment 拉取订单评价数据
+// 时间格式：yyyyMMddHHmmss
+// 默认一次且最多拉取200条
+func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string, offset int, limit ...int) ([]byte, error) {
+	m := wx.WXML{
+		"appid":      mch.appid,
+		"mch_id":     mch.mchid,
+		"begin_time": beginTime,
+		"end_time":   endTime,
+		"offset":     strconv.Itoa(offset),
+		"nonce_str":  mch.nonce(16),
+	}
+
+	if len(limit) != 0 {
+		m["limit"] = strconv.Itoa(limit[0])
+	}
+
+	m["sign"] = mch.SignWithHMacSHA256(m, true)
+
+	resp, err := mch.tlsClient.PostXML(ctx, BatchQueryCommentURL, m, wx.WithHTTPClose())
+
+	if err != nil {
+		return nil, err
+	}
+
+	// XML解析
+	result, err := wx.ParseXML2Map(resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(result) != 0 && result["return_code"] != ResultSuccess {
+		return nil, errors.New(result["return_msg"])
+	}
+
+	return resp, nil
 }
 
 // SignWithMD5 生成MD5签名
@@ -286,9 +399,9 @@ func (mch *Mch) DecryptWithAES256ECB(encrypt string) (wx.WXML, error) {
 	h := md5.New()
 	h.Write([]byte(mch.apikey))
 
-	ecb := wx.NewECBCrypto([]byte(hex.EncodeToString(h.Sum(nil))))
+	ecb := wx.NewECBCrypto([]byte(hex.EncodeToString(h.Sum(nil))), wx.PKCS7)
 
-	plainText, err := ecb.Decrypt(cipherText, wx.PKCS7)
+	plainText, err := ecb.Decrypt(cipherText)
 
 	if err != nil {
 		return nil, err

@@ -19,7 +19,7 @@ type TemplateInfo struct {
 
 // GetTemplateList 获取模板列表
 func GetTemplateList(dest *[]*TemplateInfo) wx.Action {
-	return wx.NewAPI(TemplateListURL,
+	return wx.NewAction(TemplateListURL,
 		wx.WithMethod(wx.MethodGet),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "template_list").Raw), dest)
@@ -29,7 +29,7 @@ func GetTemplateList(dest *[]*TemplateInfo) wx.Action {
 
 // DeleteTemplate 删除模板
 func DeleteTemplate(templateID string) wx.Action {
-	return wx.NewAPI(TemplateDeleteURL,
+	return wx.NewAction(TemplateDeleteURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{"template_id": templateID})
@@ -56,7 +56,7 @@ type TemplateMessage struct {
 
 // SendTemplateMessage 发送模板消息
 func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
-	return wx.NewAPI(TemplateMessageSendURL,
+	return wx.NewAction(TemplateMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			params := wx.X{
@@ -80,7 +80,7 @@ func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
 
 // SendSubscribeMessage 发送一次性订阅消息
 func SendSubscribeMessage(openID, scene, title string, msg *TemplateMessage) wx.Action {
-	return wx.NewAPI(SubscribeMessageSendURL,
+	return wx.NewAction(SubscribeMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			params := wx.X{

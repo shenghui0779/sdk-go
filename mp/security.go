@@ -18,7 +18,7 @@ var (
 
 // ImageSecCheck 校验一张图片是否含有违法违规内容
 func ImageSecCheck(filename string) wx.Action {
-	return wx.NewAPI(ImageSecCheckURL,
+	return wx.NewAction(ImageSecCheckURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithUploadForm("media", filename, nil),
 	)
@@ -31,7 +31,7 @@ type MediaSecAsyncResult struct {
 
 // MediaSecCheckAsync 异步校验图片/音频是否含有违法违规内容
 func MediaSecCheckAsync(dest *MediaSecAsyncResult, mediaType SecMediaType, mediaURL string) wx.Action {
-	return wx.NewAPI(MediaCheckAsyncURL,
+	return wx.NewAction(MediaCheckAsyncURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{
@@ -49,7 +49,7 @@ func MediaSecCheckAsync(dest *MediaSecAsyncResult, mediaType SecMediaType, media
 
 // MsgSecCheck 检查一段文本是否含有违法违规内容
 func MsgSecCheck(content string) wx.Action {
-	return wx.NewAPI(MsgSecCheckURL,
+	return wx.NewAction(MsgSecCheckURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{

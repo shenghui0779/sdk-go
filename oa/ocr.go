@@ -33,7 +33,7 @@ type IDCardFront struct {
 
 // OCRIDCardFront 身份证前面识别
 func OCRIDCardFront(dest *IDCardFront, mode OCRMode, filename string) wx.Action {
-	return wx.NewAPI(OCRIDCardURL,
+	return wx.NewAction(OCRIDCardURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
 		wx.WithUploadForm("img", filename, nil),
@@ -45,7 +45,7 @@ func OCRIDCardFront(dest *IDCardFront, mode OCRMode, filename string) wx.Action 
 
 // OCRIDCardFrontByURL 身份证前面识别
 func OCRIDCardFrontByURL(dest *IDCardFront, mode OCRMode, imgURL string) wx.Action {
-	return wx.NewAPI(OCRIDCardURL,
+	return wx.NewAction(OCRIDCardURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
@@ -66,7 +66,7 @@ func OCRIDCardBack(dest *IDCardBack, mode OCRMode, filename string) wx.Action {
 
 	query.Set("type", string(mode))
 
-	return wx.NewAPI(OCRIDCardURL,
+	return wx.NewAction(OCRIDCardURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
 		wx.WithUploadForm("img", filename, nil),
@@ -85,7 +85,7 @@ func OCRIDCardBackByURL(dest *IDCardBack, mode OCRMode, imgURL string) wx.Action
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewAPI(OCRIDCardURL,
+	return wx.NewAction(OCRIDCardURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
@@ -108,7 +108,7 @@ func OCRBankCard(dest *BankCard, mode OCRMode, filename string) wx.Action {
 
 	query.Set("type", string(mode))
 
-	return wx.NewAPI(OCRBankCardURL,
+	return wx.NewAction(OCRBankCardURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
 		wx.WithUploadForm("img", filename, nil),
@@ -127,7 +127,7 @@ func OCRBankCardByURL(dest *BankCard, mode OCRMode, imgURL string) wx.Action {
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewAPI(OCRBankCardURL,
+	return wx.NewAction(OCRBankCardURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
@@ -150,7 +150,7 @@ func OCRPlateNumber(dest *PlateNumber, mode OCRMode, filename string) wx.Action 
 
 	query.Set("type", string(mode))
 
-	return wx.NewAPI(OCRPlateNumberURL,
+	return wx.NewAction(OCRPlateNumberURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
 		wx.WithUploadForm("img", filename, nil),
@@ -169,7 +169,7 @@ func OCRPlateNumberByURL(dest *PlateNumber, mode OCRMode, imgURL string) wx.Acti
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewAPI(OCRPlateNumberURL,
+	return wx.NewAction(OCRPlateNumberURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
@@ -202,7 +202,7 @@ func OCRDriverLicense(dest *DriverLicense, mode OCRMode, filename string) wx.Act
 
 	query.Set("type", string(mode))
 
-	return wx.NewAPI(OCRDriverLicenseURL,
+	return wx.NewAction(OCRDriverLicenseURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
 		wx.WithUploadForm("img", filename, nil),
@@ -219,7 +219,7 @@ func OCRDriverLicenseByURL(dest *DriverLicense, mode OCRMode, imgURL string) wx.
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewAPI(OCRDriverLicenseURL,
+	return wx.NewAction(OCRDriverLicenseURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
@@ -257,7 +257,7 @@ func OCRVehicleLicense(dest *VehicleLicense, mode OCRMode, filename string) wx.A
 
 	query.Set("type", string(mode))
 
-	return wx.NewAPI(OCRVehicleLicenseURL,
+	return wx.NewAction(OCRVehicleLicenseURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
 		wx.WithUploadForm("img", filename, nil),
@@ -274,7 +274,7 @@ func OCRVehicleLicenseByURL(dest *VehicleLicense, mode OCRMode, imgURL string) w
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewAPI(OCRVehicleLicenseURL,
+	return wx.NewAction(OCRVehicleLicenseURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
@@ -308,7 +308,7 @@ func OCRBusinessLicense(dest *BusinessLicense, mode OCRMode, filename string) wx
 
 	query.Set("type", string(mode))
 
-	return wx.NewAPI(OCRBusinessLicenseURL,
+	return wx.NewAction(OCRBusinessLicenseURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
 		wx.WithUploadForm("img", filename, nil),
@@ -325,7 +325,7 @@ func OCRBusinessLicenseByURL(dest *BusinessLicense, mode OCRMode, imgURL string)
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewAPI(OCRBusinessLicenseURL,
+	return wx.NewAction(OCRBusinessLicenseURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
@@ -349,7 +349,7 @@ type PrintedTextItem struct {
 
 // OCRPrintedText 通用印刷体识别
 func OCRPrintedText(dest *PrintedText, mode OCRMode, filename string) wx.Action {
-	return wx.NewAPI(OCRPrintedTextURL,
+	return wx.NewAction(OCRPrintedTextURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
 		wx.WithUploadForm("img", filename, nil),
@@ -366,7 +366,7 @@ func OCRPrintedTextByURL(dest *PrintedText, mode OCRMode, imgURL string) wx.Acti
 	query.Set("type", string(mode))
 	query.Set("img_url", imgURL)
 
-	return wx.NewAPI(OCRPrintedTextURL,
+	return wx.NewAction(OCRPrintedTextURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),

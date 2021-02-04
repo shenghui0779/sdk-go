@@ -61,7 +61,7 @@ type QRCode struct {
 
 // CreateQRCode 创建小程序二维码（数量有限）
 func CreateQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action {
-	return wx.NewAPI(QRCodeCreateURL,
+	return wx.NewAction(QRCodeCreateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			settings := new(qrcodeSettings)
@@ -91,7 +91,7 @@ func CreateQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action 
 
 // GetQRCode 获取小程序二维码（数量有限）
 func GetQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action {
-	return wx.NewAPI(QRCodeGetURL,
+	return wx.NewAction(QRCodeGetURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			settings := new(qrcodeSettings)
@@ -133,7 +133,7 @@ func GetQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action {
 
 // GetUnlimitQRCode 获取小程序二维码（数量不限）
 func GetUnlimitQRCode(dest *QRCode, scene string, options ...QRCodeOption) wx.Action {
-	return wx.NewAPI(QRCodeGetUnlimitURL,
+	return wx.NewAction(QRCodeGetUnlimitURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			settings := new(qrcodeSettings)

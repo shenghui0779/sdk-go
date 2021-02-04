@@ -13,7 +13,7 @@ func TestApplyPlugin(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", []byte(`{"action":"apply","plugin_appid":"aaaa","reason":"hello"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -29,7 +29,7 @@ func TestGetPluginDevApplyList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", []byte(`{"action":"dev_apply_list","num":10,"page":1}`)).Return([]byte(`{
 		"errcode": 0,
@@ -80,7 +80,7 @@ func TestGetPluginList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", []byte(`{"action":"list"}`)).Return([]byte(`{
 		"errcode": 0,
@@ -115,7 +115,7 @@ func TestSetDevPluginApplyStatus(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", []byte(`{"action":"dev_agree","appid":"APPID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -131,7 +131,7 @@ func TestUnbindPlugin(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", []byte(`{"action":"unbind","plugin_appid":"APPID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 

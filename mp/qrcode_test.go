@@ -39,7 +39,7 @@ func TestCreateQRCode(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=ACCESS_TOKEN", []byte(`{"path":"page/index/index","width":430}`)).Return([]byte("BUFFER"), nil)
 
@@ -58,7 +58,7 @@ func TestGetQRCode(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/getwxacode?access_token=ACCESS_TOKEN", []byte(`{"path":"page/index/index","width":430}`)).Return([]byte("BUFFER"), nil)
 
@@ -77,7 +77,7 @@ func TestGetUnlimitQRCode(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=ACCESS_TOKEN", []byte(`{"scene":"a=1"}`)).Return([]byte("BUFFER"), nil)
 

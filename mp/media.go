@@ -21,7 +21,7 @@ type MediaUploadResult struct {
 
 // UploadMedia 上传临时素材到微信服务器
 func UploadMedia(dest *MediaUploadResult, mediaType MediaType, filename string) wx.Action {
-	return wx.NewAPI(MediaUploadURL,
+	return wx.NewAction(MediaUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUploadForm("media", filename, nil),
@@ -38,7 +38,7 @@ type Media struct {
 
 // GetMedia 获取客服消息内的临时素材
 func GetMedia(dest *Media, mediaID string) wx.Action {
-	return wx.NewAPI(MediaGetURL,
+	return wx.NewAction(MediaGetURL,
 		wx.WithMethod(wx.MethodGet),
 		wx.WithQuery("media_id", mediaID),
 		wx.WithDecode(func(resp []byte) error {
