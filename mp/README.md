@@ -1,4 +1,4 @@
-# 微信小程序（Mini Program）
+# 小程序（Mini Program）
 
 ```go
 import (

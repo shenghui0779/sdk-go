@@ -1,4 +1,4 @@
-# 微信公众号（Official Accounts）
+# 公众号（Official Accounts）
 
 ```go
 import (
