@@ -110,7 +110,7 @@ func UploadKFAvatar(account, filename string) wx.Action {
 	return wx.NewAction(KFAvatarUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("kf_account", account),
-		wx.WithUploadForm("media", filename, nil),
+		wx.WithUploadForm("media", filename),
 	)
 }
 

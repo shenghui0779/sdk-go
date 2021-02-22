@@ -47,26 +47,26 @@ type UploadForm interface {
 	Buffer() ([]byte, error)
 }
 
-type httpUploadForm struct {
+type httpUpload struct {
 	fieldname   string
 	filename    string
 	extraFields map[string]string
 }
 
-func (f *httpUploadForm) FieldName() string {
-	return f.fieldname
+func (u *httpUpload) FieldName() string {
+	return u.fieldname
 }
 
-func (f *httpUploadForm) FileName() string {
-	return f.filename
+func (u *httpUpload) FileName() string {
+	return u.filename
 }
 
-func (f *httpUploadForm) ExtraFields() map[string]string {
-	return f.extraFields
+func (u *httpUpload) ExtraFields() map[string]string {
+	return u.extraFields
 }
 
-func (f *httpUploadForm) Buffer() ([]byte, error) {
-	path, err := filepath.Abs(f.filename)
+func (u *httpUpload) Buffer() ([]byte, error) {
+	path, err := filepath.Abs(u.filename)
 
 	if err != nil {
 		return nil, err
@@ -75,13 +75,32 @@ func (f *httpUploadForm) Buffer() ([]byte, error) {
 	return ioutil.ReadFile(path)
 }
 
-// NewUploadForm returns new upload form
-func NewUploadForm(fieldname, filename string, extraFields map[string]string) UploadForm {
-	return &httpUploadForm{
-		fieldname:   fieldname,
-		filename:    filename,
-		extraFields: extraFields,
+// UploadOption configures how we set up the http upload from.
+type UploadOption func(u *httpUpload)
+
+// WithExtraField specifies the extra field to http upload from.
+func WithExtraField(key, value string) UploadOption {
+	return func(u *httpUpload) {
+		u.extraFields[key] = value
 	}
+}
+
+// NewUploadForm returns new upload form
+func NewUploadForm(fieldname, filename string, options ...UploadOption) UploadForm {
+	form := &httpUpload{
+		fieldname: fieldname,
+		filename:  filename,
+	}
+
+	if len(options) != 0 {
+		form.extraFields = make(map[string]string)
+
+		for _, f := range options {
+			f(form)
+		}
+	}
+
+	return form
 }
 
 // Action is the interface that handle wechat api
@@ -153,7 +172,7 @@ func (a *wxapi) Body() ([]byte, error) {
 
 func (a *wxapi) UploadForm() UploadForm {
 	if a.uploadForm == nil {
-		return new(httpUploadForm)
+		return new(httpUpload)
 	}
 
 	return a.uploadForm
@@ -199,9 +218,9 @@ func WithWXML(f func(appid, mchid, nonce string) (WXML, error)) ActionOption {
 }
 
 // WithUploadForm specifies the `upload form` to Action.
-func WithUploadForm(fieldname, filename string, extraFields map[string]string) ActionOption {
+func WithUploadForm(fieldname, filename string, options ...UploadOption) ActionOption {
 	return func(api *wxapi) {
-		api.uploadForm = NewUploadForm(fieldname, filename, extraFields)
+		api.uploadForm = NewUploadForm(fieldname, filename, options...)
 	}
 }
 

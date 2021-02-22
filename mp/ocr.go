@@ -36,7 +36,7 @@ func OCRIDCardFront(dest *IDCardFront, mode OCRMode, filename string) wx.Action 
 	return wx.NewAction(OCRIDCardURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename, nil),
+		wx.WithUploadForm("img", filename),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -69,7 +69,7 @@ func OCRIDCardBack(dest *IDCardBack, mode OCRMode, filename string) wx.Action {
 	return wx.NewAction(OCRIDCardURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename, nil),
+		wx.WithUploadForm("img", filename),
 		wx.WithDecode(func(resp []byte) error {
 			dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
 
@@ -111,7 +111,7 @@ func OCRBankCard(dest *BankCard, mode OCRMode, filename string) wx.Action {
 	return wx.NewAction(OCRBankCardURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename, nil),
+		wx.WithUploadForm("img", filename),
 		wx.WithDecode(func(resp []byte) error {
 			dest.ID = gjson.GetBytes(resp, "number").String()
 
@@ -153,7 +153,7 @@ func OCRPlateNumber(dest *PlateNumber, mode OCRMode, filename string) wx.Action 
 	return wx.NewAction(OCRPlateNumberURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename, nil),
+		wx.WithUploadForm("img", filename),
 		wx.WithDecode(func(resp []byte) error {
 			dest.ID = gjson.GetBytes(resp, "number").String()
 
@@ -205,7 +205,7 @@ func OCRDriverLicense(dest *DriverLicense, mode OCRMode, filename string) wx.Act
 	return wx.NewAction(OCRDriverLicenseURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename, nil),
+		wx.WithUploadForm("img", filename),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -260,7 +260,7 @@ func OCRVehicleLicense(dest *VehicleLicense, mode OCRMode, filename string) wx.A
 	return wx.NewAction(OCRVehicleLicenseURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename, nil),
+		wx.WithUploadForm("img", filename),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -311,7 +311,7 @@ func OCRBusinessLicense(dest *BusinessLicense, mode OCRMode, filename string) wx
 	return wx.NewAction(OCRBusinessLicenseURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename, nil),
+		wx.WithUploadForm("img", filename),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -352,7 +352,7 @@ func OCRPrintedText(dest *PrintedText, mode OCRMode, filename string) wx.Action 
 	return wx.NewAction(OCRPrintedTextURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename, nil),
+		wx.WithUploadForm("img", filename),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),

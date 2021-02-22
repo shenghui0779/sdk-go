@@ -20,7 +20,7 @@ var (
 func ImageSecCheck(filename string) wx.Action {
 	return wx.NewAction(ImageSecCheckURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm("media", filename, nil),
+		wx.WithUploadForm("media", filename),
 	)
 }
 

@@ -65,12 +65,11 @@ type apiClient struct {
 }
 
 func (c *apiClient) do(ctx context.Context, req *http.Request, options ...HTTPOption) ([]byte, error) {
-	settings := &httpSettings{
-		headers: make(map[string]string),
-		timeout: c.timeout,
-	}
+	settings := &httpSettings{timeout: c.timeout}
 
 	if len(options) != 0 {
+		settings.headers = make(map[string]string)
+
 		for _, f := range options {
 			f(settings)
 		}

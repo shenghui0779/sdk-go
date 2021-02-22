@@ -24,7 +24,7 @@ func UploadMedia(dest *MediaUploadResult, mediaType MediaType, filename string) 
 	return wx.NewAction(MediaUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadForm("media", filename, nil),
+		wx.WithUploadForm("media", filename),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),

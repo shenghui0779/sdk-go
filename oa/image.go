@@ -46,7 +46,7 @@ type AICropResult struct {
 func AICrop(dest *AICropResult, filename string) wx.Action {
 	return wx.NewAction(AICropURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm("img", filename, nil),
+		wx.WithUploadForm("img", filename),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -81,7 +81,7 @@ type QRCodeScanResult struct {
 func ScanQRCode(dest *QRCodeScanResult, filename string) wx.Action {
 	return wx.NewAction(ScanQRCodeURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm("img", filename, nil),
+		wx.WithUploadForm("img", filename),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -108,7 +108,7 @@ type SuperreSolutionResult struct {
 func SuperreSolution(dest *SuperreSolutionResult, filename string) wx.Action {
 	return wx.NewAction(SuperreSolutionURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm("img", filename, nil),
+		wx.WithUploadForm("img", filename),
 		wx.WithDecode(func(resp []byte) error {
 			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
