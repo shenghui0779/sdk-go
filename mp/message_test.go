@@ -20,7 +20,7 @@ func TestSendUniformMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	message := &UniformMessage{
+	msg := &UniformMessage{
 		MPTemplateMessage: &TemplateMessage{
 			TemplateID: "TEMPLATE_ID",
 			Page:       "page/page/index",
@@ -74,7 +74,7 @@ func TestSendUniformMessage(t *testing.T) {
 		},
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendUniformMessage("OPENID", message))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendUniformMessage("OPENID", msg))
 
 	assert.Nil(t, err)
 }
@@ -90,7 +90,7 @@ func TestSendSubscribeMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	message := &SubscribeMessage{
+	msg := &SubscribeMessage{
 		TemplateID: "TEMPLATE_ID",
 		Page:       "index",
 		Data: MessageBody{
@@ -111,7 +111,7 @@ func TestSendSubscribeMessage(t *testing.T) {
 		Lang:       "zh_CN",
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMessage("OPENID", message))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMessage("OPENID", msg))
 
 	assert.Nil(t, err)
 }
@@ -127,7 +127,7 @@ func TestSendTemplateMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	message := &TemplateMessage{
+	msg := &TemplateMessage{
 		TemplateID: "TEMPLATE_ID",
 		Page:       "index",
 		FormID:     "FORMID",
@@ -148,7 +148,7 @@ func TestSendTemplateMessage(t *testing.T) {
 		EmphasisKeyword: "keyword1.DATA",
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendTemplateMessage("OPENID", message))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendTemplateMessage("OPENID", msg))
 
 	assert.Nil(t, err)
 }
@@ -164,11 +164,7 @@ func TestSendKFTextMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	message := &KFTextMessage{
-		Content: "Hello World",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFTextMessage("OPENID", message))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFTextMessage("OPENID", "Hello World"))
 
 	assert.Nil(t, err)
 }
@@ -184,11 +180,7 @@ func TestSendKFImageMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	message := &KFImageMessage{
-		MediaID: "MEDIA_ID",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFImageMessage("OPENID", message))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFImageMessage("OPENID", "MEDIA_ID"))
 
 	assert.Nil(t, err)
 }
@@ -204,14 +196,14 @@ func TestSendKFLinkMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	message := &KFLinkMessage{
+	msg := &KFLinkMessage{
 		Title:       "Happy Day",
 		Description: "Is Really A Happy Day",
 		RedirectURL: "URL",
 		ThumbURL:    "THUMB_URL",
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFLinkMessage("OPENID", message))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFLinkMessage("OPENID", msg))
 
 	assert.Nil(t, err)
 }
@@ -227,13 +219,13 @@ func TestSendKFMinipMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	message := &KFMinipMessage{
+	msg := &KFMinipMessage{
 		Title:        "title",
 		Pagepath:     "pagepath",
 		ThumbMediaID: "thumb_media_id",
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFMinipMessage("OPENID", message))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFMinipMessage("OPENID", msg))
 
 	assert.Nil(t, err)
 }

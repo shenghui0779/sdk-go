@@ -105,4 +105,6 @@ const (
 	KFSessionListURL   = "https://api.weixin.qq.com/customservice/kfsession/getsessionlist"
 	KFWaitCaseURL      = "https://api.weixin.qq.com/customservice/kfsession/getwaitcase"
 	KFMsgRecordListURL = "https://api.weixin.qq.com/customservice/msgrecord/getmsglist"
+	KFMessageSendURL   = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
+	SetTypingURL       = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 )

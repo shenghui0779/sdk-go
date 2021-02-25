@@ -160,39 +160,33 @@ func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
 	)
 }
 
-// KFTextMessage 客服文本消息
-type KFTextMessage struct {
-	Content string `json:"content"` // 文本消息内容
-}
-
-// SendKFTextMessage 发送客服文本消息
-func SendKFTextMessage(openID string, msg *KFTextMessage) wx.Action {
+// SendKFTextMessage 发送客服文本消息（支持插入跳小程序的文字链）
+func SendKFTextMessage(openID, text string) wx.Action {
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{
 				"touser":  openID,
 				"msgtype": "text",
-				"text":    msg,
+				"text": wx.X{
+					"content": text,
+				},
 			})
 		}),
 	)
 }
 
-// KFImageMessage 客服图片消息
-type KFImageMessage struct {
-	MediaID string `json:"media_id"` // 发送的图片的媒体ID，通过 新增素材接口 上传图片文件获得
-}
-
-// SendKFImageMessage 发送客服图片消息
-func SendKFImageMessage(openID string, msg *KFImageMessage) wx.Action {
+// SendKFImageMessage 发送客服图片消息（媒体ID，通过素材接口上传获得）
+func SendKFImageMessage(openID, mediaID string) wx.Action {
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(wx.X{
 				"touser":  openID,
 				"msgtype": "image",
-				"image":   msg,
+				"image": wx.X{
+					"media_id": mediaID,
+				},
 			})
 		}),
 	)
