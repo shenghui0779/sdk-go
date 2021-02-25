@@ -99,6 +99,39 @@ wxoa.Do(ctx, access_token, oa.SendTemplateMessage(openid, msg))
 
 // 发送订阅消息
 wxoa.Do(ctx, access_token, oa.SendSubscribeMessage(openid, scene, title, msg))
+
+// 发送客服文本消息
+wxoa.Do(ctx, access_token, mp.SendKFTextMessage(openid, text))
+
+// 发送客服图片消息
+wxoa.Do(ctx, access_token, mp.SendKFImageMessage(openid, mediaID))
+
+// 发送客服语音消息
+wxoa.Do(ctx, access_token, mp.SendKFVoiceMessage(openid, msg))
+
+// 发送客服视频消息
+wxoa.Do(ctx, access_token, mp.SendKFVideoMessage(openid, msg))
+
+// 发送客服音乐消息
+wxoa.Do(ctx, access_token, mp.SendKFMusicMessage(openid, msg))
+
+// 发送图文消息（点击跳转到外链）
+wxoa.Do(ctx, access_token, mp.SendKFNewsMessage(openid, msg))
+
+// 发送图文消息（点击跳转到图文消息页面）
+wxoa.Do(ctx, access_token, mp.SendKFMPNewsMessage(openid, msg))
+
+// 发送客服菜单消息
+wxoa.Do(ctx, access_token, mp.SendKFMenuMessage(openid, msg))
+
+// 发送客服卡券消息
+wxoa.Do(ctx, access_token, mp.SendKFCardMessage(openid, cardID))
+
+// 发送客服小程序卡片消息
+wxoa.Do(ctx, access_token, mp.SendKFMinipMessage(openid, msg))
+
+// 下发当前输入状态（仅支持客服消息）
+wxoa.Do(ctx, access_token, mp.SetTyping(openid, cmd))
 ```
 
 ### 推广

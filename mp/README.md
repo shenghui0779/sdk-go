@@ -56,10 +56,10 @@ wxmp.Do(ctx, access_token, mp.SendSubscribeMessage(openid, msg))
 wxmp.Do(ctx, access_token, mp.SendTemplateMessage(openid, msg))
 
 // 发送客服文本消息
-wxmp.Do(ctx, access_token, mp.SendKFTextMessage(openid, msg))
+wxmp.Do(ctx, access_token, mp.SendKFTextMessage(openid, text))
 
-// 客服图文链接消息
-wxmp.Do(ctx, access_token, mp.SendKFImageMessage(openid, msg))
+// 发送客服图片消息
+wxmp.Do(ctx, access_token, mp.SendKFImageMessage(openid, mediaID))
 
 // 发送客服图文链接消息
 wxmp.Do(ctx, access_token, mp.SendKFLinkMessage(openid, msg))
@@ -68,7 +68,7 @@ wxmp.Do(ctx, access_token, mp.SendKFLinkMessage(openid, msg))
 wxmp.Do(ctx, access_token, mp.SendKFMinipMessage(openid, msg))
 
 // 下发当前输入状态（仅支持客服消息）
-wxmp.Do(ctx, access_token, mp.SetTyping(openid, msg))
+wxmp.Do(ctx, access_token, mp.SetTyping(openid, cmd))
 ```
 
 ### 插件管理
