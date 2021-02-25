@@ -59,7 +59,7 @@ wxmp.Do(ctx, access_token, mp.SendTemplateMessage(openid, msg))
 wxmp.Do(ctx, access_token, mp.SendKFTextMessage(openid, text))
 
 // 发送客服图片消息
-wxmp.Do(ctx, access_token, mp.SendKFImageMessage(openid, media_id))
+wxmp.Do(ctx, access_token, mp.SendKFImageMessage(openid, mediaID))
 
 // 发送客服图文链接消息
 wxmp.Do(ctx, access_token, mp.SendKFLinkMessage(openid, msg))
