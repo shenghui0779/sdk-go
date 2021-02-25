@@ -101,37 +101,37 @@ wxoa.Do(ctx, access_token, oa.SendTemplateMessage(openid, msg))
 wxoa.Do(ctx, access_token, oa.SendSubscribeMessage(openid, scene, title, msg))
 
 // 发送客服文本消息
-wxoa.Do(ctx, access_token, mp.SendKFTextMessage(openid, text))
+wxoa.Do(ctx, access_token, oa.SendKFTextMessage(openid, text))
 
 // 发送客服图片消息
-wxoa.Do(ctx, access_token, mp.SendKFImageMessage(openid, mediaID))
+wxoa.Do(ctx, access_token, oa.SendKFImageMessage(openid, mediaID))
 
 // 发送客服语音消息
-wxoa.Do(ctx, access_token, mp.SendKFVoiceMessage(openid, msg))
+wxoa.Do(ctx, access_token, oa.SendKFVoiceMessage(openid, msg))
 
 // 发送客服视频消息
-wxoa.Do(ctx, access_token, mp.SendKFVideoMessage(openid, msg))
+wxoa.Do(ctx, access_token, oa.SendKFVideoMessage(openid, msg))
 
 // 发送客服音乐消息
-wxoa.Do(ctx, access_token, mp.SendKFMusicMessage(openid, msg))
+wxoa.Do(ctx, access_token, oa.SendKFMusicMessage(openid, msg))
 
 // 发送图文消息（点击跳转到外链）
-wxoa.Do(ctx, access_token, mp.SendKFNewsMessage(openid, msg))
+wxoa.Do(ctx, access_token, oa.SendKFNewsMessage(openid, msg))
 
 // 发送图文消息（点击跳转到图文消息页面）
-wxoa.Do(ctx, access_token, mp.SendKFMPNewsMessage(openid, msg))
+wxoa.Do(ctx, access_token, oa.SendKFMPNewsMessage(openid, msg))
 
 // 发送客服菜单消息
-wxoa.Do(ctx, access_token, mp.SendKFMenuMessage(openid, msg))
+wxoa.Do(ctx, access_token, oa.SendKFMenuMessage(openid, msg))
 
 // 发送客服卡券消息
-wxoa.Do(ctx, access_token, mp.SendKFCardMessage(openid, cardID))
+wxoa.Do(ctx, access_token, oa.SendKFCardMessage(openid, cardID))
 
 // 发送客服小程序卡片消息
-wxoa.Do(ctx, access_token, mp.SendKFMinipMessage(openid, msg))
+wxoa.Do(ctx, access_token, oa.SendKFMinipMessage(openid, msg))
 
 // 下发当前输入状态（仅支持客服消息）
-wxoa.Do(ctx, access_token, mp.SetTyping(openid, cmd))
+wxoa.Do(ctx, access_token, oa.SetTyping(openid, cmd))
 ```
 
 ### 推广
