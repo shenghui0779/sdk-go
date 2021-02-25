@@ -104,10 +104,10 @@ wxoa.Do(ctx, access_token, oa.SendSubscribeMessage(openid, scene, title, msg))
 wxoa.Do(ctx, access_token, oa.SendKFTextMessage(openid, text))
 
 // 发送客服图片消息
-wxoa.Do(ctx, access_token, oa.SendKFImageMessage(openid, mediaID))
+wxoa.Do(ctx, access_token, oa.SendKFImageMessage(openid, media_id))
 
 // 发送客服语音消息
-wxoa.Do(ctx, access_token, oa.SendKFVoiceMessage(openid, msg))
+wxoa.Do(ctx, access_token, oa.SendKFVoiceMessage(openid, media_id))
 
 // 发送客服视频消息
 wxoa.Do(ctx, access_token, oa.SendKFVideoMessage(openid, msg))
@@ -119,13 +119,13 @@ wxoa.Do(ctx, access_token, oa.SendKFMusicMessage(openid, msg))
 wxoa.Do(ctx, access_token, oa.SendKFNewsMessage(openid, msg))
 
 // 发送图文消息（点击跳转到图文消息页面）
-wxoa.Do(ctx, access_token, oa.SendKFMPNewsMessage(openid, msg))
+wxoa.Do(ctx, access_token, oa.SendKFMPNewsMessage(openid, media_id))
 
 // 发送客服菜单消息
 wxoa.Do(ctx, access_token, oa.SendKFMenuMessage(openid, msg))
 
 // 发送客服卡券消息
-wxoa.Do(ctx, access_token, oa.SendKFCardMessage(openid, cardID))
+wxoa.Do(ctx, access_token, oa.SendKFCardMessage(openid, card_id))
 
 // 发送客服小程序卡片消息
 wxoa.Do(ctx, access_token, oa.SendKFMinipMessage(openid, msg))
