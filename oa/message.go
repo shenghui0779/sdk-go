@@ -328,7 +328,7 @@ func SendKFMenuMessage(openID string, msg *KFMenuMessage, kfAccount ...string) w
 	)
 }
 
-// SendKFCardMessage 发送卡券消息（特别注意：客服消息接口投放卡券仅支持非自定义Code码和导入code模式的卡券的卡券）
+// SendKFCardMessage 发送客服卡券消息（特别注意：客服消息接口投放卡券仅支持非自定义Code码和导入code模式的卡券的卡券）
 func SendKFCardMessage(openID, cardID string, kfAccount ...string) wx.Action {
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
