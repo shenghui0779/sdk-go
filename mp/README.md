@@ -173,6 +173,7 @@ wxmp.Do(ctx, access_token, mp.OCRPrintedTextByURL(dest, mode, imgURL))
 ```go
 // 上传临时素材到微信服务器
 wxmp.Do(ctx, access_token, mp.UploadMedia(dest, mediaType, filename))
+wxmp.Do(ctx, access_token, mp.UploadMediaByURL(dest, mediaType, filename, resourceURL))
 
 // 获取客服消息内的临时素材
 wxmp.Do(ctx, access_token, mp.GetMedia(dest, mediaID))
