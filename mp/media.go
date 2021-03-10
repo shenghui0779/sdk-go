@@ -31,6 +31,18 @@ func UploadMedia(dest *MediaUploadResult, mediaType MediaType, filename string) 
 	)
 }
 
+// UploadMediaByURL 上传临时素材到微信服务器
+func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, resourceURL string) wx.Action {
+	return wx.NewAction(MediaUploadURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mediaType)),
+		wx.WithUploadForm("media", filename, wx.WithResourceURL(resourceURL)),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
+}
+
 // Media 临时素材
 type Media struct {
 	Buffer []byte
