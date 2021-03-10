@@ -188,7 +188,7 @@ func (c *apiClient) Upload(ctx context.Context, url string, form UploadForm, opt
 		return nil, err
 	}
 
-	if _, err = io.Copy(fw, bytes.NewReader(media)); err != nil {
+	if _, err = fw.Write(media); err != nil {
 		return nil, err
 	}
 

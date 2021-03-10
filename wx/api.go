@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"path/filepath"
 )
@@ -50,6 +51,7 @@ type UploadForm interface {
 type httpUpload struct {
 	fieldname   string
 	filename    string
+	fileURL     string
 	extraFields map[string]string
 }
 
@@ -66,6 +68,22 @@ func (u *httpUpload) ExtraFields() map[string]string {
 }
 
 func (u *httpUpload) Buffer() ([]byte, error) {
+	if len(u.fileURL) != 0 {
+		resp, err := http.Get(u.fileURL)
+
+		if err != nil {
+			return nil, err
+		}
+
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("error http code: %d", resp.StatusCode)
+		}
+
+		return ioutil.ReadAll(resp.Body)
+	}
+
 	path, err := filepath.Abs(u.filename)
 
 	if err != nil {
@@ -77,6 +95,13 @@ func (u *httpUpload) Buffer() ([]byte, error) {
 
 // UploadOption configures how we set up the http upload from.
 type UploadOption func(u *httpUpload)
+
+// WithFileURL specifies http upload by resource url.
+func WithFileURL(url string) UploadOption {
+	return func(u *httpUpload) {
+		u.fileURL = url
+	}
+}
 
 // WithExtraField specifies the extra field to http upload from.
 func WithExtraField(key, value string) UploadOption {
