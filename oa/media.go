@@ -39,6 +39,18 @@ func UploadMedia(dest *MediaUploadResult, mediaType MediaType, filename string) 
 	)
 }
 
+// UploadMediaByURL 上传临时素材
+func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, resourceURL string) wx.Action {
+	return wx.NewAction(MediaUploadURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mediaType)),
+		wx.WithUploadForm("media", filename, wx.WithResourceURL(resourceURL)),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
+}
+
 // MaterialAddResult 永久素材新增结果
 type MaterialAddResult struct {
 	MediaID string `json:"media_id"`
@@ -86,6 +98,19 @@ func UploadNewsImage(dest *MaterialAddResult, filename string) wx.Action {
 	)
 }
 
+// UploadNewsImageByURL 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
+func UploadNewsImageByURL(dest *MaterialAddResult, filename, resourceURL string) wx.Action {
+	return wx.NewAction(NewsImageUploadURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithUploadForm("media", filename, wx.WithResourceURL(resourceURL)),
+		wx.WithDecode(func(resp []byte) error {
+			dest.URL = gjson.GetBytes(resp, "url").String()
+
+			return nil
+		}),
+	)
+}
+
 // AddMaterial 新增其他类型永久素材（支持图片、音频、缩略图）
 func AddMaterial(dest *MaterialAddResult, mediaType MediaType, filename string) wx.Action {
 	return wx.NewAction(MaterialAddURL,
@@ -98,12 +123,39 @@ func AddMaterial(dest *MaterialAddResult, mediaType MediaType, filename string) 
 	)
 }
 
+// AddMaterialByURL 新增其他类型永久素材（支持图片、音频、缩略图）
+func AddMaterialByURL(dest *MaterialAddResult, mediaType MediaType, filename, resourceURL string) wx.Action {
+	return wx.NewAction(MaterialAddURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(mediaType)),
+		wx.WithUploadForm("media", filename, wx.WithResourceURL(resourceURL)),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
+}
+
 // UploadVideo 上传视频永久素材
 func UploadVideo(dest *MaterialAddResult, filename, title, introduction string) wx.Action {
 	return wx.NewAction(MaterialAddURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(MediaVideo)),
 		wx.WithUploadForm("media", filename, wx.WithExtraField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, introduction))),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
+}
+
+// UploadVideoByURL 上传视频永久素材
+func UploadVideoByURL(dest *MaterialAddResult, filename, title, introduction, resourceURL string) wx.Action {
+	return wx.NewAction(MaterialAddURL,
+		wx.WithMethod(wx.MethodUpload),
+		wx.WithQuery("type", string(MediaVideo)),
+		wx.WithUploadForm("media", filename,
+			wx.WithExtraField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, introduction)),
+			wx.WithResourceURL(resourceURL),
+		),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),

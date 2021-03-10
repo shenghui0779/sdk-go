@@ -152,18 +152,22 @@ wxoa.Do(ctx, access_token, oa.Long2ShortURL(dest, longURL))
 ```go
 // 上传临时素材
 wxoa.Do(ctx, access_token, oa.UploadMedia(dest, media_type, filename))
+wxoa.Do(ctx, access_token, oa.UploadMediaByURL(dest, media_type, filename, resourceURL))
 
 // 新增永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
 wxoa.Do(ctx, access_token, oa.AddNews(dest, articles...))
 
 // 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
 wxoa.Do(ctx, access_token, oa.UploadNewsImage(dest, filename))
+wxoa.Do(ctx, access_token, oa.UploadNewsImageByURL(dest, filename, resourceURL))
 
 // 新增其他类型永久素材（支持图片、音频、缩略图）
 wxoa.Do(ctx, access_token, oa.AddMaterial(dest, media_type, filename))
+wxoa.Do(ctx, access_token, oa.AddMaterialByURL(dest, media_type, filename, resourceURL))
 
 // 上传视频永久素材
 wxoa.Do(ctx, access_token, oa.UploadVideo(dest, filename, title, introduction))
+wxoa.Do(ctx, access_token, oa.UploadVideoByURL(dest, filename, title, introduction, resourceURL))
 
 // 删除永久素材
 wxoa.Do(ctx, access_token, oa.DeleteMaterial(media_id))

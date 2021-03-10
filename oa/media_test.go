@@ -38,6 +38,37 @@ func TestUploadMedia(t *testing.T) {
 	}, dest)
 }
 
+func TestUploadMediaByURL(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := wx.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image",
+		wx.NewUploadForm("media", "test.jpg", wx.WithResourceURL("https://media.test.com/test.jpg")),
+	).Return([]byte(`{
+		"errcode": 0,
+		"errmsg": "ok",
+		"type": "image",
+		"media_id": "MEDIA_ID",
+		"created_at": 1606717010
+	  }`), nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.client = client
+
+	dest := new(MediaUploadResult)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMediaByURL(dest, MediaImage, "test.jpg", "https://media.test.com/test.jpg"))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &MediaUploadResult{
+		Type:      "image",
+		MediaID:   "MEDIA_ID",
+		CreatedAt: 1606717010,
+	}, dest)
+}
+
 func TestAddNews(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -98,6 +129,33 @@ func TestUploadNewsImage(t *testing.T) {
 	}, dest)
 }
 
+func TestUploadNewsImageByURL(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := wx.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN",
+		wx.NewUploadForm("media", "test.jpg", wx.WithResourceURL("https://media.test.com/test.jpg")),
+	).Return([]byte(`{
+		"errcode": 0,
+		"errmsg": "ok",
+		"url": "URL"
+	  }`), nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.client = client
+
+	dest := new(MaterialAddResult)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadNewsImageByURL(dest, "test.jpg", "https://media.test.com/test.jpg"))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &MaterialAddResult{
+		URL: "URL",
+	}, dest)
+}
+
 func TestAddMaterial(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -125,6 +183,35 @@ func TestAddMaterial(t *testing.T) {
 	}, dest)
 }
 
+func TestAddMaterialByURL(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := wx.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=image",
+		wx.NewUploadForm("media", "test.jpg", wx.WithResourceURL("https://media.test.com/test.jpg")),
+	).Return([]byte(`{
+		"errcode": 0,
+		"errmsg": "ok",
+		"media_id": "MEDIA_ID",
+		"url": "URL"
+	  }`), nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.client = client
+
+	dest := new(MaterialAddResult)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddMaterialByURL(dest, MediaImage, "test.jpg", "https://media.test.com/test.jpg"))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &MaterialAddResult{
+		MediaID: "MEDIA_ID",
+		URL:     "URL",
+	}, dest)
+}
+
 func TestUploadVideo(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -144,6 +231,38 @@ func TestUploadVideo(t *testing.T) {
 	dest := new(MaterialAddResult)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadVideo(dest, "test.mp4", "TITLE", "INTRODUCTION"))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &MaterialAddResult{
+		MediaID: "MEDIA_ID",
+		URL:     "URL",
+	}, dest)
+}
+
+func TestUploadVideoByURL(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := wx.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=video",
+		wx.NewUploadForm("media", "test.mp4",
+			wx.WithExtraField("description", `{"title":"TITLE", "introduction":"INTRODUCTION"}`),
+			wx.WithResourceURL("https://media.test.com/test.mp4"),
+		),
+	).Return([]byte(`{
+		"errcode": 0,
+		"errmsg": "ok",
+		"media_id": "MEDIA_ID",
+		"url": "URL"
+	  }`), nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.client = client
+
+	dest := new(MaterialAddResult)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadVideoByURL(dest, "test.mp4", "TITLE", "INTRODUCTION", "https://media.test.com/test.mp4"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &MaterialAddResult{
