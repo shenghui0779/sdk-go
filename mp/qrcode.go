@@ -1,8 +1,6 @@
 package mp
 
-import (
-	"github.com/shenghui0779/gochat/wx"
-)
+import "github.com/shenghui0779/gochat/wx"
 
 type qrcodeSettings struct {
 	page      string

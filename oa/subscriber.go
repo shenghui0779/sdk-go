@@ -3,9 +3,8 @@ package oa
 import (
 	"encoding/json"
 
-	"github.com/tidwall/gjson"
-
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/tidwall/gjson"
 )
 
 // MaxSubscriberListCount 关注列表的最大数目

@@ -3,9 +3,8 @@ package mp
 import (
 	"encoding/json"
 
-	"github.com/tidwall/gjson"
-
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/tidwall/gjson"
 )
 
 // InvokeData 服务调用数据

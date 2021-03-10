@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/tidwall/gjson"
-
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/tidwall/gjson"
 )
 
 // MediaType 素材类型
