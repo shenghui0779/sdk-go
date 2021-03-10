@@ -37,8 +37,10 @@ wxmp.AccessToken(ctx)
 
 ```go
 // 用户支付完成后，获取该用户的 UnionId，无需用户授权
+
 // 微信支付订单号
 wxmp.Do(ctx, access_token, mp.GetPaidUnionIDByTransactionID(dest, openid, transactionID))
+
 // 微信支付商户订单号和微信支付商户号
 wxmp.Do(ctx, access_token, mp.GetPaidUnionIDByOutTradeNO(dest, openid, mchid, outTradeNO))
 ```
