@@ -130,7 +130,7 @@ func (c *apiClient) do(ctx context.Context, req *http.Request, options ...HTTPOp
 
 // Get http get request
 func (c *apiClient) Get(ctx context.Context, url string, options ...HTTPOption) ([]byte, error) {
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
 		return nil, err
@@ -143,7 +143,7 @@ func (c *apiClient) Get(ctx context.Context, url string, options ...HTTPOption) 
 func (c *apiClient) Post(ctx context.Context, url string, body []byte, options ...HTTPOption) ([]byte, error) {
 	options = append(options, WithHTTPHeader("Content-Type", "application/json; charset=utf-8"))
 
-	req, err := http.NewRequest("POST", url, bytes.NewReader(body))
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
 
 	if err != nil {
 		return nil, err
@@ -162,7 +162,7 @@ func (c *apiClient) PostXML(ctx context.Context, url string, body WXML, options 
 
 	options = append(options, WithHTTPHeader("Content-Type", "text/xml; charset=utf-8"))
 
-	req, err := http.NewRequest("POST", url, strings.NewReader(xmlStr))
+	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(xmlStr))
 
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func (c *apiClient) Upload(ctx context.Context, url string, form UploadForm, opt
 	// If you don't close it, your request will be missing the terminating boundary.
 	w.Close()
 
-	req, err := http.NewRequest("POST", url, buf)
+	req, err := http.NewRequest(http.MethodPost, url, buf)
 
 	if err != nil {
 		return nil, err
