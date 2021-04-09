@@ -34,7 +34,7 @@ func TestGetAuthUser(t *testing.T) {
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&lang=zh_CN&openid=OPENID").Return([]byte(`{
 		"openid": "OPENID",
 		"nickname": "NICKNAME",
-		"sex": "1",
+		"sex": 1,
 		"province": "PROVINCE",
 		"city": "CITY",
 		"country": "COUNTRY",
@@ -54,7 +54,7 @@ func TestGetAuthUser(t *testing.T) {
 		OpenID:     "OPENID",
 		UnionID:    "o6_bmasdasdsad6_2sgVt7hMZOPfL",
 		Nickname:   "NICKNAME",
-		Sex:        "1",
+		Sex:        SexMale,
 		Province:   "PROVINCE",
 		City:       "CITY",
 		Country:    "COUNTRY",

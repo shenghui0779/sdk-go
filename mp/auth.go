@@ -5,6 +5,15 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+// Gender 性别
+type Gender int
+
+const (
+	GenderUnknown Gender = 0 // 未知
+	GenderMale    Gender = 1 // 男性
+	GenderFemale  Gender = 2 // 女性
+)
+
 // AuthSession 小程序授权Session
 type AuthSession struct {
 	SessionKey string `json:"session_key"`
@@ -31,7 +40,7 @@ type UserInfo struct {
 	Province  string    `json:"province"`
 	AvatarURL string    `json:"avatarUrl"`
 	NickName  string    `json:"nickName"`
-	Gender    int       `json:"gender"`
+	Gender    Gender    `json:"gender"`
 	Country   string    `json:"country"`
 	UnionID   string    `json:"unionId"`
 	WaterMark WaterMark `json:"watermark"`

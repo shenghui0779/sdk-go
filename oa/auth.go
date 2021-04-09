@@ -6,6 +6,15 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
+// Sex 性别
+type Sex int
+
+const (
+	SexUnknown Sex = 0 // 未知
+	SexMale    Sex = 1 // 男性
+	SexFemale  Sex = 2 // 女性
+)
+
 // AuthToken 公众号网页授权Token
 type AuthToken struct {
 	AccessToken  string `json:"access_token"`
@@ -34,7 +43,7 @@ type AuthUser struct {
 	OpenID     string   `json:"openid"`
 	UnionID    string   `json:"unionid"`
 	Nickname   string   `json:"nickname"`
-	Sex        string   `json:"sex"`
+	Sex        Sex      `json:"sex"`
 	Province   string   `json:"province"`
 	City       string   `json:"city"`
 	Country    string   `json:"country"`

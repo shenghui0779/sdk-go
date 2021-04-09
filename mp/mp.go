@@ -142,7 +142,9 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 	case wx.MethodGet:
 		resp, err = mp.client.Get(ctx, action.URL(accessToken), options...)
 	case wx.MethodPost:
-		body, err := action.Body()
+		var body []byte
+
+		body, err = action.Body()
 
 		if err != nil {
 			return err
