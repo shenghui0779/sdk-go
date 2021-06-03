@@ -5,7 +5,7 @@
 [![pkg.go.dev](https://img.shields.io/badge/dev-reference-007d9c?logo=go&logoColor=white&style=flat)](https://pkg.go.dev/github.com/shenghui0779/gochat)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
-微信 Go SDK（支付、公众号、小程序）
+微信 Go SDK（支付V2、公众号、小程序）
 
 | 目录  | 对应                         | 功能                                             |
 | ---- | ---------------------------- | ----------------------------------------------- |
