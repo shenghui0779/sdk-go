@@ -159,7 +159,7 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 		body, berr := action.Body()
 
 		if berr != nil {
-			return err
+			return berr
 		}
 
 		resp, err = oa.client.Post(ctx, action.URL(accessToken), body, options...)
