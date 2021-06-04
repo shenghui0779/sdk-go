@@ -156,9 +156,9 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 	case wx.MethodGet:
 		resp, err = oa.client.Get(ctx, action.URL(accessToken), options...)
 	case wx.MethodPost:
-		body, err := action.Body()
+		body, berr := action.Body()
 
-		if err != nil {
+		if berr != nil {
 			return err
 		}
 
