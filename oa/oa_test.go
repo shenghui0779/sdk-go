@@ -9,6 +9,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestAccount(t *testing.T) {
+	oa := New("wx1def0e9e5891b338", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Equal(t, "wx1def0e9e5891b338", oa.AppID())
+	assert.Equal(t, "192006250b4c09247ec02edce69f6a2d", oa.AppSecret())
+}
+
 func TestAuthURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.nonce = func(size int) string {

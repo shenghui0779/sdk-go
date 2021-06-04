@@ -107,6 +107,21 @@ func (mch *Mch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
 	return nil
 }
 
+// AppID returns appid
+func (mch *Mch) AppID() string {
+	return mch.appid
+}
+
+// MchID returns mchid
+func (mch *Mch) MchID() string {
+	return mch.mchid
+}
+
+// ApiKey returns apikey
+func (mch *Mch) ApiKey() string {
+	return mch.apikey
+}
+
 // Do exec action
 func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOption) (wx.WXML, error) {
 	m, err := action.WXML(mch.appid, mch.mchid, mch.nonce(16))

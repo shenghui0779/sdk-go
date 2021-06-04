@@ -15,6 +15,14 @@ func TestLoadCertFromPemBlock(t *testing.T) {
 	assert.Nil(t, mch.LoadCertFromPemBlock(certPemBlock, keyPemBlock))
 }
 
+func TestAccount(t *testing.T) {
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Equal(t, "wx2421b1c4370ec43b", mch.AppID())
+	assert.Equal(t, "10000100", mch.MchID())
+	assert.Equal(t, "192006250b4c09247ec02edce69f6a2d", mch.ApiKey())
+}
+
 // 涉及时间戳，签名会变化（已通过固定时间戳验证）
 // func TestAPPAPI(t *testing.T) {
 // 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")

@@ -46,6 +46,16 @@ func (mp *MP) SetServerConfig(token, encodingAESKey string) {
 	mp.encodingAESKey = encodingAESKey
 }
 
+// AppID returns appid
+func (mp *MP) AppID() string {
+	return mp.appid
+}
+
+// AppSecret returns app secret
+func (mp *MP) AppSecret() string {
+	return mp.appsecret
+}
+
 // Code2Session 获取小程序授权的session_key
 func (mp *MP) Code2Session(ctx context.Context, code string, options ...wx.HTTPOption) (*AuthSession, error) {
 	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", Code2SessionURL, mp.appid, mp.appsecret, code), options...)

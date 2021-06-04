@@ -54,6 +54,16 @@ func (oa *OA) SetServerConfig(token, encodingAESKey string) {
 	oa.encodingAESKey = encodingAESKey
 }
 
+// AppID returns appid
+func (oa *OA) AppID() string {
+	return oa.appid
+}
+
+// AppSecret returns app secret
+func (oa *OA) AppSecret() string {
+	return oa.appsecret
+}
+
 // AuthURL 生成网页授权URL（请使用 URLEncode 对 redirectURL 进行处理）
 // [参考](https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html)
 func (oa *OA) AuthURL(scope AuthScope, redirectURL string, state ...string) string {
