@@ -101,7 +101,7 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) wx.Action 
 			}
 
 			// 收款方银行卡号加密
-			b, err := wx.RSAEncrypt([]byte(data.EncBankNO), publicKey)
+			b, err := wx.RSAEncryptOEAP([]byte(data.EncBankNO), publicKey)
 
 			if err != nil {
 				return nil, err
@@ -110,7 +110,7 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) wx.Action 
 			body["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
 
 			// 收款方用户名加密
-			b, err = wx.RSAEncrypt([]byte(data.EncTrueName), publicKey)
+			b, err = wx.RSAEncryptOEAP([]byte(data.EncTrueName), publicKey)
 
 			if err != nil {
 				return nil, err
