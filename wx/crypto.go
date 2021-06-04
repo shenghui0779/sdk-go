@@ -57,7 +57,7 @@ func (c *cbccrypto) Encrypt(plainText []byte) ([]byte, error) {
 	}
 
 	if len(c.iv) != block.BlockSize() {
-		return nil, errors.New("yiigo: IV length must equal block size")
+		return nil, errors.New("gochat: IV length must equal block size")
 	}
 
 	switch c.mode {
@@ -85,7 +85,7 @@ func (c *cbccrypto) Decrypt(cipherText []byte) ([]byte, error) {
 	}
 
 	if len(c.iv) != block.BlockSize() {
-		return nil, errors.New("yiigo: IV length must equal block size")
+		return nil, errors.New("gochat: IV length must equal block size")
 	}
 
 	plainText := make([]byte, len(cipherText))
