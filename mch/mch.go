@@ -488,3 +488,55 @@ func (mch *Mch) buildSignStr(m wx.WXML) string {
 
 	return strings.Join(kvs, "&")
 }
+
+// CertOption 证书选项
+type CertOption func(mch *Mch) (tls.Certificate, error)
+
+// WithCertP12File 通过p12(pfx)证书文件加载证书
+func WithCertP12File(path string) CertOption {
+	return func(mch *Mch) (tls.Certificate, error) {
+		fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
+
+		certPath, err := filepath.Abs(filepath.Clean(path))
+
+		if err != nil {
+			return fail(err)
+		}
+
+		p12, err := ioutil.ReadFile(certPath)
+
+		if err != nil {
+			return fail(err)
+		}
+
+		return mch.pkcs12ToPem(p12)
+	}
+}
+
+// WithCertPEMBlock 通过pem证书文本内容加载证书
+func WithCertPEMBlock(certPEMBlock, keyPEMBlock []byte) CertOption {
+	return func(mch *Mch) (tls.Certificate, error) {
+		return tls.X509KeyPair(certPEMBlock, keyPEMBlock)
+	}
+}
+
+// WithCertPEMFile 通过pem证书文件加载证书
+func WithCertPEMFile(certFile, keyFile string) CertOption {
+	return func(mch *Mch) (tls.Certificate, error) {
+		fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
+
+		certPath, err := filepath.Abs(filepath.Clean(certFile))
+
+		if err != nil {
+			return fail(err)
+		}
+
+		keyPath, err := filepath.Abs(filepath.Clean(keyFile))
+
+		if err != nil {
+			return fail(err)
+		}
+
+		return tls.LoadX509KeyPair(certPath, keyPath)
+	}
+}
