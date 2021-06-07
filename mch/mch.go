@@ -54,72 +54,22 @@ func New(appid, mchid, apikey string) *Mch {
 	}
 }
 
-// LoadCertFromP12File load cert from p12(pfx) file
-func (mch *Mch) LoadCertFromP12File(p12File string) error {
-	p12FilePath, err := filepath.Abs(filepath.Clean(p12File))
+// LoadCertificate 加载证书
+func (mch *Mch) LoadCertificate(options ...CertOption) error {
+	certs := make([]tls.Certificate, 0, len(options))
 
-	if err != nil {
-		return err
-	}
+	for _, f := range options {
+		cert, err := f(mch)
 
-	p12, err := ioutil.ReadFile(p12FilePath)
+		if err != nil {
+			return err
+		}
 
-	if err != nil {
-		return err
-	}
-
-	cert, err := mch.pkcs12ToPem(p12)
-
-	if err != nil {
-		return err
+		certs = append(certs, cert)
 	}
 
 	mch.tlsClient = wx.NewHTTPClient(&tls.Config{
-		Certificates:       []tls.Certificate{cert},
-		InsecureSkipVerify: true,
-	})
-
-	return nil
-}
-
-// LoadCertFromPemFile load cert from PEM file
-func (mch *Mch) LoadCertFromPemFile(certFile, keyFile string) error {
-	certFilePath, err := filepath.Abs(filepath.Clean(certFile))
-
-	if err != nil {
-		return err
-	}
-
-	keyFilePath, err := filepath.Abs(filepath.Clean(keyFile))
-
-	if err != nil {
-		return err
-	}
-
-	cert, err := tls.LoadX509KeyPair(certFilePath, keyFilePath)
-
-	if err != nil {
-		return err
-	}
-
-	mch.tlsClient = wx.NewHTTPClient(&tls.Config{
-		Certificates:       []tls.Certificate{cert},
-		InsecureSkipVerify: true,
-	})
-
-	return nil
-}
-
-// LoadCertFromPemBlock load cert from a pair of PEM encoded data
-func (mch *Mch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
-	cert, err := tls.X509KeyPair(certPEMBlock, keyPEMBlock)
-
-	if err != nil {
-		return err
-	}
-
-	mch.tlsClient = wx.NewHTTPClient(&tls.Config{
-		Certificates:       []tls.Certificate{cert},
+		Certificates:       certs,
 		InsecureSkipVerify: true,
 	})
 
