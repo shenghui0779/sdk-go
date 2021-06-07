@@ -464,9 +464,9 @@ func WithCertP12File(path string) CertOption {
 }
 
 // WithCertPEMBlock 通过pem证书文本内容加载证书
-func WithCertPEMBlock(certPEMBlock, keyPEMBlock []byte) CertOption {
+func WithCertPEMBlock(certBlock, keyBlock []byte) CertOption {
 	return func(mch *Mch) (tls.Certificate, error) {
-		return tls.X509KeyPair(certPEMBlock, keyPEMBlock)
+		return tls.X509KeyPair(certBlock, keyBlock)
 	}
 }
 

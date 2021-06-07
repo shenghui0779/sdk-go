@@ -12,7 +12,7 @@ import (
 func TestLoadCertFromPemBlock(t *testing.T) {
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	assert.Nil(t, mch.LoadCertFromPemBlock(certPemBlock, keyPemBlock))
+	assert.Nil(t, mch.LoadCertificate(WithCertPEMBlock(certBlock, keyBlock)))
 }
 
 func TestAccount(t *testing.T) {
@@ -269,15 +269,15 @@ func TestDecryptWithAES256ECB(t *testing.T) {
 
 var (
 	// tls certificate
-	certPemBlock []byte
-	keyPemBlock  []byte
+	certBlock []byte
+	keyBlock  []byte
 	// rsa key
 	privateKey []byte
 	publicKey  []byte
 )
 
 func TestMain(m *testing.M) {
-	certPemBlock = []byte(`-----BEGIN CERTIFICATE-----
+	certBlock = []byte(`-----BEGIN CERTIFICATE-----
 MIIEazCCA9SgAwIBAgIDHEZcMA0GCSqGSIb3DQEBBQUAMIGKMQswCQYDVQQGEwJD
 TjESMBAGA1UECBMJR3Vhbmdkb25nMREwDwYDVQQHEwhTaGVuemhlbjEQMA4GA1UE
 ChMHVGVuY2VudDEMMAoGA1UECxMDV1hHMRMwEQYDVQQDEwpNbXBheW1jaENBMR8w
@@ -304,7 +304,7 @@ WGYW0ex09v5KORVBi4ahyJnDFyPC6k/5Dhe++4y4SPxJ/2EI7b0mpPxAF16VePt+
 2RhogAbMS+gv7ecrPv/H1jU+lvZR3ygxHnaG3BP3PA==
 -----END CERTIFICATE-----`)
 
-	keyPemBlock = []byte(`-----BEGIN PRIVATE KEY-----
+	keyBlock = []byte(`-----BEGIN PRIVATE KEY-----
 MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC0Th8J6vfH7Vtb
 bH4tcprGr/mwGtv1quqDbj1zQrh0cHKVwSgkGuYk4YeuFHfVJzvO382dlhw/bGnF
 wLW3YeZvSH2DFxiEDMxyJE8osfeKWhTur8BSRZBCZcCicoNwMpl0wwf3DVl4WS/4
