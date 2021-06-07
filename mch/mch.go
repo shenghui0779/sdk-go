@@ -15,6 +15,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/url"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -54,8 +55,14 @@ func New(appid, mchid, apikey string) *Mch {
 }
 
 // LoadCertFromP12File load cert from p12(pfx) file
-func (mch *Mch) LoadCertFromP12File(path string) error {
-	p12, err := ioutil.ReadFile(path)
+func (mch *Mch) LoadCertFromP12File(p12File string) error {
+	p12FilePath, err := filepath.Abs(filepath.Clean(p12File))
+
+	if err != nil {
+		return err
+	}
+
+	p12, err := ioutil.ReadFile(p12FilePath)
 
 	if err != nil {
 		return err
@@ -77,7 +84,19 @@ func (mch *Mch) LoadCertFromP12File(path string) error {
 
 // LoadCertFromPemFile load cert from PEM file
 func (mch *Mch) LoadCertFromPemFile(certFile, keyFile string) error {
-	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	certFilePath, err := filepath.Abs(filepath.Clean(certFile))
+
+	if err != nil {
+		return err
+	}
+
+	keyFilePath, err := filepath.Abs(filepath.Clean(keyFile))
+
+	if err != nil {
+		return err
+	}
+
+	cert, err := tls.LoadX509KeyPair(certFilePath, keyFilePath)
 
 	if err != nil {
 		return err
