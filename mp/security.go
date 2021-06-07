@@ -2,6 +2,7 @@ package mp
 
 import (
 	"encoding/json"
+	"path/filepath"
 
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
@@ -17,10 +18,12 @@ var (
 )
 
 // ImageSecCheck 校验一张图片是否含有违法违规内容
-func ImageSecCheck(filename string) wx.Action {
+func ImageSecCheck(path string) wx.Action {
+	_, filename := filepath.Split(path)
+
 	return wx.NewAction(ImageSecCheckURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm("media", filename),
+		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByPath(path))),
 	)
 }
 

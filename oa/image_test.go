@@ -15,7 +15,9 @@ func TestAICrop(t *testing.T) {
 
 	client := wx.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN", wx.NewUploadForm("img", "test.jpg")).Return([]byte(`{
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN",
+		wx.NewUploadForm("img", "test.jpg", wx.UploadByPath("test.jpg")),
+	).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"results": [
@@ -133,7 +135,9 @@ func TestScanQRCode(t *testing.T) {
 
 	client := wx.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN", wx.NewUploadForm("img", "test.jpg")).Return([]byte(`{
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN",
+		wx.NewUploadForm("img", "test.jpg", wx.UploadByPath("test.jpg")),
+	).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"code_results": [
@@ -483,7 +487,9 @@ func TestSuperreSolution(t *testing.T) {
 
 	client := wx.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN", wx.NewUploadForm("img", "test.jpg")).Return([]byte(`{
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN",
+		wx.NewUploadForm("img", "test.jpg", wx.UploadByPath("test.jpg")),
+	).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"media_id": "6WXsIXkG7lXuDLspD9xfm5dsvHzb0EFl0li6ySxi92ap8Vl3zZoD9DpOyNudeJGB"

@@ -2,6 +2,7 @@ package oa
 
 import (
 	"encoding/json"
+	"path/filepath"
 
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
@@ -42,10 +43,12 @@ type AICropResult struct {
 }
 
 // AICrop 图片智能裁切
-func AICrop(dest *AICropResult, filename string) wx.Action {
+func AICrop(dest *AICropResult, path string) wx.Action {
+	_, filename := filepath.Split(path)
+
 	return wx.NewAction(AICropURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm("img", filename),
+		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -77,10 +80,12 @@ type QRCodeScanResult struct {
 }
 
 // ScanQRCode 条码/二维码识别
-func ScanQRCode(dest *QRCodeScanResult, filename string) wx.Action {
+func ScanQRCode(dest *QRCodeScanResult, path string) wx.Action {
+	_, filename := filepath.Split(path)
+
 	return wx.NewAction(ScanQRCodeURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm("img", filename),
+		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -104,10 +109,12 @@ type SuperreSolutionResult struct {
 }
 
 // SuperreSolution 图片高清化
-func SuperreSolution(dest *SuperreSolutionResult, filename string) wx.Action {
+func SuperreSolution(dest *SuperreSolutionResult, path string) wx.Action {
+	_, filename := filepath.Split(path)
+
 	return wx.NewAction(SuperreSolutionURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm("img", filename),
+		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 

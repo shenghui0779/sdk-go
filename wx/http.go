@@ -173,32 +173,11 @@ func (c *apiClient) PostXML(ctx context.Context, url string, body WXML, options 
 
 // Upload http upload media
 func (c *apiClient) Upload(ctx context.Context, url string, form UploadForm, options ...HTTPOption) ([]byte, error) {
-	media, err := form.Buffer()
-
-	if err != nil {
-		return nil, err
-	}
-
 	buf := bytes.NewBuffer(make([]byte, 0, 4<<10)) // 4kb
 	w := multipart.NewWriter(buf)
 
-	fw, err := w.CreateFormFile(form.FieldName(), form.FileName())
-
-	if err != nil {
+	if err := form.Write(w); err != nil {
 		return nil, err
-	}
-
-	if _, err = fw.Write(media); err != nil {
-		return nil, err
-	}
-
-	// add extra fields
-	if extraFields := form.ExtraFields(); len(extraFields) != 0 {
-		for k, v := range extraFields {
-			if err = w.WriteField(k, v); err != nil {
-				return nil, err
-			}
-		}
 	}
 
 	options = append(options, WithHTTPHeader("Content-Type", w.FormDataContentType()))

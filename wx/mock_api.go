@@ -6,6 +6,7 @@ package wx
 
 import (
 	context "context"
+	multipart "mime/multipart"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -137,61 +138,18 @@ func (m *MockUploadForm) EXPECT() *MockUploadFormMockRecorder {
 	return m.recorder
 }
 
-// Buffer mocks base method.
-func (m *MockUploadForm) Buffer() ([]byte, error) {
+// Write mocks base method.
+func (m *MockUploadForm) Write(w *multipart.Writer) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Buffer")
-	ret0, _ := ret[0].([]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Buffer indicates an expected call of Buffer.
-func (mr *MockUploadFormMockRecorder) Buffer() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Buffer", reflect.TypeOf((*MockUploadForm)(nil).Buffer))
-}
-
-// ExtraFields mocks base method.
-func (m *MockUploadForm) ExtraFields() map[string]string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ExtraFields")
-	ret0, _ := ret[0].(map[string]string)
+	ret := m.ctrl.Call(m, "Write", w)
+	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// ExtraFields indicates an expected call of ExtraFields.
-func (mr *MockUploadFormMockRecorder) ExtraFields() *gomock.Call {
+// Write indicates an expected call of Write.
+func (mr *MockUploadFormMockRecorder) Write(w interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExtraFields", reflect.TypeOf((*MockUploadForm)(nil).ExtraFields))
-}
-
-// FieldName mocks base method.
-func (m *MockUploadForm) FieldName() string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FieldName")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// FieldName indicates an expected call of FieldName.
-func (mr *MockUploadFormMockRecorder) FieldName() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FieldName", reflect.TypeOf((*MockUploadForm)(nil).FieldName))
-}
-
-// FileName mocks base method.
-func (m *MockUploadForm) FileName() string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FileName")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// FileName indicates an expected call of FileName.
-func (mr *MockUploadFormMockRecorder) FileName() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FileName", reflect.TypeOf((*MockUploadForm)(nil).FileName))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Write", reflect.TypeOf((*MockUploadForm)(nil).Write), w)
 }
 
 // MockAction is a mock of Action interface.

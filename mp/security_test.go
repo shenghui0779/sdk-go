@@ -15,7 +15,9 @@ func TestImageSecCheck(t *testing.T) {
 
 	client := wx.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/img_sec_check?access_token=ACCESS_TOKEN", wx.NewUploadForm("media", "test.jpg")).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/img_sec_check?access_token=ACCESS_TOKEN",
+		wx.NewUploadForm("media", "test.jpg", wx.UploadByPath("test.jpg")),
+	).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
