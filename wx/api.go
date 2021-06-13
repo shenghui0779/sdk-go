@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"mime/multipart"
-	"net/http"
 	"net/url"
 	"path/filepath"
 )
@@ -34,33 +33,49 @@ type HTTPClient interface {
 	Upload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) ([]byte, error)
 }
 
+type uploadmethod int
+
+const (
+	uploadbycontent uploadmethod = iota
+	uploadbypath
+	uploadbyurl
+)
+
 // UploadForm is the interface for http upload
 type UploadForm interface {
 	// Write writes fields to multipart writer
-	Write(w *multipart.Writer) error
+	Write(ctx context.Context, w *multipart.Writer) error
 }
 
 type httpUpload struct {
-	filefield string
-	filename  string
-	filebytes []byte
-	metafield string
-	metadata  string
-	err       error
+	filefield   string
+	filename    string
+	method      uploadmethod
+	filefrom    string
+	filecontent []byte
+	metafield   string
+	metadata    string
 }
 
-func (u *httpUpload) Write(w *multipart.Writer) error {
-	if u.err != nil {
-		return u.err
-	}
-
+func (u *httpUpload) Write(ctx context.Context, w *multipart.Writer) error {
 	part, err := w.CreateFormFile(u.filefield, u.filename)
 
 	if err != nil {
 		return err
 	}
 
-	if _, err = part.Write(u.filebytes); err != nil {
+	switch u.method {
+	case uploadbypath:
+		err = u.getContentByPath()
+	case uploadbyurl:
+		err = u.getContentByResourceURL(ctx)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	if _, err = part.Write(u.filecontent); err != nil {
 		return err
 	}
 
@@ -74,67 +89,48 @@ func (u *httpUpload) Write(w *multipart.Writer) error {
 	return nil
 }
 
+func (u *httpUpload) getContentByPath() error {
+	path, err := filepath.Abs(u.filefrom)
+
+	if err != nil {
+		return err
+	}
+
+	u.filecontent, err = ioutil.ReadFile(path)
+
+	return err
+}
+
+func (u *httpUpload) getContentByResourceURL(ctx context.Context) (err error) {
+	u.filecontent, err = internalClient.Get(ctx, u.filefrom)
+
+	return
+}
+
 // UploadOption configures how we set up the upload from.
 type UploadOption func(u *httpUpload)
 
 // UploadByPath uploads by file path
 func UploadByPath(path string) UploadOption {
 	return func(u *httpUpload) {
-		path, err := filepath.Abs(filepath.Clean(path))
-
-		if err != nil {
-			u.err = fmt.Errorf("read content by path error: %s", err.Error())
-
-			return
-		}
-
-		b, err := ioutil.ReadFile(path)
-
-		if err != nil {
-			u.err = fmt.Errorf("read content by path error: %s", err.Error())
-
-			return
-		}
-
-		u.filebytes = b
+		u.method = uploadbypath
+		u.filefrom = filepath.Clean(path)
 	}
 }
 
 // UploadByContent uploads by file content
 func UploadByContent(content []byte) UploadOption {
 	return func(u *httpUpload) {
-		u.filebytes = content
+		u.method = uploadbycontent
+		u.filecontent = content
 	}
 }
 
 // UploadByResourceURL uploads file by resource url
 func UploadByResourceURL(url string) UploadOption {
 	return func(u *httpUpload) {
-		resp, err := http.Get(url)
-
-		if err != nil {
-			u.err = fmt.Errorf("get content by resource url error: %s", err.Error())
-
-			return
-		}
-
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			u.err = fmt.Errorf("error http code from resource url: %d", resp.StatusCode)
-
-			return
-		}
-
-		b, err := ioutil.ReadAll(resp.Body)
-
-		if err != nil {
-			u.err = fmt.Errorf("get content by resource url error: %s", err.Error())
-
-			return
-		}
-
-		u.filebytes = b
+		u.method = uploadbyurl
+		u.filefrom = url
 	}
 }
 

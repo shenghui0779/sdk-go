@@ -119,13 +119,7 @@ func (c *apiClient) do(ctx context.Context, req *http.Request, options ...HTTPOp
 		return nil, fmt.Errorf("error http code: %d", resp.StatusCode)
 	}
 
-	b, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return b, nil
+	return ioutil.ReadAll(resp.Body)
 }
 
 // Get http get request
@@ -176,7 +170,7 @@ func (c *apiClient) Upload(ctx context.Context, url string, form UploadForm, opt
 	buf := bytes.NewBuffer(make([]byte, 0, 4<<10)) // 4kb
 	w := multipart.NewWriter(buf)
 
-	if err := form.Write(w); err != nil {
+	if err := form.Write(ctx, w); err != nil {
 		return nil, err
 	}
 
@@ -222,3 +216,5 @@ func NewHTTPClient(tlsCfg ...*tls.Config) HTTPClient {
 		timeout: defaultTimeout,
 	}
 }
+
+var internalClient = NewHTTPClient()

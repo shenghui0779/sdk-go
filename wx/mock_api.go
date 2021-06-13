@@ -139,17 +139,17 @@ func (m *MockUploadForm) EXPECT() *MockUploadFormMockRecorder {
 }
 
 // Write mocks base method.
-func (m *MockUploadForm) Write(w *multipart.Writer) error {
+func (m *MockUploadForm) Write(ctx context.Context, w *multipart.Writer) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Write", w)
+	ret := m.ctrl.Call(m, "Write", ctx, w)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Write indicates an expected call of Write.
-func (mr *MockUploadFormMockRecorder) Write(w interface{}) *gomock.Call {
+func (mr *MockUploadFormMockRecorder) Write(ctx, w interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Write", reflect.TypeOf((*MockUploadForm)(nil).Write), w)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Write", reflect.TypeOf((*MockUploadForm)(nil).Write), ctx, w)
 }
 
 // MockAction is a mock of Action interface.
