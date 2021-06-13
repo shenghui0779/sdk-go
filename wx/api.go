@@ -66,13 +66,13 @@ func (u *httpUpload) Write(ctx context.Context, w *multipart.Writer) error {
 
 	switch u.method {
 	case uploadbypath:
-		err = u.getContentByPath()
+		if err = u.getContentByPath(); err != nil {
+			return err
+		}
 	case uploadbyurl:
-		err = u.getContentByURL(ctx)
-	}
-
-	if err != nil {
-		return err
+		if err = u.getContentByURL(ctx); err != nil {
+			return err
+		}
 	}
 
 	if _, err = part.Write(u.filecontent); err != nil {
