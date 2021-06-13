@@ -68,7 +68,7 @@ func (u *httpUpload) Write(ctx context.Context, w *multipart.Writer) error {
 	case uploadbypath:
 		err = u.getContentByPath()
 	case uploadbyurl:
-		err = u.getContentByResourceURL(ctx)
+		err = u.getContentByURL(ctx)
 	}
 
 	if err != nil {
@@ -101,7 +101,7 @@ func (u *httpUpload) getContentByPath() error {
 	return err
 }
 
-func (u *httpUpload) getContentByResourceURL(ctx context.Context) (err error) {
+func (u *httpUpload) getContentByURL(ctx context.Context) (err error) {
 	u.filecontent, err = internalClient.Get(ctx, u.filefrom)
 
 	return
