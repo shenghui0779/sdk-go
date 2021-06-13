@@ -110,14 +110,6 @@ func (u *httpUpload) getContentByResourceURL(ctx context.Context) (err error) {
 // UploadOption configures how we set up the upload from.
 type UploadOption func(u *httpUpload)
 
-// UploadByPath uploads by file path
-func UploadByPath(path string) UploadOption {
-	return func(u *httpUpload) {
-		u.method = uploadbypath
-		u.filefrom = filepath.Clean(path)
-	}
-}
-
 // UploadByContent uploads by file content
 func UploadByContent(content []byte) UploadOption {
 	return func(u *httpUpload) {
@@ -126,8 +118,16 @@ func UploadByContent(content []byte) UploadOption {
 	}
 }
 
-// UploadByResourceURL uploads file by resource url
-func UploadByResourceURL(url string) UploadOption {
+// UploadByPath uploads by file path
+func UploadByPath(path string) UploadOption {
+	return func(u *httpUpload) {
+		u.method = uploadbypath
+		u.filefrom = filepath.Clean(path)
+	}
+}
+
+// UploadByURL uploads file by resource url
+func UploadByURL(url string) UploadOption {
 	return func(u *httpUpload) {
 		u.method = uploadbyurl
 		u.filefrom = url

@@ -47,7 +47,7 @@ func TestUploadMediaByURL(t *testing.T) {
 	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image",
-		wx.NewUploadForm("media", "test.jpg", wx.UploadByResourceURL("https://media.test.com/test.jpg")),
+		wx.NewUploadForm("media", "test.jpg", wx.UploadByURL("https://media.test.com/test.jpg")),
 	).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
@@ -140,7 +140,7 @@ func TestUploadNewsImageByURL(t *testing.T) {
 	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN",
-		wx.NewUploadForm("media", "test.jpg", wx.UploadByResourceURL("https://media.test.com/test.jpg")),
+		wx.NewUploadForm("media", "test.jpg", wx.UploadByURL("https://media.test.com/test.jpg")),
 	).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
@@ -196,7 +196,7 @@ func TestAddMaterialByURL(t *testing.T) {
 	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=image",
-		wx.NewUploadForm("media", "test.jpg", wx.UploadByResourceURL("https://media.test.com/test.jpg")),
+		wx.NewUploadForm("media", "test.jpg", wx.UploadByURL("https://media.test.com/test.jpg")),
 	).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
@@ -258,7 +258,7 @@ func TestUploadVideoByURL(t *testing.T) {
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=video",
 		wx.NewUploadForm("media", "test.mp4",
-			wx.UploadByResourceURL("https://media.test.com/test.mp4"),
+			wx.UploadByURL("https://media.test.com/test.mp4"),
 			wx.WithMetaField("description", `{"title":"TITLE", "introduction":"INTRODUCTION"}`),
 		),
 	).Return([]byte(`{

@@ -46,7 +46,7 @@ func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, re
 	return wx.NewAction(MediaUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByResourceURL(resourceURL))),
+		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByURL(resourceURL))),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -106,7 +106,7 @@ func UploadNewsImage(dest *MaterialAddResult, path string) wx.Action {
 func UploadNewsImageByURL(dest *MaterialAddResult, filename, resourceURL string) wx.Action {
 	return wx.NewAction(NewsImageUploadURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByResourceURL(resourceURL))),
+		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByURL(resourceURL))),
 		wx.WithDecode(func(resp []byte) error {
 			dest.URL = gjson.GetBytes(resp, "url").String()
 
@@ -134,7 +134,7 @@ func AddMaterialByURL(dest *MaterialAddResult, mediaType MediaType, filename, re
 	return wx.NewAction(MaterialAddURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByResourceURL(resourceURL))),
+		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByURL(resourceURL))),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -164,7 +164,7 @@ func UploadVideoByURL(dest *MaterialAddResult, filename, title, introduction, re
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(MediaVideo)),
 		wx.WithUploadForm(wx.NewUploadForm("media", filename,
-			wx.UploadByResourceURL(resourceURL),
+			wx.UploadByURL(resourceURL),
 			wx.WithMetaField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, introduction)),
 		)),
 		wx.WithDecode(func(resp []byte) error {
