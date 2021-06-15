@@ -36,7 +36,7 @@ type HTTPClient interface {
 type uploadmethod int
 
 const (
-	uploadbycontent uploadmethod = iota
+	uploadbybytes uploadmethod = iota
 	uploadbypath
 	uploadbyurl
 )
@@ -110,10 +110,10 @@ func (u *httpUpload) getContentByURL(ctx context.Context) (err error) {
 // UploadOption configures how we set up the upload from.
 type UploadOption func(u *httpUpload)
 
-// UploadByContent uploads by file content
-func UploadByContent(content []byte) UploadOption {
+// UploadByBytes uploads by file content
+func UploadByBytes(content []byte) UploadOption {
 	return func(u *httpUpload) {
-		u.method = uploadbycontent
+		u.method = uploadbybytes
 		u.filecontent = content
 	}
 }
