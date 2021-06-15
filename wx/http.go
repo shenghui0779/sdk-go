@@ -217,4 +217,19 @@ func NewHTTPClient(tlsCfg ...*tls.Config) HTTPClient {
 	}
 }
 
-var internalClient = NewHTTPClient()
+var defaultHTTPClient = NewHTTPClient()
+
+// HTTPGet http get request
+func HTTPGet(ctx context.Context, url string, options ...HTTPOption) ([]byte, error) {
+	return defaultHTTPClient.Get(ctx, url, options...)
+}
+
+// HTTPPost http post request
+func HTTPPost(ctx context.Context, url string, body []byte, options ...HTTPOption) ([]byte, error) {
+	return defaultHTTPClient.Post(ctx, url, body, options...)
+}
+
+// HTTPUpload http upload file
+func HTTPUpload(ctx context.Context, url string, form UploadForm, options ...HTTPOption) ([]byte, error) {
+	return defaultHTTPClient.Upload(ctx, url, form, options...)
+}

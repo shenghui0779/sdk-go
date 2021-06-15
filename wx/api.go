@@ -102,7 +102,7 @@ func (u *httpUpload) getContentByPath() error {
 }
 
 func (u *httpUpload) getContentByURL(ctx context.Context) (err error) {
-	u.filecontent, err = internalClient.Get(ctx, u.filefrom)
+	u.filecontent, err = HTTPGet(ctx, u.filefrom)
 
 	return
 }
