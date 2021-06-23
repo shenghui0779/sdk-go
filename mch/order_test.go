@@ -43,7 +43,7 @@ func TestUnifyOrder(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "1add1a30ac87aa2db72f57a2375d8fec"
 	}
 	mch.client = client
@@ -110,7 +110,7 @@ func TestQueryOrderByTransactionID(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "ec2316275641faa3aacf3cc599e8730f"
 	}
 	mch.client = client
@@ -179,7 +179,7 @@ func TestQueryOrderByOutTradeNO(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "ec2316275641faa3aacf3cc599e8730f"
 	}
 	mch.client = client
@@ -237,7 +237,7 @@ func TestCloseOrder(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "4ca93f17ddf3443ceabf72f26d64fe0e"
 	}
 	mch.client = client

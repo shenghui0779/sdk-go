@@ -2,6 +2,8 @@ package wx
 
 import (
 	"bytes"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
@@ -23,6 +25,14 @@ func (c CDATA) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement(struct {
 		string `xml:",cdata"`
 	}{string(c)}, start)
+}
+
+// Nonce returns nonce string, param `size` better for even number.
+func Nonce(size uint) string {
+	nonce := make([]byte, size/2)
+	io.ReadFull(rand.Reader, nonce)
+
+	return hex.EncodeToString(nonce)
 }
 
 // FormatMap2XML format map to xml

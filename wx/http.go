@@ -189,8 +189,25 @@ func (c *apiClient) Upload(ctx context.Context, url string, form UploadForm, opt
 	return c.do(ctx, req, options...)
 }
 
+// TLSOption configures how we set up the http client tls config
+type TLSOption func(cfg *tls.Config)
+
+// WithInsecureSkipVerify specifies the `InsecureSkipVerify` to http client tls config.
+func WithInsecureSkipVerify() TLSOption {
+	return func(cfg *tls.Config) {
+		cfg.InsecureSkipVerify = true
+	}
+}
+
+// WithTLSCertificates specifies the certificate to http client tls config.
+func WithTLSCertificates(certs ...tls.Certificate) TLSOption {
+	return func(cfg *tls.Config) {
+		cfg.Certificates = certs
+	}
+}
+
 // NewHTTPClient returns a new http client
-func NewHTTPClient(tlsCfg ...*tls.Config) HTTPClient {
+func NewHTTPClient(options ...TLSOption) HTTPClient {
 	t := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
@@ -205,8 +222,12 @@ func NewHTTPClient(tlsCfg ...*tls.Config) HTTPClient {
 		ExpectContinueTimeout: 1 * time.Second,
 	}
 
-	if len(tlsCfg) != 0 {
-		t.TLSClientConfig = tlsCfg[0]
+	if len(options) != 0 {
+		t.TLSClientConfig = new(tls.Config)
+
+		for _, f := range options {
+			f(t.TLSClientConfig)
+		}
 	}
 
 	return &apiClient{

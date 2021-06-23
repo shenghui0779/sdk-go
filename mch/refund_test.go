@@ -42,7 +42,7 @@ func TestRefundByTransactionID(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
 	}
 
@@ -104,7 +104,7 @@ func TestRefundByOutTradeNO(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
 	}
 
@@ -165,7 +165,7 @@ func TestQueryRefundByRefundID(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 
@@ -224,7 +224,7 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 
@@ -283,7 +283,7 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 
@@ -342,7 +342,7 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 

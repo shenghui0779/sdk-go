@@ -2,13 +2,11 @@ package oa
 
 import (
 	"context"
-	"crypto/rand"
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 	"time"
 
 	"github.com/shenghui0779/gochat/event"
@@ -23,7 +21,7 @@ type OA struct {
 	originid       string
 	token          string
 	encodingAESKey string
-	nonce          func(size int) string
+	nonce          func(size uint) string
 	client         wx.HTTPClient
 }
 
@@ -32,13 +30,8 @@ func New(appid, appsecret string) *OA {
 	return &OA{
 		appid:     appid,
 		appsecret: appsecret,
-		nonce: func(size int) string {
-			nonce := make([]byte, size/2)
-			io.ReadFull(rand.Reader, nonce)
-
-			return hex.EncodeToString(nonce)
-		},
-		client: wx.NewHTTPClient(),
+		nonce:     wx.Nonce,
+		client:    wx.NewHTTPClient(wx.WithInsecureSkipVerify()),
 	}
 }
 

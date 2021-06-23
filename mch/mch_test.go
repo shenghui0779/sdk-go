@@ -104,7 +104,7 @@ func TestDownloadBill(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "21df7dc9cd8616b56919f20d9f679233"
 	}
 	mch.client = client
@@ -141,7 +141,7 @@ func TestDownloadFundFlow(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "21df7dc9cd8616b56919f20d9f679233"
 	}
 	mch.client = client
@@ -179,7 +179,7 @@ func TestBatchQueryComment(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 	mch.client = client

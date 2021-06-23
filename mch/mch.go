@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/hmac"
 	"crypto/md5"
-	"crypto/rand"
 	"crypto/sha256"
 	"crypto/tls"
 	"encoding/base64"
@@ -12,7 +11,6 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
@@ -30,25 +28,20 @@ type Mch struct {
 	appid     string
 	mchid     string
 	apikey    string
-	nonce     func(size int) string
+	nonce     func(size uint) string
 	client    wx.HTTPClient
 	tlsClient wx.HTTPClient
 }
 
 // New returns new wechat pay
 func New(appid, mchid, apikey string) *Mch {
-	c := wx.NewHTTPClient(&tls.Config{InsecureSkipVerify: true})
+	c := wx.NewHTTPClient(wx.WithInsecureSkipVerify())
 
 	return &Mch{
-		appid:  appid,
-		mchid:  mchid,
-		apikey: apikey,
-		nonce: func(size int) string {
-			nonce := make([]byte, size/2)
-			io.ReadFull(rand.Reader, nonce)
-
-			return hex.EncodeToString(nonce)
-		},
+		appid:     appid,
+		mchid:     mchid,
+		apikey:    apikey,
+		nonce:     wx.Nonce,
 		client:    c,
 		tlsClient: c,
 	}
@@ -68,10 +61,10 @@ func (mch *Mch) LoadCertificate(options ...CertOption) error {
 		certs = append(certs, cert)
 	}
 
-	mch.tlsClient = wx.NewHTTPClient(&tls.Config{
-		Certificates:       certs,
-		InsecureSkipVerify: true,
-	})
+	mch.tlsClient = wx.NewHTTPClient(
+		wx.WithTLSCertificates(certs...),
+		wx.WithInsecureSkipVerify(),
+	)
 
 	return nil
 }

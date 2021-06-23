@@ -2,12 +2,9 @@ package mp
 
 import (
 	"context"
-	"crypto/rand"
 	"encoding/base64"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
@@ -20,7 +17,7 @@ type MP struct {
 	appsecret      string
 	token          string
 	encodingAESKey string
-	nonce          func(size int) string
+	nonce          func(size uint) string
 	client         wx.HTTPClient
 }
 
@@ -29,13 +26,8 @@ func New(appid, appsecret string) *MP {
 	return &MP{
 		appid:     appid,
 		appsecret: appsecret,
-		nonce: func(size int) string {
-			nonce := make([]byte, size/2)
-			io.ReadFull(rand.Reader, nonce)
-
-			return hex.EncodeToString(nonce)
-		},
-		client: wx.NewHTTPClient(),
+		nonce:     wx.Nonce,
+		client:    wx.NewHTTPClient(wx.WithInsecureSkipVerify()),
 	}
 }
 

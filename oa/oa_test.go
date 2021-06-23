@@ -18,7 +18,7 @@ func TestAccount(t *testing.T) {
 
 func TestAuthURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
-	oa.nonce = func(size int) string {
+	oa.nonce = func(size uint) string {
 		return "STATE"
 	}
 

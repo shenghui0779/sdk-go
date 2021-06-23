@@ -41,7 +41,7 @@ func TestTransferToBalance(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 
@@ -100,7 +100,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
@@ -213,7 +213,7 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
@@ -266,7 +266,7 @@ DQIDAQAB
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
