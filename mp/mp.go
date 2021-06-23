@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/tidwall/gjson"
+
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/tidwall/gjson"
 )
 
 // MP 微信小程序

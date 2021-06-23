@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // KFInviteStatus 客服邀请状态

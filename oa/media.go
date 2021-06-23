@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // MediaType 素材类型

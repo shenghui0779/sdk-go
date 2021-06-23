@@ -11,7 +11,7 @@ func NewMch(appid, mchid, apikey string) *mch.Mch {
 	return mch.New(appid, mchid, apikey)
 }
 
-// NewPub 微信公众号
+// NewOA 微信公众号
 func NewOA(appid, appsecret string) *oa.OA {
 	return oa.New(appid, appsecret)
 }

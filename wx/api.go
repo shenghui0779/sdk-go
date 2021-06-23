@@ -26,7 +26,7 @@ type HTTPClient interface {
 	// Post sends an HTTP post request
 	Post(ctx context.Context, reqURL string, body []byte, options ...HTTPOption) ([]byte, error)
 
-	// Upload sends an HTTP post request with xml
+	// PostXML sends an HTTP post request with xml
 	PostXML(ctx context.Context, reqURL string, body WXML, options ...HTTPOption) ([]byte, error)
 
 	// Upload sends an HTTP post request for uploading media

@@ -4,8 +4,9 @@ import (
 	"encoding/base64"
 	"testing"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCrypto(t *testing.T) {

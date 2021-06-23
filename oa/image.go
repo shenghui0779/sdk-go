@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // ImageSize 图片尺寸
