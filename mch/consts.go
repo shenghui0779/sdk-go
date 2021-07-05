@@ -37,8 +37,9 @@ const (
 )
 
 const (
-	CouponTypeCash   = "CASH"    // 充值代金券
-	CouponTypeNoCash = "NO_CASH" // 非充值优惠券
+	NoCredit         = "no_credit" // 指定不能使用信用卡支付
+	CouponTypeCash   = "CASH"      // 充值代金券
+	CouponTypeNoCash = "NO_CASH"   // 非充值优惠券
 )
 
 const (
