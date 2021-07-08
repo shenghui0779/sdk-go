@@ -1,10 +1,13 @@
 package oa
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"path/filepath"
 
+	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -14,7 +17,7 @@ import (
 type MediaType string
 
 // 微信支持的素材类型
-var (
+const (
 	MediaImage MediaType = "image" // 图片
 	MediaVoice MediaType = "voice" // 音频
 	MediaVideo MediaType = "video" // 视频
@@ -35,7 +38,19 @@ func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.A
 	return wx.NewAction(MediaUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByPath(path))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			path, err := filepath.Abs(filepath.Clean(path))
+
+			if err != nil {
+				return nil, err
+			}
+
+			return ioutil.ReadFile(path)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -47,7 +62,21 @@ func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, re
 	return wx.NewAction(MediaUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByURL(resourceURL))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			resp, err := yiigo.HTTPGet(context.Background(), resourceURL)
+
+			if err != nil {
+				return nil, err
+			}
+
+			defer resp.Body.Close()
+
+			return ioutil.ReadAll(resp.Body)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -94,7 +123,19 @@ func UploadNewsImage(dest *MaterialAddResult, path string) wx.Action {
 
 	return wx.NewAction(NewsImageUploadURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByPath(path))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			path, err := filepath.Abs(filepath.Clean(path))
+
+			if err != nil {
+				return nil, err
+			}
+
+			return ioutil.ReadFile(path)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			dest.URL = gjson.GetBytes(resp, "url").String()
 
@@ -107,7 +148,21 @@ func UploadNewsImage(dest *MaterialAddResult, path string) wx.Action {
 func UploadNewsImageByURL(dest *MaterialAddResult, filename, resourceURL string) wx.Action {
 	return wx.NewAction(NewsImageUploadURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByURL(resourceURL))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			resp, err := yiigo.HTTPGet(context.Background(), resourceURL)
+
+			if err != nil {
+				return nil, err
+			}
+
+			defer resp.Body.Close()
+
+			return ioutil.ReadAll(resp.Body)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			dest.URL = gjson.GetBytes(resp, "url").String()
 
@@ -123,7 +178,19 @@ func AddMaterial(dest *MaterialAddResult, mediaType MediaType, path string) wx.A
 	return wx.NewAction(MaterialAddURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByPath(path))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			path, err := filepath.Abs(filepath.Clean(path))
+
+			if err != nil {
+				return nil, err
+			}
+
+			return ioutil.ReadFile(path)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -135,7 +202,21 @@ func AddMaterialByURL(dest *MaterialAddResult, mediaType MediaType, filename, re
 	return wx.NewAction(MaterialAddURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByURL(resourceURL))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			resp, err := yiigo.HTTPGet(context.Background(), resourceURL)
+
+			if err != nil {
+				return nil, err
+			}
+
+			defer resp.Body.Close()
+
+			return ioutil.ReadAll(resp.Body)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -149,10 +230,21 @@ func UploadVideo(dest *MaterialAddResult, path, title, introduction string) wx.A
 	return wx.NewAction(MaterialAddURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(MediaVideo)),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename,
-			wx.UploadByPath(path),
-			wx.WithMetaField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, introduction)),
-		)),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+			MetaField: "description",
+			Metadata:  fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, introduction),
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			path, err := filepath.Abs(filepath.Clean(path))
+
+			if err != nil {
+				return nil, err
+			}
+
+			return ioutil.ReadFile(path)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -164,10 +256,23 @@ func UploadVideoByURL(dest *MaterialAddResult, filename, title, introduction, re
 	return wx.NewAction(MaterialAddURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(MediaVideo)),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename,
-			wx.UploadByURL(resourceURL),
-			wx.WithMetaField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, introduction)),
-		)),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+			MetaField: "description",
+			Metadata:  fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, introduction),
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			resp, err := yiigo.HTTPGet(context.Background(), resourceURL)
+
+			if err != nil {
+				return nil, err
+			}
+
+			defer resp.Body.Close()
+
+			return ioutil.ReadAll(resp.Body)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),

@@ -1,8 +1,12 @@
 package mp
 
 import (
+	"context"
 	"encoding/json"
+	"io/ioutil"
 	"path/filepath"
+
+	"github.com/shenghui0779/yiigo"
 
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -11,7 +15,7 @@ import (
 type MediaType string
 
 // 微信支持的素材类型
-var MediaImage MediaType = "image" // 图片
+const MediaImage MediaType = "image" // 图片
 
 // MediaUploadResult  临时素材上传信息
 type MediaUploadResult struct {
@@ -27,7 +31,19 @@ func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.A
 	return wx.NewAction(MediaUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByPath(path))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			path, err := filepath.Abs(filepath.Clean(path))
+
+			if err != nil {
+				return nil, err
+			}
+
+			return ioutil.ReadFile(path)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -39,7 +55,22 @@ func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, re
 	return wx.NewAction(MediaUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByURL(resourceURL))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			resp, err := yiigo.HTTPGet(context.TODO(), resourceURL)
+			// resp, err := http.Get(resourceURL)
+
+			if err != nil {
+				return nil, err
+			}
+
+			defer resp.Body.Close()
+
+			return ioutil.ReadAll(resp.Body)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),

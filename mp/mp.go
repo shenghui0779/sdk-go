@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/event"
@@ -19,7 +20,7 @@ type MP struct {
 	token          string
 	encodingAESKey string
 	nonce          func(size uint) string
-	client         wx.HTTPClient
+	client         wx.Client
 }
 
 // New returns new wechat mini program
@@ -28,7 +29,7 @@ func New(appid, appsecret string) *MP {
 		appid:     appid,
 		appsecret: appsecret,
 		nonce:     wx.Nonce,
-		client:    wx.NewHTTPClient(wx.WithInsecureSkipVerify()),
+		client:    wx.NewClient(wx.WithInsecureSkipVerify()),
 	}
 }
 
@@ -50,7 +51,7 @@ func (mp *MP) AppSecret() string {
 }
 
 // Code2Session 获取小程序授权的session_key
-func (mp *MP) Code2Session(ctx context.Context, code string, options ...wx.HTTPOption) (*AuthSession, error) {
+func (mp *MP) Code2Session(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthSession, error) {
 	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", Code2SessionURL, mp.appid, mp.appsecret, code), options...)
 
 	if err != nil {
@@ -73,7 +74,7 @@ func (mp *MP) Code2Session(ctx context.Context, code string, options ...wx.HTTPO
 }
 
 // AccessToken 获取小程序的access_token
-func (mp *MP) AccessToken(ctx context.Context, options ...wx.HTTPOption) (*AccessToken, error) {
+func (mp *MP) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*AccessToken, error) {
 	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&grant_type=client_credential", AccessTokenURL, mp.appid, mp.appsecret), options...)
 
 	if err != nil {
@@ -115,7 +116,7 @@ func (mp *MP) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData strin
 		return err
 	}
 
-	cbc := wx.NewCBCCrypto(key, ivb, wx.PKCS7)
+	cbc := yiigo.NewCBCCrypto(key, ivb, yiigo.PKCS7)
 
 	b, err := cbc.Decrypt(cipherText)
 
@@ -135,7 +136,7 @@ func (mp *MP) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData strin
 }
 
 // Do exec action
-func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, options ...wx.HTTPOption) error {
+func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, options ...yiigo.HTTPOption) error {
 	var (
 		resp []byte
 		err  error
@@ -145,17 +146,22 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 	case wx.MethodGet:
 		resp, err = mp.client.Get(ctx, action.URL(accessToken), options...)
 	case wx.MethodPost:
-		var body []byte
+		body, berr := action.Body()
 
-		body, err = action.Body()
-
-		if err != nil {
+		if berr != nil {
 			return err
 		}
 
 		resp, err = mp.client.Post(ctx, action.URL(accessToken), body, options...)
 	case wx.MethodUpload:
-		resp, err = mp.client.Upload(ctx, action.URL(accessToken), action.UploadForm(), options...)
+		form, ferr := action.UploadForm()
+
+		if ferr != nil {
+			fmt.Println("[ERR]", ferr)
+			return ferr
+		}
+
+		resp, err = mp.client.Upload(ctx, action.URL(accessToken), form, options...)
 	}
 
 	if err != nil {

@@ -14,7 +14,7 @@ func TestSendNormalRedpack(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack", wx.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -81,7 +81,7 @@ func TestSendGroupRedpack(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack", wx.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -147,7 +147,7 @@ func TestSendMinipRedpack(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendminiprogramhb", wx.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
@@ -213,7 +213,7 @@ func TestQueryRedpackByBillNO(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo", wx.WXML{
 		"appid":      "wx2421b1c4370ec43b",

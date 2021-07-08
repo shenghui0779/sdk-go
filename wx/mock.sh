@@ -1,2 +1,2 @@
 #!/bin/bash
-mockgen -source=api.go -destination=mock_api.go -package=wx
+mockgen -source=client.go -destination=mock_client.go -package=wx

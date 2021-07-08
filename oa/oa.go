@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/event"
@@ -23,7 +24,7 @@ type OA struct {
 	token          string
 	encodingAESKey string
 	nonce          func(size uint) string
-	client         wx.HTTPClient
+	client         wx.Client
 }
 
 // New returns new OA
@@ -32,7 +33,7 @@ func New(appid, appsecret string) *OA {
 		appid:     appid,
 		appsecret: appsecret,
 		nonce:     wx.Nonce,
-		client:    wx.NewHTTPClient(wx.WithInsecureSkipVerify()),
+		client:    wx.NewClient(wx.WithInsecureSkipVerify()),
 	}
 }
 
@@ -71,7 +72,7 @@ func (oa *OA) AuthURL(scope AuthScope, redirectURL string, state ...string) stri
 }
 
 // Code2AuthToken 获取网页授权AccessToken
-func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...wx.HTTPOption) (*AuthToken, error) {
+func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthToken, error) {
 	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", SnsCode2TokenURL, oa.appid, oa.appsecret, code), options...)
 
 	if err != nil {
@@ -94,7 +95,7 @@ func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...wx.HTT
 }
 
 // RefreshAuthToken 刷新网页授权AccessToken
-func (oa *OA) RefreshAuthToken(ctx context.Context, refreshToken string, options ...wx.HTTPOption) (*AuthToken, error) {
+func (oa *OA) RefreshAuthToken(ctx context.Context, refreshToken string, options ...yiigo.HTTPOption) (*AuthToken, error) {
 	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", SnsRefreshAccessTokenURL, oa.appid, refreshToken), options...)
 
 	if err != nil {
@@ -117,7 +118,7 @@ func (oa *OA) RefreshAuthToken(ctx context.Context, refreshToken string, options
 }
 
 // AccessToken 获取普通AccessToken
-func (oa *OA) AccessToken(ctx context.Context, options ...wx.HTTPOption) (*AccessToken, error) {
+func (oa *OA) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*AccessToken, error) {
 	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", CgiBinAccessTokenURL, oa.appid, oa.appsecret), options...)
 
 	if err != nil {
@@ -140,7 +141,7 @@ func (oa *OA) AccessToken(ctx context.Context, options ...wx.HTTPOption) (*Acces
 }
 
 // Do exec action
-func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, options ...wx.HTTPOption) error {
+func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, options ...yiigo.HTTPOption) error {
 	var (
 		resp []byte
 		err  error
@@ -158,7 +159,13 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 
 		resp, err = oa.client.Post(ctx, action.URL(accessToken), body, options...)
 	case wx.MethodUpload:
-		resp, err = oa.client.Upload(ctx, action.URL(accessToken), action.UploadForm(), options...)
+		form, ferr := action.UploadForm()
+
+		if ferr != nil {
+			return ferr
+		}
+
+		resp, err = oa.client.Upload(ctx, action.URL(accessToken), form, options...)
 	}
 
 	if err != nil {

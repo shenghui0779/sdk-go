@@ -2,6 +2,7 @@ package mp
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"path/filepath"
 
 	"github.com/tidwall/gjson"
@@ -24,7 +25,19 @@ func ImageSecCheck(path string) wx.Action {
 
 	return wx.NewAction(ImageSecCheckURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByPath(path))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			path, err := filepath.Abs(filepath.Clean(path))
+
+			if err != nil {
+				return nil, err
+			}
+
+			return ioutil.ReadFile(path)
+		}),
 	)
 }
 

@@ -19,6 +19,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/shenghui0779/yiigo"
 	"golang.org/x/crypto/pkcs12"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -30,13 +31,13 @@ type Mch struct {
 	mchid     string
 	apikey    string
 	nonce     func(size uint) string
-	client    wx.HTTPClient
-	tlsClient wx.HTTPClient
+	client    wx.Client
+	tlsClient wx.Client
 }
 
 // New returns new wechat pay
 func New(appid, mchid, apikey string) *Mch {
-	c := wx.NewHTTPClient(wx.WithInsecureSkipVerify())
+	c := wx.NewClient(wx.WithInsecureSkipVerify())
 
 	return &Mch{
 		appid:     appid,
@@ -62,7 +63,7 @@ func (mch *Mch) LoadCertificate(options ...CertOption) error {
 		certs = append(certs, cert)
 	}
 
-	mch.tlsClient = wx.NewHTTPClient(
+	mch.tlsClient = wx.NewClient(
 		wx.WithTLSCertificates(certs...),
 		wx.WithInsecureSkipVerify(),
 	)
@@ -86,7 +87,7 @@ func (mch *Mch) ApiKey() string {
 }
 
 // Do exec action
-func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOption) (wx.WXML, error) {
+func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPOption) (wx.WXML, error) {
 	m, err := action.WXML(mch.appid, mch.mchid, mch.nonce(16))
 
 	if err != nil {
@@ -215,7 +216,7 @@ func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]
 
 	m["sign"] = mch.SignWithMD5(m, true)
 
-	resp, err := mch.client.PostXML(ctx, DownloadBillURL, m, wx.WithHTTPClose())
+	resp, err := mch.client.PostXML(ctx, DownloadBillURL, m, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -248,7 +249,7 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType stri
 
 	m["sign"] = mch.SignWithHMacSHA256(m, true)
 
-	resp, err := mch.tlsClient.PostXML(ctx, DownloadFundFlowURL, m, wx.WithHTTPClose())
+	resp, err := mch.tlsClient.PostXML(ctx, DownloadFundFlowURL, m, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -287,7 +288,7 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string
 
 	m["sign"] = mch.SignWithHMacSHA256(m, true)
 
-	resp, err := mch.tlsClient.PostXML(ctx, BatchQueryCommentURL, m, wx.WithHTTPClose())
+	resp, err := mch.tlsClient.PostXML(ctx, BatchQueryCommentURL, m, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -377,7 +378,7 @@ func (mch *Mch) DecryptWithAES256ECB(encrypt string) (wx.WXML, error) {
 	h := md5.New()
 	h.Write([]byte(mch.apikey))
 
-	ecb := wx.NewECBCrypto([]byte(hex.EncodeToString(h.Sum(nil))), wx.PKCS7)
+	ecb := yiigo.NewECBCrypto([]byte(hex.EncodeToString(h.Sum(nil))), yiigo.PKCS7)
 
 	plainText, err := ecb.Decrypt(cipherText)
 

@@ -2,6 +2,7 @@ package mp
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/url"
 	"path/filepath"
 
@@ -50,7 +51,19 @@ func AICrop(dest *AICropResult, path string) wx.Action {
 
 	return wx.NewAction(AICropURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "img",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			path, err := filepath.Abs(filepath.Clean(path))
+
+			if err != nil {
+				return nil, err
+			}
+
+			return ioutil.ReadFile(path)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -87,7 +100,19 @@ func ScanQRCode(dest *QRCodeScanResult, path string) wx.Action {
 
 	return wx.NewAction(ScanQRCodeURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "img",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			path, err := filepath.Abs(filepath.Clean(path))
+
+			if err != nil {
+				return nil, err
+			}
+
+			return ioutil.ReadFile(path)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -116,7 +141,19 @@ func SuperreSolution(dest *SuperreSolutionResult, path string) wx.Action {
 
 	return wx.NewAction(SuperreSolutionURL,
 		wx.WithMethod(wx.MethodUpload),
-		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "img",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			path, err := filepath.Abs(filepath.Clean(path))
+
+			if err != nil {
+				return nil, err
+			}
+
+			return ioutil.ReadFile(path)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
 
