@@ -2,6 +2,7 @@ package mp
 
 import (
 	"encoding/json"
+	"path/filepath"
 
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -20,11 +21,13 @@ type MediaUploadResult struct {
 }
 
 // UploadMedia 上传临时素材到微信服务器
-func UploadMedia(dest *MediaUploadResult, mediaType MediaType, filename string) wx.Action {
+func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.Action {
+	_, filename := filepath.Split(path)
+
 	return wx.NewAction(MediaUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadForm("media", filename),
+		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -36,7 +39,7 @@ func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, re
 	return wx.NewAction(MediaUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadForm("media", filename, wx.WithResourceURL(resourceURL)),
+		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByURL(resourceURL))),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),

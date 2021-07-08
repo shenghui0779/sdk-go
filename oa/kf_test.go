@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestGetKFAccountList(t *testing.T) {
@@ -165,7 +166,9 @@ func TestUploadKFAvatar(t *testing.T) {
 
 	client := wx.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/uploadheadimg?access_token=ACCESS_TOKEN&kf_account=KFACCOUNT", wx.NewUploadForm("media", "test.jpg")).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/uploadheadimg?access_token=ACCESS_TOKEN&kf_account=KFACCOUNT",
+		wx.NewUploadForm("media", "test.jpg", wx.UploadByPath("test.jpg")),
+	).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client

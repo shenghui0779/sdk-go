@@ -2,10 +2,11 @@ package mp
 
 import (
 	"encoding/json"
-	"net/url"
+	"path/filepath"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/tidwall/gjson"
 )
 
 // OCRMode 识别模式
@@ -32,11 +33,13 @@ type IDCardFront struct {
 }
 
 // OCRIDCardFront 身份证前面识别
-func OCRIDCardFront(dest *IDCardFront, mode OCRMode, filename string) wx.Action {
+func OCRIDCardFront(dest *IDCardFront, mode OCRMode, path string) wx.Action {
+	_, filename := filepath.Split(path)
+
 	return wx.NewAction(OCRIDCardURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename),
+		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -61,15 +64,13 @@ type IDCardBack struct {
 }
 
 // OCRIDCardBack 身份证背面识别
-func OCRIDCardBack(dest *IDCardBack, mode OCRMode, filename string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
+func OCRIDCardBack(dest *IDCardBack, mode OCRMode, path string) wx.Action {
+	_, filename := filepath.Split(path)
 
 	return wx.NewAction(OCRIDCardURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename),
+		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
 
@@ -80,11 +81,6 @@ func OCRIDCardBack(dest *IDCardBack, mode OCRMode, filename string) wx.Action {
 
 // OCRIDCardBackByURL 身份证背面识别
 func OCRIDCardBackByURL(dest *IDCardBack, mode OCRMode, imgURL string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
-	query.Set("img_url", imgURL)
-
 	return wx.NewAction(OCRIDCardURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
@@ -103,15 +99,13 @@ type BankCard struct {
 }
 
 // OCRBankCard 银行卡识别
-func OCRBankCard(dest *BankCard, mode OCRMode, filename string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
+func OCRBankCard(dest *BankCard, mode OCRMode, path string) wx.Action {
+	_, filename := filepath.Split(path)
 
 	return wx.NewAction(OCRBankCardURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename),
+		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			dest.ID = gjson.GetBytes(resp, "number").String()
 
@@ -122,11 +116,6 @@ func OCRBankCard(dest *BankCard, mode OCRMode, filename string) wx.Action {
 
 // OCRBankCardByURL 银行卡识别
 func OCRBankCardByURL(dest *BankCard, mode OCRMode, imgURL string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
-	query.Set("img_url", imgURL)
-
 	return wx.NewAction(OCRBankCardURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
@@ -145,15 +134,13 @@ type PlateNumber struct {
 }
 
 // OCRPlateNumber 车牌号识别
-func OCRPlateNumber(dest *PlateNumber, mode OCRMode, filename string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
+func OCRPlateNumber(dest *PlateNumber, mode OCRMode, path string) wx.Action {
+	_, filename := filepath.Split(path)
 
 	return wx.NewAction(OCRPlateNumberURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename),
+		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			dest.ID = gjson.GetBytes(resp, "number").String()
 
@@ -164,11 +151,6 @@ func OCRPlateNumber(dest *PlateNumber, mode OCRMode, filename string) wx.Action 
 
 // OCRPlateNumberByURL 车牌号识别
 func OCRPlateNumberByURL(dest *PlateNumber, mode OCRMode, imgURL string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
-	query.Set("img_url", imgURL)
-
 	return wx.NewAction(OCRPlateNumberURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
@@ -197,15 +179,13 @@ type DriverLicense struct {
 }
 
 // OCRDriverLicense 驾照识别
-func OCRDriverLicense(dest *DriverLicense, mode OCRMode, filename string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
+func OCRDriverLicense(dest *DriverLicense, mode OCRMode, path string) wx.Action {
+	_, filename := filepath.Split(path)
 
 	return wx.NewAction(OCRDriverLicenseURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename),
+		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -214,11 +194,6 @@ func OCRDriverLicense(dest *DriverLicense, mode OCRMode, filename string) wx.Act
 
 // OCRDriverLicenseByURL 驾照识别
 func OCRDriverLicenseByURL(dest *DriverLicense, mode OCRMode, imgURL string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
-	query.Set("img_url", imgURL)
-
 	return wx.NewAction(OCRDriverLicenseURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
@@ -252,15 +227,13 @@ type VehicleLicense struct {
 }
 
 // OCRVehicleLicense 行驶证识别
-func OCRVehicleLicense(dest *VehicleLicense, mode OCRMode, filename string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
+func OCRVehicleLicense(dest *VehicleLicense, mode OCRMode, path string) wx.Action {
+	_, filename := filepath.Split(path)
 
 	return wx.NewAction(OCRVehicleLicenseURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename),
+		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -269,11 +242,6 @@ func OCRVehicleLicense(dest *VehicleLicense, mode OCRMode, filename string) wx.A
 
 // OCRVehicleLicenseByURL 行驶证识别
 func OCRVehicleLicenseByURL(dest *VehicleLicense, mode OCRMode, imgURL string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
-	query.Set("img_url", imgURL)
-
 	return wx.NewAction(OCRVehicleLicenseURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
@@ -303,15 +271,13 @@ type BusinessLicense struct {
 }
 
 // OCRBusinessLicense 营业执照识别
-func OCRBusinessLicense(dest *BusinessLicense, mode OCRMode, filename string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
+func OCRBusinessLicense(dest *BusinessLicense, mode OCRMode, path string) wx.Action {
+	_, filename := filepath.Split(path)
 
 	return wx.NewAction(OCRBusinessLicenseURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename),
+		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -320,11 +286,6 @@ func OCRBusinessLicense(dest *BusinessLicense, mode OCRMode, filename string) wx
 
 // OCRBusinessLicenseByURL 营业执照识别
 func OCRBusinessLicenseByURL(dest *BusinessLicense, mode OCRMode, imgURL string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
-	query.Set("img_url", imgURL)
-
 	return wx.NewAction(OCRBusinessLicenseURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),
@@ -348,11 +309,13 @@ type PrintedTextItem struct {
 }
 
 // OCRPrintedText 通用印刷体识别
-func OCRPrintedText(dest *PrintedText, mode OCRMode, filename string) wx.Action {
+func OCRPrintedText(dest *PrintedText, mode OCRMode, path string) wx.Action {
+	_, filename := filepath.Split(path)
+
 	return wx.NewAction(OCRPrintedTextURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadForm("img", filename),
+		wx.WithUploadForm(wx.NewUploadForm("img", filename, wx.UploadByPath(path))),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -361,11 +324,6 @@ func OCRPrintedText(dest *PrintedText, mode OCRMode, filename string) wx.Action 
 
 // OCRPrintedTextByURL 通用印刷体识别
 func OCRPrintedTextByURL(dest *PrintedText, mode OCRMode, imgURL string) wx.Action {
-	query := url.Values{}
-
-	query.Set("type", string(mode))
-	query.Set("img_url", imgURL)
-
 	return wx.NewAction(OCRPrintedTextURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithQuery("type", string(mode)),

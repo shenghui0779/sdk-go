@@ -1,8 +1,9 @@
 package mp
 
 import (
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // Gender 性别

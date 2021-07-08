@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestUploadMedia(t *testing.T) {
@@ -15,7 +16,9 @@ func TestUploadMedia(t *testing.T) {
 
 	client := wx.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", wx.NewUploadForm("media", "test.jpg")).Return([]byte(`{
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image",
+		wx.NewUploadForm("media", "test.jpg", wx.UploadByPath("test.jpg")),
+	).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"type": "image",
@@ -45,7 +48,7 @@ func TestUploadMediaByURL(t *testing.T) {
 	client := wx.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image",
-		wx.NewUploadForm("media", "test.jpg", wx.WithResourceURL("https://media.test.com/test.jpg")),
+		wx.NewUploadForm("media", "test.jpg", wx.UploadByURL("https://media.test.com/test.jpg")),
 	).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",

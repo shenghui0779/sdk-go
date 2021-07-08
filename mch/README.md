@@ -13,9 +13,9 @@ import (
 wxpay := gochat.NewMch(appid, mchid, apikey)
 
 // 涉及退款等，需要加载证书（三选一）
-wxpay.LoadCertFromPemBlock(certBlock, keyBlock)
-wxpay.LoadCertFromPemFile(certFile, keyFile)
-wxpay.LoadCertFromP12File(path)
+wxpay.LoadCertificate(mch.WithCertP12File(path))
+wxpay.LoadCertificate(mch.WithCertPEMBlock(certBlock, keyBlock))
+wxpay.LoadCertificate(mch.WithCertPEMFile(certFile, keyFile))
 ```
 
 ### 订单

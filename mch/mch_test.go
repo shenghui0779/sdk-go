@@ -5,14 +5,23 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestLoadCertFromPemBlock(t *testing.T) {
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	assert.Nil(t, mch.LoadCertFromPemBlock(certPemBlock, keyPemBlock))
+	assert.Nil(t, mch.LoadCertificate(WithCertPEMBlock(certBlock, keyBlock)))
+}
+
+func TestAccount(t *testing.T) {
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Equal(t, "wx2421b1c4370ec43b", mch.AppID())
+	assert.Equal(t, "10000100", mch.MchID())
+	assert.Equal(t, "192006250b4c09247ec02edce69f6a2d", mch.ApiKey())
 }
 
 // 涉及时间戳，签名会变化（已通过固定时间戳验证）
@@ -96,7 +105,7 @@ func TestDownloadBill(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "21df7dc9cd8616b56919f20d9f679233"
 	}
 	mch.client = client
@@ -133,7 +142,7 @@ func TestDownloadFundFlow(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "21df7dc9cd8616b56919f20d9f679233"
 	}
 	mch.client = client
@@ -171,7 +180,7 @@ func TestBatchQueryComment(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 	mch.client = client
@@ -261,15 +270,15 @@ func TestDecryptWithAES256ECB(t *testing.T) {
 
 var (
 	// tls certificate
-	certPemBlock []byte
-	keyPemBlock  []byte
+	certBlock []byte
+	keyBlock  []byte
 	// rsa key
 	privateKey []byte
 	publicKey  []byte
 )
 
 func TestMain(m *testing.M) {
-	certPemBlock = []byte(`-----BEGIN CERTIFICATE-----
+	certBlock = []byte(`-----BEGIN CERTIFICATE-----
 MIIEazCCA9SgAwIBAgIDHEZcMA0GCSqGSIb3DQEBBQUAMIGKMQswCQYDVQQGEwJD
 TjESMBAGA1UECBMJR3Vhbmdkb25nMREwDwYDVQQHEwhTaGVuemhlbjEQMA4GA1UE
 ChMHVGVuY2VudDEMMAoGA1UECxMDV1hHMRMwEQYDVQQDEwpNbXBheW1jaENBMR8w
@@ -296,7 +305,7 @@ WGYW0ex09v5KORVBi4ahyJnDFyPC6k/5Dhe++4y4SPxJ/2EI7b0mpPxAF16VePt+
 2RhogAbMS+gv7ecrPv/H1jU+lvZR3ygxHnaG3BP3PA==
 -----END CERTIFICATE-----`)
 
-	keyPemBlock = []byte(`-----BEGIN PRIVATE KEY-----
+	keyBlock = []byte(`-----BEGIN PRIVATE KEY-----
 MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC0Th8J6vfH7Vtb
 bH4tcprGr/mwGtv1quqDbj1zQrh0cHKVwSgkGuYk4YeuFHfVJzvO382dlhw/bGnF
 wLW3YeZvSH2DFxiEDMxyJE8osfeKWhTur8BSRZBCZcCicoNwMpl0wwf3DVl4WS/4

@@ -2,18 +2,17 @@ package oa
 
 import (
 	"context"
-	"crypto/rand"
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 	"time"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/tidwall/gjson"
 )
 
 // OA 微信公众号
@@ -23,7 +22,7 @@ type OA struct {
 	originid       string
 	token          string
 	encodingAESKey string
-	nonce          func(size int) string
+	nonce          func(size uint) string
 	client         wx.HTTPClient
 }
 
@@ -32,13 +31,8 @@ func New(appid, appsecret string) *OA {
 	return &OA{
 		appid:     appid,
 		appsecret: appsecret,
-		nonce: func(size int) string {
-			nonce := make([]byte, size/2)
-			io.ReadFull(rand.Reader, nonce)
-
-			return hex.EncodeToString(nonce)
-		},
-		client: wx.NewHTTPClient(),
+		nonce:     wx.Nonce,
+		client:    wx.NewHTTPClient(wx.WithInsecureSkipVerify()),
 	}
 }
 
@@ -52,6 +46,16 @@ func (oa *OA) SetOriginID(originid string) {
 func (oa *OA) SetServerConfig(token, encodingAESKey string) {
 	oa.token = token
 	oa.encodingAESKey = encodingAESKey
+}
+
+// AppID returns appid
+func (oa *OA) AppID() string {
+	return oa.appid
+}
+
+// AppSecret returns app secret
+func (oa *OA) AppSecret() string {
+	return oa.appsecret
 }
 
 // AuthURL 生成网页授权URL（请使用 URLEncode 对 redirectURL 进行处理）
@@ -146,10 +150,10 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 	case wx.MethodGet:
 		resp, err = oa.client.Get(ctx, action.URL(accessToken), options...)
 	case wx.MethodPost:
-		body, err := action.Body()
+		body, berr := action.Body()
 
-		if err != nil {
-			return err
+		if berr != nil {
+			return berr
 		}
 
 		resp, err = oa.client.Post(ctx, action.URL(accessToken), body, options...)

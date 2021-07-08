@@ -5,9 +5,17 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/wx"
 )
+
+func TestAccount(t *testing.T) {
+	mp := New("wx1def0e9e5891b338", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Equal(t, "wx1def0e9e5891b338", mp.AppID())
+	assert.Equal(t, "192006250b4c09247ec02edce69f6a2d", mp.AppSecret())
+}
 
 func TestCode2Session(t *testing.T) {
 	ctrl := gomock.NewController(t)

@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestSendNormalRedpack(t *testing.T) {
@@ -44,7 +45,7 @@ func TestSendNormalRedpack(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
@@ -111,7 +112,7 @@ func TestSendGroupRedpack(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
@@ -177,7 +178,7 @@ func TestSendMinipRedpack(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
@@ -238,7 +239,7 @@ func TestQueryRedpackByBillNO(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 

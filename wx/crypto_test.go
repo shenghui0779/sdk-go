@@ -79,11 +79,11 @@ func TestECBCrypto(t *testing.T) {
 }
 
 func TestRSACrypto(t *testing.T) {
-	eb, err := RSAEncrypt([]byte("ILoveWechatPay"), publicKey)
+	eb, err := RSAEncryptOEAP([]byte("ILoveWechatPay"), publicKey)
 
 	assert.Nil(t, err)
 
-	db, err := RSADecrypt(eb, privateKey)
+	db, err := RSADecryptOEAP(eb, privateKey)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "ILoveWechatPay", string(db))

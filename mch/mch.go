@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/hmac"
 	"crypto/md5"
-	"crypto/rand"
 	"crypto/sha256"
 	"crypto/tls"
 	"encoding/base64"
@@ -12,16 +11,17 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/url"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/shenghui0779/gochat/wx"
 	"golang.org/x/crypto/pkcs12"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // Mch 微信支付
@@ -29,82 +29,60 @@ type Mch struct {
 	appid     string
 	mchid     string
 	apikey    string
-	nonce     func(size int) string
+	nonce     func(size uint) string
 	client    wx.HTTPClient
 	tlsClient wx.HTTPClient
 }
 
 // New returns new wechat pay
 func New(appid, mchid, apikey string) *Mch {
-	c := wx.NewHTTPClient(&tls.Config{InsecureSkipVerify: true})
+	c := wx.NewHTTPClient(wx.WithInsecureSkipVerify())
 
 	return &Mch{
-		appid:  appid,
-		mchid:  mchid,
-		apikey: apikey,
-		nonce: func(size int) string {
-			nonce := make([]byte, size/2)
-			io.ReadFull(rand.Reader, nonce)
-
-			return hex.EncodeToString(nonce)
-		},
+		appid:     appid,
+		mchid:     mchid,
+		apikey:    apikey,
+		nonce:     wx.Nonce,
 		client:    c,
 		tlsClient: c,
 	}
 }
 
-// LoadCertFromP12File load cert from p12(pfx) file
-func (mch *Mch) LoadCertFromP12File(path string) error {
-	p12, err := ioutil.ReadFile(path)
+// LoadCertificate 加载证书
+func (mch *Mch) LoadCertificate(options ...CertOption) error {
+	certs := make([]tls.Certificate, 0, len(options))
 
-	if err != nil {
-		return err
+	for _, f := range options {
+		cert, err := f(mch)
+
+		if err != nil {
+			return err
+		}
+
+		certs = append(certs, cert)
 	}
 
-	cert, err := mch.pkcs12ToPem(p12)
-
-	if err != nil {
-		return err
-	}
-
-	mch.tlsClient = wx.NewHTTPClient(&tls.Config{
-		Certificates:       []tls.Certificate{cert},
-		InsecureSkipVerify: true,
-	})
+	mch.tlsClient = wx.NewHTTPClient(
+		wx.WithTLSCertificates(certs...),
+		wx.WithInsecureSkipVerify(),
+	)
 
 	return nil
 }
 
-// LoadCertFromPemFile load cert from PEM file
-func (mch *Mch) LoadCertFromPemFile(certFile, keyFile string) error {
-	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
-
-	if err != nil {
-		return err
-	}
-
-	mch.tlsClient = wx.NewHTTPClient(&tls.Config{
-		Certificates:       []tls.Certificate{cert},
-		InsecureSkipVerify: true,
-	})
-
-	return nil
+// AppID returns appid
+func (mch *Mch) AppID() string {
+	return mch.appid
 }
 
-// LoadCertFromPemBlock load cert from a pair of PEM encoded data
-func (mch *Mch) LoadCertFromPemBlock(certPEMBlock, keyPEMBlock []byte) error {
-	cert, err := tls.X509KeyPair(certPEMBlock, keyPEMBlock)
+// MchID returns mchid
+func (mch *Mch) MchID() string {
+	return mch.mchid
+}
 
-	if err != nil {
-		return err
-	}
-
-	mch.tlsClient = wx.NewHTTPClient(&tls.Config{
-		Certificates:       []tls.Certificate{cert},
-		InsecureSkipVerify: true,
-	})
-
-	return nil
+// ApiKey returns apikey
+func (mch *Mch) ApiKey() string {
+	return mch.apikey
 }
 
 // Do exec action
@@ -453,4 +431,56 @@ func (mch *Mch) buildSignStr(m wx.WXML) string {
 	kvs = append(kvs, fmt.Sprintf("key=%s", mch.apikey))
 
 	return strings.Join(kvs, "&")
+}
+
+// CertOption 证书选项
+type CertOption func(mch *Mch) (tls.Certificate, error)
+
+// WithCertP12File 通过p12(pfx)证书文件加载证书
+func WithCertP12File(path string) CertOption {
+	return func(mch *Mch) (tls.Certificate, error) {
+		fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
+
+		certPath, err := filepath.Abs(filepath.Clean(path))
+
+		if err != nil {
+			return fail(err)
+		}
+
+		p12, err := ioutil.ReadFile(certPath)
+
+		if err != nil {
+			return fail(err)
+		}
+
+		return mch.pkcs12ToPem(p12)
+	}
+}
+
+// WithCertPEMBlock 通过pem证书文本内容加载证书
+func WithCertPEMBlock(certBlock, keyBlock []byte) CertOption {
+	return func(mch *Mch) (tls.Certificate, error) {
+		return tls.X509KeyPair(certBlock, keyBlock)
+	}
+}
+
+// WithCertPEMFile 通过pem证书文件加载证书
+func WithCertPEMFile(certFile, keyFile string) CertOption {
+	return func(mch *Mch) (tls.Certificate, error) {
+		fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
+
+		certPath, err := filepath.Abs(filepath.Clean(certFile))
+
+		if err != nil {
+			return fail(err)
+		}
+
+		keyPath, err := filepath.Abs(filepath.Clean(keyFile))
+
+		if err != nil {
+			return fail(err)
+		}
+
+		return tls.LoadX509KeyPair(certPath, keyPath)
+	}
 }

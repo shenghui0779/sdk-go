@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAPPEntrust(t *testing.T) {
@@ -41,7 +42,7 @@ func TestAPPEntrust(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
@@ -78,7 +79,7 @@ func TestOAEntrust(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
@@ -105,7 +106,7 @@ func TestMPEntrust(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
@@ -143,7 +144,7 @@ func TestH5Entrust(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
@@ -208,7 +209,7 @@ func TestEntrustByOrder(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 	mch.client = client
@@ -281,7 +282,7 @@ func TestQueryContractByID(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
@@ -347,7 +348,7 @@ func TestQueryContractByCode(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
@@ -409,7 +410,7 @@ func TestPappayApply(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 	mch.client = client
@@ -461,7 +462,7 @@ func TestDeleteContractByID(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
@@ -506,7 +507,7 @@ func TestDeleteContractByCode(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
@@ -562,7 +563,7 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 	mch.client = client
@@ -631,7 +632,7 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 
 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-	mch.nonce = func(size int) string {
+	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 	mch.client = client

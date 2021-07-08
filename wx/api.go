@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"net/http"
+	"mime/multipart"
 	"net/url"
 	"path/filepath"
 )
@@ -26,103 +26,131 @@ type HTTPClient interface {
 	// Post sends an HTTP post request
 	Post(ctx context.Context, reqURL string, body []byte, options ...HTTPOption) ([]byte, error)
 
-	// Upload sends an HTTP post request with xml
+	// PostXML sends an HTTP post request with xml
 	PostXML(ctx context.Context, reqURL string, body WXML, options ...HTTPOption) ([]byte, error)
 
 	// Upload sends an HTTP post request for uploading media
 	Upload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) ([]byte, error)
 }
 
+type uploadmethod int
+
+const (
+	uploadbybytes uploadmethod = iota
+	uploadbypath
+	uploadbyurl
+)
+
 // UploadForm is the interface for http upload
 type UploadForm interface {
-	// FieldName returns field name for upload
-	FieldName() string
-
-	// FileName returns filename for upload
-	FileName() string
-
-	// ExtraFields returns extra fields for upload
-	ExtraFields() map[string]string
-
-	// Buffer returns the buffer of media
-	Buffer() ([]byte, error)
+	// Write writes fields to multipart writer
+	Write(ctx context.Context, w *multipart.Writer) error
 }
 
 type httpUpload struct {
-	fieldname   string
+	filefield   string
 	filename    string
-	resourceURL string
-	extraFields map[string]string
+	method      uploadmethod
+	filefrom    string
+	filecontent []byte
+	metafield   string
+	metadata    string
 }
 
-func (u *httpUpload) FieldName() string {
-	return u.fieldname
-}
-
-func (u *httpUpload) FileName() string {
-	return u.filename
-}
-
-func (u *httpUpload) ExtraFields() map[string]string {
-	return u.extraFields
-}
-
-func (u *httpUpload) Buffer() ([]byte, error) {
-	if len(u.resourceURL) != 0 {
-		resp, err := http.Get(u.resourceURL)
-
-		if err != nil {
-			return nil, err
-		}
-
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			return nil, fmt.Errorf("error http code: %d", resp.StatusCode)
-		}
-
-		return ioutil.ReadAll(resp.Body)
-	}
-
-	path, err := filepath.Abs(u.filename)
+func (u *httpUpload) Write(ctx context.Context, w *multipart.Writer) error {
+	part, err := w.CreateFormFile(u.filefield, u.filename)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return ioutil.ReadFile(path)
+	switch u.method {
+	case uploadbypath:
+		if err = u.getContentByPath(); err != nil {
+			return err
+		}
+	case uploadbyurl:
+		if err = u.getContentByURL(ctx); err != nil {
+			return err
+		}
+	}
+
+	if _, err = part.Write(u.filecontent); err != nil {
+		return err
+	}
+
+	// metadata
+	if len(u.metafield) != 0 {
+		if err = w.WriteField(u.metafield, u.metadata); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-// UploadOption configures how we set up the http upload from.
+func (u *httpUpload) getContentByPath() error {
+	path, err := filepath.Abs(u.filefrom)
+
+	if err != nil {
+		return err
+	}
+
+	u.filecontent, err = ioutil.ReadFile(path)
+
+	return err
+}
+
+func (u *httpUpload) getContentByURL(ctx context.Context) (err error) {
+	u.filecontent, err = HTTPGet(ctx, u.filefrom)
+
+	return
+}
+
+// UploadOption configures how we set up the upload from.
 type UploadOption func(u *httpUpload)
 
-// WithResourceURL specifies http upload by resource url.
-func WithResourceURL(url string) UploadOption {
+// UploadByBytes uploads by file content
+func UploadByBytes(content []byte) UploadOption {
 	return func(u *httpUpload) {
-		u.resourceURL = url
+		u.method = uploadbybytes
+		u.filecontent = content
 	}
 }
 
-// WithExtraField specifies the extra field to http upload from.
-func WithExtraField(key, value string) UploadOption {
+// UploadByPath uploads by file path
+func UploadByPath(path string) UploadOption {
 	return func(u *httpUpload) {
-		u.extraFields[key] = value
+		u.method = uploadbypath
+		u.filefrom = filepath.Clean(path)
 	}
 }
 
-// NewUploadForm returns new upload form
+// UploadByURL uploads file by resource url
+func UploadByURL(url string) UploadOption {
+	return func(u *httpUpload) {
+		u.method = uploadbyurl
+		u.filefrom = url
+	}
+}
+
+// WithMetaField specifies the metadata field to upload from.
+func WithMetaField(name, value string) UploadOption {
+	return func(u *httpUpload) {
+		u.metafield = name
+		u.metadata = value
+	}
+}
+
+// NewUploadForm returns an upload form
 func NewUploadForm(fieldname, filename string, options ...UploadOption) UploadForm {
 	form := &httpUpload{
-		fieldname: fieldname,
+		filefield: fieldname,
 		filename:  filename,
 	}
 
-	if len(options) != 0 {
-		form.extraFields = make(map[string]string)
-
-		for _, f := range options {
-			f(form)
-		}
+	for _, f := range options {
+		f(form)
 	}
 
 	return form
@@ -243,9 +271,9 @@ func WithWXML(f func(appid, mchid, nonce string) (WXML, error)) ActionOption {
 }
 
 // WithUploadForm specifies the `upload form` to Action.
-func WithUploadForm(fieldname, filename string, options ...UploadOption) ActionOption {
+func WithUploadForm(form UploadForm) ActionOption {
 	return func(api *wxapi) {
-		api.uploadForm = NewUploadForm(fieldname, filename, options...)
+		api.uploadForm = form
 	}
 }
 

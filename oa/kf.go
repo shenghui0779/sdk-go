@@ -2,9 +2,11 @@ package oa
 
 import (
 	"encoding/json"
+	"path/filepath"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/tidwall/gjson"
 )
 
 // KFInviteStatus 客服邀请状态
@@ -106,11 +108,13 @@ func InviteKFWorker(account, inviteWeixin string) wx.Action {
 
 // UploadKFAvatar 上传客服头像
 // 完整客服帐号，格式为：帐号前缀@公众号微信号
-func UploadKFAvatar(account, filename string) wx.Action {
+func UploadKFAvatar(account, path string) wx.Action {
+	_, filename := filepath.Split(path)
+
 	return wx.NewAction(KFAvatarUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("kf_account", account),
-		wx.WithUploadForm("media", filename),
+		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByPath(path))),
 	)
 }
 

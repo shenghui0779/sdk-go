@@ -3,8 +3,9 @@ package mp
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // PluginAction defines for plugin action params

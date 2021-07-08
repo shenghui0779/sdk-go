@@ -2,11 +2,12 @@ package mch
 
 // 交易类型
 const (
-	TradeAPP    = "APP"
-	TradeJSAPI  = "JSAPI"
-	TradeMWEB   = "MWEB"
-	TradeNative = "NATIVE"
-	TradePAP    = "PAP"
+	TradeAPP      = "APP"      // app支付
+	TradeJSAPI    = "JSAPI"    // JSAPI支付（或小程序支付）
+	TradeMWEB     = "MWEB"     // H5支付
+	TradeNative   = "NATIVE"   // Native支付
+	TradePAP      = "PAP"      // 签约续费
+	TradeMicroPay = "MICROPAY" // 付款码支付
 )
 
 // 签名类型
@@ -37,8 +38,9 @@ const (
 )
 
 const (
-	CouponTypeCash   = "CASH"    // 充值代金券
-	CouponTypeNoCash = "NO_CASH" // 非充值优惠券
+	NoCredit         = "no_credit" // 指定不能使用信用卡支付
+	CouponTypeCash   = "CASH"      // 充值代金券
+	CouponTypeNoCash = "NO_CASH"   // 非充值优惠券
 )
 
 const (

@@ -119,13 +119,7 @@ func (c *apiClient) do(ctx context.Context, req *http.Request, options ...HTTPOp
 		return nil, fmt.Errorf("error http code: %d", resp.StatusCode)
 	}
 
-	b, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return b, nil
+	return ioutil.ReadAll(resp.Body)
 }
 
 // Get http get request
@@ -173,32 +167,11 @@ func (c *apiClient) PostXML(ctx context.Context, url string, body WXML, options 
 
 // Upload http upload media
 func (c *apiClient) Upload(ctx context.Context, url string, form UploadForm, options ...HTTPOption) ([]byte, error) {
-	media, err := form.Buffer()
-
-	if err != nil {
-		return nil, err
-	}
-
 	buf := bytes.NewBuffer(make([]byte, 0, 4<<10)) // 4kb
 	w := multipart.NewWriter(buf)
 
-	fw, err := w.CreateFormFile(form.FieldName(), form.FileName())
-
-	if err != nil {
+	if err := form.Write(ctx, w); err != nil {
 		return nil, err
-	}
-
-	if _, err = fw.Write(media); err != nil {
-		return nil, err
-	}
-
-	// add extra fields
-	if extraFields := form.ExtraFields(); len(extraFields) != 0 {
-		for k, v := range extraFields {
-			if err = w.WriteField(k, v); err != nil {
-				return nil, err
-			}
-		}
 	}
 
 	options = append(options, WithHTTPHeader("Content-Type", w.FormDataContentType()))
@@ -216,8 +189,25 @@ func (c *apiClient) Upload(ctx context.Context, url string, form UploadForm, opt
 	return c.do(ctx, req, options...)
 }
 
+// TLSOption configures how we set up the http client tls config
+type TLSOption func(cfg *tls.Config)
+
+// WithInsecureSkipVerify specifies the `InsecureSkipVerify` to http client tls config.
+func WithInsecureSkipVerify() TLSOption {
+	return func(cfg *tls.Config) {
+		cfg.InsecureSkipVerify = true
+	}
+}
+
+// WithTLSCertificates specifies the certificate to http client tls config.
+func WithTLSCertificates(certs ...tls.Certificate) TLSOption {
+	return func(cfg *tls.Config) {
+		cfg.Certificates = certs
+	}
+}
+
 // NewHTTPClient returns a new http client
-func NewHTTPClient(tlsCfg ...*tls.Config) HTTPClient {
+func NewHTTPClient(options ...TLSOption) HTTPClient {
 	t := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
@@ -232,8 +222,12 @@ func NewHTTPClient(tlsCfg ...*tls.Config) HTTPClient {
 		ExpectContinueTimeout: 1 * time.Second,
 	}
 
-	if len(tlsCfg) != 0 {
-		t.TLSClientConfig = tlsCfg[0]
+	if len(options) != 0 {
+		t.TLSClientConfig = new(tls.Config)
+
+		for _, f := range options {
+			f(t.TLSClientConfig)
+		}
 	}
 
 	return &apiClient{
@@ -242,4 +236,21 @@ func NewHTTPClient(tlsCfg ...*tls.Config) HTTPClient {
 		},
 		timeout: defaultTimeout,
 	}
+}
+
+var defaultHTTPClient = NewHTTPClient()
+
+// HTTPGet http get request
+func HTTPGet(ctx context.Context, url string, options ...HTTPOption) ([]byte, error) {
+	return defaultHTTPClient.Get(ctx, url, options...)
+}
+
+// HTTPPost http post request
+func HTTPPost(ctx context.Context, url string, body []byte, options ...HTTPOption) ([]byte, error) {
+	return defaultHTTPClient.Post(ctx, url, body, options...)
+}
+
+// HTTPUpload http upload file
+func HTTPUpload(ctx context.Context, url string, form UploadForm, options ...HTTPOption) ([]byte, error) {
+	return defaultHTTPClient.Upload(ctx, url, form, options...)
 }

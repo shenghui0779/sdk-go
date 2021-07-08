@@ -2,16 +2,14 @@ package mp
 
 import (
 	"context"
-	"crypto/rand"
 	"encoding/base64"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/tidwall/gjson"
 )
 
 // MP 微信小程序
@@ -20,7 +18,7 @@ type MP struct {
 	appsecret      string
 	token          string
 	encodingAESKey string
-	nonce          func(size int) string
+	nonce          func(size uint) string
 	client         wx.HTTPClient
 }
 
@@ -29,13 +27,8 @@ func New(appid, appsecret string) *MP {
 	return &MP{
 		appid:     appid,
 		appsecret: appsecret,
-		nonce: func(size int) string {
-			nonce := make([]byte, size/2)
-			io.ReadFull(rand.Reader, nonce)
-
-			return hex.EncodeToString(nonce)
-		},
-		client: wx.NewHTTPClient(),
+		nonce:     wx.Nonce,
+		client:    wx.NewHTTPClient(wx.WithInsecureSkipVerify()),
 	}
 }
 
@@ -44,6 +37,16 @@ func New(appid, appsecret string) *MP {
 func (mp *MP) SetServerConfig(token, encodingAESKey string) {
 	mp.token = token
 	mp.encodingAESKey = encodingAESKey
+}
+
+// AppID returns appid
+func (mp *MP) AppID() string {
+	return mp.appid
+}
+
+// AppSecret returns app secret
+func (mp *MP) AppSecret() string {
+	return mp.appsecret
 }
 
 // Code2Session 获取小程序授权的session_key
