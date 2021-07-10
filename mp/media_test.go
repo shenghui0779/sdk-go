@@ -30,7 +30,7 @@ func TestUploadMedia(t *testing.T) {
 
 	dest := new(MediaUploadResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(dest, MediaImage, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(dest, MediaImage, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &MediaUploadResult{
@@ -59,7 +59,7 @@ func TestUploadMediaByURL(t *testing.T) {
 
 	dest := new(MediaUploadResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMediaByURL(dest, MediaImage, "test.jpg", "https://gocn.vip/uploads/logo.png"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMediaByURL(dest, MediaImage, "../test/test.png", "https://golang.google.cn/doc/gopher/pkg.png"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &MediaUploadResult{

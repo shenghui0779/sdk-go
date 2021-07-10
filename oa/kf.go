@@ -2,6 +2,7 @@ package oa
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"path/filepath"
 
 	"github.com/tidwall/gjson"
@@ -114,7 +115,19 @@ func UploadKFAvatar(account, path string) wx.Action {
 	return wx.NewAction(KFAvatarUploadURL,
 		wx.WithMethod(wx.MethodUpload),
 		wx.WithQuery("kf_account", account),
-		wx.WithUploadForm(wx.NewUploadForm("media", filename, wx.UploadByPath(path))),
+		wx.WithUploadField(&wx.UploadField{
+			FileField: "media",
+			Filename:  filename,
+		}),
+		wx.WithBody(func() ([]byte, error) {
+			path, err := filepath.Abs(filepath.Clean(path))
+
+			if err != nil {
+				return nil, err
+			}
+
+			return ioutil.ReadFile(path)
+		}),
 	)
 }
 

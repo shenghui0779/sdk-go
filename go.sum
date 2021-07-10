@@ -271,6 +271,8 @@ github.com/shenghui0779/vitess_pool v1.0.1 h1:I7nxFpzVA1QSuJE9dL4MnKHc3CF5xKK/0M
 github.com/shenghui0779/vitess_pool v1.0.1/go.mod h1:vRwWHaeQvz/mrnNetj7v4R5WfAese3ZKZ1gyaFw3UHE=
 github.com/shenghui0779/yiigo v1.3.4-0.20210708022545-fef302b5c64a h1:rHFarAYIYagpfbUjawzF2NEDLR1egNcr7rqJ18ZKiQw=
 github.com/shenghui0779/yiigo v1.3.4-0.20210708022545-fef302b5c64a/go.mod h1:WwS2bdBt6CpmxCgNQ0u68IszHREa8MsjAv7dKizmb1U=
+github.com/shenghui0779/yiigo v1.3.4-0.20210710034446-c1fe0f49a053 h1:MQq6ZnKTWW7vXgGl7A5Qj/D+Hpz3/8d6vp5byiCB2Ks=
+github.com/shenghui0779/yiigo v1.3.4-0.20210710034446-c1fe0f49a053/go.mod h1:WwS2bdBt6CpmxCgNQ0u68IszHREa8MsjAv7dKizmb1U=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=

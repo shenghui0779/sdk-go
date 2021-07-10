@@ -14,7 +14,7 @@ func TestGetSubscriberInfo(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&lang=zh_CN&openid=OPENID").Return([]byte(`{
 		"subscribe": 1,
@@ -69,7 +69,7 @@ func TestBatchGetSubscriberInfo(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=ACCESS_TOKEN", []byte(`{"user_list":[{"lang":"zh_CN","openid":"otvxTs4dckWG7imySrJd6jSi0CWE"},{"lang":"zh_CN","openid":"otvxTs_JZ6SEiP0imdhpi50fuSZg"}]}`)).Return([]byte(`{
 		"user_info_list": [
@@ -138,7 +138,7 @@ func TestGetSubscriberList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/get?access_token=ACCESS_TOKEN&next_openid=NEXT_OPENID").Return([]byte(`{
 		"total": 2,
@@ -171,7 +171,7 @@ func TestGetBlackList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/getblacklist?access_token=ACCESS_TOKEN", []byte(`{"begin_openid":"OPENID1"}`)).Return([]byte(`{
 		"total": 3,
@@ -208,7 +208,7 @@ func TestBlackSubscribers(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/batchblacklist?access_token=ACCESS_TOKEN", []byte(`{"openid_list":["OPENID1","OPENID2"]}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -224,7 +224,7 @@ func TestUnBlackSubscribers(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/batchunblacklist?access_token=ACCESS_TOKEN", []byte(`{"openid_list":["OPENID1","OPENID2"]}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -240,7 +240,7 @@ func TestSetUserRemark(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=ACCESS_TOKEN", []byte(`{"openid":"oDF3iY9ffA-hqb2vVvbr7qxf6A0Q","remark":"pangzi"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 

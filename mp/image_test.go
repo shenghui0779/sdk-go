@@ -45,7 +45,7 @@ func TestAICrop(t *testing.T) {
 
 	dest := new(AICropResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICrop(dest, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICrop(dest, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &AICropResult{
@@ -203,7 +203,7 @@ func TestScanQRCode(t *testing.T) {
 
 	dest := new(QRCodeScanResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCode(dest, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCode(dest, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &QRCodeScanResult{
@@ -496,7 +496,7 @@ func TestSuperreSolution(t *testing.T) {
 
 	dest := new(SuperreSolutionResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolution(dest, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolution(dest, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &SuperreSolutionResult{

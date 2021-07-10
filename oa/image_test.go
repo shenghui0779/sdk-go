@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -14,11 +15,9 @@ func TestAICrop(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN",
-		wx.NewUploadForm("img", "test.jpg", wx.UploadByPath("test.jpg")),
-	).Return([]byte(`{
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"results": [
@@ -46,7 +45,7 @@ func TestAICrop(t *testing.T) {
 
 	dest := new(AICropResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICrop(dest, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICrop(dest, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &AICropResult{
@@ -75,7 +74,7 @@ func TestAICropByURL(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return([]byte(`{
 		"errcode": 0,
@@ -134,11 +133,9 @@ func TestScanQRCode(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN",
-		wx.NewUploadForm("img", "test.jpg", wx.UploadByPath("test.jpg")),
-	).Return([]byte(`{
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"code_results": [
@@ -206,7 +203,7 @@ func TestScanQRCode(t *testing.T) {
 
 	dest := new(QRCodeScanResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCode(dest, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCode(dest, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &QRCodeScanResult{
@@ -311,7 +308,7 @@ func TestScanQRCodeByURL(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return([]byte(`{
 		"errcode": 0,
@@ -486,11 +483,9 @@ func TestSuperreSolution(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN",
-		wx.NewUploadForm("img", "test.jpg", wx.UploadByPath("test.jpg")),
-	).Return([]byte(`{
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"media_id": "6WXsIXkG7lXuDLspD9xfm5dsvHzb0EFl0li6ySxi92ap8Vl3zZoD9DpOyNudeJGB"
@@ -501,7 +496,7 @@ func TestSuperreSolution(t *testing.T) {
 
 	dest := new(SuperreSolutionResult)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolution(dest, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolution(dest, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &SuperreSolutionResult{
@@ -513,7 +508,7 @@ func TestSuperreSolutionByURL(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockHTTPClient(ctrl)
+	client := wx.NewMockClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return([]byte(`{
 		"errcode": 0,

@@ -92,8 +92,8 @@ func (a *action) UploadForm() (yiigo.UploadForm, error) {
 		return nil, err
 	}
 
-	fields := []yiigo.UploadOption{
-		yiigo.WithFieldField(a.uploadfield.FileField, a.uploadfield.Filename, body),
+	fields := []yiigo.UploadField{
+		yiigo.WithFileField(a.uploadfield.FileField, a.uploadfield.Filename, body),
 	}
 
 	if len(a.uploadfield.MetaField) != 0 {

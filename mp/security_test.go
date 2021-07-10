@@ -22,7 +22,7 @@ func TestImageSecCheck(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ImageSecCheck("test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ImageSecCheck("../test/test.jpg"))
 
 	assert.Nil(t, err)
 }

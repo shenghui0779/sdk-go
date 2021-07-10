@@ -33,7 +33,7 @@ func TestOCRIDCardFront(t *testing.T) {
 
 	dest := new(IDCardFront)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardFront(dest, OCRPhoto, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardFront(dest, OCRPhoto, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &IDCardFront{
@@ -97,7 +97,7 @@ func TestOCRIDCardBack(t *testing.T) {
 
 	dest := new(IDCardBack)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardBack(dest, OCRPhoto, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardBack(dest, OCRPhoto, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "20070105-20270105", dest.ValidDate)
@@ -144,7 +144,7 @@ func TestOCRBankCard(t *testing.T) {
 
 	dest := new(BankCard)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBankCard(dest, OCRPhoto, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBankCard(dest, OCRPhoto, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "622213XXXXXXXXX", dest.ID)
@@ -190,7 +190,7 @@ func TestOCRPlateNumber(t *testing.T) {
 
 	dest := new(PlateNumber)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPlateNumber(dest, OCRPhoto, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPlateNumber(dest, OCRPhoto, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "苏A123456", dest.ID)
@@ -246,7 +246,7 @@ func TestOCRDriverLicense(t *testing.T) {
 
 	dest := new(DriverLicense)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRDriverLicense(dest, OCRPhoto, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRDriverLicense(dest, OCRPhoto, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &DriverLicense{
@@ -339,7 +339,7 @@ func TestOCRVehicleLicense(t *testing.T) {
 
 	dest := new(VehicleLicense)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRVehicleLicense(dest, OCRPhoto, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRVehicleLicense(dest, OCRPhoto, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &VehicleLicense{
@@ -467,7 +467,7 @@ func TestOCRBusinessLicense(t *testing.T) {
 
 	dest := new(BusinessLicense)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBusinessLicense(dest, OCRPhoto, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBusinessLicense(dest, OCRPhoto, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &BusinessLicense{
@@ -669,7 +669,7 @@ func TestOCRPrintedText(t *testing.T) {
 
 	dest := new(PrintedText)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedText(dest, OCRPhoto, "test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedText(dest, OCRPhoto, "../test/test.jpg"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &PrintedText{

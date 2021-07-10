@@ -61,7 +61,6 @@ func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, re
 		}),
 		wx.WithBody(func() ([]byte, error) {
 			resp, err := yiigo.HTTPGet(context.TODO(), resourceURL)
-			// resp, err := http.Get(resourceURL)
 
 			if err != nil {
 				return nil, err

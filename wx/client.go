@@ -42,14 +42,8 @@ type apiclient struct {
 }
 
 // Get http get request
-func (c *apiclient) Get(ctx context.Context, url string, options ...yiigo.HTTPOption) ([]byte, error) {
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.client.Do(ctx, req, options...)
+func (c *apiclient) Get(ctx context.Context, reqURL string, options ...yiigo.HTTPOption) ([]byte, error) {
+	resp, err := c.client.Do(ctx, http.MethodGet, reqURL, nil, options...)
 
 	if err != nil {
 		return nil, err
@@ -61,16 +55,10 @@ func (c *apiclient) Get(ctx context.Context, url string, options ...yiigo.HTTPOp
 }
 
 // Post http post request
-func (c *apiclient) Post(ctx context.Context, url string, body []byte, options ...yiigo.HTTPOption) ([]byte, error) {
+func (c *apiclient) Post(ctx context.Context, reqURL string, body []byte, options ...yiigo.HTTPOption) ([]byte, error) {
 	options = append(options, yiigo.WithHTTPHeader("Content-Type", "application/json; charset=utf-8"))
 
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
-
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.client.Do(ctx, req, options...)
+	resp, err := c.client.Do(ctx, http.MethodPost, reqURL, bytes.NewReader(body), options...)
 
 	if err != nil {
 		return nil, err
@@ -82,7 +70,7 @@ func (c *apiclient) Post(ctx context.Context, url string, body []byte, options .
 }
 
 // PostXML http xml post request
-func (c *apiclient) PostXML(ctx context.Context, url string, body WXML, options ...yiigo.HTTPOption) ([]byte, error) {
+func (c *apiclient) PostXML(ctx context.Context, reqURL string, body WXML, options ...yiigo.HTTPOption) ([]byte, error) {
 	xmlStr, err := FormatMap2XML(body)
 
 	if err != nil {
@@ -91,13 +79,7 @@ func (c *apiclient) PostXML(ctx context.Context, url string, body WXML, options 
 
 	options = append(options, yiigo.WithHTTPHeader("Content-Type", "text/xml; charset=utf-8"))
 
-	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(xmlStr))
-
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.client.Do(ctx, req, options...)
+	resp, err := c.client.Do(ctx, http.MethodPost, reqURL, strings.NewReader(xmlStr), options...)
 
 	if err != nil {
 		return nil, err
@@ -109,8 +91,8 @@ func (c *apiclient) PostXML(ctx context.Context, url string, body WXML, options 
 }
 
 // Upload http upload media
-func (c *apiclient) Upload(ctx context.Context, url string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error) {
-	resp, err := c.client.Upload(ctx, url, form, options...)
+func (c *apiclient) Upload(ctx context.Context, reqURL string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error) {
+	resp, err := c.client.Upload(ctx, reqURL, form, options...)
 
 	if err != nil {
 		return nil, err
