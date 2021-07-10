@@ -7,13 +7,22 @@ import (
 	"github.com/shenghui0779/yiigo"
 )
 
+// ActionMethod http request method
+type ActionMethod string
+
+const (
+	MethodGet    ActionMethod = "GET"
+	MethodPost   ActionMethod = "POST"
+	MethodUpload ActionMethod = "UPLOAD"
+)
+
 // Action is the interface that handle wechat a
 type Action interface {
 	// URL returns request url
 	URL(accessToken ...string) string
 
-	// Method returns request method
-	Method() HTTPMethod
+	// Method returns action method
+	Method() ActionMethod
 
 	// WXML returns body for xml request
 	WXML(appid, mchid, nonce string) (WXML, error)
@@ -40,7 +49,7 @@ type UploadField struct {
 
 type action struct {
 	reqURL      string
-	method      HTTPMethod
+	method      ActionMethod
 	query       url.Values
 	wxml        func(appid, mchid, nonce string) (WXML, error)
 	body        func() ([]byte, error)
@@ -61,7 +70,7 @@ func (a *action) URL(accessToken ...string) string {
 	return fmt.Sprintf("%s?%s", a.reqURL, a.query.Encode())
 }
 
-func (a *action) Method() HTTPMethod {
+func (a *action) Method() ActionMethod {
 	return a.method
 }
 
@@ -115,7 +124,7 @@ func (a *action) TLS() bool {
 type ActionOption func(a *action)
 
 // WithMethod specifies the `method` to Action.
-func WithMethod(method HTTPMethod) ActionOption {
+func WithMethod(method ActionMethod) ActionOption {
 	return func(a *action) {
 		a.method = method
 	}

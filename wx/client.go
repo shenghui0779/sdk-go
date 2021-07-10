@@ -13,15 +13,6 @@ import (
 	"github.com/shenghui0779/yiigo"
 )
 
-// HTTPMethod http request method
-type HTTPMethod string
-
-const (
-	MethodGet    HTTPMethod = "GET"
-	MethodPost   HTTPMethod = "POST"
-	MethodUpload HTTPMethod = "UPLOAD"
-)
-
 // Client is the interface that do http request
 type Client interface {
 	// Get sends an HTTP get request
