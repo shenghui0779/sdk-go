@@ -10,8 +10,8 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-// Encrypt 参考微信[加密技术方案](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318482&token=&lang=zh_CN)
-func Encrypt(appid, encodingAESKey, nonce string, plainText []byte) ([]byte, error) {
+// Encrypt 参考微信[加密技术方案](https://open.work.weixin.qq.com/api/doc/90000/90139/90968)
+func Encrypt(receiveid, encodingAESKey, nonce string, plainText []byte) ([]byte, error) {
 	key, err := base64.StdEncoding.DecodeString(encodingAESKey + "=")
 
 	if err != nil {
@@ -21,12 +21,12 @@ func Encrypt(appid, encodingAESKey, nonce string, plainText []byte) ([]byte, err
 	contentLen := len(plainText)
 	appidOffset := 20 + contentLen
 
-	encryptData := make([]byte, appidOffset+len(appid))
+	encryptData := make([]byte, appidOffset+len(receiveid))
 
 	copy(encryptData[:16], nonce)
 	copy(encryptData[16:20], wx.EncodeUint32ToBytes(uint32(contentLen)))
 	copy(encryptData[20:], plainText)
-	copy(encryptData[appidOffset:], appid)
+	copy(encryptData[appidOffset:], receiveid)
 
 	cbc := yiigo.NewCBCCrypto(key, key[:aes.BlockSize], yiigo.PKCS7)
 	cipherText, err := cbc.Encrypt(encryptData)
@@ -38,8 +38,8 @@ func Encrypt(appid, encodingAESKey, nonce string, plainText []byte) ([]byte, err
 	return cipherText, nil
 }
 
-// Decrypt 参考微信[加密技术方案](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318482&token=&lang=zh_CN)
-func Decrypt(appid, encodingAESKey, cipherText string) ([]byte, error) {
+// Decrypt 参考微信[加密技术方案](https://open.work.weixin.qq.com/api/doc/90000/90139/90968)
+func Decrypt(receiveid, encodingAESKey, cipherText string) ([]byte, error) {
 	key, err := base64.StdEncoding.DecodeString(encodingAESKey + "=")
 
 	if err != nil {
@@ -59,11 +59,11 @@ func Decrypt(appid, encodingAESKey, cipherText string) ([]byte, error) {
 		return nil, err
 	}
 
-	appidOffset := len(plainText) - len([]byte(appid))
+	appidOffset := len(plainText) - len([]byte(receiveid))
 
-	// 校验 AppID
-	if v := string(plainText[appidOffset:]); v != appid {
-		return nil, fmt.Errorf("appid mismatch, want: %s, got: %s", appid, v)
+	// 校验 receiveid
+	if v := string(plainText[appidOffset:]); v != receiveid {
+		return nil, fmt.Errorf("receiveid mismatch, want: %s, got: %s", receiveid, v)
 	}
 
 	return plainText[20:appidOffset], nil
