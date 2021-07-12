@@ -21,9 +21,7 @@ type RefundData struct {
 
 // RefundByTransactionID 根据微信订单号退款
 func RefundByTransactionID(transactionID string, data *RefundData) wx.Action {
-	return wx.NewAction(RefundApplyURL,
-		wx.WithMethod(wx.MethodPost),
-		wx.WithTLS(),
+	return wx.NewPostAction(RefundApplyURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":          appid,
@@ -54,14 +52,13 @@ func RefundByTransactionID(transactionID string, data *RefundData) wx.Action {
 
 			return body, nil
 		}),
+		wx.WithTLS(),
 	)
 }
 
 // RefundByOutTradeNO 根据商户订单号退款
 func RefundByOutTradeNO(outTradeNO string, data *RefundData) wx.Action {
-	return wx.NewAction(RefundApplyURL,
-		wx.WithMethod(wx.MethodPost),
-		wx.WithTLS(),
+	return wx.NewPostAction(RefundApplyURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":         appid,
@@ -92,13 +89,13 @@ func RefundByOutTradeNO(outTradeNO string, data *RefundData) wx.Action {
 
 			return body, nil
 		}),
+		wx.WithTLS(),
 	)
 }
 
 // QueryRefundByRefundID 根据微信退款单号查询退款信息
 func QueryRefundByRefundID(refundID string, offset ...int) wx.Action {
-	return wx.NewAction(RefundQueryURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(RefundQueryURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":     appid,
@@ -119,8 +116,7 @@ func QueryRefundByRefundID(refundID string, offset ...int) wx.Action {
 
 // QueryRefundByOutRefundNO 根据商户退款单号查询退款信息
 func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) wx.Action {
-	return wx.NewAction(RefundQueryURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(RefundQueryURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":         appid,
@@ -141,8 +137,7 @@ func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) wx.Action {
 
 // QueryRefundByTransactionID 根据微信订单号查询退款信息
 func QueryRefundByTransactionID(transactionID string, offset ...int) wx.Action {
-	return wx.NewAction(RefundQueryURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(RefundQueryURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":          appid,
@@ -163,8 +158,7 @@ func QueryRefundByTransactionID(transactionID string, offset ...int) wx.Action {
 
 // QueryRefundByOutTradeNO 根据商户订单号查询退款信息
 func QueryRefundByOutTradeNO(outTradeNO string, offset ...int) wx.Action {
-	return wx.NewAction(RefundQueryURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(RefundQueryURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":        appid,

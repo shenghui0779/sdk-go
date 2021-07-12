@@ -24,8 +24,7 @@ var (
 func ImageSecCheck(path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewAction(ImageSecCheckURL,
-		wx.WithMethod(wx.MethodUpload),
+	return wx.NewUploadAction(ImageSecCheckURL,
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
 			Filename:  filename,
@@ -49,8 +48,7 @@ type MediaSecAsyncResult struct {
 
 // MediaSecCheckAsync 异步校验图片/音频是否含有违法违规内容
 func MediaSecCheckAsync(dest *MediaSecAsyncResult, mediaType SecMediaType, mediaURL string) wx.Action {
-	return wx.NewAction(MediaCheckAsyncURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(MediaCheckAsyncURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"media_type": mediaType,
@@ -67,8 +65,7 @@ func MediaSecCheckAsync(dest *MediaSecAsyncResult, mediaType SecMediaType, media
 
 // MsgSecCheck 检查一段文本是否含有违法违规内容
 func MsgSecCheck(content string) wx.Action {
-	return wx.NewAction(MsgSecCheckURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(MsgSecCheckURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"content": content,

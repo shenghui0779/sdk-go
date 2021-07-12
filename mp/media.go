@@ -28,8 +28,7 @@ type MediaUploadResult struct {
 func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewAction(MediaUploadURL,
-		wx.WithMethod(wx.MethodUpload),
+	return wx.NewUploadAction(MediaUploadURL,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
@@ -52,8 +51,7 @@ func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.A
 
 // UploadMediaByURL 上传临时素材到微信服务器
 func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, resourceURL string) wx.Action {
-	return wx.NewAction(MediaUploadURL,
-		wx.WithMethod(wx.MethodUpload),
+	return wx.NewUploadAction(MediaUploadURL,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
@@ -83,8 +81,7 @@ type Media struct {
 
 // GetMedia 获取客服消息内的临时素材
 func GetMedia(dest *Media, mediaID string) wx.Action {
-	return wx.NewAction(MediaGetURL,
-		wx.WithMethod(wx.MethodGet),
+	return wx.NewGetAction(MediaGetURL,
 		wx.WithQuery("media_id", mediaID),
 		wx.WithDecode(func(resp []byte) error {
 			dest.Buffer = make([]byte, len(resp))

@@ -14,6 +14,7 @@ const (
 	MethodGet    ActionMethod = "GET"
 	MethodPost   ActionMethod = "POST"
 	MethodUpload ActionMethod = "UPLOAD"
+	MethodNone   ActionMethod = "NONE"
 )
 
 // Action is the interface that handle wechat a
@@ -48,14 +49,18 @@ type UploadField struct {
 }
 
 type action struct {
-	reqURL      string
 	method      ActionMethod
+	reqURL      string
 	query       url.Values
 	wxml        func(appid, mchid, nonce string) (WXML, error)
 	body        func() ([]byte, error)
 	uploadfield *UploadField
 	decode      func(resp []byte) error
 	tls         bool
+}
+
+func (a *action) Method() ActionMethod {
+	return a.method
 }
 
 func (a *action) URL(accessToken ...string) string {
@@ -68,10 +73,6 @@ func (a *action) URL(accessToken ...string) string {
 	}
 
 	return fmt.Sprintf("%s?%s", a.reqURL, a.query.Encode())
-}
-
-func (a *action) Method() ActionMethod {
-	return a.method
 }
 
 func (a *action) WXML(appid, mchid, nonce string) (WXML, error) {
@@ -123,13 +124,6 @@ func (a *action) TLS() bool {
 // ActionOption configures how we set up the action
 type ActionOption func(a *action)
 
-// WithMethod specifies the `method` to Action.
-func WithMethod(method ActionMethod) ActionOption {
-	return func(a *action) {
-		a.method = method
-	}
-}
-
 // WithQuery specifies the `query` to Action.
 func WithQuery(key, value string) ActionOption {
 	return func(a *action) {
@@ -173,8 +167,9 @@ func WithTLS() ActionOption {
 }
 
 // NewAction returns a new action
-func NewAction(reqURL string, options ...ActionOption) Action {
+func NewAction(method ActionMethod, reqURL string, options ...ActionOption) Action {
 	a := &action{
+		method: method,
 		reqURL: reqURL,
 		query:  url.Values{},
 	}
@@ -184,4 +179,19 @@ func NewAction(reqURL string, options ...ActionOption) Action {
 	}
 
 	return a
+}
+
+// NewGetAction returns a new action with GET method
+func NewGetAction(reqURL string, options ...ActionOption) Action {
+	return NewAction(MethodGet, reqURL, options...)
+}
+
+// NewPostAction returns a new action with POST method
+func NewPostAction(reqURL string, options ...ActionOption) Action {
+	return NewAction(MethodPost, reqURL, options...)
+}
+
+// NewUploadAction returns a new action with UPLOAD method
+func NewUploadAction(reqURL string, options ...ActionOption) Action {
+	return NewAction(MethodUpload, reqURL, options...)
 }

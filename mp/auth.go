@@ -76,8 +76,7 @@ type PaidUnionID struct {
 
 // GetPaidUnionIDByTransactionID 用户支付完成后，获取该用户的 UnionId，无需用户授权
 func GetPaidUnionIDByTransactionID(dest *PaidUnionID, openid, transactionID string) wx.Action {
-	return wx.NewAction(PaidUnionURL,
-		wx.WithMethod(wx.MethodGet),
+	return wx.NewGetAction(PaidUnionURL,
 		wx.WithQuery("openid", openid),
 		wx.WithQuery("transaction_id", transactionID),
 		wx.WithDecode(func(resp []byte) error {
@@ -90,8 +89,7 @@ func GetPaidUnionIDByTransactionID(dest *PaidUnionID, openid, transactionID stri
 
 // GetPaidUnionIDByOutTradeNO 用户支付完成后，获取该用户的 UnionId，无需用户授权
 func GetPaidUnionIDByOutTradeNO(dest *PaidUnionID, openid, mchid, outTradeNO string) wx.Action {
-	return wx.NewAction(PaidUnionURL,
-		wx.WithMethod(wx.MethodGet),
+	return wx.NewGetAction(PaidUnionURL,
 		wx.WithQuery("openid", openid),
 		wx.WithQuery("mch_id", mchid),
 		wx.WithQuery("out_trade_no", outTradeNO),

@@ -72,8 +72,7 @@ type User struct {
 }
 
 func UserCreate(data *User) wx.Action {
-	return wx.NewAction(UserCreateURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(UserCreateURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -81,8 +80,7 @@ func UserCreate(data *User) wx.Action {
 }
 
 func UserGet(dest *User, userID string) wx.Action {
-	return wx.NewAction(UserGetURL,
-		wx.WithMethod(wx.MethodGet),
+	return wx.NewGetAction(UserGetURL,
 		wx.WithQuery("userid", userID),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -91,8 +89,7 @@ func UserGet(dest *User, userID string) wx.Action {
 }
 
 func UserUpdate(data *User) wx.Action {
-	return wx.NewAction(UserUpdateURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(UserUpdateURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -100,15 +97,13 @@ func UserUpdate(data *User) wx.Action {
 }
 
 func UserDelete(userID string) wx.Action {
-	return wx.NewAction(UserDeleteURL,
-		wx.WithMethod(wx.MethodGet),
+	return wx.NewGetAction(UserDeleteURL,
 		wx.WithQuery("userid", userID),
 	)
 }
 
 func UserBatchDelete(userIDs ...string) wx.Action {
-	return wx.NewAction(UserBatchDeleteURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(UserBatchDeleteURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"useridlist": userIDs,
@@ -124,8 +119,7 @@ func UserSimpleList(dest *[]*User, departmentID int, fetchChild bool) wx.Action 
 		child = 1
 	}
 
-	return wx.NewAction(UserSimpleListURL,
-		wx.WithMethod(wx.MethodGet),
+	return wx.NewGetAction(UserSimpleListURL,
 		wx.WithQuery("department_id", strconv.Itoa(departmentID)),
 		wx.WithQuery("fetch_child", strconv.Itoa(child)),
 		wx.WithDecode(func(resp []byte) error {
@@ -141,12 +135,30 @@ func UserList(dest *[]*User, departmentID int, fetchChild bool) wx.Action {
 		child = 1
 	}
 
-	return wx.NewAction(UserListURL,
-		wx.WithMethod(wx.MethodGet),
+	return wx.NewGetAction(UserListURL,
 		wx.WithQuery("department_id", strconv.Itoa(departmentID)),
 		wx.WithQuery("fetch_child", strconv.Itoa(child)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "userlist").Raw), dest)
+		}),
+	)
+}
+
+type UserOpenID struct {
+	UserID string `json:"userid"`
+	OpenID string `json:"openid"`
+}
+
+func UserConvert2OpenID(dest *UserOpenID, userID string) wx.Action {
+	return wx.NewPostAction(UserConvert2OpenIDURL,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(yiigo.X{"userid": userID})
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.UserID = userID
+			dest.OpenID = gjson.GetBytes(resp, "openid").String()
+
+			return nil
 		}),
 	)
 }

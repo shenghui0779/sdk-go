@@ -25,8 +25,7 @@ type RedpackData struct {
 
 // SendNormalRedpack 发放普通红包
 func SendNormalRedpack(data *RedpackData) wx.Action {
-	return wx.NewAction(RedpackNormalURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(RedpackNormalURL,
 		wx.WithTLS(),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
@@ -60,8 +59,7 @@ func SendNormalRedpack(data *RedpackData) wx.Action {
 
 // SendGroupRedpack 发放裂变红包
 func SendGroupRedpack(data *RedpackData) wx.Action {
-	return wx.NewAction(RedpackGroupURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(RedpackGroupURL,
 		wx.WithTLS(),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
@@ -95,8 +93,7 @@ func SendGroupRedpack(data *RedpackData) wx.Action {
 
 // SendMinipRedpack 发放小程序红包
 func SendMinipRedpack(data *RedpackData) wx.Action {
-	return wx.NewAction(RedpackMinipURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(RedpackMinipURL,
 		wx.WithTLS(),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
@@ -126,8 +123,7 @@ func SendMinipRedpack(data *RedpackData) wx.Action {
 
 // QueryRedpackByBillNO 查询红包记录
 func QueryRedpackByBillNO(billNO string) wx.Action {
-	return wx.NewAction(RedpackQueryURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(RedpackQueryURL,
 		wx.WithTLS(),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{

@@ -37,8 +37,7 @@ type TransferBankCardData struct {
 
 // TransferToBalance 付款到零钱【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
 func TransferToBalance(data *TransferBalanceData) wx.Action {
-	return wx.NewAction(TransferToBalanceURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(TransferToBalanceURL,
 		wx.WithTLS(),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
@@ -72,9 +71,7 @@ func TransferToBalance(data *TransferBalanceData) wx.Action {
 
 // QueryTransferBalanceOrder 查询付款到零钱订单
 func QueryTransferBalanceOrder(partnerTradeNO string) wx.Action {
-	return wx.NewAction(TransferBalanceOrderQueryURL,
-		wx.WithMethod(wx.MethodPost),
-		wx.WithTLS(),
+	return wx.NewPostAction(TransferBalanceOrderQueryURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":            appid,
@@ -84,14 +81,13 @@ func QueryTransferBalanceOrder(partnerTradeNO string) wx.Action {
 				"sign_type":        SignMD5,
 			}, nil
 		}),
+		wx.WithTLS(),
 	)
 }
 
 // TransferToBankCard 付款到银行卡【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
 func TransferToBankCard(data *TransferBankCardData, publicKey []byte) wx.Action {
-	return wx.NewAction(TransferToBankCardURL,
-		wx.WithMethod(wx.MethodPost),
-		wx.WithTLS(),
+	return wx.NewPostAction(TransferToBankCardURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"mch_id":           mchid,
@@ -126,14 +122,13 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) wx.Action 
 
 			return body, nil
 		}),
+		wx.WithTLS(),
 	)
 }
 
 // QueryTransferBankCardOrder 查询付款到银行卡订单
 func QueryTransferBankCardOrder(partnerTradeNO string) wx.Action {
-	return wx.NewAction(TransferBankCardOrderQueryURL,
-		wx.WithMethod(wx.MethodPost),
-		wx.WithTLS(),
+	return wx.NewPostAction(TransferBankCardOrderQueryURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"mch_id":           mchid,
@@ -142,14 +137,13 @@ func QueryTransferBankCardOrder(partnerTradeNO string) wx.Action {
 				"sign_type":        SignMD5,
 			}, nil
 		}),
+		wx.WithTLS(),
 	)
 }
 
 // RSAPublicKey 获取RSA加密公钥
 func RSAPublicKey() wx.Action {
-	return wx.NewAction(RSAPublicKeyURL,
-		wx.WithMethod(wx.MethodPost),
-		wx.WithTLS(),
+	return wx.NewPostAction(RSAPublicKeyURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"mch_id":    mchid,
@@ -157,5 +151,6 @@ func RSAPublicKey() wx.Action {
 				"sign_type": SignMD5,
 			}, nil
 		}),
+		wx.WithTLS(),
 	)
 }

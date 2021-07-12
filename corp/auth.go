@@ -17,8 +17,7 @@ type APIDomainIP struct {
 }
 
 func GetAPIDomainIP(dest *APIDomainIP) wx.Action {
-	return wx.NewAction(APIDomainIPURL,
-		wx.WithMethod(wx.MethodGet),
+	return wx.NewGetAction(APIDomainIPURL,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),

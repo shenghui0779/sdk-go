@@ -52,8 +52,7 @@ type OATemplateMessage struct {
 
 // Uniform 发送统一服务消息
 func SendUniformMessage(openID string, msg *UniformMessage) wx.Action {
-	return wx.NewAction(UniformMessageSendURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(UniformMessageSendURL,
 		wx.WithBody(func() ([]byte, error) {
 			params := yiigo.X{
 				"touser": openID,
@@ -108,8 +107,7 @@ func SendUniformMessage(openID string, msg *UniformMessage) wx.Action {
 
 // SendSubscribeMessage 发送订阅消息
 func SendSubscribeMessage(openID string, msg *SubscribeMessage) wx.Action {
-	return wx.NewAction(SubscribeMessageSendURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(SubscribeMessageSendURL,
 		wx.WithBody(func() ([]byte, error) {
 			params := yiigo.X{
 				"touser":      openID,
@@ -136,8 +134,7 @@ func SendSubscribeMessage(openID string, msg *SubscribeMessage) wx.Action {
 
 // SendTemplateMessage 发送模板消息（已废弃，请使用订阅消息）
 func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
-	return wx.NewAction(TemplateMessageSendURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(TemplateMessageSendURL,
 		wx.WithBody(func() ([]byte, error) {
 			params := yiigo.X{
 				"touser":      openID,
@@ -164,8 +161,7 @@ func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
 
 // SendKFTextMessage 发送客服文本消息（支持插入跳小程序的文字链）
 func SendKFTextMessage(openID, text string) wx.Action {
-	return wx.NewAction(KFMessageSendURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(KFMessageSendURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"touser":  openID,
@@ -180,8 +176,7 @@ func SendKFTextMessage(openID, text string) wx.Action {
 
 // SendKFImageMessage 发送客服图片消息（媒体ID，通过素材接口上传获得）
 func SendKFImageMessage(openID, mediaID string) wx.Action {
-	return wx.NewAction(KFMessageSendURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(KFMessageSendURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"touser":  openID,
@@ -204,8 +199,7 @@ type KFLinkMessage struct {
 
 // SendKFLinkMessage 发送客服图文链接消息
 func SendKFLinkMessage(openID string, msg *KFLinkMessage) wx.Action {
-	return wx.NewAction(KFMessageSendURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(KFMessageSendURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"touser":  openID,
@@ -225,8 +219,7 @@ type KFMinipMessage struct {
 
 // SendKFMinipMessage 发送客服小程序卡片消息
 func SendKFMinipMessage(openID string, msg *KFMinipMessage) wx.Action {
-	return wx.NewAction(KFMessageSendURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(KFMessageSendURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"touser":          openID,
@@ -248,8 +241,7 @@ const (
 
 // SetTyping 下发当前输入状态（仅支持客服消息）
 func SetTyping(openID string, cmd TypeCommand) wx.Action {
-	return wx.NewAction(SetTypingURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(SetTypingURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"touser":  openID,

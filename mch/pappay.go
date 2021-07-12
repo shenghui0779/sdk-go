@@ -69,8 +69,7 @@ type PappayData struct {
 
 // APPEntrust APP纯签约
 func APPEntrust(c *Contract) wx.Action {
-	return wx.NewAction(PappayAPPEntrustURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(PappayAPPEntrustURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":                    appid,
@@ -96,7 +95,7 @@ func APPEntrust(c *Contract) wx.Action {
 
 // OAEntrust 公众号纯签约
 func OAEntrust(c *Contract) wx.Action {
-	return wx.NewAction(ContractOAEntrust,
+	return wx.NewAction(wx.MethodNone, ContractOAEntrust,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":                    appid,
@@ -122,7 +121,7 @@ func OAEntrust(c *Contract) wx.Action {
 
 // MPEntrust 小程序纯签约，返回小程序所需的 extraData 数据
 func MPEntrust(c *Contract) wx.Action {
-	return wx.NewAction(ContractMPEntrust,
+	return wx.NewAction(wx.MethodNone, ContractMPEntrust,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			extraData := wx.WXML{
 				"appid":                    appid,
@@ -147,7 +146,7 @@ func MPEntrust(c *Contract) wx.Action {
 
 // H5Entrust H5纯签约
 func H5Entrust(c *Contract) wx.Action {
-	return wx.NewAction(ContractH5Entrust,
+	return wx.NewAction(wx.MethodNone, ContractH5Entrust,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":                    appid,
@@ -174,8 +173,7 @@ func H5Entrust(c *Contract) wx.Action {
 
 // EntrustByOrder 支付中签约
 func EntrustByOrder(order *ContractOrder) wx.Action {
-	return wx.NewAction(PappayContractOrderURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(PappayContractOrderURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":                    appid,
@@ -245,8 +243,7 @@ func EntrustByOrder(order *ContractOrder) wx.Action {
 
 // QueryContractByID 根据微信返回的委托代扣协议id查询签约关系
 func QueryContractByID(contractID string) wx.Action {
-	return wx.NewAction(PappayContractQueryURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(PappayContractQueryURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":       appid,
@@ -261,8 +258,7 @@ func QueryContractByID(contractID string) wx.Action {
 
 // QueryContractByCode 根据签约协议号查询签约关系，需要商户平台配置的代扣模版id
 func QueryContractByCode(planID, contractCode string) wx.Action {
-	return wx.NewAction(PappayContractQueryURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(PappayContractQueryURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":         appid,
@@ -278,8 +274,7 @@ func QueryContractByCode(planID, contractCode string) wx.Action {
 
 // PappayApply 申请扣款
 func PappayApply(data *PappayData) wx.Action {
-	return wx.NewAction(PappayApplyURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(PappayApplyURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":            appid,
@@ -323,8 +318,7 @@ func PappayApply(data *PappayData) wx.Action {
 
 // DeleteContractByID 根据微信返回的委托代扣协议id解约
 func DeleteContractByID(contractID, remark string) wx.Action {
-	return wx.NewAction(PappayContractDeleteURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(PappayContractDeleteURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":                       appid,
@@ -340,8 +334,7 @@ func DeleteContractByID(contractID, remark string) wx.Action {
 
 // DeleteContractByCode 根据签约协议号解约，需要商户平台配置的代扣模版id
 func DeleteContractByCode(planID, contractCode, remark string) wx.Action {
-	return wx.NewAction(PappayContractDeleteURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(PappayContractDeleteURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":                       appid,
@@ -358,8 +351,7 @@ func DeleteContractByCode(planID, contractCode, remark string) wx.Action {
 
 // QueryPappayByTransactionID 根据微信订单号查询扣款信息
 func QueryPappayByTransactionID(transactionID string) wx.Action {
-	return wx.NewAction(PappayOrderQueryURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(PappayOrderQueryURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":          appid,
@@ -374,8 +366,7 @@ func QueryPappayByTransactionID(transactionID string) wx.Action {
 
 // QueryPappayByOutTradeNO 根据商户订单号查询扣款信息
 func QueryPappayByOutTradeNO(outTradeNO string) wx.Action {
-	return wx.NewAction(PappayOrderQueryURL,
-		wx.WithMethod(wx.MethodPost),
+	return wx.NewPostAction(PappayOrderQueryURL,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":        appid,
