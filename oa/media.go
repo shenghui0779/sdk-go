@@ -107,7 +107,7 @@ func AddNews(dest *MaterialAddResult, articles ...*NewsArticle) wx.Action {
 	return wx.NewAction(NewsAddURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{"articles": articles})
+			return json.Marshal(yiigo.X{"articles": articles})
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
@@ -284,7 +284,7 @@ func DeleteMaterial(mediaID string) wx.Action {
 	return wx.NewAction(MaterialDeleteURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{"media_id": mediaID})
+			return json.Marshal(yiigo.X{"media_id": mediaID})
 		}),
 	)
 }

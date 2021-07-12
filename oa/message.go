@@ -3,6 +3,7 @@ package oa
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -33,7 +34,7 @@ func DeleteTemplate(templateID string) wx.Action {
 	return wx.NewAction(TemplateDeleteURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{"template_id": templateID})
+			return json.Marshal(yiigo.X{"template_id": templateID})
 		}),
 	)
 }
@@ -60,7 +61,7 @@ func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
 	return wx.NewAction(TemplateMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			params := wx.X{
+			params := yiigo.X{
 				"touser":      openID,
 				"template_id": msg.TemplateID,
 				"data":        msg.Data,
@@ -84,7 +85,7 @@ func SendSubscribeMessage(openID, scene, title string, msg *TemplateMessage) wx.
 	return wx.NewAction(SubscribeMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			params := wx.X{
+			params := yiigo.X{
 				"scene":       scene,
 				"title":       title,
 				"touser":      openID,
@@ -110,16 +111,16 @@ func SendKFTextMessage(openID, text string, kfAccount ...string) wx.Action {
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			data := wx.X{
+			data := yiigo.X{
 				"touser":  openID,
 				"msgtype": "text",
-				"text": wx.X{
+				"text": yiigo.X{
 					"content": text,
 				},
 			}
 
 			if len(kfAccount) != 0 {
-				data["customservice"] = wx.X{
+				data["customservice"] = yiigo.X{
 					"kf_account": kfAccount[0],
 				}
 			}
@@ -134,16 +135,16 @@ func SendKFImageMessage(openID, mediaID string, kfAccount ...string) wx.Action {
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			data := wx.X{
+			data := yiigo.X{
 				"touser":  openID,
 				"msgtype": "image",
-				"image": wx.X{
+				"image": yiigo.X{
 					"media_id": mediaID,
 				},
 			}
 
 			if len(kfAccount) != 0 {
-				data["customservice"] = wx.X{
+				data["customservice"] = yiigo.X{
 					"kf_account": kfAccount[0],
 				}
 			}
@@ -158,16 +159,16 @@ func SendKFVoiceMessage(openID, mediaID string, kfAccount ...string) wx.Action {
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			data := wx.X{
+			data := yiigo.X{
 				"touser":  openID,
 				"msgtype": "voice",
-				"voice": wx.X{
+				"voice": yiigo.X{
 					"media_id": mediaID,
 				},
 			}
 
 			if len(kfAccount) != 0 {
-				data["customservice"] = wx.X{
+				data["customservice"] = yiigo.X{
 					"kf_account": kfAccount[0],
 				}
 			}
@@ -190,14 +191,14 @@ func SendKFVideoMessage(openID string, msg *KFVideoMessage, kfAccount ...string)
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			data := wx.X{
+			data := yiigo.X{
 				"touser":  openID,
 				"msgtype": "video",
 				"video":   msg,
 			}
 
 			if len(kfAccount) != 0 {
-				data["customservice"] = wx.X{
+				data["customservice"] = yiigo.X{
 					"kf_account": kfAccount[0],
 				}
 			}
@@ -221,14 +222,14 @@ func SendKFMusicMessage(openID string, msg *KFMusicMessage, kfAccount ...string)
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			data := wx.X{
+			data := yiigo.X{
 				"touser":  openID,
 				"msgtype": "music",
 				"music":   msg,
 			}
 
 			if len(kfAccount) != 0 {
-				data["customservice"] = wx.X{
+				data["customservice"] = yiigo.X{
 					"kf_account": kfAccount[0],
 				}
 			}
@@ -251,16 +252,16 @@ func SendKFNewsMessage(openID string, articles []*KFArticle, kfAccount ...string
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			data := wx.X{
+			data := yiigo.X{
 				"touser":  openID,
 				"msgtype": "news",
-				"news": wx.X{
+				"news": yiigo.X{
 					"articles": articles,
 				},
 			}
 
 			if len(kfAccount) != 0 {
-				data["customservice"] = wx.X{
+				data["customservice"] = yiigo.X{
 					"kf_account": kfAccount[0],
 				}
 			}
@@ -275,16 +276,16 @@ func SendKFMPNewsMessage(openID, mediaID string, kfAccount ...string) wx.Action 
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			data := wx.X{
+			data := yiigo.X{
 				"touser":  openID,
 				"msgtype": "mpnews",
-				"mpnews": wx.X{
+				"mpnews": yiigo.X{
 					"media_id": mediaID,
 				},
 			}
 
 			if len(kfAccount) != 0 {
-				data["customservice"] = wx.X{
+				data["customservice"] = yiigo.X{
 					"kf_account": kfAccount[0],
 				}
 			}
@@ -312,14 +313,14 @@ func SendKFMenuMessage(openID string, msg *KFMenuMessage, kfAccount ...string) w
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			data := wx.X{
+			data := yiigo.X{
 				"touser":  openID,
 				"msgtype": "msgmenu",
 				"msgmenu": msg,
 			}
 
 			if len(kfAccount) != 0 {
-				data["customservice"] = wx.X{
+				data["customservice"] = yiigo.X{
 					"kf_account": kfAccount[0],
 				}
 			}
@@ -334,16 +335,16 @@ func SendKFCardMessage(openID, cardID string, kfAccount ...string) wx.Action {
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			data := wx.X{
+			data := yiigo.X{
 				"touser":  openID,
 				"msgtype": "wxcard",
-				"wxcard": wx.X{
+				"wxcard": yiigo.X{
 					"card_id": cardID,
 				},
 			}
 
 			if len(kfAccount) != 0 {
-				data["customservice"] = wx.X{
+				data["customservice"] = yiigo.X{
 					"kf_account": kfAccount[0],
 				}
 			}
@@ -366,14 +367,14 @@ func SendKFMinipMessage(openID string, msg *KFMinipMessage, kfAccount ...string)
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			data := wx.X{
+			data := yiigo.X{
 				"touser":          openID,
 				"msgtype":         "miniprogrampage",
 				"miniprogrampage": msg,
 			}
 
 			if len(kfAccount) != 0 {
-				data["customservice"] = wx.X{
+				data["customservice"] = yiigo.X{
 					"kf_account": kfAccount[0],
 				}
 			}
@@ -397,7 +398,7 @@ func SetTyping(openID string, cmd TypeCommand) wx.Action {
 	return wx.NewAction(SetTypingURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"touser":  openID,
 				"command": cmd,
 			})

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -28,7 +29,7 @@ func TestInvokeService(t *testing.T) {
 	data := &InvokeData{
 		Service: "wx79ac3de8be320b71",
 		API:     "OcrAllInOne",
-		Data: wx.X{
+		Data: yiigo.X{
 			"img_url":   "http://mmbiz.qpic.cn/mmbiz_jpg/7UFjuNbYxibu66xSqsQqKcuoGBZM77HIyibdiczeWibdMeA2XMt5oibWVQMgDibriazJSOibLqZxcO6DVVcZMxDKgeAtbQ/0",
 			"data_type": 3,
 			"ocr_type":  1,

@@ -3,6 +3,7 @@ package oa
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -87,7 +88,7 @@ func BatchGetSubscribers(dest *[]*SubscriberInfo, openids ...string) wx.Action {
 				})
 			}
 
-			return json.Marshal(wx.X{"user_list": userList})
+			return json.Marshal(yiigo.X{"user_list": userList})
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "user_info_list").Raw), dest)
@@ -111,7 +112,7 @@ func GetBlackList(dest *SubscriberList, beginOpenID ...string) wx.Action {
 	return wx.NewAction(BlackListGetURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			params := wx.X{
+			params := yiigo.X{
 				"begin_openid": "",
 			}
 
@@ -132,7 +133,7 @@ func BlackSubscribers(openids ...string) wx.Action {
 	return wx.NewAction(BatchBlackListURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{"openid_list": openids})
+			return json.Marshal(yiigo.X{"openid_list": openids})
 		}),
 	)
 }
@@ -142,7 +143,7 @@ func UnBlackSubscribers(openids ...string) wx.Action {
 	return wx.NewAction(BatchUnBlackListURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{"openid_list": openids})
+			return json.Marshal(yiigo.X{"openid_list": openids})
 		}),
 	)
 }
@@ -152,7 +153,7 @@ func SetUserRemark(openid, remark string) wx.Action {
 	return wx.NewAction(UserRemarkSetURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"openid": openid,
 				"remark": remark,
 			})

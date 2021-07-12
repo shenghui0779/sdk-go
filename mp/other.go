@@ -3,6 +3,7 @@ package mp
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -10,10 +11,10 @@ import (
 
 // InvokeData 服务调用数据
 type InvokeData struct {
-	Service     string `json:"service"`       // 服务ID
-	API         string `json:"api"`           // 接口名
-	Data        wx.X   `json:"data"`          // 服务提供方接口定义的 JSON 格式的数据
-	ClientMsgID string `json:"client_msg_id"` // 随机字符串ID，调用方请求的唯一标识
+	Service     string  `json:"service"`       // 服务ID
+	API         string  `json:"api"`           // 接口名
+	Data        yiigo.X `json:"data"`          // 服务提供方接口定义的 JSON 格式的数据
+	ClientMsgID string  `json:"client_msg_id"` // 随机字符串ID，调用方请求的唯一标识
 }
 
 type InvokeResult struct {

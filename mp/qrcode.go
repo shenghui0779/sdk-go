@@ -1,6 +1,10 @@
 package mp
 
-import "github.com/shenghui0779/gochat/wx"
+import (
+	"github.com/shenghui0779/yiigo"
+
+	"github.com/shenghui0779/gochat/wx"
+)
 
 type qrcodeSettings struct {
 	page      string
@@ -70,7 +74,7 @@ func CreateQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action 
 				}
 			}
 
-			params := wx.X{"path": path}
+			params := yiigo.X{"path": path}
 
 			if settings.width != 0 {
 				params["width"] = settings.width
@@ -100,7 +104,7 @@ func GetQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action {
 				}
 			}
 
-			params := wx.X{"path": path}
+			params := yiigo.X{"path": path}
 
 			if settings.width != 0 {
 				params["width"] = settings.width
@@ -142,7 +146,7 @@ func GetUnlimitQRCode(dest *QRCode, scene string, options ...QRCodeOption) wx.Ac
 				}
 			}
 
-			params := wx.X{"scene": scene}
+			params := yiigo.X{"scene": scene}
 
 			if settings.page != "" {
 				params["page"] = settings.page

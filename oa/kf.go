@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
+	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -67,7 +68,7 @@ func AddKFAccount(account, nickname string) wx.Action {
 	return wx.NewAction(KFAccountAddURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"kf_account": account,
 				"nickname":   nickname,
 			})
@@ -82,7 +83,7 @@ func UpdateKFAccount(account, nickname string) wx.Action {
 	return wx.NewAction(KFAccountUpdateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"kf_account": account,
 				"nickname":   nickname,
 			})
@@ -99,7 +100,7 @@ func InviteKFWorker(account, inviteWeixin string) wx.Action {
 	return wx.NewAction(KFInviteURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"kf_account": account,
 				"invite_wx":  inviteWeixin,
 			})
@@ -154,7 +155,7 @@ func CreateKFSession(account, openid string) wx.Action {
 	return wx.NewAction(KFSessionCreateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"kf_account": account,
 				"openid":     openid,
 			})
@@ -168,7 +169,7 @@ func CloseKFSession(account, openid string) wx.Action {
 	return wx.NewAction(KFSessionCloseURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"kf_account": account,
 				"openid":     openid,
 			})
@@ -239,7 +240,7 @@ func GetKFMsgRecordList(dest *KFMsgRecordList, msgid, starttime, endtime int64, 
 	return wx.NewAction(KFMsgRecordListURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"msgid":     msgid,
 				"starttime": starttime,
 				"endtime":   endtime,

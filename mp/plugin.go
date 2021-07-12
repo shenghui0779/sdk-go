@@ -3,6 +3,7 @@ package mp
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -27,7 +28,7 @@ func ApplyPlugin(pluginAppID, reason string) wx.Action {
 	return wx.NewAction(PluginManageURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"action":       PluginApply,
 				"plugin_appid": pluginAppID,
 				"reason":       reason,
@@ -38,14 +39,14 @@ func ApplyPlugin(pluginAppID, reason string) wx.Action {
 
 // PluginDevApplyInfo 插件使用方信息
 type PluginDevApplyInfo struct {
-	AppID      string `json:"appid"`       // 使用者的appid
-	Status     int    `json:"status"`      // 插件状态
-	Nickname   string `json:"nickname"`    // 使用者的昵称
-	HeadImgURL string `json:"headimgurl"`  // 使用者的头像
-	Categories []wx.X `json:"categories"`  // 使用者的类目
-	CreateTime string `json:"create_time"` // 使用者的申请时间
-	ApplyURL   string `json:"apply_url"`   // 使用者的小程序码
-	Reason     string `json:"reason"`      // 使用者的申请说明
+	AppID      string    `json:"appid"`       // 使用者的appid
+	Status     int       `json:"status"`      // 插件状态
+	Nickname   string    `json:"nickname"`    // 使用者的昵称
+	HeadImgURL string    `json:"headimgurl"`  // 使用者的头像
+	Categories []yiigo.X `json:"categories"`  // 使用者的类目
+	CreateTime string    `json:"create_time"` // 使用者的申请时间
+	ApplyURL   string    `json:"apply_url"`   // 使用者的小程序码
+	Reason     string    `json:"reason"`      // 使用者的申请说明
 }
 
 // GetPluginDevApplyList 获取当前所有插件使用方（供插件开发者调用）
@@ -53,7 +54,7 @@ func GetPluginDevApplyList(dest *[]*PluginDevApplyInfo, page, num int) wx.Action
 	return wx.NewAction(PluginDevManageURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"action": PluginDevApplyList,
 				"page":   page,
 				"num":    num,
@@ -78,7 +79,7 @@ func GetPluginList(dest *[]*PluginInfo) wx.Action {
 	return wx.NewAction(PluginManageURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{"action": PluginList})
+			return json.Marshal(yiigo.X{"action": PluginList})
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "plugin_list").Raw), dest)
@@ -91,7 +92,7 @@ func SetDevPluginApplyStatus(action PluginAction, appid, reason string) wx.Actio
 	return wx.NewAction(PluginDevManageURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			params := wx.X{"action": action}
+			params := yiigo.X{"action": action}
 
 			if len(appid) != 0 {
 				params["appid"] = appid
@@ -111,7 +112,7 @@ func UnbindPlugin(pluginAppID string) wx.Action {
 	return wx.NewAction(PluginManageURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"action":       PluginUnbind,
 				"plugin_appid": pluginAppID,
 			})

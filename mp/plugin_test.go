@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -64,7 +65,7 @@ func TestGetPluginDevApplyList(t *testing.T) {
 			Status:     1,
 			Nickname:   "名称",
 			HeadImgURL: "**********",
-			Categories: []wx.X{
+			Categories: []yiigo.X{
 				{
 					"first":  "IT科技",
 					"second": "硬件与设备",

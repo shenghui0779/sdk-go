@@ -3,6 +3,7 @@ package oa
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -73,7 +74,7 @@ func CreateMenu(buttons ...*MenuButton) wx.Action {
 	return wx.NewAction(MenuCreateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{"button": buttons})
+			return json.Marshal(yiigo.X{"button": buttons})
 		}),
 	)
 }
@@ -83,7 +84,7 @@ func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.
 	return wx.NewAction(MenuAddConditionalURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"button":    buttons,
 				"matchrule": matchRule,
 			})
@@ -97,7 +98,7 @@ func TryMatchMenu(dest *[]*MenuButton, userID string) wx.Action {
 	return wx.NewAction(MenuTryMatchURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{"user_id": userID})
+			return json.Marshal(yiigo.X{"user_id": userID})
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "button").Raw), dest)
@@ -125,7 +126,7 @@ func DeleteConditionalMenu(menuID string) wx.Action {
 	return wx.NewAction(MenuDeleteConditionalURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{"menuid": menuID})
+			return json.Marshal(yiigo.X{"menuid": menuID})
 		}),
 	)
 }

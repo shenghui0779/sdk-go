@@ -3,6 +3,7 @@ package oa
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -20,7 +21,7 @@ func CreateTempQRCode(dest *QRCode, senceID int, expireSeconds ...int) wx.Action
 	return wx.NewAction(QRCodeCreateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			params := wx.X{
+			params := yiigo.X{
 				"action_name": "QR_SCENE",
 				"action_info": map[string]map[string]int{
 					"scene": {"scene_id": senceID},
@@ -44,7 +45,7 @@ func CreatePermQRCode(dest *QRCode, senceID int) wx.Action {
 	return wx.NewAction(QRCodeCreateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			params := wx.X{
+			params := yiigo.X{
 				"action_name": "QR_LIMIT_SCENE",
 				"action_info": map[string]map[string]int{
 					"scene": {"scene_id": senceID},
@@ -69,7 +70,7 @@ func Long2ShortURL(dest *ShortURL, longURL string) wx.Action {
 	return wx.NewAction(ShortURLGenerateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return wx.MarshalWithNoEscapeHTML(wx.X{
+			return wx.MarshalWithNoEscapeHTML(yiigo.X{
 				"action":   "long2short",
 				"long_url": longURL,
 			})

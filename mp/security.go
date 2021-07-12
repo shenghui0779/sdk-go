@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
+	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
@@ -51,7 +52,7 @@ func MediaSecCheckAsync(dest *MediaSecAsyncResult, mediaType SecMediaType, media
 	return wx.NewAction(MediaCheckAsyncURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"media_type": mediaType,
 				"media_url":  mediaURL,
 			})
@@ -69,7 +70,7 @@ func MsgSecCheck(content string) wx.Action {
 	return wx.NewAction(MsgSecCheckURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"content": content,
 			})
 		}),

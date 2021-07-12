@@ -3,6 +3,8 @@ package mp
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/yiigo"
+
 	"github.com/shenghui0779/gochat/wx"
 )
 
@@ -53,13 +55,13 @@ func SendUniformMessage(openID string, msg *UniformMessage) wx.Action {
 	return wx.NewAction(UniformMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			params := wx.X{
+			params := yiigo.X{
 				"touser": openID,
 			}
 
 			// 小程序模板消息
 			if msg.MPTemplateMessage != nil {
-				tplMsg := wx.X{
+				tplMsg := yiigo.X{
 					"template_id": msg.MPTemplateMessage.TemplateID,
 					"form_id":     msg.MPTemplateMessage.FormID,
 				}
@@ -81,7 +83,7 @@ func SendUniformMessage(openID string, msg *UniformMessage) wx.Action {
 
 			// 公众号模板消息
 			if msg.OATemplateMessage != nil {
-				tplMsg := wx.X{
+				tplMsg := yiigo.X{
 					"appid":       msg.OATemplateMessage.AppID,
 					"template_id": msg.OATemplateMessage.TemplateID,
 					"data":        msg.OATemplateMessage.Data,
@@ -109,7 +111,7 @@ func SendSubscribeMessage(openID string, msg *SubscribeMessage) wx.Action {
 	return wx.NewAction(SubscribeMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			params := wx.X{
+			params := yiigo.X{
 				"touser":      openID,
 				"template_id": msg.TemplateID,
 				"data":        msg.Data,
@@ -137,7 +139,7 @@ func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
 	return wx.NewAction(TemplateMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			params := wx.X{
+			params := yiigo.X{
 				"touser":      openID,
 				"template_id": msg.TemplateID,
 				"form_id":     msg.FormID,
@@ -165,10 +167,10 @@ func SendKFTextMessage(openID, text string) wx.Action {
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"touser":  openID,
 				"msgtype": "text",
-				"text": wx.X{
+				"text": yiigo.X{
 					"content": text,
 				},
 			})
@@ -181,10 +183,10 @@ func SendKFImageMessage(openID, mediaID string) wx.Action {
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"touser":  openID,
 				"msgtype": "image",
-				"image": wx.X{
+				"image": yiigo.X{
 					"media_id": mediaID,
 				},
 			})
@@ -197,7 +199,7 @@ type KFLinkMessage struct {
 	Title       string `json:"title"`       // 消息标题
 	Description string `json:"description"` // 图文链接消息
 	RedirectURL string `json:"url"`         // 图文链接消息被点击后跳转的链接
-	ThumbURL    string `json:"thumb_url"`   // 图文链接消息的图片链接，支持 JPG、PNG 格式，较好的效果为大图 640 wx.X 320，小图 80 wx.X 80
+	ThumbURL    string `json:"thumb_url"`   // 图文链接消息的图片链接，支持 JPG、PNG 格式，较好的效果为大图 640 yiigo.X 320，小图 80 yiigo.X 80
 }
 
 // SendKFLinkMessage 发送客服图文链接消息
@@ -205,7 +207,7 @@ func SendKFLinkMessage(openID string, msg *KFLinkMessage) wx.Action {
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"touser":  openID,
 				"msgtype": "link",
 				"link":    msg,
@@ -226,7 +228,7 @@ func SendKFMinipMessage(openID string, msg *KFMinipMessage) wx.Action {
 	return wx.NewAction(KFMessageSendURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"touser":          openID,
 				"msgtype":         "miniprogrampage",
 				"miniprogrampage": msg,
@@ -249,7 +251,7 @@ func SetTyping(openID string, cmd TypeCommand) wx.Action {
 	return wx.NewAction(SetTypingURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(wx.X{
+			return json.Marshal(yiigo.X{
 				"touser":  openID,
 				"command": cmd,
 			})

@@ -14,9 +14,6 @@ import (
 // WXML deal with xml for wechat
 type WXML map[string]string
 
-// X is a convenient alias for a map[string]interface{}.
-type X map[string]interface{}
-
 // CDATA XML CDATA section which is defined as blocks of text that are not parsed by the parser, but are otherwise recognized as markup.
 type CDATA string
 
