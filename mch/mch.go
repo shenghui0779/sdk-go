@@ -101,35 +101,26 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPO
 		m["sign"] = mch.SignWithMD5(m, true)
 	}
 
-	reqURL := action.URL()
+	if action.Method() == wx.MethodNone {
+		if reqURL := action.URL(); len(reqURL) != 0 {
+			query := url.Values{}
 
-	switch reqURL {
-	case ContractOAEntrust: // 公众号签约
-		query := url.Values{}
+			for k, v := range m {
+				query.Add(k, v)
+			}
 
-		for k, v := range m {
-			query.Add(k, v)
+			return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", reqURL, query.Encode())}, nil
 		}
 
-		return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayOAEntrustURL, query.Encode())}, nil
-	case ContractMPEntrust: // 小程序签约
 		return m, nil
-	case ContractH5Entrust: // H5签约
-		query := url.Values{}
-
-		for k, v := range m {
-			query.Add(k, v)
-		}
-
-		return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", PappayH5EntrustURL, query.Encode())}, nil
 	}
 
 	var resp []byte
 
 	if action.TLS() {
-		resp, err = mch.tlsClient.PostXML(ctx, reqURL, m, options...)
+		resp, err = mch.tlsClient.PostXML(ctx, action.URL(), m, options...)
 	} else {
-		resp, err = mch.client.PostXML(ctx, reqURL, m, options...)
+		resp, err = mch.client.PostXML(ctx, action.URL(), m, options...)
 	}
 
 	if err != nil {

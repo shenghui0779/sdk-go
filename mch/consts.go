@@ -63,12 +63,6 @@ const (
 )
 
 const (
-	ContractOAEntrust = "offical_accounts_entrust"
-	ContractMPEntrust = "mini_program_entrust"
-	ContractH5Entrust = "h5_entrust"
-)
-
-const (
 	ContractAdd    = "ADD"    // 签约
 	ContractDelete = "DELETE" // 解约
 )
