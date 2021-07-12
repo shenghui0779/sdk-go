@@ -102,17 +102,17 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPO
 	}
 
 	if action.Method() == wx.MethodNone {
-		if reqURL := action.URL(); len(reqURL) != 0 {
-			query := url.Values{}
-
-			for k, v := range m {
-				query.Add(k, v)
-			}
-
-			return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", reqURL, query.Encode())}, nil
+		if len(action.URL()) == 0 {
+			return m, nil
 		}
 
-		return m, nil
+		query := url.Values{}
+
+		for k, v := range m {
+			query.Add(k, v)
+		}
+
+		return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", action.URL(), query.Encode())}, nil
 	}
 
 	var resp []byte
