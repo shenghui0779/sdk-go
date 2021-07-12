@@ -2,8 +2,10 @@ package corp
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"github.com/shenghui0779/yiigo"
+	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -69,7 +71,7 @@ type User struct {
 	ExternalProfile  *UserExternalProfile `json:"external_profile,omitempty"`
 }
 
-func CreateUser(data *User) wx.Action {
+func UserCreate(data *User) wx.Action {
 	return wx.NewAction(UserCreateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
@@ -78,7 +80,7 @@ func CreateUser(data *User) wx.Action {
 	)
 }
 
-func GetUser(dest *User, userID string) wx.Action {
+func UserGet(dest *User, userID string) wx.Action {
 	return wx.NewAction(UserGetURL,
 		wx.WithMethod(wx.MethodGet),
 		wx.WithQuery("userid", userID),
@@ -88,7 +90,7 @@ func GetUser(dest *User, userID string) wx.Action {
 	)
 }
 
-func UpdateUser(data *User) wx.Action {
+func UserUpdate(data *User) wx.Action {
 	return wx.NewAction(UserUpdateURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
@@ -97,20 +99,54 @@ func UpdateUser(data *User) wx.Action {
 	)
 }
 
-func DeleteUser(userID string) wx.Action {
+func UserDelete(userID string) wx.Action {
 	return wx.NewAction(UserDeleteURL,
 		wx.WithMethod(wx.MethodGet),
 		wx.WithQuery("userid", userID),
 	)
 }
 
-func BatchDeleteUser(userIDs ...string) wx.Action {
+func UserBatchDelete(userIDs ...string) wx.Action {
 	return wx.NewAction(UserBatchDeleteURL,
 		wx.WithMethod(wx.MethodPost),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"useridlist": userIDs,
 			})
+		}),
+	)
+}
+
+func UserSimpleList(dest *[]*User, departmentID int, fetchChild bool) wx.Action {
+	child := 0
+
+	if fetchChild {
+		child = 1
+	}
+
+	return wx.NewAction(UserSimpleListURL,
+		wx.WithMethod(wx.MethodGet),
+		wx.WithQuery("department_id", strconv.Itoa(departmentID)),
+		wx.WithQuery("fetch_child", strconv.Itoa(child)),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal([]byte(gjson.GetBytes(resp, "userlist").Raw), dest)
+		}),
+	)
+}
+
+func UserList(dest *[]*User, departmentID int, fetchChild bool) wx.Action {
+	child := 0
+
+	if fetchChild {
+		child = 1
+	}
+
+	return wx.NewAction(UserListURL,
+		wx.WithMethod(wx.MethodGet),
+		wx.WithQuery("department_id", strconv.Itoa(departmentID)),
+		wx.WithQuery("fetch_child", strconv.Itoa(child)),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal([]byte(gjson.GetBytes(resp, "userlist").Raw), dest)
 		}),
 	)
 }

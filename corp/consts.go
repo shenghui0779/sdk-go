@@ -11,4 +11,6 @@ const (
 	UserUpdateURL      = "https://qyapi.weixin.qq.com/cgi-bin/user/update"
 	UserDeleteURL      = "https://qyapi.weixin.qq.com/cgi-bin/user/delete"
 	UserBatchDeleteURL = "https://qyapi.weixin.qq.com/cgi-bin/user/batchdelete"
+	UserSimpleListURL  = "https://qyapi.weixin.qq.com/cgi-bin/user/simplelist"
+	UserListURL        = "https://qyapi.weixin.qq.com/cgi-bin/user/list"
 )
