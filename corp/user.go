@@ -71,6 +71,7 @@ type User struct {
 	ExternalProfile  *UserExternalProfile `json:"external_profile,omitempty"`
 }
 
+// UserCreate 创建成员
 func UserCreate(data *User) wx.Action {
 	return wx.NewPostAction(UserCreateURL,
 		wx.WithBody(func() ([]byte, error) {
@@ -79,6 +80,7 @@ func UserCreate(data *User) wx.Action {
 	)
 }
 
+// UserGet 读取成员
 func UserGet(dest *User, userID string) wx.Action {
 	return wx.NewGetAction(UserGetURL,
 		wx.WithQuery("userid", userID),
@@ -88,6 +90,7 @@ func UserGet(dest *User, userID string) wx.Action {
 	)
 }
 
+// UserUpdate 更新成员
 func UserUpdate(data *User) wx.Action {
 	return wx.NewPostAction(UserUpdateURL,
 		wx.WithBody(func() ([]byte, error) {
@@ -96,12 +99,14 @@ func UserUpdate(data *User) wx.Action {
 	)
 }
 
+// UserDelete 删除成员
 func UserDelete(userID string) wx.Action {
 	return wx.NewGetAction(UserDeleteURL,
 		wx.WithQuery("userid", userID),
 	)
 }
 
+// UserBatchDelete 批量删除成员
 func UserBatchDelete(userIDs ...string) wx.Action {
 	return wx.NewPostAction(UserBatchDeleteURL,
 		wx.WithBody(func() ([]byte, error) {
@@ -112,6 +117,7 @@ func UserBatchDelete(userIDs ...string) wx.Action {
 	)
 }
 
+// UserSimpleList 获取部门成员
 func UserSimpleList(dest *[]*User, departmentID int, fetchChild bool) wx.Action {
 	child := 0
 
@@ -128,6 +134,7 @@ func UserSimpleList(dest *[]*User, departmentID int, fetchChild bool) wx.Action 
 	)
 }
 
+// UserList 获取部门成员详情
 func UserList(dest *[]*User, departmentID int, fetchChild bool) wx.Action {
 	child := 0
 
@@ -144,13 +151,14 @@ func UserList(dest *[]*User, departmentID int, fetchChild bool) wx.Action {
 	)
 }
 
-type UserOpenID struct {
+type ConvertResult struct {
 	UserID string `json:"userid"`
 	OpenID string `json:"openid"`
 }
 
-func UserConvert2OpenID(dest *UserOpenID, userID string) wx.Action {
-	return wx.NewPostAction(UserConvert2OpenIDURL,
+// Convert2OpenID userid转openid
+func Convert2OpenID(dest *ConvertResult, userID string) wx.Action {
+	return wx.NewPostAction(Convert2OpenIDURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"userid": userID})
 		}),
@@ -159,6 +167,82 @@ func UserConvert2OpenID(dest *UserOpenID, userID string) wx.Action {
 			dest.OpenID = gjson.GetBytes(resp, "openid").String()
 
 			return nil
+		}),
+	)
+}
+
+// Convert2UserID openid转userid
+func Convert2UserID(dest *ConvertResult, openid string) wx.Action {
+	return wx.NewPostAction(Convert2UserIDURL,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(yiigo.X{"openid": openid})
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			dest.UserID = gjson.GetBytes(resp, "userid").String()
+			dest.OpenID = openid
+
+			return nil
+		}),
+	)
+}
+
+type ParamsInvite struct {
+	User  []string `json:"user,omitempty"`  // 成员ID列表，最多支持1000个
+	Party []string `json:"party,omitempty"` // 部门ID列表，最多支持100个
+	Tag   []string `json:"tag,omitempty"`   // 标签ID列表，最多支持100个
+}
+
+type InviteResult struct {
+	InvalidUser  []string `json:"invaliduser"`
+	InvalidParth []string `json:"invalidparth"`
+	InvalidTag   []string `json:"invalidtag"`
+}
+
+// BatchInvite 邀请成员
+func BatchInvite(dest *InviteResult, params *ParamsInvite) wx.Action {
+	return wx.NewPostAction(BatchInviteURL,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
+}
+
+type JoinQRCode struct {
+	URL string `json:"join_qrcode"` // 二维码链接，有效期7天
+}
+
+// GetJoinQRCode 获取加入企业二维码
+// 尺寸：
+// 1 - 171 x 171
+// 2 - 399 x 399
+// 3 - 741 x 741
+// 4 - 2052 x 2052
+func GetJoinQRCode(dest *JoinQRCode, size int) wx.Action {
+	return wx.NewGetAction(JoinQRCodeURL,
+		wx.WithQuery("size_type", strconv.Itoa(size)),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
+}
+
+type ActiveStat struct {
+	Count int `json:"active_cnt"`
+}
+
+// GetActiveStat 获取企业活跃成员数
+func GetActiveStat(dest *ActiveStat, date string) wx.Action {
+	return wx.NewPostAction(ActiveStatURL,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(yiigo.X{
+				"date": date,
+			})
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
 		}),
 	)
 }
