@@ -21,3 +21,10 @@ const (
 	JoinQRCodeURL      = "https://qyapi.weixin.qq.com/cgi-bin/corp/get_join_qrcode"
 	ActiveStatURL      = "https://qyapi.weixin.qq.com/cgi-bin/user/get_active_stat"
 )
+
+const (
+	DepartmentCreateURL = "https://qyapi.weixin.qq.com/cgi-bin/department/create"
+	DepartmentUpdateURL = "https://qyapi.weixin.qq.com/cgi-bin/department/update"
+	DepartmentDeleteURL = "https://qyapi.weixin.qq.com/cgi-bin/department/delete"
+	DepartmentListURL   = "https://qyapi.weixin.qq.com/cgi-bin/department/list"
+)

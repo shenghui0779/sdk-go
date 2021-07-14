@@ -220,13 +220,18 @@ type JoinQRCode struct {
 // 2 - 399 x 399
 // 3 - 741 x 741
 // 4 - 2052 x 2052
-func GetJoinQRCode(dest *JoinQRCode, size int) wx.Action {
-	return wx.NewGetAction(JoinQRCodeURL,
-		wx.WithQuery("size_type", strconv.Itoa(size)),
+func GetJoinQRCode(dest *JoinQRCode, size ...int) wx.Action {
+	options := []wx.ActionOption{
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
-	)
+	}
+
+	if len(size) != 0 {
+		options = append(options, wx.WithQuery("size_type", strconv.Itoa(size[0])))
+	}
+
+	return wx.NewGetAction(JoinQRCodeURL, options...)
 }
 
 type ActiveStat struct {
