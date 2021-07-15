@@ -28,7 +28,7 @@ go get -u github.com/shenghui0779/gochat
 
 ## 说明
 
-- 支持 Go1.11+
+- 支持 Go1.15+
 - 注意：因 `access_token` 每日获取次数有限且含有效期，故服务端应妥善保存 `access_token` 并定时刷新
 - 配合 [yiigo](https://github.com/shenghui0779/yiigo) 使用，可以更方便的操作 `MySQL`、`MongoDB` 与 `Redis` 等
 
