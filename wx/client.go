@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -42,6 +44,12 @@ func (c *apiclient) Get(ctx context.Context, reqURL string, options ...yiigo.HTT
 
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		io.Copy(ioutil.Discard, resp.Body)
+
+		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
+	}
+
 	return ioutil.ReadAll(resp.Body)
 }
 
@@ -56,6 +64,12 @@ func (c *apiclient) Post(ctx context.Context, reqURL string, body []byte, option
 	}
 
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		io.Copy(ioutil.Discard, resp.Body)
+
+		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
+	}
 
 	return ioutil.ReadAll(resp.Body)
 }
@@ -78,6 +92,12 @@ func (c *apiclient) PostXML(ctx context.Context, reqURL string, body WXML, optio
 
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		io.Copy(ioutil.Discard, resp.Body)
+
+		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
+	}
+
 	return ioutil.ReadAll(resp.Body)
 }
 
@@ -90,6 +110,12 @@ func (c *apiclient) Upload(ctx context.Context, reqURL string, form yiigo.Upload
 	}
 
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		io.Copy(ioutil.Discard, resp.Body)
+
+		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
+	}
 
 	return ioutil.ReadAll(resp.Body)
 }
