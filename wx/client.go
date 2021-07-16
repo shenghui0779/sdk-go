@@ -83,7 +83,7 @@ func (c *apiclient) Post(ctx context.Context, reqURL string, body []byte, option
 		yiigo.Logger().Info(fmt.Sprintf("[gochat] [POST] %s", reqURL), logFields...)
 	}()
 
-	logFields = append(logFields, zap.ByteString("req_body", body))
+	logFields = append(logFields, zap.ByteString("body", body))
 
 	options = append(options, yiigo.WithHTTPHeader("Content-Type", "application/json; charset=utf-8"))
 
@@ -97,7 +97,7 @@ func (c *apiclient) Post(ctx context.Context, reqURL string, body []byte, option
 
 	defer resp.Body.Close()
 
-	logFields = append(logFields, zap.Int("status_code", resp.StatusCode))
+	logFields = append(logFields, zap.Int("status", resp.StatusCode))
 
 	b, err := ioutil.ReadAll(resp.Body)
 
@@ -107,7 +107,7 @@ func (c *apiclient) Post(ctx context.Context, reqURL string, body []byte, option
 		return nil, err
 	}
 
-	logFields = append(logFields, zap.ByteString("resp_body", b))
+	logFields = append(logFields, zap.ByteString("response", b))
 
 	return b, nil
 }
@@ -132,7 +132,7 @@ func (c *apiclient) PostXML(ctx context.Context, reqURL string, body WXML, optio
 		return nil, err
 	}
 
-	logFields = append(logFields, zap.String("req_body", xmlStr))
+	logFields = append(logFields, zap.String("body", xmlStr))
 
 	options = append(options, yiigo.WithHTTPHeader("Content-Type", "text/xml; charset=utf-8"))
 
@@ -146,7 +146,7 @@ func (c *apiclient) PostXML(ctx context.Context, reqURL string, body WXML, optio
 
 	defer resp.Body.Close()
 
-	logFields = append(logFields, zap.Int("status_code", resp.StatusCode))
+	logFields = append(logFields, zap.Int("status", resp.StatusCode))
 
 	b, err := ioutil.ReadAll(resp.Body)
 
@@ -156,7 +156,7 @@ func (c *apiclient) PostXML(ctx context.Context, reqURL string, body WXML, optio
 		return nil, err
 	}
 
-	logFields = append(logFields, zap.ByteString("resp_body", b))
+	logFields = append(logFields, zap.ByteString("response", b))
 
 	return b, nil
 }
@@ -183,7 +183,7 @@ func (c *apiclient) Upload(ctx context.Context, reqURL string, form yiigo.Upload
 
 	defer resp.Body.Close()
 
-	logFields = append(logFields, zap.Int("status_code", resp.StatusCode))
+	logFields = append(logFields, zap.Int("status", resp.StatusCode))
 
 	b, err := ioutil.ReadAll(resp.Body)
 
@@ -193,7 +193,7 @@ func (c *apiclient) Upload(ctx context.Context, reqURL string, form yiigo.Upload
 		return nil, err
 	}
 
-	logFields = append(logFields, zap.ByteString("resp_body", b))
+	logFields = append(logFields, zap.ByteString("response", b))
 
 	return b, nil
 }
