@@ -52,3 +52,20 @@ type TagSpec struct {
 	UserList  []*TagUser `json:"userlist"`
 	PartyList []int      `json:"partylist"`
 }
+
+func TagGet(dest *TagSpec, tagID int) wx.Action {
+	return wx.NewGetAction(TagGetURL,
+		wx.WithQuery("tagid", strconv.Itoa(tagID)),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
+}
+
+func TagList(dest *[]*Tag) wx.Action {
+	return wx.NewGetAction(TagListURL,
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal([]byte(gjson.GetBytes(resp, "taglist").Raw), dest)
+		}),
+	)
+}

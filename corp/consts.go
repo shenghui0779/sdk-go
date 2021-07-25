@@ -33,8 +33,8 @@ const (
 	TagCreateURL  = "https://qyapi.weixin.qq.com/cgi-bin/tag/create"
 	TagUpdateURL  = "https://qyapi.weixin.qq.com/cgi-bin/tag/update"
 	TagDeleteURL  = "https://qyapi.weixin.qq.com/cgi-bin/tag/delete"
+	TagGetURL     = "https://qyapi.weixin.qq.com/cgi-bin/tag/get"
 	TagListURL    = "https://qyapi.weixin.qq.com/cgi-bin/tag/list"
-	TagUserGetURL = "https://qyapi.weixin.qq.com/cgi-bin/tag/get"
 	TagUserAddURL = "https://qyapi.weixin.qq.com/cgi-bin/tag/addtagusers"
 	TagUserDelURL = "https://qyapi.weixin.qq.com/cgi-bin/tag/deltagusers"
 )

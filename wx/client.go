@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -58,6 +59,12 @@ func (c *apiclient) Get(ctx context.Context, reqURL string, options ...yiigo.HTT
 
 	logFields = append(logFields, zap.Int("status_code", resp.StatusCode))
 
+	if resp.StatusCode >= http.StatusBadRequest {
+		io.Copy(ioutil.Discard, resp.Body)
+
+		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
+	}
+
 	b, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
@@ -98,6 +105,12 @@ func (c *apiclient) Post(ctx context.Context, reqURL string, body []byte, option
 	defer resp.Body.Close()
 
 	logFields = append(logFields, zap.Int("status", resp.StatusCode))
+
+	if resp.StatusCode >= http.StatusBadRequest {
+		io.Copy(ioutil.Discard, resp.Body)
+
+		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
+	}
 
 	b, err := ioutil.ReadAll(resp.Body)
 
@@ -148,6 +161,12 @@ func (c *apiclient) PostXML(ctx context.Context, reqURL string, body WXML, optio
 
 	logFields = append(logFields, zap.Int("status", resp.StatusCode))
 
+	if resp.StatusCode >= http.StatusBadRequest {
+		io.Copy(ioutil.Discard, resp.Body)
+
+		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
+	}
+
 	b, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
@@ -184,6 +203,12 @@ func (c *apiclient) Upload(ctx context.Context, reqURL string, form yiigo.Upload
 	defer resp.Body.Close()
 
 	logFields = append(logFields, zap.Int("status", resp.StatusCode))
+
+	if resp.StatusCode >= http.StatusBadRequest {
+		io.Copy(ioutil.Discard, resp.Body)
+
+		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
+	}
 
 	b, err := ioutil.ReadAll(resp.Body)
 
