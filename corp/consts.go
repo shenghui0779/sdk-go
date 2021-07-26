@@ -38,3 +38,10 @@ const (
 	TagUserAddURL = "https://qyapi.weixin.qq.com/cgi-bin/tag/addtagusers"
 	TagUserDelURL = "https://qyapi.weixin.qq.com/cgi-bin/tag/deltagusers"
 )
+
+const (
+	BatchSyncUserURL     = "https://qyapi.weixin.qq.com/cgi-bin/batch/syncuser"
+	BatchReplaceUserURL  = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceuser"
+	BatchReplacePartyURL = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceparty"
+	BatchResultURL       = "https://qyapi.weixin.qq.com/cgi-bin/batch/getresult"
+)
