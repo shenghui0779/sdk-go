@@ -76,4 +76,20 @@ type BatchSyncResult struct {
 	Type       BatchSyncType `json:"type"`
 	Total      int           `json:"total"`
 	Percentage int           `json:"percentage"`
+	Result     []*SyncResult `json:"result"`
+}
+
+type SyncResult struct {
+	UserID  string `json:"userid"`
+	Action  int    `json:"action"`
+	PartyID int    `json:"partyid"`
+}
+
+func BatchGetResult(dest *BatchSyncResult, jobID string) wx.Action {
+	return wx.NewGetAction(BatchResultURL,
+		wx.WithQuery("jobid", jobID),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, dest)
+		}),
+	)
 }

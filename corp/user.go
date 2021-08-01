@@ -41,6 +41,7 @@ type UserExtAttr struct {
 
 type UserExternalProfile struct {
 	ExternalCorpName string      `json:"external_corp_name"`
+	WechatChannels   string      `json:"wechat_channels"`
 	ExternalAttr     []*UserAttr `json:"external_attr"`
 }
 
@@ -49,12 +50,12 @@ type User struct {
 	Name             string               `json:"name"`
 	Alias            string               `json:"alias,omitempty"`
 	Mobile           string               `json:"mobile,omitempty"`
-	Department       []int                `json:"department"`
-	Order            []int                `json:"order,omitempty"`
+	Department       []int64              `json:"department"`
+	Order            []int64              `json:"order,omitempty"`
 	Position         string               `json:"position,omitempty"`
 	Gender           Gender               `json:"gender,omitempty"`
 	Email            string               `json:"email,omitempty"`
-	IsLeaderInDept   []int                `json:"is_leader_in_dept,omitempty"`
+	IsLeaderInDept   []int64              `json:"is_leader_in_dept,omitempty"`
 	Enable           int                  `json:"enable,omitempty"`
 	AvatarMediaID    string               `json:"avatar_mediaid,omitempty"` // 仅创建/更新可见
 	Avatar           string               `json:"avatar,omitempty"`         // 仅详情可见
@@ -62,7 +63,7 @@ type User struct {
 	Telephone        string               `json:"telephone,omitempty"`
 	Address          string               `json:"address,omitempty"`
 	OpenUserID       string               `json:"open_userid,omitempty"` // 仅详情可见
-	MainDepartment   int                  `json:"main_department,omitempty"`
+	MainDepartment   int64                `json:"main_department,omitempty"`
 	ExtAttr          *UserExtAttr         `json:"extattr,omitempty"`
 	ToInvite         bool                 `json:"to_invite,omitempty"` // 仅创建/更新可见
 	Status           int                  `json:"status,omitempty"`    // 仅详情可见
@@ -71,8 +72,8 @@ type User struct {
 	ExternalProfile  *UserExternalProfile `json:"external_profile,omitempty"`
 }
 
-// UserCreate 创建成员
-func UserCreate(data *User) wx.Action {
+// CreateUser 创建成员
+func CreateUser(data *User) wx.Action {
 	return wx.NewPostAction(UserCreateURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
@@ -80,8 +81,8 @@ func UserCreate(data *User) wx.Action {
 	)
 }
 
-// UserGet 读取成员
-func UserGet(dest *User, userID string) wx.Action {
+// GetUser 读取成员
+func GetUser(dest *User, userID string) wx.Action {
 	return wx.NewGetAction(UserGetURL,
 		wx.WithQuery("userid", userID),
 		wx.WithDecode(func(resp []byte) error {
@@ -90,8 +91,8 @@ func UserGet(dest *User, userID string) wx.Action {
 	)
 }
 
-// UserUpdate 更新成员
-func UserUpdate(data *User) wx.Action {
+// UpdateUser 更新成员
+func UpdateUser(data *User) wx.Action {
 	return wx.NewPostAction(UserUpdateURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
@@ -99,15 +100,15 @@ func UserUpdate(data *User) wx.Action {
 	)
 }
 
-// UserDelete 删除成员
-func UserDelete(userID string) wx.Action {
+// DeleteUser 删除成员
+func DeleteUser(userID string) wx.Action {
 	return wx.NewGetAction(UserDeleteURL,
 		wx.WithQuery("userid", userID),
 	)
 }
 
-// UserBatchDelete 批量删除成员
-func UserBatchDelete(userIDs ...string) wx.Action {
+// BatchDeleteUser 批量删除成员
+func BatchDeleteUser(userIDs ...string) wx.Action {
 	return wx.NewPostAction(UserBatchDeleteURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
@@ -117,8 +118,8 @@ func UserBatchDelete(userIDs ...string) wx.Action {
 	)
 }
 
-// UserSimpleList 获取部门成员
-func UserSimpleList(dest *[]*User, departmentID int, fetchChild bool) wx.Action {
+// GetUserSimpleList 获取部门成员
+func GetUserSimpleList(dest *[]*User, departmentID int64, fetchChild bool) wx.Action {
 	child := 0
 
 	if fetchChild {
@@ -126,7 +127,7 @@ func UserSimpleList(dest *[]*User, departmentID int, fetchChild bool) wx.Action 
 	}
 
 	return wx.NewGetAction(UserSimpleListURL,
-		wx.WithQuery("department_id", strconv.Itoa(departmentID)),
+		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),
 		wx.WithQuery("fetch_child", strconv.Itoa(child)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "userlist").Raw), dest)
@@ -135,7 +136,7 @@ func UserSimpleList(dest *[]*User, departmentID int, fetchChild bool) wx.Action 
 }
 
 // UserList 获取部门成员详情
-func UserList(dest *[]*User, departmentID int, fetchChild bool) wx.Action {
+func UserList(dest *[]*User, departmentID int64, fetchChild bool) wx.Action {
 	child := 0
 
 	if fetchChild {
@@ -143,7 +144,7 @@ func UserList(dest *[]*User, departmentID int, fetchChild bool) wx.Action {
 	}
 
 	return wx.NewGetAction(UserListURL,
-		wx.WithQuery("department_id", strconv.Itoa(departmentID)),
+		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),
 		wx.WithQuery("fetch_child", strconv.Itoa(child)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "userlist").Raw), dest)

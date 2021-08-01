@@ -45,3 +45,15 @@ const (
 	BatchReplacePartyURL = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceparty"
 	BatchResultURL       = "https://qyapi.weixin.qq.com/cgi-bin/batch/getresult"
 )
+
+const (
+	LinkedCorpPermListURL       = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/agent/get_perm_list"
+	LinkedCorpUserGetURL        = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/get"
+	LinkedCorpUserSimpleListURL = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/simplelist"
+	LinkedCorpUserListURL       = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/list"
+	LinkedCorpDepartmentListURL = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/department/list"
+)
+
+const (
+	ExternalContactFollowUserListURL = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_follow_user_list"
+)

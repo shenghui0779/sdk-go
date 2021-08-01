@@ -10,29 +10,29 @@ import (
 )
 
 type Department struct {
-	ID       int    `json:"id,omitempty"`
+	ID       int64  `json:"id,omitempty"`
 	Name     string `json:"name"`
 	NameEN   string `json:"name_en,omitempty"`
-	ParentID int    `json:"parentid,omitempty"`
-	Order    int    `json:"order,omitempty"`
+	ParentID int64  `json:"parentid,omitempty"`
+	Order    int64  `json:"order,omitempty"`
 }
 
-// DepartmentCreate 创建部门
-func DepartmentCreate(data *Department) wx.Action {
+// CreateDepartment 创建部门
+func CreateDepartment(data *Department) wx.Action {
 	return wx.NewPostAction(DepartmentCreateURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			data.ID = int(gjson.GetBytes(resp, "id").Int())
+			data.ID = gjson.GetBytes(resp, "id").Int()
 
 			return nil
 		}),
 	)
 }
 
-// DepartmentUpdate 更新部门
-func DepartmentUpdate(data *Department) wx.Action {
+// UpdateDepartment 更新部门
+func UpdateDepartment(data *Department) wx.Action {
 	return wx.NewPostAction(DepartmentUpdateURL,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
@@ -40,15 +40,15 @@ func DepartmentUpdate(data *Department) wx.Action {
 	)
 }
 
-// DepartmentDelete 删除部门
-func DepartmentDelete(id int) wx.Action {
+// DeleteDepartment 删除部门
+func DeleteDepartment(id int64) wx.Action {
 	return wx.NewGetAction(DepartmentDeleteURL,
-		wx.WithQuery("id", strconv.Itoa(id)),
+		wx.WithQuery("id", strconv.FormatInt(id, 10)),
 	)
 }
 
-// DepartmentList 获取部门列表
-func DepartmentList(dest *[]*Department, id ...int) wx.Action {
+// GetDepartmentList 获取部门列表
+func GetDepartmentList(dest *[]*Department, id ...int64) wx.Action {
 	options := []wx.ActionOption{
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "department").Raw), dest)
@@ -56,7 +56,7 @@ func DepartmentList(dest *[]*Department, id ...int) wx.Action {
 	}
 
 	if len(id) != 0 {
-		options = append(options, wx.WithQuery("id", strconv.Itoa(id[0])))
+		options = append(options, wx.WithQuery("id", strconv.FormatInt(id[0], 10)))
 	}
 
 	return wx.NewGetAction(DepartmentListURL, options...)
