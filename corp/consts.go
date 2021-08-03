@@ -56,4 +56,9 @@ const (
 
 const (
 	ExternalContactFollowUserListURL = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_follow_user_list"
+	ExternalContactWayAddURL         = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_contact_way"
+	ExternalContactWayGetURL         = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_contact_way"
+	ExternalContactWayUpdateURL      = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/update_contact_way"
+	ExternalContactWayDeleteURL      = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_contact_way"
+	ExternalContactCloseTempChatURL  = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/close_temp_chat"
 )

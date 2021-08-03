@@ -9,11 +9,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/shenghui0779/yiigo"
-	"github.com/tidwall/gjson"
-
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/shenghui0779/yiigo"
+	"github.com/tidwall/gjson"
 )
 
 // OA 微信公众号

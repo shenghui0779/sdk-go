@@ -5,10 +5,9 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 // KFInviteStatus 客服邀请状态

@@ -19,10 +19,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"golang.org/x/crypto/pkcs12"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 // Mch 微信支付

@@ -3,9 +3,8 @@ package mp
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/shenghui0779/yiigo"
 )
 
 // MessageBody 消息内容体

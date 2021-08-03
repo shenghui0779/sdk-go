@@ -7,10 +7,9 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 // MediaType 素材类型

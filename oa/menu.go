@@ -3,10 +3,9 @@ package oa
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 // MenuButtonType 菜单按钮类型

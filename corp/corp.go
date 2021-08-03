@@ -5,10 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 type Corp struct {

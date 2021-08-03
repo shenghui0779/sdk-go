@@ -4,9 +4,8 @@ import (
 	"encoding/base64"
 	"strconv"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/shenghui0779/yiigo"
 )
 
 // TransferBalanceData 付款到零钱数据

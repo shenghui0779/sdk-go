@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/tidwall/gjson"
-
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/tidwall/gjson"
 )
 
 type Department struct {
