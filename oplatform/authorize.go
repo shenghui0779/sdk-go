@@ -31,6 +31,8 @@ type PreAuthCode struct {
 	ExpiresIn            int    `json:"expires_in"`
 }
 
+
+
 // 获取令牌
 func GetApiComponentToken(data *ComponentAccessToken) wx.Action {
 	return wx.NewPostAction(ComponentApiComponentTokenUrl,

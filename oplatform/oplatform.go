@@ -7,6 +7,7 @@
 package oplatform
 
 import (
+	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
 )
 
@@ -55,6 +56,16 @@ func (o *Oplatform)  ComponentVerifyTicket () string {
 	return o.componentVerifyTicket
 }
 
+// DecryptEventMessage 事件消息解密
+func (o *Oplatform) DecryptEventMessage(encrypt string) (wx.WXML, error) {
+	b, err := event.Decrypt(o.appid, o.encodingAESKey, encrypt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return wx.ParseXML2Map(b)
+}
 
 
 
