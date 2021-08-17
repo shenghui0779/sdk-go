@@ -7,10 +7,13 @@
 package oplatform
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/shenghui0779/yiigo"
+	"github.com/tidwall/gjson"
 )
 
 type Oplatform  struct {
@@ -79,6 +82,51 @@ func (o *Oplatform) SafeBindComponent(preAuthCode string, redirectUri string, au
 	safeBindComponentUrl := fmt.Sprintf("%s/safe/bindcomponent?action=bindcomponent&no_scan=1&component_appid=%s&pre_auth_code=%s&redirect_uri=%s&auth_type=%d&biz_appid=%s#wechat_redirect",
 		BaseUrl, o.appid, preAuthCode, redirectUri, authType, bizAppid)
 	return safeBindComponentUrl, nil
+}
+
+// Do exec action
+func (o *Oplatform) Do(ctx context.Context,  action wx.Action, options ...yiigo.HTTPOption) error {
+	var (
+		resp []byte
+		err  error
+	)
+
+	switch action.Method() {
+	case wx.MethodGet:
+		resp, err = o.client.Get(ctx, action.URL(), options...)
+	case wx.MethodPost:
+		body, berr := action.Body()
+
+		if berr != nil {
+			return berr
+		}
+
+		resp, err = o.client.Post(ctx, action.URL(), body, options...)
+	case wx.MethodUpload:
+		form, ferr := action.UploadForm()
+
+		if ferr != nil {
+			return ferr
+		}
+
+		resp, err = o.client.Upload(ctx, action.URL(), form, options...)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	r := gjson.ParseBytes(resp)
+
+	if code := r.Get("errcode").Int(); code != 0 {
+		return fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
+	}
+
+	if action.Decode() == nil {
+		return nil
+	}
+
+	return action.Decode()(resp)
 }
 
 

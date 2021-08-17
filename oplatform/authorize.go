@@ -40,8 +40,6 @@ type SafeBindComponent struct {
 	BizAppId string `json:"biz_app_id"`
 }
 
-
-
 // 获取令牌
 func GetApiComponentToken(data *ComponentAccessToken) wx.Action {
 	return wx.NewPostAction(ComponentApiComponentTokenUrl,
@@ -58,7 +56,10 @@ func GetApiComponentToken(data *ComponentAccessToken) wx.Action {
 
 // 获取预授权码
 func GetPreAuthCode(data *PreAuthCode) wx.Action  {
-	return wx.NewGetAction(fmt.Sprintf(ComponentApiCreatePreAuthCode, data.ComponentAccessToken),
+	return wx.NewPostAction(fmt.Sprintf(ComponentApiCreatePreAuthCode, data.ComponentAccessToken),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(data)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, data)
 		}),
