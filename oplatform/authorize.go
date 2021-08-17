@@ -31,6 +31,15 @@ type PreAuthCode struct {
 	ExpiresIn            int    `json:"expires_in"`
 }
 
+// 构建移动端授权链接 https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/Before_Develop/Authorization_Process_Technical_Description.html
+type SafeBindComponent struct {
+	ComponentAppid string `json:"component_appid"`
+	PreAuthCode string `json:"pre_auth_code"`
+	RedirectUri  string `json:"redirect_uri"`
+	AuthType   int `json:"auth_type"`
+	BizAppId string `json:"biz_app_id"`
+}
+
 
 
 // 获取令牌
@@ -55,3 +64,4 @@ func GetPreAuthCode(data *PreAuthCode) wx.Action  {
 		}),
 	)
 }
+

@@ -6,6 +6,10 @@
 */
 package oplatform
 
+const  (
+	BaseUrl = "https://mp.weixin.qq.com"
+)
+
 const (
 	// 获取令牌
 	ComponentApiComponentTokenUrl = "https://api.weixin.qq.com/cgi-bin/component/api_component_token"

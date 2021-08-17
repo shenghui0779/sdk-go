@@ -7,6 +7,8 @@
 package oplatform
 
 import (
+	"errors"
+	"fmt"
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -67,5 +69,16 @@ func (o *Oplatform) DecryptEventMessage(encrypt string) (wx.WXML, error) {
 	return wx.ParseXML2Map(b)
 }
 
+// 获取 移动端授权链接的方法
+// https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/Before_Develop/Authorization_Process_Technical_Description.html
+func (o *Oplatform) SafeBindComponent(preAuthCode string, redirectUri string, authType int, bizAppid string) (string, error) {
+	if len(o.componentVerifyTicket) < 1 {
+		return "", errors.New("component_verify_ticket is error")
+	}
+
+	safeBindComponentUrl := fmt.Sprintf("%s/safe/bindcomponent?action=bindcomponent&no_scan=1&component_appid=%s&pre_auth_code=%s&redirect_uri=%s&auth_type=%d&biz_appid=%s#wechat_redirect",
+		BaseUrl, o.appid, preAuthCode, redirectUri, authType, bizAppid)
+	return safeBindComponentUrl, nil
+}
 
 
