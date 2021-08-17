@@ -57,6 +57,26 @@ type AuthorizationInfo struct {
 	AuthorizerRefreshToken string `json:"authorizer_refresh_token"`
 }
 
+// 获取授权方的帐号基本信息
+// https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/api_get_authorizer_info.html#%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80
+type ComponentApiGetAuthorizerInfo struct {
+	ComponentAccessToken string `json:"component_access_token"`
+	ComponentAppid string `json:"component_appid"`
+	AuthorizerAppid string `json:"authorizer_appid"`
+	AuthorizerInfo *AuthorizerInfo `json:"authorizer_info"`
+	AuthorizationInfo *AuthorizationInfo `json:"authorization_info"`
+}
+
+// TODO AuthorizerInfo 信息不完全
+type AuthorizerInfo struct {
+	NickName string `json:"nick_name"`
+	HeadImg string `json:"head_img"`
+	UserName string `json:"user_name"`
+	PrincipalName string `json:"principal_name"`
+	Alias string `json:"alias"`
+	QrcodeUrl string `json:"qrcode_url"`
+}
+
 // 获取令牌
 func GetApiComponentToken(data *ComponentAccessToken) wx.Action {
 	return wx.NewPostAction(ComponentApiComponentTokenUrl,
@@ -97,4 +117,27 @@ func GetComponentApiQueryAuth(data *ComponentApiQueryAuth) wx.Action {
 			return nil
 		}),
 	)
+}
+
+// 获取授权方的帐号基本信息
+func GetComponentApiGetAuthorizerInfo(data *ComponentApiGetAuthorizerInfo) wx.Action  {
+	return wx.NewPostAction(fmt.Sprintf(ComponentApiGetAuthorizerInfoUrl, data.ComponentAccessToken),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(data)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			data.AuthorizerInfo.NickName = gjson.GetBytes(resp, "authorizer_info.nick_name").String()
+			data.AuthorizerInfo.HeadImg = gjson.GetBytes(resp, "authorizer_info.head_img").String()
+			data.AuthorizerInfo.UserName = gjson.GetBytes(resp, "authorizer_info.user_name").String()
+			data.AuthorizerInfo.PrincipalName = gjson.GetBytes(resp, "authorizer_info.principal_name").String()
+			data.AuthorizerInfo.Alias = gjson.GetBytes(resp, "authorizer_info.alias").String()
+			data.AuthorizerInfo.QrcodeUrl = gjson.GetBytes(resp, "authorizer_info.qrcode_url").String()
+
+			data.AuthorizationInfo.AuthorizerAppid =  gjson.GetBytes(resp, "authorization_info.authorizer_appid").String()
+			data.AuthorizationInfo.AuthorizerAccessToken =  gjson.GetBytes(resp, "authorization_info.authorizer_access_token").String()
+			data.AuthorizationInfo.ExpiresIn =  gjson.GetBytes(resp, "authorization_info.authorizer_access_token").Int()
+			data.AuthorizationInfo.AuthorizerRefreshToken =  gjson.GetBytes(resp, "authorization_info.authorizer_refresh_token").String()
+			return nil
+		}),
+		)
 }
