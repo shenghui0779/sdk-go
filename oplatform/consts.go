@@ -20,3 +20,8 @@ const (
 	// 获取授权方的帐号基本信息
 	ComponentApiGetAuthorizerInfoUrl = "https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_info?component_access_token=%s"
 	)
+
+const   (
+	//关联小程序
+	WxopenWxamplinkUrl = "https://api.weixin.qq.com/cgi-bin/wxopen/wxamplink?access_token=%s"
+)
