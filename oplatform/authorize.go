@@ -46,11 +46,11 @@ type ComponentApiQueryAuth struct {
 	ComponentAccessToken string             `json:"component_access_token"`
 	ComponentAppid       string             `json:"component_appid"`
 	AuthorizationCode    string             `json:"authorization_code"`
-	AuthorizationInfo    *authorizationInfo `json:"authorization_info"`
+	AuthorizationInfo    *AuthorizationInfo `json:"authorization_info"`
 }
 
 // TODO 授权之后的用户 信息 取消 func_info 暂时没时间补充
-type authorizationInfo struct {
+type AuthorizationInfo struct {
 	AuthorizerAppid        string `json:"authorizer_appid"`
 	AuthorizerAccessToken  string `json:"authorizer_access_token"`
 	ExpiresIn              int64    `json:"expires_in"`
