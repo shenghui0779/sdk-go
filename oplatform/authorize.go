@@ -75,7 +75,18 @@ type AuthorizerInfo struct {
 	PrincipalName string `json:"principal_name"`
 	Alias string `json:"alias"`
 	QrcodeUrl string `json:"qrcode_url"`
+	ServiceTypeInfo *ServiceTypeInfo `json:"service_type_info"`
+	VerifyTypeInfo *VerifyTypeInfo `json:"verify_type_info"`
 }
+
+type ServiceTypeInfo struct {
+	Id int64 `json:"id"`
+}
+
+type VerifyTypeInfo struct {
+	Id int64 `json:"id"`
+}
+
 
 // 获取令牌
 func GetApiComponentToken(data *ComponentAccessToken) wx.Action {
@@ -126,6 +137,8 @@ func GetComponentApiGetAuthorizerInfo(data *ComponentApiGetAuthorizerInfo) wx.Ac
 			return json.Marshal(data)
 		}),
 		wx.WithDecode(func(resp []byte) error {
+			data.AuthorizerInfo.ServiceTypeInfo = &ServiceTypeInfo{Id:gjson.GetBytes(resp, "authorizer_info.service_type_info.id").Int()}
+			data.AuthorizerInfo.VerifyTypeInfo = &VerifyTypeInfo{Id:gjson.GetBytes(resp, "authorizer_info.verify_type_info.id").Int()}
 			data.AuthorizerInfo.NickName = gjson.GetBytes(resp, "authorizer_info.nick_name").String()
 			data.AuthorizerInfo.HeadImg = gjson.GetBytes(resp, "authorizer_info.head_img").String()
 			data.AuthorizerInfo.UserName = gjson.GetBytes(resp, "authorizer_info.user_name").String()
