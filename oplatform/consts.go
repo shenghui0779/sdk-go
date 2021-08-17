@@ -15,4 +15,6 @@ const (
 	ComponentApiComponentTokenUrl = "https://api.weixin.qq.com/cgi-bin/component/api_component_token"
 	// 获取预授权码
 	ComponentApiCreatePreAuthCode = "https://api.weixin.qq.com/cgi-bin/component/api_create_preauthcode?component_access_token=%s"
-)
+	// 使用授权码获取授权信息
+	ComponentApiQueryAuthUrl = "https://api.weixin.qq.com/cgi-bin/component/api_query_auth?component_access_token=%s"
+	)
