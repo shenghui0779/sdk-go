@@ -7,9 +7,11 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // MediaType 素材类型
@@ -34,7 +36,7 @@ type MediaUploadResult struct {
 func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(MediaUploadURL,
+	return wx.NewUploadAction(urls.OAMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
@@ -57,7 +59,7 @@ func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.A
 
 // UploadMediaByURL 上传临时素材
 func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, resourceURL string) wx.Action {
-	return wx.NewUploadAction(MediaUploadURL,
+	return wx.NewUploadAction(urls.OAMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
@@ -101,7 +103,7 @@ type NewsArticle struct {
 
 // AddNews 新增永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
 func AddNews(dest *MaterialAddResult, articles ...*NewsArticle) wx.Action {
-	return wx.NewPostAction(NewsAddURL,
+	return wx.NewPostAction(urls.OANewsAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"articles": articles})
 		}),
@@ -117,7 +119,7 @@ func AddNews(dest *MaterialAddResult, articles ...*NewsArticle) wx.Action {
 func UploadNewsImage(dest *MaterialAddResult, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(NewsImageUploadURL,
+	return wx.NewUploadAction(urls.OANewsImageUpload,
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
 			Filename:  filename,
@@ -141,7 +143,7 @@ func UploadNewsImage(dest *MaterialAddResult, path string) wx.Action {
 
 // UploadNewsImageByURL 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
 func UploadNewsImageByURL(dest *MaterialAddResult, filename, resourceURL string) wx.Action {
-	return wx.NewUploadAction(NewsImageUploadURL,
+	return wx.NewUploadAction(urls.OANewsImageUpload,
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
 			Filename:  filename,
@@ -169,7 +171,7 @@ func UploadNewsImageByURL(dest *MaterialAddResult, filename, resourceURL string)
 func AddMaterial(dest *MaterialAddResult, mediaType MediaType, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(MaterialAddURL,
+	return wx.NewUploadAction(urls.OAMaterialAdd,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
@@ -192,7 +194,7 @@ func AddMaterial(dest *MaterialAddResult, mediaType MediaType, path string) wx.A
 
 // AddMaterialByURL 新增其他类型永久素材（支持图片、音频、缩略图）
 func AddMaterialByURL(dest *MaterialAddResult, mediaType MediaType, filename, resourceURL string) wx.Action {
-	return wx.NewUploadAction(MaterialAddURL,
+	return wx.NewUploadAction(urls.OAMaterialAdd,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
@@ -219,7 +221,7 @@ func AddMaterialByURL(dest *MaterialAddResult, mediaType MediaType, filename, re
 func UploadVideo(dest *MaterialAddResult, path, title, introduction string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(MaterialAddURL,
+	return wx.NewUploadAction(urls.OAMaterialAdd,
 		wx.WithQuery("type", string(MediaVideo)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
@@ -244,7 +246,7 @@ func UploadVideo(dest *MaterialAddResult, path, title, introduction string) wx.A
 
 // UploadVideoByURL 上传视频永久素材
 func UploadVideoByURL(dest *MaterialAddResult, filename, title, introduction, resourceURL string) wx.Action {
-	return wx.NewUploadAction(MaterialAddURL,
+	return wx.NewUploadAction(urls.OAMaterialAdd,
 		wx.WithQuery("type", string(MediaVideo)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
@@ -271,7 +273,7 @@ func UploadVideoByURL(dest *MaterialAddResult, filename, title, introduction, re
 
 // DeleteMaterial 删除永久素材
 func DeleteMaterial(mediaID string) wx.Action {
-	return wx.NewPostAction(MaterialDeleteURL,
+	return wx.NewPostAction(urls.OAMaterialDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"media_id": mediaID})
 		}),

@@ -1,4 +1,4 @@
-package mp
+package minip
 
 import (
 	"context"

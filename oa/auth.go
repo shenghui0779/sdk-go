@@ -3,6 +3,7 @@ package oa
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
@@ -32,7 +33,7 @@ type AccessToken struct {
 
 // CheckAuthToken 检验授权凭证（access_token）是否有效
 func CheckAuthToken(openid string) wx.Action {
-	return wx.NewGetAction(SnsCheckAccessTokenURL,
+	return wx.NewGetAction(urls.OASnsCheckAccessToken,
 		wx.WithQuery("openid", openid),
 	)
 }
@@ -52,7 +53,7 @@ type AuthUser struct {
 
 // GetAuthUser 获取授权用户信息（注意：使用网页授权的access_token）
 func GetAuthUser(dest *AuthUser, openid string) wx.Action {
-	return wx.NewGetAction(SnsUserInfoURL,
+	return wx.NewGetAction(urls.OASnsUserInfo,
 		wx.WithQuery("openid", openid),
 		wx.WithQuery("lang", "zh_CN"),
 		wx.WithDecode(func(resp []byte) error {
@@ -85,7 +86,7 @@ type JSSDKTicket struct {
 
 // GetJSSDKTicket 获取 JS-SDK ticket (注意：使用普通access_token)
 func GetJSSDKTicket(dest *JSSDKTicket, t TicketType) wx.Action {
-	return wx.NewGetAction(CgiBinTicketURL,
+	return wx.NewGetAction(urls.OACgiBinTicket,
 		wx.WithQuery("type", string(t)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)

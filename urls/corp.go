@@ -1,4 +1,4 @@
-package corp
+package consts
 
 const (
 	CgiBinAccessTokenURL = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"

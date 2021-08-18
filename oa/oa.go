@@ -9,10 +9,21 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/shenghui0779/gochat/event"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/event"
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
+)
+
+// AuthScope 应用授权作用域
+type AuthScope string
+
+// 公众号支持的应用授权作用域
+const (
+	ScopeSnsapiBase AuthScope = "snsapi_base"     // 静默授权使用，不弹出授权页面，直接跳转，只能获取用户openid
+	ScopeSnsapiUser AuthScope = "snsapi_userinfo" // 弹出授权页面，可通过openid拿到昵称、性别、所在地。并且，即使在未关注的情况下，只要用户授权，也能获取其信息
 )
 
 // OA 微信公众号
@@ -67,12 +78,12 @@ func (oa *OA) AuthURL(scope AuthScope, redirectURL string, state ...string) stri
 		paramState = state[0]
 	}
 
-	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", AuthorizeURL, oa.appid, redirectURL, scope, paramState)
+	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", urls.OAAuthorize, oa.appid, redirectURL, scope, paramState)
 }
 
 // Code2AuthToken 获取网页授权AccessToken
 func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthToken, error) {
-	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", SnsCode2TokenURL, oa.appid, oa.appsecret, code), options...)
+	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", urls.OASnsCode2Token, oa.appid, oa.appsecret, code), options...)
 
 	if err != nil {
 		return nil, err
@@ -95,7 +106,7 @@ func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...yiigo.
 
 // RefreshAuthToken 刷新网页授权AccessToken
 func (oa *OA) RefreshAuthToken(ctx context.Context, refreshToken string, options ...yiigo.HTTPOption) (*AuthToken, error) {
-	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", SnsRefreshAccessTokenURL, oa.appid, refreshToken), options...)
+	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", urls.OASnsRefreshAccessToken, oa.appid, refreshToken), options...)
 
 	if err != nil {
 		return nil, err
@@ -118,7 +129,7 @@ func (oa *OA) RefreshAuthToken(ctx context.Context, refreshToken string, options
 
 // AccessToken 获取普通AccessToken
 func (oa *OA) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*AccessToken, error) {
-	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", CgiBinAccessTokenURL, oa.appid, oa.appsecret), options...)
+	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", urls.OACgiBinAccessToken, oa.appid, oa.appsecret), options...)
 
 	if err != nil {
 		return nil, err

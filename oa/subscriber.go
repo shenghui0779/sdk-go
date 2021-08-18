@@ -3,9 +3,11 @@ package oa
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // MaxSubscriberListCount 关注列表的最大数目
@@ -63,7 +65,7 @@ type SubscriberListData struct {
 
 // GetSubscriberInfo 获取关注用户信息
 func GetSubscriberInfo(dest *SubscriberInfo, openid string) wx.Action {
-	return wx.NewGetAction(SubscriberGetURL,
+	return wx.NewGetAction(urls.OASubscriberGet,
 		wx.WithQuery("openid", openid),
 		wx.WithQuery("lang", "zh_CN"),
 		wx.WithDecode(func(resp []byte) error {
@@ -74,7 +76,7 @@ func GetSubscriberInfo(dest *SubscriberInfo, openid string) wx.Action {
 
 // BatchGetSubscribers 批量关注用户信息
 func BatchGetSubscribers(dest *[]*SubscriberInfo, openids ...string) wx.Action {
-	return wx.NewPostAction(SubscriberBatchGetURL,
+	return wx.NewPostAction(urls.OASubscriberBatchGet,
 		wx.WithBody(func() ([]byte, error) {
 			userList := make([]map[string]string, 0, len(openids))
 
@@ -95,7 +97,7 @@ func BatchGetSubscribers(dest *[]*SubscriberInfo, openids ...string) wx.Action {
 
 // GetSubscriberList 获取关注用户列表
 func GetSubscriberList(dest *SubscriberList, nextOpenID ...string) wx.Action {
-	return wx.NewGetAction(SubscriberListURL,
+	return wx.NewGetAction(urls.OASubscriberList,
 		wx.WithQuery("next_openid", nextOpenID[0]),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -105,7 +107,7 @@ func GetSubscriberList(dest *SubscriberList, nextOpenID ...string) wx.Action {
 
 // GetBlackList 获取用户黑名单列表
 func GetBlackList(dest *SubscriberList, beginOpenID ...string) wx.Action {
-	return wx.NewPostAction(BlackListGetURL,
+	return wx.NewPostAction(urls.OABlackListGet,
 		wx.WithBody(func() ([]byte, error) {
 			params := yiigo.X{
 				"begin_openid": "",
@@ -125,7 +127,7 @@ func GetBlackList(dest *SubscriberList, beginOpenID ...string) wx.Action {
 
 // BlackSubscribers 拉黑用户
 func BlackSubscribers(openids ...string) wx.Action {
-	return wx.NewPostAction(BatchBlackListURL,
+	return wx.NewPostAction(urls.OABatchBlackList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"openid_list": openids})
 		}),
@@ -134,7 +136,7 @@ func BlackSubscribers(openids ...string) wx.Action {
 
 // UnBlackSubscriber 取消拉黑用户
 func UnBlackSubscribers(openids ...string) wx.Action {
-	return wx.NewPostAction(BatchUnBlackListURL,
+	return wx.NewPostAction(urls.OABatchUnBlackList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"openid_list": openids})
 		}),
@@ -143,7 +145,7 @@ func UnBlackSubscribers(openids ...string) wx.Action {
 
 // SetUserRemark 设置用户备注名（该接口暂时开放给微信认证的服务号）
 func SetUserRemark(openid, remark string) wx.Action {
-	return wx.NewPostAction(UserRemarkSetURL,
+	return wx.NewPostAction(urls.OAUserRemarkSet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"openid": openid,

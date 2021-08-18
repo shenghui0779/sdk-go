@@ -1,11 +1,12 @@
-package corp
+package external_contact
 
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 type ExternalContactWayType int

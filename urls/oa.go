@@ -1,4 +1,4 @@
-package oa
+package consts
 
 // AuthScope 应用授权作用域
 type AuthScope string

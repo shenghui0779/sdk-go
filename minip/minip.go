@@ -1,4 +1,4 @@
-package mp
+package minip
 
 import (
 	"context"
@@ -6,14 +6,15 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/shenghui0779/gochat/event"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/event"
+	"github.com/shenghui0779/gochat/wx"
 )
 
-// MP 微信小程序
-type MP struct {
+// Minip 微信小程序
+type Minip struct {
 	appid          string
 	appsecret      string
 	token          string
@@ -23,8 +24,8 @@ type MP struct {
 }
 
 // New returns new wechat mini program
-func New(appid, appsecret string) *MP {
-	return &MP{
+func New(appid, appsecret string) *Minip {
+	return &Minip{
 		appid:     appid,
 		appsecret: appsecret,
 		nonce:     wx.Nonce,
@@ -34,23 +35,23 @@ func New(appid, appsecret string) *MP {
 
 // SetServerConfig 设置服务器配置
 // [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
-func (mp *MP) SetServerConfig(token, encodingAESKey string) {
+func (mp *Minip) SetServerConfig(token, encodingAESKey string) {
 	mp.token = token
 	mp.encodingAESKey = encodingAESKey
 }
 
 // AppID returns appid
-func (mp *MP) AppID() string {
+func (mp *Minip) AppID() string {
 	return mp.appid
 }
 
 // AppSecret returns app secret
-func (mp *MP) AppSecret() string {
+func (mp *Minip) AppSecret() string {
 	return mp.appsecret
 }
 
 // Code2Session 获取小程序授权的session_key
-func (mp *MP) Code2Session(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthSession, error) {
+func (mp *Minip) Code2Session(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthSession, error) {
 	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", Code2SessionURL, mp.appid, mp.appsecret, code), options...)
 
 	if err != nil {
@@ -73,7 +74,7 @@ func (mp *MP) Code2Session(ctx context.Context, code string, options ...yiigo.HT
 }
 
 // AccessToken 获取小程序的access_token
-func (mp *MP) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*AccessToken, error) {
+func (mp *Minip) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*AccessToken, error) {
 	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&grant_type=client_credential", AccessTokenURL, mp.appid, mp.appsecret), options...)
 
 	if err != nil {
@@ -96,7 +97,7 @@ func (mp *MP) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*Ac
 }
 
 // DecryptAuthInfo 解密授权信息
-func (mp *MP) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData string) error {
+func (mp *Minip) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData string) error {
 	key, err := base64.StdEncoding.DecodeString(sessionKey)
 
 	if err != nil {
@@ -135,7 +136,7 @@ func (mp *MP) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData strin
 }
 
 // Do exec action
-func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, options ...yiigo.HTTPOption) error {
+func (mp *Minip) Do(ctx context.Context, accessToken string, action wx.Action, options ...yiigo.HTTPOption) error {
 	var (
 		resp []byte
 		err  error
@@ -184,14 +185,14 @@ func (mp *MP) Do(ctx context.Context, accessToken string, action wx.Action, opti
 // 验证消息来自微信服务器，使用：signature、timestamp、nonce；若验证成功，请原样返回echostr参数内容
 // 验证事件消息签名，使用：msg_signature、timestamp、nonce、msg_encrypt
 // [参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
-func (mp *MP) VerifyEventSign(signature string, items ...string) bool {
+func (mp *Minip) VerifyEventSign(signature string, items ...string) bool {
 	signStr := event.SignWithSHA1(mp.token, items...)
 
 	return signStr == signature
 }
 
 // DecryptEventMessage 事件消息解密
-func (mp *MP) DecryptEventMessage(encrypt string) (wx.WXML, error) {
+func (mp *Minip) DecryptEventMessage(encrypt string) (wx.WXML, error) {
 	b, err := event.Decrypt(mp.appid, mp.encodingAESKey, encrypt)
 
 	if err != nil {

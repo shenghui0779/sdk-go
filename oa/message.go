@@ -3,9 +3,11 @@ package oa
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // TemplateInfo 模板信息
@@ -20,7 +22,7 @@ type TemplateInfo struct {
 
 // GetTemplateList 获取模板列表
 func GetTemplateList(dest *[]*TemplateInfo) wx.Action {
-	return wx.NewGetAction(TemplateListURL,
+	return wx.NewGetAction(urls.OATemplateList,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "template_list").Raw), dest)
 		}),
@@ -29,7 +31,7 @@ func GetTemplateList(dest *[]*TemplateInfo) wx.Action {
 
 // DeleteTemplate 删除模板
 func DeleteTemplate(templateID string) wx.Action {
-	return wx.NewPostAction(TemplateDeleteURL,
+	return wx.NewPostAction(urls.OATemplateDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"template_id": templateID})
 		}),
@@ -55,7 +57,7 @@ type TemplateMessage struct {
 
 // SendTemplateMessage 发送模板消息
 func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
-	return wx.NewPostAction(TemplateMessageSendURL,
+	return wx.NewPostAction(urls.OATemplateMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			params := yiigo.X{
 				"touser":      openID,
@@ -78,7 +80,7 @@ func SendTemplateMessage(openID string, msg *TemplateMessage) wx.Action {
 
 // SendSubscribeMessage 发送一次性订阅消息
 func SendSubscribeMessage(openID, scene, title string, msg *TemplateMessage) wx.Action {
-	return wx.NewPostAction(SubscribeMessageSendURL,
+	return wx.NewPostAction(urls.OASubscribeMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			params := yiigo.X{
 				"scene":       scene,
@@ -103,7 +105,7 @@ func SendSubscribeMessage(openID, scene, title string, msg *TemplateMessage) wx.
 
 // SendKFTextMessage 发送客服文本消息（支持插入跳小程序的文字链）
 func SendKFTextMessage(openID, text string, kfAccount ...string) wx.Action {
-	return wx.NewPostAction(KFMessageSendURL,
+	return wx.NewPostAction(urls.OAKFMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			data := yiigo.X{
 				"touser":  openID,
@@ -126,7 +128,7 @@ func SendKFTextMessage(openID, text string, kfAccount ...string) wx.Action {
 
 // SendKFImageMessage 发送客服图片消息（媒体ID，通过素材接口上传获得）
 func SendKFImageMessage(openID, mediaID string, kfAccount ...string) wx.Action {
-	return wx.NewPostAction(KFMessageSendURL,
+	return wx.NewPostAction(urls.OAKFMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			data := yiigo.X{
 				"touser":  openID,
@@ -149,7 +151,7 @@ func SendKFImageMessage(openID, mediaID string, kfAccount ...string) wx.Action {
 
 // SendKFVoiceMessage 发送客服语音消息（媒体ID，通过素材接口上传获得）
 func SendKFVoiceMessage(openID, mediaID string, kfAccount ...string) wx.Action {
-	return wx.NewPostAction(KFMessageSendURL,
+	return wx.NewPostAction(urls.OAKFMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			data := yiigo.X{
 				"touser":  openID,
@@ -180,7 +182,7 @@ type KFVideoMessage struct {
 
 // SendKFVideoMessage 发送客服视频消息（媒体ID，通过素材接口上传获得）
 func SendKFVideoMessage(openID string, msg *KFVideoMessage, kfAccount ...string) wx.Action {
-	return wx.NewPostAction(KFMessageSendURL,
+	return wx.NewPostAction(urls.OAKFMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			data := yiigo.X{
 				"touser":  openID,
@@ -210,7 +212,7 @@ type KFMusicMessage struct {
 
 // SendKFMusicMessage 发送客服音乐消息
 func SendKFMusicMessage(openID string, msg *KFMusicMessage, kfAccount ...string) wx.Action {
-	return wx.NewPostAction(KFMessageSendURL,
+	return wx.NewPostAction(urls.OAKFMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			data := yiigo.X{
 				"touser":  openID,
@@ -239,7 +241,7 @@ type KFArticle struct {
 
 // SendKFNewsMessage 发送客服图文消息（点击跳转到外链；图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008）
 func SendKFNewsMessage(openID string, articles []*KFArticle, kfAccount ...string) wx.Action {
-	return wx.NewPostAction(KFMessageSendURL,
+	return wx.NewPostAction(urls.OAKFMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			data := yiigo.X{
 				"touser":  openID,
@@ -262,7 +264,7 @@ func SendKFNewsMessage(openID string, articles []*KFArticle, kfAccount ...string
 
 // SendKFMPNewsMessage 发送图文消息（点击跳转到图文消息页面；图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008）
 func SendKFMPNewsMessage(openID, mediaID string, kfAccount ...string) wx.Action {
-	return wx.NewPostAction(KFMessageSendURL,
+	return wx.NewPostAction(urls.OAKFMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			data := yiigo.X{
 				"touser":  openID,
@@ -298,7 +300,7 @@ type KFMenuOption struct {
 
 // SendKFMenuMessage 发送客服菜单消息
 func SendKFMenuMessage(openID string, msg *KFMenuMessage, kfAccount ...string) wx.Action {
-	return wx.NewPostAction(KFMessageSendURL,
+	return wx.NewPostAction(urls.OAKFMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			data := yiigo.X{
 				"touser":  openID,
@@ -319,7 +321,7 @@ func SendKFMenuMessage(openID string, msg *KFMenuMessage, kfAccount ...string) w
 
 // SendKFCardMessage 发送客服卡券消息（特别注意：客服消息接口投放卡券仅支持非自定义Code码和导入code模式的卡券的卡券）
 func SendKFCardMessage(openID, cardID string, kfAccount ...string) wx.Action {
-	return wx.NewPostAction(KFMessageSendURL,
+	return wx.NewPostAction(urls.OAKFMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			data := yiigo.X{
 				"touser":  openID,
@@ -350,7 +352,7 @@ type KFMinipMessage struct {
 
 // SendKFMinipMessage 发送客服小程序卡片消息
 func SendKFMinipMessage(openID string, msg *KFMinipMessage, kfAccount ...string) wx.Action {
-	return wx.NewPostAction(KFMessageSendURL,
+	return wx.NewPostAction(urls.OAKFMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			data := yiigo.X{
 				"touser":          openID,
@@ -380,7 +382,7 @@ const (
 
 // SetTyping 下发当前输入状态（仅支持客服消息）
 func SetTyping(openID string, cmd TypeCommand) wx.Action {
-	return wx.NewPostAction(SetTypingURL,
+	return wx.NewPostAction(urls.OASetTyping,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"touser":  openID,
