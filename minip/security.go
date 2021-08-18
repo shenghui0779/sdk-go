@@ -1,13 +1,15 @@
-package mp
+package minip
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // SecMediaType 检测的素材类型
@@ -23,7 +25,7 @@ var (
 func ImageSecCheck(path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(ImageSecCheckURL,
+	return wx.NewUploadAction(urls.MinipImageSecCheck,
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
 			Filename:  filename,
@@ -47,7 +49,7 @@ type MediaSecAsyncResult struct {
 
 // MediaSecCheckAsync 异步校验图片/音频是否含有违法违规内容
 func MediaSecCheckAsync(dest *MediaSecAsyncResult, mediaType SecMediaType, mediaURL string) wx.Action {
-	return wx.NewPostAction(MediaCheckAsyncURL,
+	return wx.NewPostAction(urls.MinipMediaCheckAsync,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"media_type": mediaType,
@@ -64,7 +66,7 @@ func MediaSecCheckAsync(dest *MediaSecAsyncResult, mediaType SecMediaType, media
 
 // MsgSecCheck 检查一段文本是否含有违法违规内容
 func MsgSecCheck(content string) wx.Action {
-	return wx.NewPostAction(MsgSecCheckURL,
+	return wx.NewPostAction(urls.MinipMsgSecCheck,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"content": content,

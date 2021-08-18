@@ -1,11 +1,13 @@
-package mp
+package minip
 
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // InvokeData 服务调用数据
@@ -22,7 +24,7 @@ type InvokeResult struct {
 
 // InvokeService 调用服务平台提供的服务
 func InvokeService(dest *InvokeResult, data *InvokeData) wx.Action {
-	return wx.NewPostAction(InvokeServiceURL,
+	return wx.NewPostAction(urls.MinipInvokeService,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -48,7 +50,7 @@ type SoterVerifyResult struct {
 
 // SoterVerify 生物认证秘钥签名验证
 func SoterVerify(dest *SoterVerifyResult, sign *SoterSignature) wx.Action {
-	return wx.NewPostAction(SoterVerifyURL,
+	return wx.NewPostAction(urls.MinipSoterVerify,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(sign)
 		}),
@@ -88,7 +90,7 @@ type UserRiskResult struct {
 
 // GetUserRiskRank 获取用户的安全等级（无需用户授权）
 func GetUserRiskRank(dest *UserRiskResult, data *UserRiskData) wx.Action {
-	return wx.NewPostAction(UserRiskRankURL,
+	return wx.NewPostAction(urls.MinipUserRiskRank,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),

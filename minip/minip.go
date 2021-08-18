@@ -10,6 +10,7 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/event"
+	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
@@ -52,7 +53,7 @@ func (mp *Minip) AppSecret() string {
 
 // Code2Session 获取小程序授权的session_key
 func (mp *Minip) Code2Session(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthSession, error) {
-	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", Code2SessionURL, mp.appid, mp.appsecret, code), options...)
+	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", urls.MinipCode2Session, mp.appid, mp.appsecret, code), options...)
 
 	if err != nil {
 		return nil, err
@@ -75,7 +76,7 @@ func (mp *Minip) Code2Session(ctx context.Context, code string, options ...yiigo
 
 // AccessToken 获取小程序的access_token
 func (mp *Minip) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*AccessToken, error) {
-	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&grant_type=client_credential", AccessTokenURL, mp.appid, mp.appsecret), options...)
+	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&grant_type=client_credential", urls.MinipAccessToken, mp.appid, mp.appsecret), options...)
 
 	if err != nil {
 		return nil, err

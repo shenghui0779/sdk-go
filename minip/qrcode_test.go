@@ -1,12 +1,13 @@
-package mp
+package minip
 
 import (
 	"context"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestQRCodeOption(t *testing.T) {

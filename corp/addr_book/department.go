@@ -1,11 +1,13 @@
-package corp
+package addr_book
 
 import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 type Department struct {
@@ -18,7 +20,7 @@ type Department struct {
 
 // CreateDepartment 创建部门
 func CreateDepartment(data *Department) wx.Action {
-	return wx.NewPostAction(DepartmentCreateURL,
+	return wx.NewPostAction(urls.CorpAddrBookDepartmentCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -32,7 +34,7 @@ func CreateDepartment(data *Department) wx.Action {
 
 // UpdateDepartment 更新部门
 func UpdateDepartment(data *Department) wx.Action {
-	return wx.NewPostAction(DepartmentUpdateURL,
+	return wx.NewPostAction(urls.CorpAddrBookDepartmentUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -41,7 +43,7 @@ func UpdateDepartment(data *Department) wx.Action {
 
 // DeleteDepartment 删除部门
 func DeleteDepartment(id int64) wx.Action {
-	return wx.NewGetAction(DepartmentDeleteURL,
+	return wx.NewGetAction(urls.CorpAddrBookDepartmentDelete,
 		wx.WithQuery("id", strconv.FormatInt(id, 10)),
 	)
 }
@@ -58,5 +60,5 @@ func GetDepartmentList(dest *[]*Department, id ...int64) wx.Action {
 		options = append(options, wx.WithQuery("id", strconv.FormatInt(id[0], 10)))
 	}
 
-	return wx.NewGetAction(DepartmentListURL, options...)
+	return wx.NewGetAction(urls.CorpAddrBookDepartmentList, options...)
 }

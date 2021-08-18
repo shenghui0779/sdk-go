@@ -4,8 +4,10 @@ import (
 	"encoding/base64"
 	"strconv"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // TransferBalanceData 付款到零钱数据
@@ -36,7 +38,7 @@ type TransferBankCardData struct {
 
 // TransferToBalance 付款到零钱【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
 func TransferToBalance(data *TransferBalanceData) wx.Action {
-	return wx.NewPostAction(TransferToBalanceURL,
+	return wx.NewPostAction(urls.MchTransferToBalance,
 		wx.WithTLS(),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
@@ -70,7 +72,7 @@ func TransferToBalance(data *TransferBalanceData) wx.Action {
 
 // QueryTransferBalanceOrder 查询付款到零钱订单
 func QueryTransferBalanceOrder(partnerTradeNO string) wx.Action {
-	return wx.NewPostAction(TransferBalanceOrderQueryURL,
+	return wx.NewPostAction(urls.MchTransferBalanceOrderQuery,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":            appid,
@@ -86,7 +88,7 @@ func QueryTransferBalanceOrder(partnerTradeNO string) wx.Action {
 
 // TransferToBankCard 付款到银行卡【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
 func TransferToBankCard(data *TransferBankCardData, publicKey []byte) wx.Action {
-	return wx.NewPostAction(TransferToBankCardURL,
+	return wx.NewPostAction(urls.MchTransferToBankCard,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"mch_id":           mchid,
@@ -127,7 +129,7 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) wx.Action 
 
 // QueryTransferBankCardOrder 查询付款到银行卡订单
 func QueryTransferBankCardOrder(partnerTradeNO string) wx.Action {
-	return wx.NewPostAction(TransferBankCardOrderQueryURL,
+	return wx.NewPostAction(urls.MchTransferBankCardOrderQuery,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"mch_id":           mchid,
@@ -142,7 +144,7 @@ func QueryTransferBankCardOrder(partnerTradeNO string) wx.Action {
 
 // RSAPublicKey 获取RSA加密公钥
 func RSAPublicKey() wx.Action {
-	return wx.NewPostAction(RSAPublicKeyURL,
+	return wx.NewPostAction(urls.MchRSAPublicKey,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"mch_id":    mchid,

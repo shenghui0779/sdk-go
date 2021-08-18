@@ -1,12 +1,14 @@
-package mp
+package minip
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // ImageSize 图片尺寸
@@ -47,7 +49,7 @@ type AICropResult struct {
 func AICrop(dest *AICropResult, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(AICropURL,
+	return wx.NewUploadAction(urls.MinipAICrop,
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "img",
 			Filename:  filename,
@@ -69,7 +71,7 @@ func AICrop(dest *AICropResult, path string) wx.Action {
 
 // AICropByURL 图片智能裁切
 func AICropByURL(dest *AICropResult, imgURL string) wx.Action {
-	return wx.NewPostAction(AICropURL,
+	return wx.NewPostAction(urls.MinipAICrop,
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -94,7 +96,7 @@ type QRCodeScanResult struct {
 func ScanQRCode(dest *QRCodeScanResult, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(ScanQRCodeURL,
+	return wx.NewUploadAction(urls.MinipScanQRCode,
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "img",
 			Filename:  filename,
@@ -116,7 +118,7 @@ func ScanQRCode(dest *QRCodeScanResult, path string) wx.Action {
 
 // ScanQRCodeByURL 条码/二维码识别
 func ScanQRCodeByURL(dest *QRCodeScanResult, imgURL string) wx.Action {
-	return wx.NewPostAction(ScanQRCodeURL,
+	return wx.NewPostAction(urls.MinipScanQRCode,
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -133,7 +135,7 @@ type SuperreSolutionResult struct {
 func SuperreSolution(dest *SuperreSolutionResult, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(SuperreSolutionURL,
+	return wx.NewUploadAction(urls.MinipSuperreSolution,
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "img",
 			Filename:  filename,
@@ -157,7 +159,7 @@ func SuperreSolution(dest *SuperreSolutionResult, path string) wx.Action {
 
 // SuperreSolutionByURL 图片高清化
 func SuperreSolutionByURL(dest *SuperreSolutionResult, imgURL string) wx.Action {
-	return wx.NewPostAction(SuperreSolutionURL,
+	return wx.NewPostAction(urls.MinipSuperreSolution,
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
 			dest.MediaID = gjson.GetBytes(resp, "media_id").String()

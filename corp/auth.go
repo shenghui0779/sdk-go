@@ -1,4 +1,4 @@
-package addr_book
+package corp
 
 import (
 	"encoding/json"

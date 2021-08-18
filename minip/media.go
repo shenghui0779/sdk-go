@@ -1,4 +1,4 @@
-package mp
+package minip
 
 import (
 	"context"
@@ -6,8 +6,10 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // MediaType 素材类型
@@ -27,7 +29,7 @@ type MediaUploadResult struct {
 func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(MediaUploadURL,
+	return wx.NewUploadAction(urls.MinipMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
@@ -50,7 +52,7 @@ func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.A
 
 // UploadMediaByURL 上传临时素材到微信服务器
 func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, resourceURL string) wx.Action {
-	return wx.NewUploadAction(MediaUploadURL,
+	return wx.NewUploadAction(urls.MinipMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
@@ -80,7 +82,7 @@ type Media struct {
 
 // GetMedia 获取客服消息内的临时素材
 func GetMedia(dest *Media, mediaID string) wx.Action {
-	return wx.NewGetAction(MediaGetURL,
+	return wx.NewGetAction(urls.MinipMediaGet,
 		wx.WithQuery("media_id", mediaID),
 		wx.WithDecode(func(resp []byte) error {
 			dest.Buffer = make([]byte, len(resp))

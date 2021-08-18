@@ -3,6 +3,7 @@ package mch
 import (
 	"strconv"
 
+	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
@@ -25,7 +26,7 @@ type RedpackData struct {
 
 // SendNormalRedpack 发放普通红包
 func SendNormalRedpack(data *RedpackData) wx.Action {
-	return wx.NewPostAction(RedpackNormalURL,
+	return wx.NewPostAction(urls.MchRedpackNormal,
 		wx.WithTLS(),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
@@ -59,7 +60,7 @@ func SendNormalRedpack(data *RedpackData) wx.Action {
 
 // SendGroupRedpack 发放裂变红包
 func SendGroupRedpack(data *RedpackData) wx.Action {
-	return wx.NewPostAction(RedpackGroupURL,
+	return wx.NewPostAction(urls.MchRedpackGroup,
 		wx.WithTLS(),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
@@ -93,7 +94,7 @@ func SendGroupRedpack(data *RedpackData) wx.Action {
 
 // SendMinipRedpack 发放小程序红包
 func SendMinipRedpack(data *RedpackData) wx.Action {
-	return wx.NewPostAction(RedpackMinipURL,
+	return wx.NewPostAction(urls.MchRedpackMinip,
 		wx.WithTLS(),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
@@ -123,7 +124,7 @@ func SendMinipRedpack(data *RedpackData) wx.Action {
 
 // QueryRedpackByBillNO 查询红包记录
 func QueryRedpackByBillNO(billNO string) wx.Action {
-	return wx.NewPostAction(RedpackQueryURL,
+	return wx.NewPostAction(urls.MchRedpackQuery,
 		wx.WithTLS(),
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{

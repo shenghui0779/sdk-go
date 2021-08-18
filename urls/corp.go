@@ -1,64 +1,52 @@
-package consts
+package urls
 
+const CorpCgiBinAccessToken = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
+
+// addr_book
 const (
-	CgiBinAccessTokenURL = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
-	APIDomainIPURL       = "https://qyapi.weixin.qq.com/cgi-bin/get_api_domain_ip"
-	UserInfoURL          = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo"
-	UserAuthSuccURL      = "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc"
+	CorpAddrBookAPIDomainIP       = "https://qyapi.weixin.qq.com/cgi-bin/get_api_domain_ip"
+	CorpAddrBookUserInfo          = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo"
+	CorpAddrBookUserAuthSucc      = "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc"
+	CorpAddrBookUserCreate        = "https://qyapi.weixin.qq.com/cgi-bin/user/create"
+	CorpAddrBookUserGet           = "https://qyapi.weixin.qq.com/cgi-bin/user/get"
+	CorpAddrBookUserUpdate        = "https://qyapi.weixin.qq.com/cgi-bin/user/update"
+	CorpAddrBookUserDelete        = "https://qyapi.weixin.qq.com/cgi-bin/user/delete"
+	CorpAddrBookUserBatchDelete   = "https://qyapi.weixin.qq.com/cgi-bin/user/batchdelete"
+	CorpAddrBookUserSimpleList    = "https://qyapi.weixin.qq.com/cgi-bin/user/simplelist"
+	CorpAddrBookUserList          = "https://qyapi.weixin.qq.com/cgi-bin/user/list"
+	CorpAddrBookConvert2OpenID    = "https://qyapi.weixin.qq.com/cgi-bin/user/convert_to_openid"
+	CorpAddrBookConvert2UserID    = "https://qyapi.weixin.qq.com/cgi-bin/user/convert_to_userid"
+	CorpAddrBookBatchInvite       = "https://qyapi.weixin.qq.com/cgi-bin/batch/invite"
+	CorpAddrBookJoinQRCode        = "https://qyapi.weixin.qq.com/cgi-bin/corp/get_join_qrcode"
+	CorpAddrBookActiveStat        = "https://qyapi.weixin.qq.com/cgi-bin/user/get_active_stat"
+	CorpAddrBookDepartmentCreate  = "https://qyapi.weixin.qq.com/cgi-bin/department/create"
+	CorpAddrBookDepartmentUpdate  = "https://qyapi.weixin.qq.com/cgi-bin/department/update"
+	CorpAddrBookDepartmentDelete  = "https://qyapi.weixin.qq.com/cgi-bin/department/delete"
+	CorpAddrBookDepartmentList    = "https://qyapi.weixin.qq.com/cgi-bin/department/list"
+	CorpAddrBookTagCreate         = "https://qyapi.weixin.qq.com/cgi-bin/tag/create"
+	CorpAddrBookTagUpdate         = "https://qyapi.weixin.qq.com/cgi-bin/tag/update"
+	CorpAddrBookTagDelete         = "https://qyapi.weixin.qq.com/cgi-bin/tag/delete"
+	CorpAddrBookTagGet            = "https://qyapi.weixin.qq.com/cgi-bin/tag/get"
+	CorpAddrBookTagList           = "https://qyapi.weixin.qq.com/cgi-bin/tag/list"
+	CorpAddrBookTagUserAdd        = "https://qyapi.weixin.qq.com/cgi-bin/tag/addtagusers"
+	CorpAddrBookTagUserDel        = "https://qyapi.weixin.qq.com/cgi-bin/tag/deltagusers"
+	CorpAddrBookBatchSyncUser     = "https://qyapi.weixin.qq.com/cgi-bin/batch/syncuser"
+	CorpAddrBookBatchReplaceUser  = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceuser"
+	CorpAddrBookBatchReplaceParty = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceparty"
+	CorpAddrBookBatchResult       = "https://qyapi.weixin.qq.com/cgi-bin/batch/getresult"
+	CorpLinkedCorpPermList        = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/agent/get_perm_list"
+	CorpLinkedCorpUserGet         = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/get"
+	CorpLinkedCorpUserSimpleList  = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/simplelist"
+	CorpLinkedCorpUserList        = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/list"
+	CorpLinkedCorpDepartmentList  = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/department/list"
 )
 
+// external_contact
 const (
-	UserCreateURL      = "https://qyapi.weixin.qq.com/cgi-bin/user/create"
-	UserGetURL         = "https://qyapi.weixin.qq.com/cgi-bin/user/get"
-	UserUpdateURL      = "https://qyapi.weixin.qq.com/cgi-bin/user/update"
-	UserDeleteURL      = "https://qyapi.weixin.qq.com/cgi-bin/user/delete"
-	UserBatchDeleteURL = "https://qyapi.weixin.qq.com/cgi-bin/user/batchdelete"
-	UserSimpleListURL  = "https://qyapi.weixin.qq.com/cgi-bin/user/simplelist"
-	UserListURL        = "https://qyapi.weixin.qq.com/cgi-bin/user/list"
-	Convert2OpenIDURL  = "https://qyapi.weixin.qq.com/cgi-bin/user/convert_to_openid"
-	Convert2UserIDURL  = "https://qyapi.weixin.qq.com/cgi-bin/user/convert_to_userid"
-	BatchInviteURL     = "https://qyapi.weixin.qq.com/cgi-bin/batch/invite"
-	JoinQRCodeURL      = "https://qyapi.weixin.qq.com/cgi-bin/corp/get_join_qrcode"
-	ActiveStatURL      = "https://qyapi.weixin.qq.com/cgi-bin/user/get_active_stat"
-)
-
-const (
-	DepartmentCreateURL = "https://qyapi.weixin.qq.com/cgi-bin/department/create"
-	DepartmentUpdateURL = "https://qyapi.weixin.qq.com/cgi-bin/department/update"
-	DepartmentDeleteURL = "https://qyapi.weixin.qq.com/cgi-bin/department/delete"
-	DepartmentListURL   = "https://qyapi.weixin.qq.com/cgi-bin/department/list"
-)
-
-const (
-	TagCreateURL  = "https://qyapi.weixin.qq.com/cgi-bin/tag/create"
-	TagUpdateURL  = "https://qyapi.weixin.qq.com/cgi-bin/tag/update"
-	TagDeleteURL  = "https://qyapi.weixin.qq.com/cgi-bin/tag/delete"
-	TagGetURL     = "https://qyapi.weixin.qq.com/cgi-bin/tag/get"
-	TagListURL    = "https://qyapi.weixin.qq.com/cgi-bin/tag/list"
-	TagUserAddURL = "https://qyapi.weixin.qq.com/cgi-bin/tag/addtagusers"
-	TagUserDelURL = "https://qyapi.weixin.qq.com/cgi-bin/tag/deltagusers"
-)
-
-const (
-	BatchSyncUserURL     = "https://qyapi.weixin.qq.com/cgi-bin/batch/syncuser"
-	BatchReplaceUserURL  = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceuser"
-	BatchReplacePartyURL = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceparty"
-	BatchResultURL       = "https://qyapi.weixin.qq.com/cgi-bin/batch/getresult"
-)
-
-const (
-	LinkedCorpPermListURL       = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/agent/get_perm_list"
-	LinkedCorpUserGetURL        = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/get"
-	LinkedCorpUserSimpleListURL = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/simplelist"
-	LinkedCorpUserListURL       = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/list"
-	LinkedCorpDepartmentListURL = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/department/list"
-)
-
-const (
-	ExternalContactFollowUserListURL = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_follow_user_list"
-	ExternalContactWayAddURL         = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_contact_way"
-	ExternalContactWayGetURL         = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_contact_way"
-	ExternalContactWayUpdateURL      = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/update_contact_way"
-	ExternalContactWayDeleteURL      = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_contact_way"
-	ExternalContactCloseTempChatURL  = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/close_temp_chat"
+	CorpExternalContactFollowUserList = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_follow_user_list"
+	CorpExternalContactWayAdd         = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_contact_way"
+	CorpExternalContactWayGet         = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_contact_way"
+	CorpExternalContactWayUpdate      = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/update_contact_way"
+	CorpExternalContactWayDelete      = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_contact_way"
+	CorpExternalContactCloseTempChat  = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/close_temp_chat"
 )

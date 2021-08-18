@@ -6,84 +6,85 @@ import (
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
+	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type ExternalContactWayType int
+type ContactType int
 
 const (
-	ExternalContactWaySingle ExternalContactWayType = 1
-	ExternalContactWayMulti  ExternalContactWayType = 2
+	ContactSingle ContactType = 1
+	ContactMulti  ContactType = 2
 )
 
-type ExternalContactWayScene int
+type ContactScene int
 
 const (
-	ExternalContactWayMinip  ExternalContactWayScene = 1
-	ExternalContactWayQRCode ExternalContactWayScene = 2
+	ContactMinip  ContactScene = 1
+	ContactQRCode ContactScene = 2
 )
 
-func GetExternalContactFollowUserList(dest *[]string) wx.Action {
-	return wx.NewGetAction(ExternalContactFollowUserListURL,
+func GetFollowUserList(dest *[]string) wx.Action {
+	return wx.NewGetAction(urls.CorpExternalContactFollowUserList,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "follow_user").Raw), dest)
 		}),
 	)
 }
 
-type ExternalContactWay struct {
-	ConfigID      string                      `json:"config_id,omitempty"`
-	Type          ExternalContactWayType      `json:"type,omitempty"`
-	Scene         ExternalContactWayScene     `json:"scene,omitempty"`
-	Style         int                         `json:"style,omitempty"`
-	Remark        string                      `json:"remark,omitempty"`
-	SkipVerify    bool                        `json:"skip_verify,omitempty"`
-	State         string                      `json:"state,omitempty"`
-	User          []string                    `json:"user,omitempty"`
-	Party         []int64                     `json:"party,omitempty"`
-	IsTemp        bool                        `json:"is_temp,omitempty"`
-	ExpiresIn     int                         `json:"expires_in,omitempty"`
-	ChatExpiresIn int                         `json:"chat_expires_in,omitempty"`
-	UnionID       string                      `json:"unionid,omitempty"`
-	Conclusions   *ExternalContactConclusions `json:"conclusions,omitempty"`
+type ContactWay struct {
+	ConfigID      string       `json:"config_id,omitempty"`
+	Type          ContactType  `json:"type,omitempty"`
+	Scene         ContactScene `json:"scene,omitempty"`
+	Style         int          `json:"style,omitempty"`
+	Remark        string       `json:"remark,omitempty"`
+	SkipVerify    bool         `json:"skip_verify,omitempty"`
+	State         string       `json:"state,omitempty"`
+	User          []string     `json:"user,omitempty"`
+	Party         []int64      `json:"party,omitempty"`
+	IsTemp        bool         `json:"is_temp,omitempty"`
+	ExpiresIn     int          `json:"expires_in,omitempty"`
+	ChatExpiresIn int          `json:"chat_expires_in,omitempty"`
+	UnionID       string       `json:"unionid,omitempty"`
+	Conclusions   *Conclusions `json:"conclusions,omitempty"`
 }
 
-type ExternalContactConclusions struct {
-	Text        *ExternalContactTextConclusion  `json:"text,omitempty"`
-	Image       *ExternalContactImageConclusion `json:"image,omitempty"`
-	Link        *ExternalContactLinkConclusion  `json:"link,omitempty"`
-	MiniProgram *ExternalContactMinipConclusion `json:"mini_program,omitempty"`
+type Conclusions struct {
+	Text        *TextConclusion  `json:"text,omitempty"`
+	Image       *ImageConclusion `json:"image,omitempty"`
+	Link        *LinkConclusion  `json:"link,omitempty"`
+	MiniProgram *MinipConclusion `json:"mini_program,omitempty"`
 }
 
-type ExternalContactTextConclusion struct {
+type TextConclusion struct {
 	Content string `json:"content"`
 }
 
-type ExternalContactImageConclusion struct {
+type ImageConclusion struct {
 	MediaID string `json:"media_id"`
 }
 
-type ExternalContactLinkConclusion struct {
+type LinkConclusion struct {
 	Title  string `json:"title"`
 	PicURL string `json:"picurl"`
 	Desc   string `json:"desc"`
 	URL    string `json:"url"`
 }
 
-type ExternalContactMinipConclusion struct {
+type MinipConclusion struct {
 	Title      string `json:"title"`
 	PicMediaID string `json:"pic_media_id"`
 	AppID      string `json:"appid"`
 	Page       string `json:"page"`
 }
 
-type ExternalContactWayAddResult struct {
+type ContactWayAddResult struct {
 	ConfigID string `json:"config_id"`
 	QRCode   string `json:"qr_code"`
 }
 
-func AddExternalContactWay(dest *ExternalContactWayAddResult, data *ExternalContactWay) wx.Action {
-	return wx.NewPostAction(ExternalContactWayAddURL,
+func AddContactWay(dest *ContactWayAddResult, data *ContactWay) wx.Action {
+	return wx.NewPostAction(urls.CorpExternalContactWayAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -93,8 +94,8 @@ func AddExternalContactWay(dest *ExternalContactWayAddResult, data *ExternalCont
 	)
 }
 
-func GetExternalContactWay(dest *ExternalContactWay, configID string) wx.Action {
-	return wx.NewPostAction(ExternalContactWayGetURL,
+func GetContactWay(dest *ContactWay, configID string) wx.Action {
+	return wx.NewPostAction(urls.CorpExternalContactWayGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"config_id": configID})
 		}),
@@ -104,24 +105,24 @@ func GetExternalContactWay(dest *ExternalContactWay, configID string) wx.Action 
 	)
 }
 
-func UpdateExternalContactWay(data *ExternalContactWay) wx.Action {
-	return wx.NewPostAction(ExternalContactWayUpdateURL,
+func UpdateContactWay(data *ContactWay) wx.Action {
+	return wx.NewPostAction(urls.CorpExternalContactWayUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
 	)
 }
 
-func DeleteExternalContactWay(configID string) wx.Action {
-	return wx.NewPostAction(ExternalContactWayDeleteURL,
+func DeleteContactWay(configID string) wx.Action {
+	return wx.NewPostAction(urls.CorpExternalContactWayDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"config_id": configID})
 		}),
 	)
 }
 
-func CloseExternalContactTempChat(userID, externalUserID string) wx.Action {
-	return wx.NewPostAction(ExternalContactCloseTempChatURL,
+func CloseTempChat(userID, externalUserID string) wx.Action {
+	return wx.NewPostAction(urls.CorpExternalContactCloseTempChat,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"userid":          userID,

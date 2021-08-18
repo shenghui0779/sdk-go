@@ -1,19 +1,21 @@
-package corp
+package addr_book
 
 import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
-type LinkedCorpUserAttrType int
+type LinkedCorpAttrType int
 
 const (
-	LinkedCorpUserAttrText LinkedCorpUserAttrType = 0
-	LinkedCorpUserAttrWeb  LinkedCorpUserAttrType = 1
+	LinkedCorpAttrText LinkedCorpAttrType = 0
+	LinkedCorpAttrWeb  LinkedCorpAttrType = 1
 )
 
 type LinkedCorpPermList struct {
@@ -22,7 +24,7 @@ type LinkedCorpPermList struct {
 }
 
 func GetLinkedCorpPermList(dest *LinkedCorpPermList) wx.Action {
-	return wx.NewPostAction(LinkedCorpPermListURL,
+	return wx.NewPostAction(urls.CorpLinkedCorpPermList,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -46,15 +48,15 @@ type LinkedCorpUserExtAttr struct {
 }
 
 type LinkedCorpUserAttr struct {
-	Type  LinkedCorpUserAttrType `json:"type" `
-	Name  string                 `json:"name"`
-	Value string                 `json:"value"`
-	Text  map[string]string      `json:"text"`
-	Web   map[string]string      `json:"web"`
+	Type  LinkedCorpAttrType `json:"type" `
+	Name  string             `json:"name"`
+	Value string             `json:"value"`
+	Text  map[string]string  `json:"text"`
+	Web   map[string]string  `json:"web"`
 }
 
 func GetLinkedCorpUser(dest *LinkedCorpUser, corpID, userID string) wx.Action {
-	return wx.NewPostAction(LinkedCorpUserGetURL,
+	return wx.NewPostAction(urls.CorpLinkedCorpUserGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"userid": fmt.Sprintf("%s/%s", corpID, userID),
@@ -73,7 +75,7 @@ func GetLinkedCorpUserSimpleList(dest *[]*LinkedCorpUser, linkedID, departmentID
 		child = 1
 	}
 
-	return wx.NewPostAction(LinkedCorpUserSimpleListURL,
+	return wx.NewPostAction(urls.CorpLinkedCorpUserSimpleList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"department_id": fmt.Sprintf("%s/%s", linkedID, departmentID),
@@ -93,7 +95,7 @@ func GetLinkedCorpUserList(dest *[]*LinkedCorpUser, linkedID, departmentID strin
 		child = 1
 	}
 
-	return wx.NewPostAction(LinkedCorpUserListURL,
+	return wx.NewPostAction(urls.CorpLinkedCorpUserList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"department_id": fmt.Sprintf("%s/%s", linkedID, departmentID),
@@ -114,7 +116,7 @@ type LinkedCorpDepartment struct {
 }
 
 func GetLinkedCorpDeparmentList(dest *[]*LinkedCorpDepartment, linkedID, departmentID string) wx.Action {
-	return wx.NewPostAction(LinkedCorpDepartmentListURL,
+	return wx.NewPostAction(urls.CorpLinkedCorpDepartmentList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"department_id": fmt.Sprintf("%s/%s", linkedID, departmentID),
