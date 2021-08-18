@@ -1,4 +1,4 @@
-package oa
+package offia
 
 import (
 	"context"
@@ -26,8 +26,8 @@ const (
 	ScopeSnsapiUser AuthScope = "snsapi_userinfo" // 弹出授权页面，可通过openid拿到昵称、性别、所在地。并且，即使在未关注的情况下，只要用户授权，也能获取其信息
 )
 
-// OA 微信公众号
-type OA struct {
+// Offia 微信公众号
+type Offia struct {
 	appid          string
 	appsecret      string
 	originid       string
@@ -37,9 +37,9 @@ type OA struct {
 	client         wx.Client
 }
 
-// New returns new OA
-func New(appid, appsecret string) *OA {
-	return &OA{
+// New returns new Offia
+func New(appid, appsecret string) *Offia {
+	return &Offia{
 		appid:     appid,
 		appsecret: appsecret,
 		nonce:     wx.Nonce,
@@ -48,42 +48,42 @@ func New(appid, appsecret string) *OA {
 }
 
 // SetOriginID 设置原始ID（开发者微信号）
-func (oa *OA) SetOriginID(originid string) {
+func (oa *Offia) SetOriginID(originid string) {
 	oa.originid = originid
 }
 
 // SetServerConfig 设置服务器配置
 // [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
-func (oa *OA) SetServerConfig(token, encodingAESKey string) {
+func (oa *Offia) SetServerConfig(token, encodingAESKey string) {
 	oa.token = token
 	oa.encodingAESKey = encodingAESKey
 }
 
 // AppID returns appid
-func (oa *OA) AppID() string {
+func (oa *Offia) AppID() string {
 	return oa.appid
 }
 
 // AppSecret returns app secret
-func (oa *OA) AppSecret() string {
+func (oa *Offia) AppSecret() string {
 	return oa.appsecret
 }
 
 // AuthURL 生成网页授权URL（请使用 URLEncode 对 redirectURL 进行处理）
-// [参考](https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html)
-func (oa *OA) AuthURL(scope AuthScope, redirectURL string, state ...string) string {
+// [参考](https://developers.weixin.qq.com/doc/offiaccount/Offia_Web_Apps/Wechat_webpage_authorization.html)
+func (oa *Offia) AuthURL(scope AuthScope, redirectURL string, state ...string) string {
 	paramState := oa.nonce(16)
 
 	if len(state) != 0 {
 		paramState = state[0]
 	}
 
-	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", urls.OAAuthorize, oa.appid, redirectURL, scope, paramState)
+	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", urls.OffiaAuthorize, oa.appid, redirectURL, scope, paramState)
 }
 
 // Code2AuthToken 获取网页授权AccessToken
-func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthToken, error) {
-	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", urls.OASnsCode2Token, oa.appid, oa.appsecret, code), options...)
+func (oa *Offia) Code2AuthToken(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthToken, error) {
+	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", urls.OffiaSnsCode2Token, oa.appid, oa.appsecret, code), options...)
 
 	if err != nil {
 		return nil, err
@@ -105,8 +105,8 @@ func (oa *OA) Code2AuthToken(ctx context.Context, code string, options ...yiigo.
 }
 
 // RefreshAuthToken 刷新网页授权AccessToken
-func (oa *OA) RefreshAuthToken(ctx context.Context, refreshToken string, options ...yiigo.HTTPOption) (*AuthToken, error) {
-	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", urls.OASnsRefreshAccessToken, oa.appid, refreshToken), options...)
+func (oa *Offia) RefreshAuthToken(ctx context.Context, refreshToken string, options ...yiigo.HTTPOption) (*AuthToken, error) {
+	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", urls.OffiaSnsRefreshAccessToken, oa.appid, refreshToken), options...)
 
 	if err != nil {
 		return nil, err
@@ -128,8 +128,8 @@ func (oa *OA) RefreshAuthToken(ctx context.Context, refreshToken string, options
 }
 
 // AccessToken 获取普通AccessToken
-func (oa *OA) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*AccessToken, error) {
-	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", urls.OACgiBinAccessToken, oa.appid, oa.appsecret), options...)
+func (oa *Offia) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*AccessToken, error) {
+	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", urls.OffiaCgiBinAccessToken, oa.appid, oa.appsecret), options...)
 
 	if err != nil {
 		return nil, err
@@ -151,7 +151,7 @@ func (oa *OA) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*Ac
 }
 
 // Do exec action
-func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, options ...yiigo.HTTPOption) error {
+func (oa *Offia) Do(ctx context.Context, accessToken string, action wx.Action, options ...yiigo.HTTPOption) error {
 	var (
 		resp []byte
 		err  error
@@ -199,14 +199,14 @@ func (oa *OA) Do(ctx context.Context, accessToken string, action wx.Action, opti
 // 验证消息来自微信服务器，使用：signature、timestamp、nonce；若验证成功，请原样返回echostr参数内容
 // 验证事件消息签名，使用：msg_signature、timestamp、nonce、msg_encrypt
 // [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
-func (oa *OA) VerifyEventSign(signature string, items ...string) bool {
+func (oa *Offia) VerifyEventSign(signature string, items ...string) bool {
 	signStr := event.SignWithSHA1(oa.token, items...)
 
 	return signStr == signature
 }
 
 // DecryptEventMessage 事件消息解密
-func (oa *OA) DecryptEventMessage(encrypt string) (wx.WXML, error) {
+func (oa *Offia) DecryptEventMessage(encrypt string) (wx.WXML, error) {
 	b, err := event.Decrypt(oa.appid, oa.encodingAESKey, encrypt)
 
 	if err != nil {
@@ -217,7 +217,7 @@ func (oa *OA) DecryptEventMessage(encrypt string) (wx.WXML, error) {
 }
 
 // Reply 消息回复
-func (oa *OA) Reply(openid string, reply event.Reply) (*event.ReplyMessage, error) {
+func (oa *Offia) Reply(openid string, reply event.Reply) (*event.ReplyMessage, error) {
 	body, err := reply.Bytes(oa.originid, openid)
 
 	if err != nil {
@@ -235,7 +235,7 @@ func (oa *OA) Reply(openid string, reply event.Reply) (*event.ReplyMessage, erro
 }
 
 // JSSDKSign 生成 JS-SDK 签名
-func (oa *OA) JSSDKSign(jsapiTicket, url string) *JSSDKSign {
+func (oa *Offia) JSSDKSign(jsapiTicket, url string) *JSSDKSign {
 	noncestr := oa.nonce(16)
 	now := time.Now().Unix()
 
