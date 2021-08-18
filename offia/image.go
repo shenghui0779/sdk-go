@@ -49,7 +49,7 @@ type AICropResult struct {
 func AICrop(dest *AICropResult, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.OAAICrop,
+	return wx.NewUploadAction(urls.OffiaAICrop,
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "img",
 			Filename:  filename,
@@ -71,7 +71,7 @@ func AICrop(dest *AICropResult, path string) wx.Action {
 
 // AICropByURL 图片智能裁切
 func AICropByURL(dest *AICropResult, imgURL string) wx.Action {
-	return wx.NewPostAction(urls.OAAICrop,
+	return wx.NewPostAction(urls.OffiaAICrop,
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -96,7 +96,7 @@ type QRCodeScanResult struct {
 func ScanQRCode(dest *QRCodeScanResult, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.OAScanQRCode,
+	return wx.NewUploadAction(urls.OffiaScanQRCode,
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "img",
 			Filename:  filename,
@@ -118,7 +118,7 @@ func ScanQRCode(dest *QRCodeScanResult, path string) wx.Action {
 
 // ScanQRCodeByURL 条码/二维码识别
 func ScanQRCodeByURL(dest *QRCodeScanResult, imgURL string) wx.Action {
-	return wx.NewPostAction(urls.OAScanQRCode,
+	return wx.NewPostAction(urls.OffiaScanQRCode,
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -135,7 +135,7 @@ type SuperreSolutionResult struct {
 func SuperreSolution(dest *SuperreSolutionResult, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.OASuperreSolution,
+	return wx.NewUploadAction(urls.OffiaSuperreSolution,
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "img",
 			Filename:  filename,
@@ -159,7 +159,7 @@ func SuperreSolution(dest *SuperreSolutionResult, path string) wx.Action {
 
 // SuperreSolutionByURL 图片高清化
 func SuperreSolutionByURL(dest *SuperreSolutionResult, imgURL string) wx.Action {
-	return wx.NewPostAction(urls.OASuperreSolution,
+	return wx.NewPostAction(urls.OffiaSuperreSolution,
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
 			dest.MediaID = gjson.GetBytes(resp, "media_id").String()

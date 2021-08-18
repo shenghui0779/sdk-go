@@ -36,7 +36,7 @@ type KFAccount struct {
 
 // GetKFAccountList 获取客服列表
 func GetKFAccountList(dest *[]*KFAccount) wx.Action {
-	return wx.NewGetAction(urls.OAKFAccountList,
+	return wx.NewGetAction(urls.OffiaKFAccountList,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "kf_list").Raw), dest)
 		}),
@@ -53,7 +53,7 @@ type KFOnline struct {
 
 // GetKFOnlineList 获取客服在线列表
 func GetKFOnlineList(dest *[]*KFOnline) wx.Action {
-	return wx.NewGetAction(urls.OAKFOnlineList,
+	return wx.NewGetAction(urls.OffiaKFOnlineList,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "kf_online_list").Raw), dest)
 		}),
@@ -64,7 +64,7 @@ func GetKFOnlineList(dest *[]*KFOnline) wx.Action {
 // 完整客服帐号，格式为：帐号前缀@公众号微信号，帐号前缀最多10个字符，必须是英文、数字字符或者下划线，后缀为公众号微信号，长度不超过30个字符
 // 客服昵称，最长16个字
 func AddKFAccount(account, nickname string) wx.Action {
-	return wx.NewPostAction(urls.OAKFAccountAdd,
+	return wx.NewPostAction(urls.OffiaKFAccountAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"kf_account": account,
@@ -78,7 +78,7 @@ func AddKFAccount(account, nickname string) wx.Action {
 // 完整客服帐号，格式为：帐号前缀@公众号微信号，帐号前缀最多10个字符，必须是英文、数字字符或者下划线，后缀为公众号微信号，长度不超过30个字符
 // 客服昵称，最长16个字
 func UpdateKFAccount(account, nickname string) wx.Action {
-	return wx.NewPostAction(urls.OAKFAccountUpdate,
+	return wx.NewPostAction(urls.OffiaKFAccountUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"kf_account": account,
@@ -94,7 +94,7 @@ func UpdateKFAccount(account, nickname string) wx.Action {
 // 尚未绑定微信号的帐号可以进行绑定邀请操作，邀请未失效时不能对该帐号进行再次绑定微信号邀请。
 // 完整客服帐号，格式为：帐号前缀@公众号微信号
 func InviteKFWorker(account, inviteWeixin string) wx.Action {
-	return wx.NewPostAction(urls.OAKFInvite,
+	return wx.NewPostAction(urls.OffiaKFInvite,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"kf_account": account,
@@ -109,7 +109,7 @@ func InviteKFWorker(account, inviteWeixin string) wx.Action {
 func UploadKFAvatar(account, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.OAKFAvatarUpload,
+	return wx.NewUploadAction(urls.OffiaKFAvatarUpload,
 		wx.WithQuery("kf_account", account),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
@@ -130,7 +130,7 @@ func UploadKFAvatar(account, path string) wx.Action {
 // DeleteKFAccount 删除客服帐号
 // 完整客服帐号，格式为：帐号前缀@公众号微信号
 func DeleteKFAccount(account string) wx.Action {
-	return wx.NewGetAction(urls.OAKFDelete,
+	return wx.NewGetAction(urls.OffiaKFDelete,
 		wx.WithQuery("kf_account", account),
 	)
 }
@@ -146,7 +146,7 @@ type KFSession struct {
 // CreateKFSession 创建会话
 // 完整客服帐号，格式为：帐号前缀@公众号微信号
 func CreateKFSession(account, openid string) wx.Action {
-	return wx.NewPostAction(urls.OAKFSessionCreate,
+	return wx.NewPostAction(urls.OffiaKFSessionCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"kf_account": account,
@@ -159,7 +159,7 @@ func CreateKFSession(account, openid string) wx.Action {
 // CloseKFSession 关闭会话
 // 完整客服帐号，格式为：帐号前缀@公众号微信号
 func CloseKFSession(account, openid string) wx.Action {
-	return wx.NewPostAction(urls.OAKFSessionClose,
+	return wx.NewPostAction(urls.OffiaKFSessionClose,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"kf_account": account,
@@ -172,7 +172,7 @@ func CloseKFSession(account, openid string) wx.Action {
 // GetKFSession 获取客户会话状态
 // 获取一个客户的会话，如果不存在，则kf_account为空。
 func GetKFSession(dest *KFSession, openid string) wx.Action {
-	return wx.NewGetAction(urls.OAKFSessionGet,
+	return wx.NewGetAction(urls.OffiaKFSessionGet,
 		wx.WithQuery("openid", openid),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -183,7 +183,7 @@ func GetKFSession(dest *KFSession, openid string) wx.Action {
 // GetKFSessionList 获取客服会话列表
 // 完整客服帐号，格式为：帐号前缀@公众号微信号
 func GetKFSessionList(dest *[]*KFSession, account string) wx.Action {
-	return wx.NewGetAction(urls.OAKFSessionList,
+	return wx.NewGetAction(urls.OffiaKFSessionList,
 		wx.WithQuery("kf_account", account),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "sessionlist").Raw), dest)
@@ -200,7 +200,7 @@ type KFWaitCase struct {
 // GetKFWaitCase 获取未接入会话列表
 // 最多返回100条数据，按照来访顺序
 func GetKFWaitCase(dest *KFWaitCase) wx.Action {
-	return wx.NewGetAction(urls.OAKFWaitCase,
+	return wx.NewGetAction(urls.OffiaKFWaitCase,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -226,7 +226,7 @@ type KFMsgRecordList struct {
 // GetKFMsgRecordList 获取聊天记录（每次查询时段不能超过24小时）
 // 聊天记录中，对于图片、语音、视频，分别展示成文本格式的[image]、[voice]、[video]。
 func GetKFMsgRecordList(dest *KFMsgRecordList, msgid, starttime, endtime int64, number int) wx.Action {
-	return wx.NewPostAction(urls.OAKFMsgRecordList,
+	return wx.NewPostAction(urls.OffiaKFMsgRecordList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
 				"msgid":     msgid,
