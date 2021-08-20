@@ -50,17 +50,13 @@ type WxopensItems struct {
 }
 
 
-func SetWxopenWxamplink(data *WxopenWxamplinkget) wx.Action {
+func SetWxopenWxamplink(data *WxopenWxamplink) wx.Action {
 	return wx.NewPostAction(fmt.Sprintf(WxopenWxamplinkUrl, data.AuthorizerRefreshToken),
 		wx.WithBody(func() (bytes []byte, e error) {
 			return json.Marshal(data)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			jsonStr := gjson.GetBytes(resp, "wxopens.items").String()
-			err := json.Unmarshal([]byte(jsonStr), &data.Items)
-			if err != nil {
-				return err
-			}
+
 			return nil
 		},
 	))
@@ -69,10 +65,12 @@ func SetWxopenWxamplink(data *WxopenWxamplinkget) wx.Action {
 func GetWxampLink(data *WxopenWxamplinkget) wx.Action  {
 	return wx.NewPostAction(fmt.Sprintf(WxopenWxamplinkGetUrl, data.AuthorizerRefreshToken),
 		wx.WithDecode(func(resp []byte) error {
-
-
+			jsonStr := gjson.GetBytes(resp, "wxopens.items").String()
+			err := json.Unmarshal([]byte(jsonStr), &data.Items)
+			if err != nil {
+				return err
+			}
 			return nil
 		},),
 	)
-	
 }
