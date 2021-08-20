@@ -19,9 +19,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"golang.org/x/crypto/pkcs12"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 // Mch 微信支付
@@ -206,7 +208,7 @@ func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]
 
 	m["sign"] = mch.SignWithMD5(m, true)
 
-	resp, err := mch.client.PostXML(ctx, DownloadBillURL, m, yiigo.WithHTTPClose())
+	resp, err := mch.client.PostXML(ctx, urls.MchDownloadBill, m, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -239,7 +241,7 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType stri
 
 	m["sign"] = mch.SignWithHMacSHA256(m, true)
 
-	resp, err := mch.tlsClient.PostXML(ctx, DownloadFundFlowURL, m, yiigo.WithHTTPClose())
+	resp, err := mch.tlsClient.PostXML(ctx, urls.MchDownloadFundFlow, m, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -278,7 +280,7 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string
 
 	m["sign"] = mch.SignWithHMacSHA256(m, true)
 
-	resp, err := mch.tlsClient.PostXML(ctx, BatchQueryCommentURL, m, yiigo.WithHTTPClose())
+	resp, err := mch.tlsClient.PostXML(ctx, urls.MchBatchQueryComment, m, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err

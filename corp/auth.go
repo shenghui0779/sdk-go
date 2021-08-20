@@ -3,6 +3,7 @@ package corp
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
@@ -17,7 +18,7 @@ type APIDomainIP struct {
 }
 
 func GetAPIDomainIP(dest *APIDomainIP) wx.Action {
-	return wx.NewGetAction(APIDomainIPURL,
+	return wx.NewGetAction(urls.CorpAddrBookAPIDomainIP,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -33,7 +34,7 @@ type UserInfo struct {
 
 // GetUserInfo 获取访问用户身份
 func GetUserInfo(dest *UserInfo, code string) wx.Action {
-	return wx.NewGetAction(UserInfoURL,
+	return wx.NewGetAction(urls.CorpAddrBookUserInfo,
 		wx.WithQuery("code", code),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -43,7 +44,7 @@ func GetUserInfo(dest *UserInfo, code string) wx.Action {
 
 // UserAuthSucc 二次验证
 func UserAuthSucc(userID string) wx.Action {
-	return wx.NewGetAction(UserAuthSuccURL,
+	return wx.NewGetAction(urls.CorpAddrBookUserAuthSucc,
 		wx.WithQuery("userid", userID),
 	)
 }

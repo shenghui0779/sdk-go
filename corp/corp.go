@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 type Corp struct {
@@ -38,7 +40,7 @@ func (corp *Corp) CorpID() string {
 }
 
 func (corp *Corp) AccessToken(ctx context.Context, secret string, options ...yiigo.HTTPOption) (*AccessToken, error) {
-	resp, err := corp.client.Get(ctx, fmt.Sprintf("%s?corpid=%s&corpsecret=%s", CgiBinAccessTokenURL, corp.corpid, secret), options...)
+	resp, err := corp.client.Get(ctx, fmt.Sprintf("%s?corpid=%s&corpsecret=%s", urls.CorpCgiBinAccessToken, corp.corpid, secret), options...)
 
 	if err != nil {
 		return nil, err
