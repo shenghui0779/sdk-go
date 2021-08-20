@@ -24,6 +24,7 @@ type Oplatform  struct {
 	componentVerifyTicket string //
 	nonce          func(size uint) string
 	client         wx.Client
+	officialAccount *OfficialAccount
 }
 
 
@@ -33,6 +34,7 @@ func New(appid, appsecret string) *Oplatform {
 		appid:     appid,
 		appsecret: appsecret,
 		nonce:     wx.Nonce,
+		officialAccount: &OfficialAccount{},
 		client:    wx.NewClient(wx.WithInsecureSkipVerify()),
 	}
 }
@@ -44,6 +46,11 @@ func (o *Oplatform) SetServerConfig(token, encodingAESKey ,componentVerifyTicket
 	o.token = token
 	o.encodingAESKey = encodingAESKey
 	o.componentVerifyTicket = componentVerifyTicket
+}
+
+func (o *Oplatform) SetOfficialAccount(appId string, refreshToken string) {
+	o.officialAccount.AppId = appId
+	o.officialAccount.RefreshToken = appId
 }
 
 // AppID returns appid
@@ -59,6 +66,14 @@ func (o *Oplatform) AppSecret() string {
 // ComponentVerifyTicket returns app componentVerifyTicket
 func (o *Oplatform)  ComponentVerifyTicket () string {
 	return o.componentVerifyTicket
+}
+
+func (o *Oplatform)  OfficialAccountAppId () string {
+	return o.officialAccount.AppId
+}
+
+func (o *Oplatform)  OfficialAccountRefreshToken () string {
+	return o.officialAccount.RefreshToken
 }
 
 // DecryptEventMessage 事件消息解密
