@@ -49,4 +49,23 @@ const (
 	CorpExternalContactWayUpdate      = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/update_contact_way"
 	CorpExternalContactWayDelete      = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_contact_way"
 	CorpExternalContactCloseTempChat  = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/close_temp_chat"
+	CorpExternalContactList           = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/list"
+)
+
+// kf
+const (
+	CorpKFAccountAdd              = "https://qyapi.weixin.qq.com/cgi-bin/kf/account/add"
+	CorpKFAccountDel              = "https://qyapi.weixin.qq.com/cgi-bin/kf/account/del"
+	CorpKFAccountUpdate           = "https://qyapi.weixin.qq.com/cgi-bin/kf/account/update"
+	CorpKFAccountList             = "https://qyapi.weixin.qq.com/cgi-bin/kf/account/list"
+	CorpKFAddContactWay           = "https://qyapi.weixin.qq.com/cgi-bin/kf/add_contact_way"
+	CorpKFServicerAdd             = "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/add"
+	CorpKFServicerDel             = "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/del"
+	CorpKFServicerList            = "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/list"
+	CorpKFSyncMsg                 = "https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg"
+	CorpKFSendMsg                 = "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg"
+	CorpKFCustomerBatchGet        = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/batchget"
+	CorpKFGetUpgradeServiceConfig = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/get_upgrade_service_config"
+	CorpKFUpgradeService          = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/upgrade_service"
+	CorpKFCancelUpgradeService    = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/cancel_upgrade_service"
 )

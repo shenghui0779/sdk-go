@@ -7,15 +7,9 @@ import (
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
+	"github.com/shenghui0779/gochat/corp/common"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
-)
-
-type LinkedCorpAttrType int
-
-const (
-	LinkedCorpAttrText LinkedCorpAttrType = 0
-	LinkedCorpAttrWeb  LinkedCorpAttrType = 1
 )
 
 type LinkedCorpPermList struct {
@@ -32,27 +26,15 @@ func GetLinkedCorpPermList(dest *LinkedCorpPermList) wx.Action {
 }
 
 type LinkedCorpUser struct {
-	UserID     string                 `json:"userid"`
-	Name       string                 `json:"name"`
-	Department []string               `json:"department"`
-	Mobile     string                 `json:"mobile"`
-	Telephone  string                 `json:"telephone"`
-	EMail      string                 `json:"email"`
-	Position   string                 `json:"position"`
-	CorpID     string                 `json:"corpid"`
-	ExtAttr    *LinkedCorpUserExtAttr `json:"extattr"`
-}
-
-type LinkedCorpUserExtAttr struct {
-	Attrs []*LinkedCorpUserAttr `json:"attrs"`
-}
-
-type LinkedCorpUserAttr struct {
-	Type  LinkedCorpAttrType `json:"type" `
-	Name  string             `json:"name"`
-	Value string             `json:"value"`
-	Text  map[string]string  `json:"text"`
-	Web   map[string]string  `json:"web"`
+	UserID     string          `json:"userid"`
+	Name       string          `json:"name"`
+	Department []string        `json:"department"`
+	Mobile     string          `json:"mobile"`
+	Telephone  string          `json:"telephone"`
+	EMail      string          `json:"email"`
+	Position   string          `json:"position"`
+	CorpID     string          `json:"corpid"`
+	ExtAttr    *common.ExtAttr `json:"extattr"`
 }
 
 func GetLinkedCorpUser(dest *LinkedCorpUser, corpID, userID string) wx.Action {

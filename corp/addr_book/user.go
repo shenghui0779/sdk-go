@@ -7,74 +7,40 @@ import (
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
+	"github.com/shenghui0779/gochat/corp/common"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
-// Gender 性别
-type Gender string
-
-const (
-	GenderUnknown Gender = "0" // 未知
-	GenderMale    Gender = "1" // 男性
-	GenderFemale  Gender = "2" // 女性
-)
-
-type AttrType int
-
-const (
-	TextAttr  AttrType = 0
-	WebAttr   AttrType = 1
-	MinipAttr AttrType = 2
-)
-
-type Attr struct {
-	Type        AttrType          `json:"type"`
-	Name        string            `json:"name"`
-	Text        map[string]string `json:"text,omitempty"`
-	Web         map[string]string `json:"web,omitempty"`
-	Miniprogram map[string]string `json:"miniprogram,omitempty"`
-}
-
-type ExtAttr struct {
-	Attrs []*Attr `json:"attrs"`
-}
-
-type ExternalProfile struct {
-	ExternalCorpName string  `json:"external_corp_name"`
-	WechatChannels   string  `json:"wechat_channels"`
-	ExternalAttr     []*Attr `json:"external_attr"`
-}
-
 type User struct {
-	UserID           string           `json:"user_id"`
-	Name             string           `json:"name"`
-	Alias            string           `json:"alias,omitempty"`
-	Mobile           string           `json:"mobile,omitempty"`
-	Department       []int64          `json:"department"`
-	Order            []int64          `json:"order,omitempty"`
-	Position         string           `json:"position,omitempty"`
-	Gender           Gender           `json:"gender,omitempty"`
-	Email            string           `json:"email,omitempty"`
-	IsLeaderInDept   []int64          `json:"is_leader_in_dept,omitempty"`
-	Enable           int              `json:"enable,omitempty"`
-	AvatarMediaID    string           `json:"avatar_mediaid,omitempty"` // 仅创建/更新可见
-	Avatar           string           `json:"avatar,omitempty"`         // 仅详情可见
-	ThumbAvatar      string           `json:"thumb_avatar,omitempty"`   // 仅详情可见
-	Telephone        string           `json:"telephone,omitempty"`
-	Address          string           `json:"address,omitempty"`
-	OpenUserID       string           `json:"open_userid,omitempty"` // 仅详情可见
-	MainDepartment   int64            `json:"main_department,omitempty"`
-	ExtAttr          *ExtAttr         `json:"extattr,omitempty"`
-	ToInvite         bool             `json:"to_invite,omitempty"` // 仅创建/更新可见
-	Status           int              `json:"status,omitempty"`    // 仅详情可见
-	QRCode           string           `json:"qr_code,omitempty"`   // 仅详情可见
-	ExternalPosition string           `json:"external_position,omitempty"`
-	ExternalProfile  *ExternalProfile `json:"external_profile,omitempty"`
+	UserID           string                  `json:"user_id"`
+	Name             string                  `json:"name"`
+	Alias            string                  `json:"alias,omitempty"`
+	Mobile           string                  `json:"mobile,omitempty"`
+	Department       []int64                 `json:"department"`
+	Order            []int64                 `json:"order,omitempty"`
+	Position         string                  `json:"position,omitempty"`
+	Gender           common.Gender           `json:"gender,omitempty"`
+	Email            string                  `json:"email,omitempty"`
+	IsLeaderInDept   []int64                 `json:"is_leader_in_dept,omitempty"`
+	Enable           int                     `json:"enable,omitempty"`
+	AvatarMediaID    string                  `json:"avatar_mediaid,omitempty"` // 仅创建/更新可见
+	Avatar           string                  `json:"avatar,omitempty"`         // 仅详情可见
+	ThumbAvatar      string                  `json:"thumb_avatar,omitempty"`   // 仅详情可见
+	Telephone        string                  `json:"telephone,omitempty"`
+	Address          string                  `json:"address,omitempty"`
+	OpenUserID       string                  `json:"open_userid,omitempty"` // 仅详情可见
+	MainDepartment   int64                   `json:"main_department,omitempty"`
+	ExtAttr          *common.ExtAttr         `json:"extattr,omitempty"`
+	ToInvite         bool                    `json:"to_invite,omitempty"` // 仅创建/更新可见
+	Status           int                     `json:"status,omitempty"`    // 仅详情可见
+	QRCode           string                  `json:"qr_code,omitempty"`   // 仅详情可见
+	ExternalPosition string                  `json:"external_position,omitempty"`
+	ExternalProfile  *common.ExternalProfile `json:"external_profile,omitempty"`
 }
 
-// CreateUser 创建成员
-func CreateUser(data *User) wx.Action {
+// UserCreate 创建成员
+func UserCreate(data *User) wx.Action {
 	return wx.NewPostAction(urls.CorpAddrBookUserCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
@@ -82,8 +48,8 @@ func CreateUser(data *User) wx.Action {
 	)
 }
 
-// GetUser 读取成员
-func GetUser(dest *User, userID string) wx.Action {
+// UserGet 读取成员
+func UserGet(dest *User, userID string) wx.Action {
 	return wx.NewGetAction(urls.CorpAddrBookUserGet,
 		wx.WithQuery("userid", userID),
 		wx.WithDecode(func(resp []byte) error {
@@ -92,8 +58,8 @@ func GetUser(dest *User, userID string) wx.Action {
 	)
 }
 
-// UpdateUser 更新成员
-func UpdateUser(data *User) wx.Action {
+// UserUpdate 更新成员
+func UserUpdate(data *User) wx.Action {
 	return wx.NewPostAction(urls.CorpAddrBookUserUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
@@ -101,15 +67,15 @@ func UpdateUser(data *User) wx.Action {
 	)
 }
 
-// DeleteUser 删除成员
-func DeleteUser(userID string) wx.Action {
+// UserDelete 删除成员
+func UserDelete(userID string) wx.Action {
 	return wx.NewGetAction(urls.CorpAddrBookUserDelete,
 		wx.WithQuery("userid", userID),
 	)
 }
 
-// BatchDeleteUser 批量删除成员
-func BatchDeleteUser(userIDs ...string) wx.Action {
+// UserBatchDelete 批量删除成员
+func UserBatchDelete(userIDs ...string) wx.Action {
 	return wx.NewPostAction(urls.CorpAddrBookUserBatchDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
@@ -119,8 +85,8 @@ func BatchDeleteUser(userIDs ...string) wx.Action {
 	)
 }
 
-// GetUserSimpleList 获取部门成员
-func GetUserSimpleList(dest *[]*User, departmentID int64, fetchChild bool) wx.Action {
+// UserSimpleList 获取部门成员
+func UserSimpleList(dest *[]*User, departmentID int64, fetchChild bool) wx.Action {
 	child := 0
 
 	if fetchChild {
@@ -158,8 +124,8 @@ type ConvertResult struct {
 	OpenID string `json:"openid"`
 }
 
-// Convert2OpenID userid转openid
-func Convert2OpenID(dest *ConvertResult, userID string) wx.Action {
+// UserID2OpenID userid转openid
+func UserID2OpenID(dest *ConvertResult, userID string) wx.Action {
 	return wx.NewPostAction(urls.CorpAddrBookConvert2OpenID,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"userid": userID})
@@ -173,8 +139,8 @@ func Convert2OpenID(dest *ConvertResult, userID string) wx.Action {
 	)
 }
 
-// Convert2UserID openid转userid
-func Convert2UserID(dest *ConvertResult, openid string) wx.Action {
+// OpenID2UserID openid转userid
+func OpenID2UserID(dest *ConvertResult, openid string) wx.Action {
 	return wx.NewPostAction(urls.CorpAddrBookConvert2UserID,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"openid": openid})
