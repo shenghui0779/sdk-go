@@ -67,17 +67,14 @@ const (
 	EventMsgSendFail                EventType = "msg_send_fail"                // 消息发送失败
 	EventServicerStatusChange       EventType = "servicer_status_change"       // 客服人员接待状态变更
 	EventSessionStatusChange        EventType = "session_status_change"        // 会话状态变更
+	EventSwitchWorkbenchMode        EventType = "switch_workbench_mode"        // 切换工作台自定义模式
 )
 
 // EventMessage 微信公众平台事件推送加密消息（兼容/安全模式）
 type EventMessage struct {
-	XMLName    xml.Name  `xml:"xml"`
-	ToUserName string    `xml:"ToUserName"`
-	Encrypt    string    `xml:"Encrypt"`
-	CreateTime string    `xml:"CreateTime"`
-	MsgType    MsgType   `xml:"MsgType"`
-	Event      EventType `xml:"Event"`
-	Token      string    `xml:"Tokenoken"`
+	XMLName    xml.Name `xml:"xml"`
+	ToUserName string   `xml:"ToUserName"`
+	Encrypt    string   `xml:"Encrypt"`
 }
 
 // SignWithSHA1 事件消息sha1签名

@@ -71,3 +71,16 @@ const (
 	CorpKFUpgradeService          = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/upgrade_service"
 	CorpKFCancelUpgradeService    = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/cancel_upgrade_service"
 )
+
+// agent
+const (
+	CorpAgentGet             = "https://qyapi.weixin.qq.com/cgi-bin/agent/get"
+	CorpAgentList            = "https://qyapi.weixin.qq.com/cgi-bin/agent/list"
+	CorpAgentSet             = "https://qyapi.weixin.qq.com/cgi-bin/agent/set"
+	CorpMenuCreate           = "https://qyapi.weixin.qq.com/cgi-bin/menu/create"
+	CorpMenuGet              = "https://qyapi.weixin.qq.com/cgi-bin/menu/get"
+	CorpMenuDelete           = "https://qyapi.weixin.qq.com/cgi-bin/menu/delete"
+	CorpSetWorkbenchTemplate = "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_template"
+	CorpGetWorkbenchTemplate = "https://qyapi.weixin.qq.com/cgi-bin/agent/get_workbench_template"
+	CorpSetWorkbenchData     = "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_data"
+)
