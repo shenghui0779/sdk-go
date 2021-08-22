@@ -1,12 +1,14 @@
 package urls
 
-const CorpCgiBinAccessToken = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
+const (
+	CorpCgiBinAccessToken  = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
+	CorpCgiBinAPIDomainIP  = "https://qyapi.weixin.qq.com/cgi-bin/get_api_domain_ip"
+	CorpCgiBinUserInfo     = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo"
+	CorpCgiBinUserAuthSucc = "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc"
+)
 
 // addr_book
 const (
-	CorpAddrBookAPIDomainIP       = "https://qyapi.weixin.qq.com/cgi-bin/get_api_domain_ip"
-	CorpAddrBookUserInfo          = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo"
-	CorpAddrBookUserAuthSucc      = "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc"
 	CorpAddrBookUserCreate        = "https://qyapi.weixin.qq.com/cgi-bin/user/create"
 	CorpAddrBookUserGet           = "https://qyapi.weixin.qq.com/cgi-bin/user/get"
 	CorpAddrBookUserUpdate        = "https://qyapi.weixin.qq.com/cgi-bin/user/update"

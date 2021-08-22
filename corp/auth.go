@@ -7,6 +7,14 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
+// AuthScope 应用授权作用域
+type AuthScope string
+
+// 企业微信支持的应用授权作用域
+const (
+	ScopeSnsapiBase AuthScope = "snsapi_base" // 企业自建应用固定填写：snsapi_base
+)
+
 // AccessToken 企业微信AccessToken
 type AccessToken struct {
 	Token     string `json:"access_token"`
@@ -18,7 +26,7 @@ type APIDomainIP struct {
 }
 
 func GetAPIDomainIP(dest *APIDomainIP) wx.Action {
-	return wx.NewGetAction(urls.CorpAddrBookAPIDomainIP,
+	return wx.NewGetAction(urls.CorpCgiBinAPIDomainIP,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
 		}),
@@ -34,7 +42,7 @@ type UserInfo struct {
 
 // GetUserInfo 获取访问用户身份
 func GetUserInfo(dest *UserInfo, code string) wx.Action {
-	return wx.NewGetAction(urls.CorpAddrBookUserInfo,
+	return wx.NewGetAction(urls.CorpCgiBinUserInfo,
 		wx.WithQuery("code", code),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -44,7 +52,7 @@ func GetUserInfo(dest *UserInfo, code string) wx.Action {
 
 // UserAuthSucc 二次验证
 func UserAuthSucc(userID string) wx.Action {
-	return wx.NewGetAction(urls.CorpAddrBookUserAuthSucc,
+	return wx.NewGetAction(urls.CorpCgiBinUserAuthSucc,
 		wx.WithQuery("userid", userID),
 	)
 }
