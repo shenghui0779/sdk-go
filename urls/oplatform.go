@@ -27,3 +27,11 @@ const   (
 	//获取公众号关联的小程序
 	WxopenWxamplinkGetUrl = "https://api.weixin.qq.com/cgi-bin/wxopen/wxamplinkget?access_token=%s"
 )
+
+const  (
+	// 图文消息内的图片获取URL
+	OaMediaUpload = "https://api.weixin.qq.com/cgi-bin/media/upload?"
+
+	OaAddMaterial = "https://api.weixin.qq.com/cgi-bin/media/add_material"
+
+)
