@@ -1,12 +1,14 @@
 package urls
 
-const CorpCgiBinAccessToken = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
+const (
+	CorpCgiBinAccessToken  = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
+	CorpCgiBinAPIDomainIP  = "https://qyapi.weixin.qq.com/cgi-bin/get_api_domain_ip"
+	CorpCgiBinUserInfo     = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo"
+	CorpCgiBinUserAuthSucc = "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc"
+)
 
 // addr_book
 const (
-	CorpAddrBookAPIDomainIP       = "https://qyapi.weixin.qq.com/cgi-bin/get_api_domain_ip"
-	CorpAddrBookUserInfo          = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo"
-	CorpAddrBookUserAuthSucc      = "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc"
 	CorpAddrBookUserCreate        = "https://qyapi.weixin.qq.com/cgi-bin/user/create"
 	CorpAddrBookUserGet           = "https://qyapi.weixin.qq.com/cgi-bin/user/get"
 	CorpAddrBookUserUpdate        = "https://qyapi.weixin.qq.com/cgi-bin/user/update"
@@ -49,4 +51,36 @@ const (
 	CorpExternalContactWayUpdate      = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/update_contact_way"
 	CorpExternalContactWayDelete      = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_contact_way"
 	CorpExternalContactCloseTempChat  = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/close_temp_chat"
+	CorpExternalContactList           = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/list"
+)
+
+// kf
+const (
+	CorpKFAccountAdd              = "https://qyapi.weixin.qq.com/cgi-bin/kf/account/add"
+	CorpKFAccountDel              = "https://qyapi.weixin.qq.com/cgi-bin/kf/account/del"
+	CorpKFAccountUpdate           = "https://qyapi.weixin.qq.com/cgi-bin/kf/account/update"
+	CorpKFAccountList             = "https://qyapi.weixin.qq.com/cgi-bin/kf/account/list"
+	CorpKFAddContactWay           = "https://qyapi.weixin.qq.com/cgi-bin/kf/add_contact_way"
+	CorpKFServicerAdd             = "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/add"
+	CorpKFServicerDel             = "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/del"
+	CorpKFServicerList            = "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/list"
+	CorpKFSyncMsg                 = "https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg"
+	CorpKFSendMsg                 = "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg"
+	CorpKFCustomerBatchGet        = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/batchget"
+	CorpKFGetUpgradeServiceConfig = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/get_upgrade_service_config"
+	CorpKFUpgradeService          = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/upgrade_service"
+	CorpKFCancelUpgradeService    = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/cancel_upgrade_service"
+)
+
+// agent
+const (
+	CorpAgentGet             = "https://qyapi.weixin.qq.com/cgi-bin/agent/get"
+	CorpAgentList            = "https://qyapi.weixin.qq.com/cgi-bin/agent/list"
+	CorpAgentSet             = "https://qyapi.weixin.qq.com/cgi-bin/agent/set"
+	CorpMenuCreate           = "https://qyapi.weixin.qq.com/cgi-bin/menu/create"
+	CorpMenuGet              = "https://qyapi.weixin.qq.com/cgi-bin/menu/get"
+	CorpMenuDelete           = "https://qyapi.weixin.qq.com/cgi-bin/menu/delete"
+	CorpSetWorkbenchTemplate = "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_template"
+	CorpGetWorkbenchTemplate = "https://qyapi.weixin.qq.com/cgi-bin/agent/get_workbench_template"
+	CorpSetWorkbenchData     = "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_data"
 )

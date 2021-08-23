@@ -69,16 +69,16 @@ func (oa *Offia) AppSecret() string {
 	return oa.appsecret
 }
 
-// AuthURL 生成网页授权URL（请使用 URLEncode 对 redirectURL 进行处理）
+// WebAuthURL 生成网页授权URL（请使用 URLEncode 对 redirectURL 进行处理）
 // [参考](https://developers.weixin.qq.com/doc/offiaccount/Offia_Web_Apps/Wechat_webpage_authorization.html)
-func (oa *Offia) AuthURL(scope AuthScope, redirectURL string, state ...string) string {
+func (oa *Offia) WebAuthURL(scope AuthScope, redirectURL string, state ...string) string {
 	paramState := oa.nonce(16)
 
 	if len(state) != 0 {
 		paramState = state[0]
 	}
 
-	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", urls.OffiaAuthorize, oa.appid, redirectURL, scope, paramState)
+	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", urls.Oauth2Authorize, oa.appid, redirectURL, scope, paramState)
 }
 
 // Code2AuthToken 获取网页授权AccessToken

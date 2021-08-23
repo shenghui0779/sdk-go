@@ -1,7 +1,10 @@
 package urls
 
 // oauth
-const OffiaAuthorize = "https://open.weixin.qq.com/connect/oauth2/authorize"
+const (
+	Oauth2Authorize = "https://open.weixin.qq.com/connect/oauth2/authorize"
+	QRCodeAuthorize = "https://open.work.weixin.qq.com/wwopen/sso/qrConnect"
+)
 
 // cgi-bin
 const (

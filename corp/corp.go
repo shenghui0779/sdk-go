@@ -39,6 +39,30 @@ func (corp *Corp) CorpID() string {
 	return corp.corpid
 }
 
+// WebAuthURL 生成网页授权URL（请使用 URLEncode 对 redirectURL 进行处理）
+// [参考](https://open.work.weixin.qq.com/api/doc/90000/90135/91020)
+func (corp *Corp) WebAuthURL(scope AuthScope, redirectURL string, state ...string) string {
+	paramState := corp.nonce(16)
+
+	if len(state) != 0 {
+		paramState = state[0]
+	}
+
+	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", urls.Oauth2Authorize, corp.corpid, redirectURL, scope, paramState)
+}
+
+// QRCodeAuthURL 扫码授权URL（请使用 URLEncode 对 redirectURL 进行处理）
+// [参考](https://open.work.weixin.qq.com/api/doc/90000/90135/90988)
+func (corp *Corp) QRCodeAuthURL(agentID string, redirectURL string, state ...string) string {
+	paramState := corp.nonce(16)
+
+	if len(state) != 0 {
+		paramState = state[0]
+	}
+
+	return fmt.Sprintf("%s?appid=%s&agentid=%s&redirect_uri=%s&state=%s", urls.QRCodeAuthorize, corp.corpid, agentID, redirectURL, paramState)
+}
+
 func (corp *Corp) AccessToken(ctx context.Context, secret string, options ...yiigo.HTTPOption) (*AccessToken, error) {
 	resp, err := corp.client.Get(ctx, fmt.Sprintf("%s?corpid=%s&corpsecret=%s", urls.CorpCgiBinAccessToken, corp.corpid, secret), options...)
 

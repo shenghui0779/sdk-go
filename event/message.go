@@ -8,22 +8,26 @@ import (
 	"strings"
 )
 
-// MessageType 消息类型
-type MessageType string
+// MsgType 消息类型
+type MsgType string
 
 // 微信支持的消息类型
 const (
-	MessageText       MessageType = "text"       // 文本消息
-	MessageImage      MessageType = "image"      // 图片消息
-	MessageVoice      MessageType = "voice"      // 语音消息
-	MessageVideo      MessageType = "video"      // 视频消息
-	MessageShortVideo MessageType = "shortvideo" // 小视频消息
-	MessageLocation   MessageType = "location"   // 地理位置消息
-	MessageLink       MessageType = "link"       // 链接消息
-	MessageMusic      MessageType = "music"      // 音乐消息
-	MessageNews       MessageType = "news"       // 图文消息
-	MessageWXCard     MessageType = "wxcard"     // 卡券，客服消息时使用
-	MessageEvent      MessageType = "event"      // 事件推送
+	MsgText          MsgType = "text"          // 文本消息
+	MsgImage         MsgType = "image"         // 图片消息
+	MsgVoice         MsgType = "voice"         // 语音消息
+	MsgVideo         MsgType = "video"         // 视频消息
+	MsgShortVideo    MsgType = "shortvideo"    // 小视频消息
+	MsgLocation      MsgType = "location"      // 地理位置消息
+	MsgLink          MsgType = "link"          // 链接消息
+	MsgMusic         MsgType = "music"         // 音乐消息
+	MsgNews          MsgType = "news"          // 图文消息
+	MsgWXCard        MsgType = "wxcard"        // 卡券，客服消息时使用
+	MsgFile          MsgType = "file"          // 文件消息
+	MsgMinip         MsgType = "miniprogram"   // 小程序消息
+	MsgMenu          MsgType = "menu"          // 菜单消息
+	MsgBussinessCard MsgType = "business_card" // 企业名片消息
+	MsgEvent         MsgType = "event"         // 事件推送
 )
 
 // EventType 事件类型
@@ -58,6 +62,12 @@ const (
 	EventCardPayOrder               EventType = "card_pay_order"               // 券点流水详情事件
 	EventSubmitMemberCardUserInfo   EventType = "submit_membercard_user_info"  // 会员卡激活
 	EventWxaMediaCheck              EventType = "wxa_media_check"              // 校验图片/音频是否含有违法违规内容
+	EventKFMsgOREvent               EventType = "kf_msg_or_event"              // 企业微信客服
+	EventEnterSession               EventType = "enter_session"                // 用户进入会话
+	EventMsgSendFail                EventType = "msg_send_fail"                // 消息发送失败
+	EventServicerStatusChange       EventType = "servicer_status_change"       // 客服人员接待状态变更
+	EventSessionStatusChange        EventType = "session_status_change"        // 会话状态变更
+	EventSwitchWorkbenchMode        EventType = "switch_workbench_mode"        // 切换工作台自定义模式
 )
 
 // EventMessage 微信公众平台事件推送加密消息（兼容/安全模式）
