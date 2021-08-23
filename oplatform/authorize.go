@@ -9,6 +9,7 @@ package oplatform
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
 )
@@ -90,7 +91,7 @@ type VerifyTypeInfo struct {
 
 // 获取令牌
 func GetApiComponentToken(data *ComponentAccessToken) wx.Action {
-	return wx.NewPostAction(ComponentApiComponentTokenUrl,
+	return wx.NewPostAction(urls.ComponentApiComponentTokenUrl,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -104,7 +105,7 @@ func GetApiComponentToken(data *ComponentAccessToken) wx.Action {
 
 // 获取预授权码
 func GetPreAuthCode(data *PreAuthCode) wx.Action {
-	return wx.NewPostAction(fmt.Sprintf(ComponentApiCreatePreAuthCode, data.ComponentAccessToken),
+	return wx.NewPostAction(fmt.Sprintf(urls.ComponentApiCreatePreAuthCode, data.ComponentAccessToken),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -116,7 +117,7 @@ func GetPreAuthCode(data *PreAuthCode) wx.Action {
 
 // 授权码获取授权信息
 func GetComponentApiQueryAuth(data *ComponentApiQueryAuth) wx.Action {
-	return wx.NewPostAction(fmt.Sprintf(ComponentApiQueryAuthUrl, data.ComponentAccessToken),
+	return wx.NewPostAction(fmt.Sprintf(urls.ComponentApiQueryAuthUrl, data.ComponentAccessToken),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -132,7 +133,7 @@ func GetComponentApiQueryAuth(data *ComponentApiQueryAuth) wx.Action {
 
 // 获取授权方的帐号基本信息
 func GetComponentApiGetAuthorizerInfo(data *ComponentApiGetAuthorizerInfo) wx.Action  {
-	return wx.NewPostAction(fmt.Sprintf(ComponentApiGetAuthorizerInfoUrl, data.ComponentAccessToken),
+	return wx.NewPostAction(fmt.Sprintf(urls.ComponentApiGetAuthorizerInfoUrl, data.ComponentAccessToken),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),

@@ -4,7 +4,7 @@
 @File : consts
 @Software: GoLand
 */
-package oplatform
+package urls
 
 const  (
 	BaseUrl = "https://mp.weixin.qq.com"

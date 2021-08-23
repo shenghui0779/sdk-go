@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/shenghui0779/gochat/event"
+	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
@@ -95,7 +96,7 @@ func (o *Oplatform) SafeBindComponent(preAuthCode string, redirectUri string, au
 	}
 
 	safeBindComponentUrl := fmt.Sprintf("%s/safe/bindcomponent?action=bindcomponent&no_scan=1&component_appid=%s&pre_auth_code=%s&redirect_uri=%s&auth_type=%d&biz_appid=%s#wechat_redirect",
-		BaseUrl, o.appid, preAuthCode, redirectUri, authType, bizAppid)
+		urls.BaseUrl, o.appid, preAuthCode, redirectUri, authType, bizAppid)
 	return safeBindComponentUrl, nil
 }
 
