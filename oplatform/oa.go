@@ -67,6 +67,7 @@ func GetWxampLink(data *WxopenWxamplinkget) wx.Action  {
 	return wx.NewPostAction(urls.WxopenWxamplinkGetUrl,
 		wx.WithQuery("access_token",data.AccessToken),
 		wx.WithDecode(func(resp []byte) error {
+			data.Items = []*WxopensItems{}
 			jsonStr := gjson.GetBytes(resp, "wxopens.items").String()
 			err := json.Unmarshal([]byte(jsonStr), &data.Items)
 			if err != nil {
