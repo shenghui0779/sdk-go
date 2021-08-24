@@ -51,7 +51,7 @@ func (o *Oplatform) SetServerConfig(token, encodingAESKey ,componentVerifyTicket
 
 func (o *Oplatform) SetOfficialAccount(appId string, refreshToken string) {
 	o.officialAccount.AppId = appId
-	o.officialAccount.RefreshToken = appId
+	o.officialAccount.RefreshToken = refreshToken
 }
 
 // AppID returns appid
