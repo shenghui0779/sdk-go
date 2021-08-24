@@ -19,7 +19,9 @@ const (
 	ComponentApiQueryAuthUrl = "https://api.weixin.qq.com/cgi-bin/component/api_query_auth?component_access_token=%s"
 	// 获取授权方的帐号基本信息
 	ComponentApiGetAuthorizerInfoUrl = "https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_info?component_access_token=%s"
-	)
+	// 获取/刷新接口调用令牌
+	ComponentApiGetAuthorizerTokenUrl = "https://api.weixin.qq.com/cgi-bin/component/api_authorizer_token"
+)
 
 const   (
 	//关联小程序

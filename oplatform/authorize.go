@@ -88,6 +88,20 @@ type VerifyTypeInfo struct {
 	Id int64 `json:"id"`
 }
 
+// 获取刷新接口调用令牌
+// https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/api_authorizer_token.html
+type ComponentApiAuthorizerToken struct {
+	ComponentAppid string `json:"component_appid"`
+	AuthorizerAppid string `json:"authorizer_appid"`
+	AuthorizerRefreshToken string `json:"authorizer_refresh_token"`
+	ResponseInfo *ApiAuthorizerTokenResp
+}
+
+type ApiAuthorizerTokenResp struct {
+	AuthorizerAccessToken string `json:"authorizer_access_token"`
+	ExpiresIn int `json:"expires_in"`
+	AuthorizerRefreshToken string `json:"authorizer_refresh_token"`
+}
 
 // 获取令牌
 func GetApiComponentToken(data *ComponentAccessToken) wx.Action {
@@ -154,4 +168,21 @@ func GetComponentApiGetAuthorizerInfo(data *ComponentApiGetAuthorizerInfo) wx.Ac
 			return nil
 		}),
 		)
+}
+
+// 获取/刷新接口调用令牌
+func GetComponentApiAuthorizertoken(data *ComponentApiAuthorizerToken) wx.Action {
+	return wx.NewPostAction(urls.ComponentApiGetAuthorizerTokenUrl,
+		wx.WithQuery("component_access_token",data.ComponentAppid),
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(data)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			data.ResponseInfo = &ApiAuthorizerTokenResp{}
+			data.ResponseInfo.AuthorizerRefreshToken = gjson.GetBytes(resp, "authorizer_refresh_token").String()
+			data.ResponseInfo.AuthorizerAccessToken = gjson.GetBytes(resp, "authorizer_access_token").String()
+			data.ResponseInfo.ExpiresIn = int(gjson.GetBytes(resp, "expires_in").Int())
+			return nil
+		}),
+	)
 }
