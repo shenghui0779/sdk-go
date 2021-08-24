@@ -91,7 +91,7 @@ type VerifyTypeInfo struct {
 // 获取刷新接口调用令牌
 // https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/api_authorizer_token.html
 type ComponentApiAuthorizerToken struct {
-	ComponentAppid string `json:"component_appid"`
+	ComponentAccessToken string `json:"component_access_token"`
 	AuthorizerAppid string `json:"authorizer_appid"`
 	AuthorizerRefreshToken string `json:"authorizer_refresh_token"`
 	ResponseInfo *ApiAuthorizerTokenResp
@@ -173,7 +173,7 @@ func GetComponentApiGetAuthorizerInfo(data *ComponentApiGetAuthorizerInfo) wx.Ac
 // 获取/刷新接口调用令牌
 func GetComponentApiAuthorizertoken(data *ComponentApiAuthorizerToken) wx.Action {
 	return wx.NewPostAction(urls.ComponentApiGetAuthorizerTokenUrl,
-		wx.WithQuery("component_access_token",data.ComponentAppid),
+		wx.WithQuery("component_access_token",data.ComponentAccessToken),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
