@@ -49,9 +49,10 @@ func (o *Oplatform) SetServerConfig(token, encodingAESKey ,componentVerifyTicket
 	o.componentVerifyTicket = componentVerifyTicket
 }
 
-func (o *Oplatform) SetOfficialAccount(appId string, refreshToken string) {
+func (o *Oplatform) SetOfficialAccount(appId string, refreshToken string, accessToken string) {
 	o.officialAccount.AppId = appId
 	o.officialAccount.RefreshToken = refreshToken
+	o.officialAccount.AccessToken = accessToken
 }
 
 // AppID returns appid
@@ -75,6 +76,10 @@ func (o *Oplatform)  OfficialAccountAppId () string {
 
 func (o *Oplatform)  OfficialAccountRefreshToken () string {
 	return o.officialAccount.RefreshToken
+}
+
+func (o *Oplatform)  OfficialAccessToken () string {
+	return o.officialAccount.AccessToken
 }
 
 // DecryptEventMessage 事件消息解密
