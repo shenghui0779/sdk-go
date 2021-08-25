@@ -33,7 +33,7 @@ const   (
 const  (
 	// 图文消息内的图片获取URL
 	OaMediaUpload = "https://api.weixin.qq.com/cgi-bin/media/upload"
-
+	// 图文永久素材
 	OaAddMaterial = "https://api.weixin.qq.com/cgi-bin/media/add_material"
 
 )
