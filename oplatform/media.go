@@ -50,7 +50,7 @@ func MaterialAddNewsImage(dest *MediaUploadImg, path string) wx.Action {
 
 	return wx.NewUploadAction(urls.OaAddMaterial,
 		wx.WithQuery("type", string(dest.Type)),
-		wx.WithQuery("type", string(dest.AccessToken)),
+		wx.WithQuery("access_token", string(dest.AccessToken)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
 			Filename:  filename,
