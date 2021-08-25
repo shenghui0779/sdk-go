@@ -8,6 +8,7 @@ package oplatform
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"github.com/shenghui0779/gochat/event"
@@ -150,4 +151,21 @@ func (o *Oplatform) Do(ctx context.Context,  action wx.Action, options ...yiigo.
 	return action.Decode()(resp)
 }
 
+// Reply 消息回复
+func (o *Oplatform) Reply(openid string, form string,reply event.Reply) (*event.ReplyMessage, error) {
+	body, err := reply.Bytes(form, openid)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// 消息加密
+	cipherText, err := event.Encrypt(o.appid, o.encodingAESKey, o.nonce(16), body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return event.BuildReply(o.token, o.nonce(16), base64.StdEncoding.EncodeToString(cipherText)), nil
+}
 
