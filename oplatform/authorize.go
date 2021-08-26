@@ -121,6 +121,7 @@ func GetApiComponentToken(data *ComponentAccessToken) wx.Action {
 // 获取预授权码
 func GetPreAuthCode(data *PreAuthCode) wx.Action {
 	return wx.NewPostAction(fmt.Sprintf(urls.ComponentApiCreatePreAuthCode, data.ComponentAccessToken),
+		wx.WithQuery("component_access_token", data.ComponentAccessToken),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -132,7 +133,8 @@ func GetPreAuthCode(data *PreAuthCode) wx.Action {
 
 // 授权码获取授权信息
 func GetComponentApiQueryAuth(data *ComponentApiQueryAuth) wx.Action {
-	return wx.NewPostAction(fmt.Sprintf(urls.ComponentApiQueryAuthUrl, data.ComponentAccessToken),
+	return wx.NewPostAction(urls.ComponentApiQueryAuthUrl,
+		wx.WithQuery("component_access_token",data.ComponentAccessToken),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -148,7 +150,9 @@ func GetComponentApiQueryAuth(data *ComponentApiQueryAuth) wx.Action {
 
 // 获取授权方的帐号基本信息
 func GetComponentApiGetAuthorizerInfo(data *ComponentApiGetAuthorizerInfo) wx.Action {
-	return wx.NewPostAction(fmt.Sprintf(urls.ComponentApiGetAuthorizerInfoUrl, data.ComponentAccessToken),
+	return wx.NewPostAction(urls.ComponentApiGetAuthorizerInfoUrl,
+		wx.WithQuery("component_access_token", data.ComponentAccessToken),
+
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),

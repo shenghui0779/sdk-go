@@ -8,7 +8,6 @@ package oplatform
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
@@ -52,7 +51,8 @@ type WxopensItems struct {
 
 
 func SetWxopenWxamplink(data *WxopenWxamplink) wx.Action {
-	return wx.NewPostAction(fmt.Sprintf(urls.WxopenWxamplinkUrl, data.AuthorizerRefreshToken),
+	return wx.NewPostAction(urls.WxopenWxamplinkUrl,
+		wx.WithQuery("access_token", data.AuthorizerRefreshToken),
 		wx.WithBody(func() (bytes []byte, e error) {
 			return json.Marshal(data)
 		}),
