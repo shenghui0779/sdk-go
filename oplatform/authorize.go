@@ -140,6 +140,7 @@ func GetComponentApiQueryAuth(data *ComponentApiQueryAuth) wx.Action {
 			return json.Marshal(data)
 		}),
 		wx.WithDecode(func(resp []byte) error {
+			data.AuthorizationInfo = &AuthorizationInfo{}
 			data.AuthorizationInfo.AuthorizerAppid = gjson.GetBytes(resp, "authorization_info.authorizer_appid").String()
 			data.AuthorizationInfo.AuthorizerAccessToken = gjson.GetBytes(resp, "authorization_info.authorizer_access_token").String()
 			data.AuthorizationInfo.ExpiresIn = gjson.GetBytes(resp, "authorization_info.authorizer_access_token").Int()
