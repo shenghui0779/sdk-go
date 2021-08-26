@@ -56,10 +56,6 @@ func (o *Oplatform) SetOfficialAccount(appId string, refreshToken string, access
 	o.officialAccount.accessToken = accessToken
 }
 
-func (o *Oplatform) SetOriginid(originid string)  {
-	o.officialAccount.originid = originid
-}
-
 // AppID returns appid
 func (o *Oplatform) AppID() string {
 	return o.appid
@@ -87,9 +83,6 @@ func (o *Oplatform)  OfficialAccessToken () string {
 	return o.officialAccount.accessToken
 }
 
-func (o *Oplatform)  OfficialOriginid () string {
-	return o.officialAccount.originid
-}
 
 // DecryptEventMessage 事件消息解密
 func (o *Oplatform) DecryptEventMessage(appId string,encrypt string) (wx.WXML, error) {
@@ -160,8 +153,8 @@ func (o *Oplatform) Do(ctx context.Context,  action wx.Action, options ...yiigo.
 }
 
 // Reply 消息回复
-func (o *Oplatform) Reply(openid string,reply event.Reply) (*event.ReplyMessage, error) {
-	body, err := reply.Bytes(o.officialAccount.originid , openid)
+func (o *Oplatform) Reply(openid string, form string,reply event.Reply) (*event.ReplyMessage, error) {
+	body, err := reply.Bytes(form, openid)
 
 	if err != nil {
 		return nil, err

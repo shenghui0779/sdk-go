@@ -10,5 +10,4 @@ type OfficialAccount struct {
 	appId        string
 	refreshToken string
 	accessToken  string
-	originid    string
 }
