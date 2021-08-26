@@ -8,7 +8,6 @@ package oplatform
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/tidwall/gjson"
@@ -120,7 +119,7 @@ func GetApiComponentToken(data *ComponentAccessToken) wx.Action {
 
 // 获取预授权码
 func GetPreAuthCode(data *PreAuthCode) wx.Action {
-	return wx.NewPostAction(fmt.Sprintf(urls.ComponentApiCreatePreAuthCode, data.ComponentAccessToken),
+	return wx.NewPostAction(urls.ComponentApiCreatePreAuthCode,
 		wx.WithQuery("component_access_token", data.ComponentAccessToken),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
