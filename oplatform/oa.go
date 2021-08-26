@@ -51,7 +51,7 @@ type WxopensItems struct {
 
 func SetWxopenWxamplink(data *WxopenWxamplink) wx.Action {
 	return wx.NewPostAction(urls.WxopenWxamplinkUrl,
-		wx.WithQuery("access_token", data.AuthorizerRefreshToken),
+		wx.WithQuery("access_token", data.AccessToken),
 		wx.WithBody(func() (bytes []byte, e error) {
 			return json.Marshal(data)
 		}),
