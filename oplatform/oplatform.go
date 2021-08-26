@@ -8,9 +8,11 @@ package oplatform
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"github.com/shenghui0779/gochat/event"
+	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
@@ -48,9 +50,10 @@ func (o *Oplatform) SetServerConfig(token, encodingAESKey ,componentVerifyTicket
 	o.componentVerifyTicket = componentVerifyTicket
 }
 
-func (o *Oplatform) SetOfficialAccount(appId string, refreshToken string) {
-	o.officialAccount.AppId = appId
-	o.officialAccount.RefreshToken = appId
+func (o *Oplatform) SetOfficialAccount(appId string, refreshToken string, accessToken string) {
+	o.officialAccount.appId = appId
+	o.officialAccount.refreshToken = refreshToken
+	o.officialAccount.accessToken = accessToken
 }
 
 // AppID returns appid
@@ -69,12 +72,17 @@ func (o *Oplatform)  ComponentVerifyTicket () string {
 }
 
 func (o *Oplatform)  OfficialAccountAppId () string {
-	return o.officialAccount.AppId
+	return o.officialAccount.appId
 }
 
 func (o *Oplatform)  OfficialAccountRefreshToken () string {
-	return o.officialAccount.RefreshToken
+	return o.officialAccount.refreshToken
 }
+
+func (o *Oplatform)  OfficialAccessToken () string {
+	return o.officialAccount.accessToken
+}
+
 
 // DecryptEventMessage 事件消息解密
 func (o *Oplatform) DecryptEventMessage(appId string,encrypt string) (wx.WXML, error) {
@@ -95,7 +103,7 @@ func (o *Oplatform) SafeBindComponent(preAuthCode string, redirectUri string, au
 	}
 
 	safeBindComponentUrl := fmt.Sprintf("%s/safe/bindcomponent?action=bindcomponent&no_scan=1&component_appid=%s&pre_auth_code=%s&redirect_uri=%s&auth_type=%d&biz_appid=%s#wechat_redirect",
-		BaseUrl, o.appid, preAuthCode, redirectUri, authType, bizAppid)
+		urls.BaseUrl, o.appid, preAuthCode, redirectUri, authType, bizAppid)
 	return safeBindComponentUrl, nil
 }
 
@@ -144,4 +152,21 @@ func (o *Oplatform) Do(ctx context.Context,  action wx.Action, options ...yiigo.
 	return action.Decode()(resp)
 }
 
+// Reply 消息回复
+func (o *Oplatform) Reply(openid string, form string,reply event.Reply) (*event.ReplyMessage, error) {
+	body, err := reply.Bytes(form, openid)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// 消息加密
+	cipherText, err := event.Encrypt(o.appid, o.encodingAESKey, o.nonce(16), body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return event.BuildReply(o.token, o.nonce(16), base64.StdEncoding.EncodeToString(cipherText)), nil
+}
 
