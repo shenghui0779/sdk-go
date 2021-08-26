@@ -7,7 +7,8 @@
 package oplatform
 
 type OfficialAccount struct {
-	AppId        string
-	RefreshToken string
-	AccessToken  string
+	appId        string
+	refreshToken string
+	accessToken  string
+	originid    string
 }
