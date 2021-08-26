@@ -125,7 +125,9 @@ func GetPreAuthCode(data *PreAuthCode) wx.Action {
 			return json.Marshal(data)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, data)
+			data.ComponentAccessToken = gjson.GetBytes(resp, "pre_auth_code").String()
+			data.ExpiresIn = int(gjson.GetBytes(resp, "expires_in").Int())
+			return nil
 		}),
 	)
 }
