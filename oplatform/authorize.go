@@ -63,6 +63,10 @@ type ComponentApiGetAuthorizerInfo struct {
 	ComponentAccessToken string             `json:"component_access_token"`
 	ComponentAppid       string             `json:"component_appid"`
 	AuthorizerAppid      string             `json:"authorizer_appid"`
+	AuthorizerInfo		 *ComponentApiGetAuthorizerResponseInfo `json:"authorizer_info"`
+}
+
+type ComponentApiGetAuthorizerResponseInfo struct {
 	AuthorizerInfo       *AuthorizerInfo    `json:"authorizer_info"`
 	AuthorizationInfo    *AuthorizationInfo `json:"authorization_info"`
 }
@@ -159,20 +163,23 @@ func GetComponentApiGetAuthorizerInfo(data *ComponentApiGetAuthorizerInfo) wx.Ac
 			return json.Marshal(data)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			data.AuthorizerInfo.ServiceTypeInfo = &ServiceTypeInfo{Id: gjson.GetBytes(resp, "authorizer_info.service_type_info.id").Int()}
-			data.AuthorizerInfo.VerifyTypeInfo = &VerifyTypeInfo{Id: gjson.GetBytes(resp, "authorizer_info.verify_type_info.id").Int()}
-			data.AuthorizerInfo.NickName = gjson.GetBytes(resp, "authorizer_info.nick_name").String()
-			data.AuthorizerInfo.HeadImg = gjson.GetBytes(resp, "authorizer_info.head_img").String()
-			data.AuthorizerInfo.UserName = gjson.GetBytes(resp, "authorizer_info.user_name").String()
-			data.AuthorizerInfo.PrincipalName = gjson.GetBytes(resp, "authorizer_info.principal_name").String()
-			data.AuthorizerInfo.Alias = gjson.GetBytes(resp, "authorizer_info.alias").String()
-			data.AuthorizerInfo.QrcodeUrl = gjson.GetBytes(resp, "authorizer_info.qrcode_url").String()
+			data.AuthorizerInfo = &ComponentApiGetAuthorizerResponseInfo{}
 
-			data.AuthorizationInfo.AuthorizerAppid = gjson.GetBytes(resp, "authorization_info.authorizer_appid").String()
-			data.AuthorizationInfo.AuthorizerAccessToken = gjson.GetBytes(resp, "authorization_info.authorizer_access_token").String()
-			data.AuthorizationInfo.ExpiresIn = gjson.GetBytes(resp, "authorization_info.authorizer_access_token").Int()
-			data.AuthorizationInfo.AuthorizerRefreshToken = gjson.GetBytes(resp, "authorization_info.authorizer_refresh_token").String()
-			return nil
+			err := json.Unmarshal(resp, &data.AuthorizerInfo)
+			//data.AuthorizerInfo.ServiceTypeInfo = &ServiceTypeInfo{Id: gjson.GetBytes(resp, "authorizer_info.service_type_info.id").Int()}
+			//data.AuthorizerInfo.VerifyTypeInfo = &VerifyTypeInfo{Id: gjson.GetBytes(resp, "authorizer_info.verify_type_info.id").Int()}
+			//data.AuthorizerInfo.NickName = gjson.GetBytes(resp, "authorizer_info.nick_name").String()
+			//data.AuthorizerInfo.HeadImg = gjson.GetBytes(resp, "authorizer_info.head_img").String()
+			//data.AuthorizerInfo.UserName = gjson.GetBytes(resp, "authorizer_info.user_name").String()
+			//data.AuthorizerInfo.PrincipalName = gjson.GetBytes(resp, "authorizer_info.principal_name").String()
+			//data.AuthorizerInfo.Alias = gjson.GetBytes(resp, "authorizer_info.alias").String()
+			//data.AuthorizerInfo.QrcodeUrl = gjson.GetBytes(resp, "authorizer_info.qrcode_url").String()
+			//
+			//data.AuthorizationInfo.AuthorizerAppid = gjson.GetBytes(resp, "authorization_info.authorizer_appid").String()
+			//data.AuthorizationInfo.AuthorizerAccessToken = gjson.GetBytes(resp, "authorization_info.authorizer_access_token").String()
+			//data.AuthorizationInfo.ExpiresIn = gjson.GetBytes(resp, "authorization_info.authorizer_access_token").Int()
+			//data.AuthorizationInfo.AuthorizerRefreshToken = gjson.GetBytes(resp, "authorization_info.authorizer_refresh_token").String()
+			return err
 		}),
 	)
 }
