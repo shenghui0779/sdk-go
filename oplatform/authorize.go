@@ -63,10 +63,6 @@ type ComponentApiGetAuthorizerInfo struct {
 	ComponentAccessToken string             `json:"component_access_token"`
 	ComponentAppid       string             `json:"component_appid"`
 	AuthorizerAppid      string             `json:"authorizer_appid"`
-	AuthorizerInfo		 *ComponentApiGetAuthorizerResponseInfo `json:"authorizer_info"`
-}
-
-type ComponentApiGetAuthorizerResponseInfo struct {
 	AuthorizerInfo       *AuthorizerInfo    `json:"authorizer_info"`
 	AuthorizationInfo    *AuthorizationInfo `json:"authorization_info"`
 }
