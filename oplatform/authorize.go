@@ -159,9 +159,10 @@ func GetComponentApiGetAuthorizerInfo(data *ComponentApiGetAuthorizerInfo) wx.Ac
 			return json.Marshal(data)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			data.AuthorizerInfo = &ComponentApiGetAuthorizerResponseInfo{}
+			data.AuthorizerInfo = &AuthorizerInfo{}
+			data.AuthorizationInfo = &AuthorizationInfo{}
 
-			err := json.Unmarshal(resp, &data.AuthorizerInfo)
+			err := json.Unmarshal(resp, &data)
 			//data.AuthorizerInfo.ServiceTypeInfo = &ServiceTypeInfo{Id: gjson.GetBytes(resp, "authorizer_info.service_type_info.id").Int()}
 			//data.AuthorizerInfo.VerifyTypeInfo = &VerifyTypeInfo{Id: gjson.GetBytes(resp, "authorizer_info.verify_type_info.id").Int()}
 			//data.AuthorizerInfo.NickName = gjson.GetBytes(resp, "authorizer_info.nick_name").String()
