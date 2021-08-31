@@ -47,7 +47,12 @@ type ComponentApiQueryAuth struct {
 	ComponentAppid        string                   `json:"component_appid"`
 	AuthorizationCode     string                   `json:"authorization_code"`
 	AuthorizationInfo     *AuthorizationInfo       `json:"authorization_info"`
-	AuthorizationFuncInfo *[]AuthorizationFuncInfo `json:"func_info"`
+}
+
+type FuncInfo struct {
+	FuncscopeCategory struct {
+		Id int64 `json:"id"`
+	} `json:"funcscope_category"`
 }
 
 // TODO 授权之后的用户 信息 取消 func_info 暂时没时间补充
@@ -56,6 +61,7 @@ type AuthorizationInfo struct {
 	AuthorizerAccessToken  string `json:"authorizer_access_token"`
 	ExpiresIn              int64  `json:"expires_in"`
 	AuthorizerRefreshToken string `json:"authorizer_refresh_token"`
+	FuncInfo []*FuncInfo `json:"func_info"`
 }
 
 type AuthorizationFuncInfo struct {
@@ -153,7 +159,6 @@ func GetComponentApiQueryAuth(data *ComponentApiQueryAuth) wx.Action {
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			data.AuthorizationInfo = &AuthorizationInfo{}
-			data.AuthorizationFuncInfo = &[]AuthorizationFuncInfo{}
 			err := json.Unmarshal(resp, &data)
 			return err
 		}),
