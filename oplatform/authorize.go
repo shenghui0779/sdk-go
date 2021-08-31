@@ -47,6 +47,7 @@ type ComponentApiQueryAuth struct {
 	ComponentAppid       string             `json:"component_appid"`
 	AuthorizationCode    string             `json:"authorization_code"`
 	AuthorizationInfo    *AuthorizationInfo `json:"authorization_info"`
+	AuthorizationFuncInfo  *AuthorizationFuncInfo `json:"func_info"`
 }
 
 // TODO 授权之后的用户 信息 取消 func_info 暂时没时间补充
@@ -55,6 +56,12 @@ type AuthorizationInfo struct {
 	AuthorizerAccessToken  string `json:"authorizer_access_token"`
 	ExpiresIn              int64  `json:"expires_in"`
 	AuthorizerRefreshToken string `json:"authorizer_refresh_token"`
+}
+
+type AuthorizationFuncInfo struct {
+	FuncscopeCategory []struct {
+		ID int `json:"id"`
+	} `json:"funcscope_category"`
 }
 
 // 获取授权方的帐号基本信息
@@ -141,11 +148,9 @@ func GetComponentApiQueryAuth(data *ComponentApiQueryAuth) wx.Action {
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			data.AuthorizationInfo = &AuthorizationInfo{}
-			data.AuthorizationInfo.AuthorizerAppid = gjson.GetBytes(resp, "authorization_info.authorizer_appid").String()
-			data.AuthorizationInfo.AuthorizerAccessToken = gjson.GetBytes(resp, "authorization_info.authorizer_access_token").String()
-			data.AuthorizationInfo.ExpiresIn = gjson.GetBytes(resp, "authorization_info.authorizer_access_token").Int()
-			data.AuthorizationInfo.AuthorizerRefreshToken = gjson.GetBytes(resp, "authorization_info.authorizer_refresh_token").String()
-			return nil
+			data.AuthorizationFuncInfo = &AuthorizationFuncInfo{}
+			err := json.Unmarshal(resp, &data)
+			return err
 		}),
 	)
 }
