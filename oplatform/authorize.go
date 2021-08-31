@@ -153,7 +153,7 @@ func GetComponentApiQueryAuth(data *ComponentApiQueryAuth) wx.Action {
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			data.AuthorizationInfo = &AuthorizationInfo{}
-			data.AuthorizationFuncInfo = &AuthorizationFuncInfo{}
+			data.AuthorizationFuncInfo = &[]AuthorizationFuncInfo{}
 			err := json.Unmarshal(resp, &data)
 			return err
 		}),
