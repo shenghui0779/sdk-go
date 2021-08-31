@@ -43,11 +43,11 @@ type SafeBindComponent struct {
 // 使用授权码获取授权信息
 // https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/authorization_info.html#%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80
 type ComponentApiQueryAuth struct {
-	ComponentAccessToken string             `json:"component_access_token"`
-	ComponentAppid       string             `json:"component_appid"`
-	AuthorizationCode    string             `json:"authorization_code"`
-	AuthorizationInfo    *AuthorizationInfo `json:"authorization_info"`
-	*AuthorizationFuncInfo
+	ComponentAccessToken  string                   `json:"component_access_token"`
+	ComponentAppid        string                   `json:"component_appid"`
+	AuthorizationCode     string                   `json:"authorization_code"`
+	AuthorizationInfo     *AuthorizationInfo       `json:"authorization_info"`
+	AuthorizationFuncInfo *[]AuthorizationFuncInfo `json:"func_info"`
 }
 
 // TODO 授权之后的用户 信息 取消 func_info 暂时没时间补充
@@ -59,16 +59,14 @@ type AuthorizationInfo struct {
 }
 
 type AuthorizationFuncInfo struct {
-	FuncInfo []struct {
-		FuncscopeCategory struct {
-			ID int `json:"id"`
-		} `json:"funcscope_category"`
-		ConfirmInfo struct {
-			NeedConfirm int `json:"need_confirm"`
-			AlreadyConfirm int `json:"already_confirm"`
-			CanConfirm int `json:"can_confirm"`
-		} `json:"confirm_info,omitempty"`
-	} `json:"func_info"`
+	FuncscopeCategory struct {
+		ID int `json:"id"`
+	} `json:"funcscope_category"`
+	ConfirmInfo struct {
+		NeedConfirm    int `json:"need_confirm"`
+		AlreadyConfirm int `json:"already_confirm"`
+		CanConfirm     int `json:"can_confirm"`
+	} `json:"confirm_info,omitempty"`
 }
 
 // 获取授权方的帐号基本信息
@@ -149,7 +147,7 @@ func GetPreAuthCode(data *PreAuthCode) wx.Action {
 // 授权码获取授权信息
 func GetComponentApiQueryAuth(data *ComponentApiQueryAuth) wx.Action {
 	return wx.NewPostAction(urls.ComponentApiQueryAuthUrl,
-		wx.WithQuery("component_access_token",data.ComponentAccessToken),
+		wx.WithQuery("component_access_token", data.ComponentAccessToken),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
