@@ -47,7 +47,7 @@ type ComponentApiQueryAuth struct {
 	ComponentAppid       string             `json:"component_appid"`
 	AuthorizationCode    string             `json:"authorization_code"`
 	AuthorizationInfo    *AuthorizationInfo `json:"authorization_info"`
-	AuthorizationFuncInfo  *AuthorizationFuncInfo `json:"func_info"`
+	*AuthorizationFuncInfo
 }
 
 // TODO 授权之后的用户 信息 取消 func_info 暂时没时间补充
@@ -59,9 +59,16 @@ type AuthorizationInfo struct {
 }
 
 type AuthorizationFuncInfo struct {
-	FuncscopeCategory []struct {
-		ID int `json:"id"`
-	} `json:"funcscope_category"`
+	FuncInfo []struct {
+		FuncscopeCategory struct {
+			ID int `json:"id"`
+		} `json:"funcscope_category"`
+		ConfirmInfo struct {
+			NeedConfirm int `json:"need_confirm"`
+			AlreadyConfirm int `json:"already_confirm"`
+			CanConfirm int `json:"can_confirm"`
+		} `json:"confirm_info,omitempty"`
+	} `json:"func_info"`
 }
 
 // 获取授权方的帐号基本信息
