@@ -5,6 +5,7 @@ const (
 	CorpCgiBinAPIDomainIP  = "https://qyapi.weixin.qq.com/cgi-bin/get_api_domain_ip"
 	CorpCgiBinUserInfo     = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo"
 	CorpCgiBinUserAuthSucc = "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc"
+	CorpCginBinCallbackIP  = "https://qyapi.weixin.qq.com/cgi-bin/getcallbackip"
 )
 
 // addr_book
@@ -36,11 +37,11 @@ const (
 	CorpAddrBookBatchReplaceUser  = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceuser"
 	CorpAddrBookBatchReplaceParty = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceparty"
 	CorpAddrBookBatchResult       = "https://qyapi.weixin.qq.com/cgi-bin/batch/getresult"
-	CorpLinkedCorpPermList        = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/agent/get_perm_list"
-	CorpLinkedCorpUserGet         = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/get"
-	CorpLinkedCorpUserSimpleList  = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/simplelist"
-	CorpLinkedCorpUserList        = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/list"
-	CorpLinkedCorpDepartmentList  = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/department/list"
+	CorpLinkedcorpPermList        = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/agent/get_perm_list"
+	CorpLinkedcorpUserGet         = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/get"
+	CorpLinkedcorpUserSimpleList  = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/simplelist"
+	CorpLinkedcorpUserList        = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/list"
+	CorpLinkedcorpDepartmentList  = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/department/list"
 )
 
 // external_contact
@@ -83,4 +84,18 @@ const (
 	CorpSetWorkbenchTemplate = "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_template"
 	CorpGetWorkbenchTemplate = "https://qyapi.weixin.qq.com/cgi-bin/agent/get_workbench_template"
 	CorpSetWorkbenchData     = "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_data"
+)
+
+// message
+const (
+	CorpMessageSend                = "https://qyapi.weixin.qq.com/cgi-bin/message/send"
+	CorpMessageUpdateTemplateCard  = "https://qyapi.weixin.qq.com/cgi-bin/message/update_template_card"
+	CorpMessageRecall              = "https://qyapi.weixin.qq.com/cgi-bin/message/recall"
+	CorpAppchatCreate              = "https://qyapi.weixin.qq.com/cgi-bin/appchat/create"
+	CorpAppchatUpdate              = "https://qyapi.weixin.qq.com/cgi-bin/appchat/update"
+	CorpAppchatGet                 = "https://qyapi.weixin.qq.com/cgi-bin/appchat/get"
+	CorpAppchatSend                = "https://qyapi.weixin.qq.com/cgi-bin/appchat/send"
+	CorpLinkedcorpMessageSend      = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send"
+	CorpExternalContactMessageSend = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send"
+	CorpMessageStaticsGet          = "https://qyapi.weixin.qq.com/cgi-bin/message/get_statistics"
 )
