@@ -39,8 +39,8 @@ type User struct {
 	ExternalProfile  *common.ExternalProfile `json:"external_profile,omitempty"`
 }
 
-// UserCreate 创建成员
-func UserCreate(data *User) wx.Action {
+// CreateUser 创建成员
+func CreateUser(data *User) wx.Action {
 	return wx.NewPostAction(urls.CorpAddrBookUserCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
@@ -48,8 +48,8 @@ func UserCreate(data *User) wx.Action {
 	)
 }
 
-// UserGet 读取成员
-func UserGet(dest *User, userID string) wx.Action {
+// GetUser 读取成员
+func GetUser(dest *User, userID string) wx.Action {
 	return wx.NewGetAction(urls.CorpAddrBookUserGet,
 		wx.WithQuery("userid", userID),
 		wx.WithDecode(func(resp []byte) error {
@@ -58,8 +58,8 @@ func UserGet(dest *User, userID string) wx.Action {
 	)
 }
 
-// UserUpdate 更新成员
-func UserUpdate(data *User) wx.Action {
+// UpdateUser 更新成员
+func UpdateUser(data *User) wx.Action {
 	return wx.NewPostAction(urls.CorpAddrBookUserUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
@@ -67,15 +67,15 @@ func UserUpdate(data *User) wx.Action {
 	)
 }
 
-// UserDelete 删除成员
-func UserDelete(userID string) wx.Action {
+// DeleteUser 删除成员
+func DeleteUser(userID string) wx.Action {
 	return wx.NewGetAction(urls.CorpAddrBookUserDelete,
 		wx.WithQuery("userid", userID),
 	)
 }
 
-// UserBatchDelete 批量删除成员
-func UserBatchDelete(userIDs ...string) wx.Action {
+// BatchDeleteUser 批量删除成员
+func BatchDeleteUser(userIDs ...string) wx.Action {
 	return wx.NewPostAction(urls.CorpAddrBookUserBatchDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
@@ -85,8 +85,8 @@ func UserBatchDelete(userIDs ...string) wx.Action {
 	)
 }
 
-// UserSimpleList 获取部门成员
-func UserSimpleList(dest *[]*User, departmentID int64, fetchChild bool) wx.Action {
+// GetUserSimpleList 获取部门成员
+func GetUserSimpleList(dest *[]*User, departmentID int64, fetchChild bool) wx.Action {
 	child := 0
 
 	if fetchChild {
@@ -102,8 +102,8 @@ func UserSimpleList(dest *[]*User, departmentID int64, fetchChild bool) wx.Actio
 	)
 }
 
-// UserList 获取部门成员详情
-func UserList(dest *[]*User, departmentID int64, fetchChild bool) wx.Action {
+// GetUserList 获取部门成员详情
+func GetUserList(dest *[]*User, departmentID int64, fetchChild bool) wx.Action {
 	child := 0
 
 	if fetchChild {

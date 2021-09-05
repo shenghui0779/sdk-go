@@ -18,7 +18,7 @@ type ResultAppchartCreate struct {
 	ChatID string `json:"chatid"`
 }
 
-func AppchatCreate(params *ParamsAppchatCreate, result *ResultAppchartCreate) wx.Action {
+func CreateAppchat(params *ParamsAppchatCreate, result *ResultAppchartCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpAppchatCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -37,7 +37,7 @@ type ParamsAppchatUpdate struct {
 	DelUserList []string `json:"del_user_list,omitempty"`
 }
 
-func AppchatUpdate(params *ParamsAppchatUpdate) wx.Action {
+func UpdateAppchat(params *ParamsAppchatUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpAppchatUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -56,7 +56,7 @@ type AppchatInfo struct {
 	UserList []string `json:"userlist"`
 }
 
-func AppchatGet(chatID string, result *ResultAppchatGet) wx.Action {
+func GetAppchat(chatID string, result *ResultAppchatGet) wx.Action {
 	return wx.NewGetAction(urls.CorpAppchatGet,
 		wx.WithQuery("chatid", chatID),
 		wx.WithDecode(func(resp []byte) error {
@@ -80,7 +80,7 @@ type ParamsAppchatSend struct {
 	Safe     int              `json:"safe"`
 }
 
-func AppchatSend(params *ParamsAppchatSend) wx.Action {
+func SendAppchat(params *ParamsAppchatSend) wx.Action {
 	return wx.NewPostAction(urls.CorpAppchatSend,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

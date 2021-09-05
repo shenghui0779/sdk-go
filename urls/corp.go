@@ -99,3 +99,23 @@ const (
 	CorpExternalContactMessageSend = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send"
 	CorpMessageStaticsGet          = "https://qyapi.weixin.qq.com/cgi-bin/message/get_statistics"
 )
+
+// media
+const (
+	CorpMediaUpload    = "https://qyapi.weixin.qq.com/cgi-bin/media/upload"
+	CorpMediaUploadimg = "https://qyapi.weixin.qq.com/cgi-bin/media/uploadimg"
+	CorpMediaGet       = "https://qyapi.weixin.qq.com/cgi-bin/media/get"
+	CorpMediaGetJSSDK  = "https://qyapi.weixin.qq.com/cgi-bin/media/get/jssdk"
+)
+
+// OA
+const (
+	CorpOAGetCorpCheckinOption   = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcorpcheckinoption"
+	CorpOAGetCheckinOption       = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckinoption"
+	CorpOAGetCheckinData         = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata"
+	CorpOAGetCheckinDayData      = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckin_daydata"
+	CorpOAGetCheckinMonthData    = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckin_monthdata"
+	CorpOAGetCheckinScheduleList = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckinschedulist"
+	CorpOASetCheckinScheduleList = "https://qyapi.weixin.qq.com/cgi-bin/checkin/setcheckinschedulist"
+	CorpOAAddCheckinUserFace     = "https://qyapi.weixin.qq.com/cgi-bin/checkin/addcheckinuserface"
+)

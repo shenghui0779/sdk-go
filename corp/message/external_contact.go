@@ -37,7 +37,7 @@ type ResultExternalContactMessageSend struct {
 	InvalidParty         []string `json:"invalid_party"`
 }
 
-func ExternalContactMessageSend(params *ParamsExternalContactMessageSend, result *ResultExternalContactMessageSend) wx.Action {
+func SendExternalContactMessage(params *ParamsExternalContactMessageSend, result *ResultExternalContactMessageSend) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

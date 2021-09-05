@@ -32,7 +32,7 @@ type ResultLinkedcorpMessageSend struct {
 	InvalidTag   []string `json:"invalidtag"`
 }
 
-func LinkedcorpMessageSend(params *ParamsLinkedcorpMessageSend, result *ResultLinkedcorpMessageSend) wx.Action {
+func SendLinkedcorpMessage(params *ParamsLinkedcorpMessageSend, result *ResultLinkedcorpMessageSend) wx.Action {
 	return wx.NewPostAction(urls.CorpLinkedcorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
