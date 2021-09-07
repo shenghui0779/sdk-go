@@ -1,1 +1,147 @@
 package oa
+
+import (
+	"encoding/json"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
+)
+
+type TemplateContent struct {
+	Controls []*TemplateControl `json:"controls"`
+}
+
+type TemplateControl struct {
+	Property *ControlProperty `json:"property"`
+	Config   *ControlConfig   `json:"config"`
+}
+
+type ControlProperty struct {
+	Control     string         `json:"control"`
+	ID          string         `json:"id"`
+	Title       []*DisplayText `json:"title"`
+	Placeholder []*DisplayText `json:"placeholder"`
+	Require     int            `json:"require"`
+	UnPrint     int            `json:"un_print"`
+}
+
+type ControlConfig struct {
+	Date         *ControlDate       `json:"date,omitempty"`
+	Selector     *ControlSelector   `json:"selector,omitempty"`
+	Table        *ControlTable      `json:"table,omitempty"`
+	Attendance   *ControlAttendance `json:"attendance,omitempty"`
+	VacationList *ControlVacation   `json:"vacation_list,omitempty"`
+}
+
+type ControlDate struct {
+	Type string `json:"type"`
+}
+
+type ControlSelector struct {
+	Type    string            `json:"type"`
+	ExpType int               `json:"exp_type"`
+	Options []*SelectorOption `json:"options"`
+}
+
+type SelectorOption struct {
+	Key   string         `json:"key"`
+	Value []*DisplayText `json:"value"`
+}
+
+type ControlContact struct {
+	Type string `json:"type"`
+	Mode string `json:"mode"`
+}
+
+type ControlTable struct {
+	Childern  []*TableChild `json:"childern"`
+	StatField interface{}   `json:"stat_field"`
+}
+
+type TableChild struct {
+	Property *ControlProperty
+}
+
+type ControlAttendance struct {
+	Type      int                  `json:"type"`
+	DateRange *AttendanceDateRange `json:"date_range"`
+}
+
+type AttendanceDateRange struct {
+	Type string `json:"type"`
+}
+
+type ControlVacation struct {
+	Item []*VacationItem `json:"item"`
+}
+
+type VacationItem struct {
+	ID   int64          `json:"id"`
+	Name []*DisplayText `json:"name"`
+}
+
+type ParamsTemplateDetailGet struct {
+	TemplateID string `json:"template_id"`
+}
+
+type ResultTemplateDetailGet struct {
+	TemplateNames   []*DisplayText   `json:"template_names"`
+	TemplateContent *TemplateContent `json:"template_content"`
+}
+
+func GetTemplateDetail(params *ParamsTemplateDetailGet, result *ResultTemplateDetailGet) wx.Action {
+	return wx.NewPostAction(urls.CorpOAGetTemplateDetail,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type Approver struct {
+	Attr   int      `json:"attr"`
+	UserID []string `json:"userid"`
+}
+
+type ApplyData struct {
+	Contents []*ApplyContent `json:"contents"`
+}
+
+type ApplyContent struct {
+	Control string       `json:"control"`
+	ID      string       `json:"id"`
+	Value   *DisplayText `json:"value"`
+}
+
+type ApplySummaryInfo struct {
+	SummaryInfo []*DisplayText `json:"summary_info"`
+}
+
+type ParamsApplyEvent struct {
+	CreatorUserID       string              `json:"creator_userid"`
+	TemplateID          string              `json:"template_id"`
+	UseTemplateApprover int                 `json:"use_template_approver"`
+	ChooseDepartment    int64               `json:"choose_department,omitempty"`
+	Approver            []*Approver         `json:"approver"`
+	Notifyer            []string            `json:"notifyer"`
+	NotifyType          int                 `json:"notify_type"`
+	ApplyData           *ApplyData          `json:"apply_data"`
+	SummaryList         []*ApplySummaryInfo `json:"summary_list"`
+}
+
+type ResultApplyEvent struct {
+	SpNo string `json:"sp_no"`
+}
+
+func ApplyEvent(params *ParamsApplyEvent, result *ResultApplyEvent) wx.Action {
+	return wx.NewPostAction(urls.CorpOAApplyEvent,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}

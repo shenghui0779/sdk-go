@@ -7,6 +7,11 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
+type DisplayText struct {
+	Text string `json:"text"`
+	Lang string `json:"lang"`
+}
+
 type CorpCheckinOption struct {
 	GroupType              int               `json:"grouptype"`
 	GroupID                int64             `json:"groupid"`
@@ -206,16 +211,16 @@ func GetCorpCheckinOption(result *ResultCorpCheckinOption) wx.Action {
 	)
 }
 
-type ParamsCheckinOption struct {
+type ParamsCheckinOptionGet struct {
 	DateTime   int64    `json:"datetime"`
 	UserIDList []string `json:"useridlist"`
 }
 
-type ResultCheckinOption struct {
+type ResultCheckinOptionGet struct {
 	Info *CheckinInfo `json:"info"`
 }
 
-func GetCheckinOption(params *ParamsCheckinOption, result *ResultCheckinOption) wx.Action {
+func GetCheckinOption(params *ParamsCheckinOptionGet, result *ResultCheckinOptionGet) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetCheckinOption,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -244,18 +249,18 @@ type CheckinData struct {
 	TimelineID     int64    `json:"timeline_id"`
 }
 
-type ParamsCheckinData struct {
+type ParamsCheckinDataGet struct {
 	OpenCheckinDataType int      `json:"opencheckindatatype"`
 	StartTime           int64    `json:"starttime"`
 	EndTime             int64    `json:"endtime"`
 	UserIDList          []string `json:"useridlist"`
 }
 
-type ResultCheckinData struct {
+type ResultCheckinDataGet struct {
 	CheckinData []*CheckinData `json:"checkindata"`
 }
 
-func GetCheckinData(params *ParamsCheckinData, result *ResultCheckinData) wx.Action {
+func GetCheckinData(params *ParamsCheckinDataGet, result *ResultCheckinDataGet) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetCheckinData,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -338,16 +343,11 @@ type HolidayInfo struct {
 }
 
 type SPDescription struct {
-	Data []*SPData `json:"data"`
+	Data []*DisplayText `json:"data"`
 }
 
 type SPTitle struct {
-	Data []*SPData `json:"data"`
-}
-
-type SPData struct {
-	Lang string `json:"lang"`
-	Text string `json:"text"`
+	Data []*DisplayText `json:"data"`
 }
 
 type ExceptionInfo struct {
@@ -413,6 +413,91 @@ func GetCheckinMonthData(params *ParamsCheckinMonthData, result *ResultCheckinMo
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsCheckinScheduleListGet struct {
+	StartTime  int64    `json:"starttime"`
+	EndTime    int64    `json:"endtime"`
+	UserIDList []string `json:"useridlist"`
+}
+
+type ResultCheckinScheduleListGet struct {
+	ScheduleList []*UserCheckinSchedule `json:"schedule_list"`
+}
+
+type UserCheckinSchedule struct {
+	UserID    string           `json:"userid"`
+	YearMonth uint32           `json:"yearmonth"`
+	GroupID   int64            `json:"groupid"`
+	GroupName string           `json:"groupname"`
+	Schedule  *CheckinSchedule `json:"schedule"`
+}
+
+type CheckinSchedule struct {
+	ScheduleList []*Schedule `json:"schedule_list"`
+}
+
+type Schedule struct {
+	Day          uint32        `json:"day"`
+	ScheduleInfo *ScheduleInfo `json:"schedule_info"`
+}
+
+type ScheduleInfo struct {
+	ScheduleID   int64                `json:"schedule_id"`
+	ScheduleName string               `json:"schedule_name"`
+	TimeSection  *ScheduleTimeSection `json:"time_section"`
+}
+
+type ScheduleTimeSection struct {
+	ID               int64  `json:"id"`
+	WorkSec          uint32 `json:"work_sec"`
+	OffWorkSec       uint32 `json:"off_work_sec"`
+	RemindWorkSec    uint32 `json:"remind_work_sec"`
+	RemindOffWorkSec uint32 `json:"remind_off_work_sec"`
+}
+
+func GetCheckinScheduleList(params *ParamsCheckinScheduleListGet, result *ResultCheckinScheduleListGet) wx.Action {
+	return wx.NewPostAction(urls.CorpOAGetCheckinScheduleList,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsCheckinScheduleListSet struct {
+	GroupID   int64           `json:"groupid"`
+	YearMonth uint32          `json:"yearmonth"`
+	Items     []*ScheduleItem `json:"items"`
+}
+
+type ScheduleItem struct {
+	UserID     string `json:"userid"`
+	Day        uint32 `json:"day"`
+	ScheduleID int64  `json:"schedule_id"`
+}
+
+func SetCheckinScheduleList(params *ParamsCheckinScheduleListSet) wx.Action {
+	return wx.NewPostAction(urls.CorpOASetCheckinScheduleList,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+	)
+}
+
+type ParamsCheckinUserFaceAdd struct {
+	UserID   string `json:"userid"`
+	UserFace string `json:"userface"`
+}
+
+func AddCheckinUserFace(params *ParamsCheckinUserFaceAdd) wx.Action {
+	return wx.NewPostAction(urls.CorpOAAddCheckinUserFace,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
 		}),
 	)
 }

@@ -118,4 +118,11 @@ const (
 	CorpOAGetCheckinScheduleList = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckinschedulist"
 	CorpOASetCheckinScheduleList = "https://qyapi.weixin.qq.com/cgi-bin/checkin/setcheckinschedulist"
 	CorpOAAddCheckinUserFace     = "https://qyapi.weixin.qq.com/cgi-bin/checkin/addcheckinuserface"
+	CorpOAGetTemplateDetail      = "https://qyapi.weixin.qq.com/cgi-bin/oa/gettemplatedetail"
+	CorpOAApplyEvent             = "https://qyapi.weixin.qq.com/cgi-bin/oa/applyevent"
+	CorpOAGetApprovalInfo        = "https://qyapi.weixin.qq.com/cgi-bin/oa/getapprovalinfo"
+	CorpOAGetApprovalDetail      = "https://qyapi.weixin.qq.com/cgi-bin/oa/getapprovaldetail"
+	CorpOAGetVacationCorpConf    = "https://qyapi.weixin.qq.com/cgi-bin/oa/vacation/getcorpconf"
+	CorpOAGetUserVacationQuota   = "https://qyapi.weixin.qq.com/cgi-bin/oa/vacation/getuservacationquota"
+	CorpOASetUserVacationQuota   = "https://qyapi.weixin.qq.com/cgi-bin/oa/vacation/setoneuserquota"
 )

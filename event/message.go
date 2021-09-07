@@ -85,6 +85,7 @@ const (
 	EventPicWeixin                  EventType = "pic_weixin"                   // 弹出微信相册发图器
 	EventLocationSelect             EventType = "location_select"              // 弹出地理位置选择器
 	EventOpenApprovalChange         EventType = "open_approval_change"         // 审批状态通知
+	EventSysApprovalChange          EventType = "sys_approval_change"          // 审批申请状态变化回调
 	EventShareAgentChange           EventType = "share_agent_change"           // 共享应用
 	EventTemplateCard               EventType = "template_card_event"          // 模板卡片事件推送
 )
