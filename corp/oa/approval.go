@@ -145,3 +145,73 @@ func ApplyEvent(params *ParamsApplyEvent, result *ResultApplyEvent) wx.Action {
 		}),
 	)
 }
+
+type ApprovalNodes struct {
+	ApprovalNode []*ApprovalNode `json:"ApprovalNode"`
+}
+
+type ApprovalNode struct {
+	NodeStatus int                `json:"NodeStatus"`
+	NodeAttr   int                `json:"NodeAttr"`
+	NodeType   int                `json:"NodeType"`
+	Items      *ApprovalNodeItems `json:"Items"`
+}
+
+type ApprovalNodeItems struct {
+	Item []*ApprovalNodeItem `json:"Item"`
+}
+
+type ApprovalNodeItem struct {
+	ItemName   string `json:"ItemName"`
+	ItemParty  string `json:"ItemParty"`
+	ItemImage  string `json:"ItemImage"`
+	ItemUserID string `json:"ItemUserId"`
+	ItemStatus int    `json:"ItemStatus"`
+	ItemSpeech string `json:"ItemSpeech"`
+	ItemOPTime int64  `json:"ItemOPTime"`
+}
+
+type NotifyNodes struct {
+	NotifyNode []*NotifyNode `json:"NotifyNode"`
+}
+
+type NotifyNode struct {
+	ItemName   string `json:"ItemName"`
+	ItemParty  string `json:"ItemParty"`
+	ItemImage  string `json:"ItemImage"`
+	ItemUserID string `json:"ItemUserId"`
+}
+
+type OpenApprovalData struct {
+	ThirdNO        string         `json:"ThirdNo"`
+	OpenTemplateID string         `json:"OpenTemplateId"`
+	OpenSPName     string         `json:"OpenSpName"`
+	OpenSPStatus   string         `json:"OpenSpstatus"`
+	ApplyTime      int64          `json:"ApplyTime"`
+	ApplyUsername  string         `json:"ApplyUsername"`
+	ApplyUserParty string         `json:"ApplyUserParty"`
+	ApplyUserImage string         `json:"ApplyUserImage"`
+	ApplyUserID    string         `json:"ApplyUserId"`
+	ApprovalNodes  *ApprovalNodes `json:"ApprovalNodes"`
+	NotifyNodes    *NotifyNodes   `json:"NotifyNodes"`
+	ApproverStep   int            `json:"ApproverStep"`
+}
+
+type ParamsOpenApprovalDataGet struct {
+	ThirdNO string `json:"thirdNo"`
+}
+
+type ResultOpenApprovalDataGet struct {
+	Data *OpenApprovalData `json:"data"`
+}
+
+func GetOpenApprovalData(params *ParamsOpenApprovalDataGet, result *ResultOpenApprovalDataGet) wx.Action {
+	return wx.NewPostAction(urls.CorpOAGetOpenApprovalData,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
