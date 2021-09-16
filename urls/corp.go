@@ -128,14 +128,22 @@ const (
 	CorpOAGetJournalRecordList      = "https://qyapi.weixin.qq.com/cgi-bin/oa/journal/get_record_list"
 	CorpOAGetJournalRecordDetail    = "https://qyapi.weixin.qq.com/cgi-bin/oa/journal/get_record_detail"
 	CorpOAGetJournalStatList        = "https://qyapi.weixin.qq.com/cgi-bin/oa/journal/get_stat_list"
-	CorpOAGetOpenApprovalData       = "https://qyapi.weixin.qq.com/cgi-bin/corp/getopenapprovaldata"
-	CorpOAAddMeetingRoom            = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/add"
+	CorpOAOpenApprovalDataGet       = "https://qyapi.weixin.qq.com/cgi-bin/corp/getopenapprovaldata"
+	CorpOAMeetingRoomAdd            = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/add"
 	CorpOAMeetingRoomList           = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/list"
-	CorpOAEditMeetingRoom           = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/edit"
-	CorpOADelMeetingRoom            = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/del"
+	CorpOAMeetingRoomEdit           = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/edit"
+	CorpOAMeetingRoomDel            = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/del"
 	CorpOAGetMeetingRoomBookingInfo = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/get_booking_info"
-	CorpOABookMeetingRoom           = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/book"
-	CorpOACancelBookMeetingRoom     = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/cancel_book"
+	CorpOAMeetingRoomBook           = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/book"
+	CorpOAMeetingRoomCancelBook     = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/cancel_book"
 	CorpOACallPstncc                = "https://qyapi.weixin.qq.com/cgi-bin/pstncc/call"
 	CorpOAGetPstnccStates           = "https://qyapi.weixin.qq.com/cgi-bin/pstncc/getstates"
+)
+
+// tools
+const (
+	CorpToolsCalendarAdd    = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/add"
+	CorpToolsCalendarUpdate = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/update"
+	CorpToolsCalendarGet    = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/get"
+	CorpToolsCalendarDel    = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/del"
 )

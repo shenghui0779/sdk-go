@@ -39,7 +39,7 @@ type ResultMeetingRoomAdd struct {
 }
 
 func AddMeetingRoom(params *ParamsMeetingRoomAdd, result *ResultMeetingRoomAdd) wx.Action {
-	return wx.NewPostAction(urls.CorpOAAddMeetingRoom,
+	return wx.NewPostAction(urls.CorpOAMeetingRoomAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -83,7 +83,7 @@ type ParamsMeetingRoomEdit struct {
 }
 
 func EditMeetingRoom(params *ParamsMeetingRoomEdit) wx.Action {
-	return wx.NewPostAction(urls.CorpOAEditMeetingRoom,
+	return wx.NewPostAction(urls.CorpOAMeetingRoomEdit,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -95,7 +95,7 @@ type ParamsMeetingRoomDel struct {
 }
 
 func DelMeetingRoom(params *ParamsMeetingRoomDel) wx.Action {
-	return wx.NewPostAction(urls.CorpOADelMeetingRoom,
+	return wx.NewPostAction(urls.CorpOAMeetingRoomDel,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -154,7 +154,7 @@ type ResultMeetingRoomBook struct {
 }
 
 func BookMeetingRoom(params *ParamsMeetingRoomBook, result *ResultMeetingRoomBook) wx.Action {
-	return wx.NewPostAction(urls.CorpOABookMeetingRoom,
+	return wx.NewPostAction(urls.CorpOAMeetingRoomBook,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
