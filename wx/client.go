@@ -31,33 +31,38 @@ type Client interface {
 	Upload(ctx context.Context, reqURL string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error)
 }
 
-type apiclient struct {
-	client yiigo.HTTPClient
+type wxclient struct {
+	client   yiigo.HTTPClient
+	insecure bool
+	certs    []tls.Certificate
+	logger   Logger
 }
 
 // Get http get request
-func (c *apiclient) Get(ctx context.Context, reqURL string, options ...yiigo.HTTPOption) ([]byte, error) {
+func (c *wxclient) Get(ctx context.Context, reqURL string, options ...yiigo.HTTPOption) ([]byte, error) {
+	logData := &LogData{
+		URL:    reqURL,
+		Method: http.MethodGet,
+	}
+
 	now := time.Now().Local()
 
-	logFields := make([]zap.Field, 0, 4)
-
 	defer func() {
-		logFields = append(logFields, zap.String("duration", time.Since(now).String()))
-
-		yiigo.Logger().Info(fmt.Sprintf("[gochat] [GET] %s", reqURL), logFields...)
+		logData.Duration = time.Since(now)
+		c.logger.Log(ctx, logData)
 	}()
 
 	resp, err := c.client.Do(ctx, http.MethodGet, reqURL, nil, options...)
 
 	if err != nil {
-		logFields = append(logFields, zap.Error(err))
+		logData.Error = err
 
 		return nil, err
 	}
 
 	defer resp.Body.Close()
 
-	logFields = append(logFields, zap.Int("status_code", resp.StatusCode))
+	logData.StatusCode = resp.StatusCode
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		io.Copy(ioutil.Discard, resp.Body)
@@ -68,43 +73,44 @@ func (c *apiclient) Get(ctx context.Context, reqURL string, options ...yiigo.HTT
 	b, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		logFields = append(logFields, zap.Error(err))
+		logData.Error = err
 
 		return nil, err
 	}
 
-	logFields = append(logFields, zap.ByteString("resp_body", b))
+	logData.Response = b
 
 	return b, nil
 }
 
 // Post http post request
-func (c *apiclient) Post(ctx context.Context, reqURL string, body []byte, options ...yiigo.HTTPOption) ([]byte, error) {
+func (c *wxclient) Post(ctx context.Context, reqURL string, body []byte, options ...yiigo.HTTPOption) ([]byte, error) {
+	logData := &LogData{
+		URL:    reqURL,
+		Method: http.MethodPost,
+		Body:   body,
+	}
+
 	now := time.Now().Local()
 
-	logFields := make([]zap.Field, 0, 5)
-
 	defer func() {
-		logFields = append(logFields, zap.String("duration", time.Since(now).String()))
-
-		yiigo.Logger().Info(fmt.Sprintf("[gochat] [POST] %s", reqURL), logFields...)
+		logData.Duration = time.Since(now)
+		c.logger.Log(ctx, logData)
 	}()
-
-	logFields = append(logFields, zap.ByteString("body", body))
 
 	options = append(options, yiigo.WithHTTPHeader("Content-Type", "application/json; charset=utf-8"))
 
 	resp, err := c.client.Do(ctx, http.MethodPost, reqURL, bytes.NewReader(body), options...)
 
 	if err != nil {
-		logFields = append(logFields, zap.Error(err))
+		logData.Error = err
 
 		return nil, err
 	}
 
 	defer resp.Body.Close()
 
-	logFields = append(logFields, zap.Int("status", resp.StatusCode))
+	logData.StatusCode = resp.StatusCode
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		io.Copy(ioutil.Discard, resp.Body)
@@ -115,51 +121,53 @@ func (c *apiclient) Post(ctx context.Context, reqURL string, body []byte, option
 	b, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		logFields = append(logFields, zap.Error(err))
+		logData.Error = err
 
 		return nil, err
 	}
 
-	logFields = append(logFields, zap.ByteString("response", b))
+	logData.Response = b
 
 	return b, nil
 }
 
 // PostXML http xml post request
-func (c *apiclient) PostXML(ctx context.Context, reqURL string, body WXML, options ...yiigo.HTTPOption) ([]byte, error) {
+func (c *wxclient) PostXML(ctx context.Context, reqURL string, body WXML, options ...yiigo.HTTPOption) ([]byte, error) {
+	logData := &LogData{
+		URL:    reqURL,
+		Method: http.MethodPost,
+	}
+
 	now := time.Now().Local()
 
-	logFields := make([]zap.Field, 0, 5)
-
 	defer func() {
-		logFields = append(logFields, zap.String("duration", time.Since(now).String()))
-
-		yiigo.Logger().Info(fmt.Sprintf("[gochat] [POST XML] %s", reqURL), logFields...)
+		logData.Duration = time.Since(now)
+		c.logger.Log(ctx, logData)
 	}()
 
 	xmlStr, err := FormatMap2XML(body)
 
 	if err != nil {
-		logFields = append(logFields, zap.Error(err))
+		logData.Error = err
 
 		return nil, err
 	}
 
-	logFields = append(logFields, zap.String("body", xmlStr))
+	logData.Body = []byte(xmlStr)
 
 	options = append(options, yiigo.WithHTTPHeader("Content-Type", "text/xml; charset=utf-8"))
 
 	resp, err := c.client.Do(ctx, http.MethodPost, reqURL, strings.NewReader(xmlStr), options...)
 
 	if err != nil {
-		logFields = append(logFields, zap.Error(err))
+		logData.Error = err
 
 		return nil, err
 	}
 
 	defer resp.Body.Close()
 
-	logFields = append(logFields, zap.Int("status", resp.StatusCode))
+	logData.StatusCode = resp.StatusCode
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		io.Copy(ioutil.Discard, resp.Body)
@@ -170,39 +178,41 @@ func (c *apiclient) PostXML(ctx context.Context, reqURL string, body WXML, optio
 	b, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		logFields = append(logFields, zap.Error(err))
+		logData.Error = err
 
 		return nil, err
 	}
 
-	logFields = append(logFields, zap.ByteString("response", b))
+	logData.Response = b
 
 	return b, nil
 }
 
 // Upload http upload media
-func (c *apiclient) Upload(ctx context.Context, reqURL string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error) {
+func (c *wxclient) Upload(ctx context.Context, reqURL string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error) {
+	logData := &LogData{
+		URL:    reqURL,
+		Method: http.MethodPost,
+	}
+
 	now := time.Now().Local()
 
-	logFields := make([]zap.Field, 0, 4)
-
 	defer func() {
-		logFields = append(logFields, zap.String("duration", time.Since(now).String()))
-
-		yiigo.Logger().Info(fmt.Sprintf("[gochat] [UPLOAD] %s", reqURL), logFields...)
+		logData.Duration = time.Since(now)
+		c.logger.Log(ctx, logData)
 	}()
 
 	resp, err := c.client.Upload(ctx, reqURL, form, options...)
 
 	if err != nil {
-		logFields = append(logFields, zap.Error(err))
+		logData.Error = err
 
 		return nil, err
 	}
 
 	defer resp.Body.Close()
 
-	logFields = append(logFields, zap.Int("status", resp.StatusCode))
+	logData.StatusCode = resp.StatusCode
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		io.Copy(ioutil.Discard, resp.Body)
@@ -213,41 +223,35 @@ func (c *apiclient) Upload(ctx context.Context, reqURL string, form yiigo.Upload
 	b, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		logFields = append(logFields, zap.Error(err))
+		logData.Error = err
 
 		return nil, err
 	}
 
-	logFields = append(logFields, zap.ByteString("response", b))
+	logData.Response = b
 
 	return b, nil
 }
 
-// TLSOption configures how we set up the http client tls config
-type TLSOption func(cfg *tls.Config)
-
-// WithInsecureSkipVerify specifies the `InsecureSkipVerify` to http client tls config.
-func WithInsecureSkipVerify() TLSOption {
-	return func(cfg *tls.Config) {
-		cfg.InsecureSkipVerify = true
-	}
-}
-
-// WithTLSCertificates specifies the certificate to http client tls config.
-func WithTLSCertificates(certs ...tls.Certificate) TLSOption {
-	return func(cfg *tls.Config) {
-		cfg.Certificates = certs
-	}
-}
-
 // NewClient returns a new http client
-func NewClient(options ...TLSOption) Client {
+func NewClient(options ...ClientOption) Client {
+	client := &wxclient{
+		logger: new(wxlogger),
+	}
+
+	for _, f := range options {
+		f(client)
+	}
+
 	t := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
 			Timeout:   30 * time.Second,
 			KeepAlive: 60 * time.Second,
 		}).DialContext,
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
 		MaxIdleConns:          0,
 		MaxIdleConnsPerHost:   1000,
 		MaxConnsPerHost:       1000,
@@ -256,17 +260,55 @@ func NewClient(options ...TLSOption) Client {
 		ExpectContinueTimeout: 1 * time.Second,
 	}
 
-	if len(options) != 0 {
-		t.TLSClientConfig = new(tls.Config)
-
-		for _, f := range options {
-			f(t.TLSClientConfig)
+	if client.insecure || len(client.certs) != 0 {
+		t.TLSClientConfig = &tls.Config{
+			Certificates:       client.certs,
+			InsecureSkipVerify: client.insecure,
 		}
 	}
 
-	return &apiclient{
+	return &wxclient{
 		client: yiigo.NewHTTPClient(&http.Client{
 			Transport: t,
 		}),
 	}
+}
+
+type Logger interface {
+	Log(ctx context.Context, data *LogData)
+}
+
+type LogData struct {
+	URL        string        `json:"url"`
+	Method     string        `json:"method"`
+	Body       []byte        `json:"body"`
+	StatusCode int           `json:"status_code"`
+	Response   []byte        `json:"response"`
+	Duration   time.Duration `json:"duration"`
+	Error      error         `json:"error"`
+}
+
+type wxlogger struct{}
+
+func (l *wxlogger) Log(ctx context.Context, data *LogData) {
+	fields := make([]zap.Field, 0, 5)
+
+	fields = append(fields,
+		zap.String("method", data.Method),
+		zap.String("url", data.URL),
+		zap.ByteString("body", data.Body),
+		zap.ByteString("response", data.Response),
+		zap.Int("status", data.StatusCode),
+		zap.String("duration", data.Duration.String()),
+	)
+
+	if data.Error != nil {
+		fields = append(fields, zap.Error(data.Error))
+	}
+
+	if data.Error != nil {
+		yiigo.Logger().Error("[gochat] action do error", fields...)
+	}
+
+	yiigo.Logger().Info("[gochat] action do info", fields...)
 }
