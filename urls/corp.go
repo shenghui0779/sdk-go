@@ -142,8 +142,13 @@ const (
 
 // tools
 const (
-	CorpToolsCalendarAdd    = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/add"
-	CorpToolsCalendarUpdate = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/update"
-	CorpToolsCalendarGet    = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/get"
-	CorpToolsCalendarDel    = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/del"
+	CorpToolsCalendarAdd           = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/add"
+	CorpToolsCalendarUpdate        = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/update"
+	CorpToolsCalendarGet           = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/get"
+	CorpToolsCalendarDel           = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/del"
+	CorpToolsScheduleAdd           = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/add"
+	CorpToolsScheduleUpdate        = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/update"
+	CorpToolsScheduleGet           = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/get"
+	CorpToolsScheduleDel           = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/del"
+	CorpToolsScheduleGetByCalendar = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/get_by_calendar"
 )

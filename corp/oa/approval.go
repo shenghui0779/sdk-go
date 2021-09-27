@@ -206,7 +206,7 @@ type ResultOpenApprovalDataGet struct {
 }
 
 func GetOpenApprovalData(params *ParamsOpenApprovalDataGet, result *ResultOpenApprovalDataGet) wx.Action {
-	return wx.NewPostAction(urls.CorpOAGetOpenApprovalData,
+	return wx.NewPostAction(urls.CorpOAOpenApprovalDataGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

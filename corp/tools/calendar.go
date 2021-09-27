@@ -51,3 +51,55 @@ func AddCalendar(params *ParamsCalendarAdd, result *ResultCalendarAdd) wx.Action
 		}),
 	)
 }
+
+type ParamsCalendarUpdate struct {
+	Calendar *CalendarUpdateData `json:"calendar"`
+}
+
+type CalendarUpdateData struct {
+	CalID       string           `json:"cal_id"`
+	ReadOnly    int              `json:"read_only"`
+	Summary     string           `json:"summary"`
+	Color       string           `json:"color"`
+	Description string           `json:"description"`
+	Shares      []*CalendarShare `json:"shares"`
+}
+
+func UpdateCalendar(params *ParamsCalendarUpdate) wx.Action {
+	return wx.NewPostAction(urls.CorpToolsCalendarUpdate,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+	)
+}
+
+type ParamsCalendarGet struct {
+	CalIDList []string `json:"cal_id_list"`
+}
+
+type ResultCalendarGet struct {
+	CalendarList []*Calendar `json:"calendar_list"`
+}
+
+func GetCalendar(params *ParamsCalendarGet, result *ResultCalendarGet) wx.Action {
+	return wx.NewPostAction(urls.CorpToolsCalendarGet,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsCalendarDel struct {
+	CalID string `json:"cal_id"`
+}
+
+func DelCalendar(params *ParamsCalendarDel) wx.Action {
+	return wx.NewPostAction(urls.CorpToolsCalendarDel,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+	)
+}

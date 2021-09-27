@@ -88,6 +88,11 @@ const (
 	EventSysApprovalChange          EventType = "sys_approval_change"          // 审批申请状态变化回调
 	EventShareAgentChange           EventType = "share_agent_change"           // 共享应用
 	EventTemplateCard               EventType = "template_card_event"          // 模板卡片事件推送
+	EventModifyCalendar             EventType = "modify_calendar"              // 修改日历
+	EventDeleteCalendar             EventType = "delete_calendar"              // 删除日历
+	EventAddSchedule                EventType = "add_schedule"                 // 添加日程
+	EventModifySchedule             EventType = "modify_schedule"              // 修改日程
+	EventDeleteSchedule             EventType = "delete_schedule"              // 删除日程
 )
 
 // JobType 任务类型
