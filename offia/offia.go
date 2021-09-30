@@ -43,7 +43,7 @@ func New(appid, appsecret string) *Offia {
 		appid:     appid,
 		appsecret: appsecret,
 		nonce:     wx.Nonce,
-		client:    wx.NewClient(wx.WithInsecureSkipVerify()),
+		client:    wx.NewClient(),
 	}
 }
 
@@ -57,6 +57,11 @@ func (oa *Offia) SetOriginID(originid string) {
 func (oa *Offia) SetServerConfig(token, encodingAESKey string) {
 	oa.token = token
 	oa.encodingAESKey = encodingAESKey
+}
+
+// SetLogger set logger
+func (oa *Offia) SetLogger(l wx.Logger) {
+	oa.client.SetLogger(l)
 }
 
 // AppID returns appid

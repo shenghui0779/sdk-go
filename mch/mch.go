@@ -8,19 +8,15 @@ import (
 	"crypto/tls"
 	"encoding/base64"
 	"encoding/hex"
-	"encoding/pem"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/url"
-	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/shenghui0779/yiigo"
-	"golang.org/x/crypto/pkcs12"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -37,39 +33,33 @@ type Mch struct {
 }
 
 // New returns new wechat pay
-func New(appid, mchid, apikey string) *Mch {
-	c := wx.NewClient(wx.WithInsecureSkipVerify())
+func New(appid, mchid, apikey string, options ...wx.MchCertOption) (*Mch, error) {
+	certs := make([]tls.Certificate, 0, len(options))
+
+	for _, f := range options {
+		cert, err := f(mchid)
+
+		if err != nil {
+			return nil, err
+		}
+
+		certs = append(certs, cert)
+	}
 
 	return &Mch{
 		appid:     appid,
 		mchid:     mchid,
 		apikey:    apikey,
 		nonce:     wx.Nonce,
-		client:    c,
-		tlsClient: c,
-	}
+		client:    wx.NewClient(),
+		tlsClient: wx.NewClient(certs...),
+	}, nil
 }
 
-// LoadCertificate 加载证书
-func (mch *Mch) LoadCertificate(options ...CertOption) error {
-	certs := make([]tls.Certificate, 0, len(options))
-
-	for _, f := range options {
-		cert, err := f(mch)
-
-		if err != nil {
-			return err
-		}
-
-		certs = append(certs, cert)
-	}
-
-	mch.tlsClient = wx.NewClient(
-		wx.WithTLSCertificates(certs...),
-		wx.WithInsecureSkipVerify(),
-	)
-
-	return nil
+// SetLogger set logger
+func (mch *Mch) SetLogger(l wx.Logger) {
+	mch.client.SetLogger(l)
+	mch.tlsClient.SetLogger(l)
 }
 
 // AppID returns appid
@@ -381,23 +371,6 @@ func (mch *Mch) DecryptWithAES256ECB(encrypt string) (wx.WXML, error) {
 	return wx.ParseXML2Map(plainText)
 }
 
-func (mch *Mch) pkcs12ToPem(p12 []byte) (tls.Certificate, error) {
-	blocks, err := pkcs12.ToPEM(p12, mch.mchid)
-
-	if err != nil {
-		return tls.Certificate{}, err
-	}
-
-	pemData := make([]byte, 0)
-
-	for _, b := range blocks {
-		pemData = append(pemData, pem.EncodeToMemory(b)...)
-	}
-
-	// then use PEM data for tls to construct tls certificate:
-	return tls.X509KeyPair(pemData, pemData)
-}
-
 // Sign 生成签名
 func (mch *Mch) buildSignStr(m wx.WXML) string {
 	l := len(m)
@@ -424,56 +397,4 @@ func (mch *Mch) buildSignStr(m wx.WXML) string {
 	kvs = append(kvs, fmt.Sprintf("key=%s", mch.apikey))
 
 	return strings.Join(kvs, "&")
-}
-
-// CertOption 证书选项
-type CertOption func(mch *Mch) (tls.Certificate, error)
-
-// WithCertP12File 通过p12(pfx)证书文件加载证书
-func WithCertP12File(path string) CertOption {
-	return func(mch *Mch) (tls.Certificate, error) {
-		fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
-
-		certPath, err := filepath.Abs(filepath.Clean(path))
-
-		if err != nil {
-			return fail(err)
-		}
-
-		p12, err := ioutil.ReadFile(certPath)
-
-		if err != nil {
-			return fail(err)
-		}
-
-		return mch.pkcs12ToPem(p12)
-	}
-}
-
-// WithCertPEMBlock 通过pem证书文本内容加载证书
-func WithCertPEMBlock(certBlock, keyBlock []byte) CertOption {
-	return func(mch *Mch) (tls.Certificate, error) {
-		return tls.X509KeyPair(certBlock, keyBlock)
-	}
-}
-
-// WithCertPEMFile 通过pem证书文件加载证书
-func WithCertPEMFile(certFile, keyFile string) CertOption {
-	return func(mch *Mch) (tls.Certificate, error) {
-		fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
-
-		certPath, err := filepath.Abs(filepath.Clean(certFile))
-
-		if err != nil {
-			return fail(err)
-		}
-
-		keyPath, err := filepath.Abs(filepath.Clean(keyFile))
-
-		if err != nil {
-			return fail(err)
-		}
-
-		return tls.LoadX509KeyPair(certPath, keyPath)
-	}
 }

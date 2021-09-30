@@ -30,7 +30,7 @@ func New(appid, appsecret string) *Minip {
 		appid:     appid,
 		appsecret: appsecret,
 		nonce:     wx.Nonce,
-		client:    wx.NewClient(wx.WithInsecureSkipVerify()),
+		client:    wx.NewClient(),
 	}
 }
 
@@ -39,6 +39,11 @@ func New(appid, appsecret string) *Minip {
 func (mp *Minip) SetServerConfig(token, encodingAESKey string) {
 	mp.token = token
 	mp.encodingAESKey = encodingAESKey
+}
+
+// SetLogger set logger
+func (mp *Minip) SetLogger(l wx.Logger) {
+	mp.client.SetLogger(l)
 }
 
 // AppID returns appid

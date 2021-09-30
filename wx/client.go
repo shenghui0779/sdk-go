@@ -29,16 +29,16 @@ type Client interface {
 
 	// Upload sends an HTTP post request for uploading media
 	Upload(ctx context.Context, reqURL string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error)
+
+	// SetLogger set logger for client
+	SetLogger(l Logger)
 }
 
 type wxclient struct {
-	client   yiigo.HTTPClient
-	insecure bool
-	certs    []tls.Certificate
-	logger   Logger
+	client yiigo.HTTPClient
+	logger Logger
 }
 
-// Get http get request
 func (c *wxclient) Get(ctx context.Context, reqURL string, options ...yiigo.HTTPOption) ([]byte, error) {
 	logData := &LogData{
 		URL:    reqURL,
@@ -83,7 +83,6 @@ func (c *wxclient) Get(ctx context.Context, reqURL string, options ...yiigo.HTTP
 	return b, nil
 }
 
-// Post http post request
 func (c *wxclient) Post(ctx context.Context, reqURL string, body []byte, options ...yiigo.HTTPOption) ([]byte, error) {
 	logData := &LogData{
 		URL:    reqURL,
@@ -131,7 +130,6 @@ func (c *wxclient) Post(ctx context.Context, reqURL string, body []byte, options
 	return b, nil
 }
 
-// PostXML http xml post request
 func (c *wxclient) PostXML(ctx context.Context, reqURL string, body WXML, options ...yiigo.HTTPOption) ([]byte, error) {
 	logData := &LogData{
 		URL:    reqURL,
@@ -188,7 +186,6 @@ func (c *wxclient) PostXML(ctx context.Context, reqURL string, body WXML, option
 	return b, nil
 }
 
-// Upload http upload media
 func (c *wxclient) Upload(ctx context.Context, reqURL string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error) {
 	logData := &LogData{
 		URL:    reqURL,
@@ -233,44 +230,40 @@ func (c *wxclient) Upload(ctx context.Context, reqURL string, form yiigo.UploadF
 	return b, nil
 }
 
-// NewClient returns a new http client
-func NewClient(options ...ClientOption) Client {
-	client := &wxclient{
-		logger: new(wxlogger),
+func (c *wxclient) SetLogger(l Logger) {
+	c.logger = l
+}
+
+// NewClient returns a new wechat client
+func NewClient(certs ...tls.Certificate) Client {
+	tlscfg := &tls.Config{
+		InsecureSkipVerify: true,
 	}
 
-	for _, f := range options {
-		f(client)
+	if len(certs) != 0 {
+		tlscfg.Certificates = certs
 	}
 
-	t := &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-		DialContext: (&net.Dialer{
-			Timeout:   30 * time.Second,
-			KeepAlive: 60 * time.Second,
-		}).DialContext,
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
+	client := &http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+			DialContext: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 60 * time.Second,
+			}).DialContext,
+			TLSClientConfig:       tlscfg,
+			MaxIdleConns:          0,
+			MaxIdleConnsPerHost:   1000,
+			MaxConnsPerHost:       1000,
+			IdleConnTimeout:       60 * time.Second,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ExpectContinueTimeout: 1 * time.Second,
 		},
-		MaxIdleConns:          0,
-		MaxIdleConnsPerHost:   1000,
-		MaxConnsPerHost:       1000,
-		IdleConnTimeout:       60 * time.Second,
-		TLSHandshakeTimeout:   10 * time.Second,
-		ExpectContinueTimeout: 1 * time.Second,
-	}
-
-	if client.insecure || len(client.certs) != 0 {
-		t.TLSClientConfig = &tls.Config{
-			Certificates:       client.certs,
-			InsecureSkipVerify: client.insecure,
-		}
 	}
 
 	return &wxclient{
-		client: yiigo.NewHTTPClient(&http.Client{
-			Transport: t,
-		}),
+		logger: new(wxlogger),
+		client: yiigo.NewHTTPClient(client),
 	}
 }
 
