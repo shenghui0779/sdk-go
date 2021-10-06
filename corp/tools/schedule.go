@@ -29,7 +29,7 @@ type ScheduleAttendee struct {
 type ScheduleReminders struct {
 	IsRemind              int                    `json:"is_remind,omitempty"`
 	IsRepeat              int                    `json:"is_repeat,omitempty"`
-	RemindBeforeEventSecs uint32                 `json:"remind_before_event_secs,omitempty"`
+	RemindBeforeEventSecs int                    `json:"remind_before_event_secs,omitempty"`
 	RemindTimeDiffs       []int                  `json:"remind_time_diffs,omitempty"`
 	RepeatType            int                    `json:"repeat_type,omitempty"`
 	RepeatUntil           int64                  `json:"repeat_until,omitempty"`

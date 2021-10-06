@@ -93,6 +93,7 @@ const (
 	EventAddSchedule                EventType = "add_schedule"                 // 添加日程
 	EventModifySchedule             EventType = "modify_schedule"              // 修改日程
 	EventDeleteSchedule             EventType = "delete_schedule"              // 删除日程
+	EventLivingStatusChange         EventType = "living_status_change"         // 直播状态变更
 )
 
 // JobType 任务类型

@@ -34,12 +34,12 @@ type CorpCheckinOption struct {
 	OtInfo                 *OptionOtInfo     `json:"ot_info"`
 	AllowApplyBKCnt        int               `json:"allow_apply_bk_cnt"`
 	AllowApplyBKDayLimit   int               `json:"allow_apply_bk_day_limit"`
-	OptionOutRange         uint32            `json:"option_out_range"`
+	OptionOutRange         int               `json:"option_out_range"`
 	CreateUserID           string            `json:"create_userid"`
 	UpdateUserID           string            `json:"update_userid"`
 	UseFaceDetect          bool              `json:"use_face_detect"`
 	ScheduleList           []*OptionSchedule `json:"schedulelist"`
-	OffWorkIntervalTime    uint32            `json:"off_work_interval_time"`
+	OffWorkIntervalTime    int               `json:"off_work_interval_time"`
 }
 
 type CheckinInfo struct {
@@ -68,9 +68,9 @@ type CheckinDate struct {
 	Workdays        []int          `json:"workdays"`
 	CheckinTime     []*CheckinTime `json:"checkintime"`
 	NoNeedOffWork   bool           `json:"noneed_offwork"`
-	LimitAheadTime  uint32         `json:"limit_aheadtime"`
-	FlexOnDutyTime  uint32         `json:"flex_on_duty_time"`
-	FlexOffDutyTime uint32         `json:"flex_off_duty_time"`
+	LimitAheadTime  int            `json:"limit_aheadtime"`
+	FlexOnDutyTime  int            `json:"flex_on_duty_time"`
+	FlexOffDutyTime int            `json:"flex_off_duty_time"`
 }
 
 type SpeDay struct {
@@ -80,10 +80,10 @@ type SpeDay struct {
 }
 
 type CheckinTime struct {
-	WorkSec          uint32 `json:"work_sec"`
-	OffWorkSec       uint32 `json:"off_work_sec"`
-	RemindWorkSec    uint32 `json:"remind_work_sec"`
-	RemindOffWorkSec uint32 `json:"remind_off_work_sec"`
+	WorkSec          int `json:"work_sec"`
+	OffWorkSec       int `json:"off_work_sec"`
+	RemindWorkSec    int `json:"remind_work_sec"`
+	RemindOffWorkSec int `json:"remind_off_work_sec"`
 }
 
 type WifiMacInfo struct {
@@ -96,7 +96,7 @@ type LocInfo struct {
 	Lng       int64  `json:"lng"`
 	LocTitle  string `json:"loc_title"`
 	LocDetail string `json:"loc_detail"`
-	Distance  uint32 `json:"distance"`
+	Distance  int    `json:"distance"`
 }
 
 type Range struct {
@@ -124,14 +124,14 @@ type OptionOtInfo struct {
 }
 
 type OtCheckInfo struct {
-	OtWorkingDayTimeStart      uint32      `json:"ot_workingday_time_start"`
-	OtWorkingDayTimeMin        uint32      `json:"ot_workingday_time_min"`
-	OtWorkingDayTimeMax        uint32      `json:"ot_workingday_time_max"`
-	OtNonWorkingDayTimeMin     uint32      `json:"ot_nonworkingday_time_min"`
-	OtNonWorkingDayTimeMax     uint32      `json:"ot_nonworkingday_time_max"`
+	OtWorkingDayTimeStart      int         `json:"ot_workingday_time_start"`
+	OtWorkingDayTimeMin        int         `json:"ot_workingday_time_min"`
+	OtWorkingDayTimeMax        int         `json:"ot_workingday_time_max"`
+	OtNonWorkingDayTimeMin     int         `json:"ot_nonworkingday_time_min"`
+	OtNonWorkingDayTimeMax     int         `json:"ot_nonworkingday_time_max"`
 	OtWorkingDayRestInfo       *OtRestInfo `json:"ot_workingday_restinfo"`
 	OtNonWorkingDayRestInfo    *OtRestInfo `json:"ot_nonworkingday_restinfo"`
-	OtNonWorkingDaySpandayTime uint32      `json:"ot_nonworkingday_spanday_time"`
+	OtNonWorkingDaySpandayTime int         `json:"ot_nonworkingday_spanday_time"`
 }
 
 type OtApplyInfo struct {
@@ -140,7 +140,7 @@ type OtApplyInfo struct {
 	UpTime                     int64       `json:"uptime"`
 	OtWorkingDayRestInfo       *OtRestInfo `json:"ot_workingday_restinfo"`
 	OtNonWorkingDayRestInfo    *OtRestInfo `json:"ot_nonworkingday_restinfo"`
-	OtNonWorkingDaySpandayTime uint32      `json:"ot_nonworkingday_spanday_time"`
+	OtNonWorkingDaySpandayTime int         `json:"ot_nonworkingday_spanday_time"`
 }
 
 type OtRestInfo struct {
@@ -150,8 +150,8 @@ type OtRestInfo struct {
 }
 
 type FixTimeRule struct {
-	FixTimeBeginSec uint32 `json:"fix_time_begin_sec"`
-	FixTimeEndSec   uint32 `json:"fix_time_end_sec"`
+	FixTimeBeginSec int `json:"fix_time_begin_sec"`
+	FixTimeEndSec   int `json:"fix_time_end_sec"`
 }
 
 type CalOtTimeRule struct {
@@ -159,34 +159,34 @@ type CalOtTimeRule struct {
 }
 
 type OtTimeRuleItem struct {
-	OtTime   uint32 `json:"ot_time"`
-	RestTime uint32 `json:"rest_time"`
+	OtTime   int `json:"ot_time"`
+	RestTime int `json:"rest_time"`
 }
 
 type OptionSchedule struct {
 	ScheduleID          int64          `json:"schedule_id"`
 	ScheduleName        string         `json:"schedule_name"`
 	TimeSection         []*TimeSection `json:"time_section"`
-	LimitAheadTime      uint32         `json:"limit_aheadtime"`
+	LimitAheadTime      int            `json:"limit_aheadtime"`
 	NoNeedOffWork       bool           `json:"noneed_offwork"`
-	LimitOffTime        uint32         `json:"limit_off_time"`
-	FlexOnDutyTime      uint32         `json:"flex_on_duty_time"`
-	FlexOffDutyTime     uint32         `json:"flex_off_duty_time"`
+	LimitOffTime        int            `json:"limit_off_time"`
+	FlexOnDutyTime      int            `json:"flex_on_duty_time"`
+	FlexOffDutyTime     int            `json:"flex_off_duty_time"`
 	AllowFlex           bool           `json:"allow_flex"`
 	LateRule            *LateRule      `json:"late_rule"`
-	MaxAllowArriveEarly uint32         `json:"max_allow_arrive_early"`
-	MaxAllowArriveLate  uint32         `json:"max_allow_arrive_late"`
+	MaxAllowArriveEarly int            `json:"max_allow_arrive_early"`
+	MaxAllowArriveLate  int            `json:"max_allow_arrive_late"`
 }
 
 type TimeSection struct {
-	TimeID           int64  `json:"time_id"`
-	WorkSec          uint32 `json:"work_sec"`
-	OffWorkSec       uint32 `json:"off_work_sec"`
-	RemindWorkSec    uint32 `json:"remind_work_sec"`
-	RemindOffWorkSec uint32 `json:"remind_off_work_sec"`
-	RestBeginTime    uint32 `json:"rest_begin_time"`
-	RestEndTime      uint32 `json:"rest_end_time"`
-	AllowRest        bool   `json:"allow_rest"`
+	TimeID           int64 `json:"time_id"`
+	WorkSec          int   `json:"work_sec"`
+	OffWorkSec       int   `json:"off_work_sec"`
+	RemindWorkSec    int   `json:"remind_work_sec"`
+	RemindOffWorkSec int   `json:"remind_off_work_sec"`
+	RestBeginTime    int   `json:"rest_begin_time"`
+	RestEndTime      int   `json:"rest_end_time"`
+	AllowRest        bool  `json:"allow_rest"`
 }
 
 type LateRule struct {
@@ -195,8 +195,8 @@ type LateRule struct {
 }
 
 type TimeRule struct {
-	OffWorkAfterTime uint32 `json:"offwork_after_time"`
-	OnWorkFlexTime   uint32 `json:"onwork_flex_time"`
+	OffWorkAfterTime int `json:"offwork_after_time"`
+	OnWorkFlexTime   int `json:"onwork_flex_time"`
 }
 
 type ResultCorpCheckinOption struct {
@@ -322,18 +322,18 @@ type MonthRuleInfo struct {
 }
 
 type DaySummaryInfo struct {
-	CheckinCount    uint32 `json:"checkin_count"`
-	RegularWorkSec  uint32 `json:"regular_work_sec"`
-	StandardWorkSec uint32 `json:"standard_work_sec"`
-	EarliestTime    uint32 `json:"earliest_time"`
-	LastestTime     uint32 `json:"lastest_time"`
+	CheckinCount    int `json:"checkin_count"`
+	RegularWorkSec  int `json:"regular_work_sec"`
+	StandardWorkSec int `json:"standard_work_sec"`
+	EarliestTime    int `json:"earliest_time"`
+	LastestTime     int `json:"lastest_time"`
 }
 
 type MonthSummaryInfo struct {
-	WorkDays        uint32 `json:"work_days"`
-	ExceptDays      uint32 `json:"except_days"`
-	RegularWorkSec  uint32 `json:"regular_work_sec"`
-	StandardWorkSec uint32 `json:"standard_work_sec"`
+	WorkDays        int `json:"work_days"`
+	ExceptDays      int `json:"except_days"`
+	RegularWorkSec  int `json:"regular_work_sec"`
+	StandardWorkSec int `json:"standard_work_sec"`
 }
 
 type HolidayInfo struct {
@@ -351,28 +351,28 @@ type SPTitle struct {
 }
 
 type ExceptionInfo struct {
-	Count     uint32 `json:"count"`
-	Duration  uint32 `json:"duration"`
-	Exception uint32 `json:"exception"`
+	Count     int `json:"count"`
+	Duration  int `json:"duration"`
+	Exception int `json:"exception"`
 }
 
 type DayOtInfo struct {
-	OtStatus          uint32 `json:"ot_status"`
-	OtDuration        uint32 `json:"ot_duration"`
-	ExceptionDuration uint32 `json:"exception_duration"`
+	OtStatus          int `json:"ot_status"`
+	OtDuration        int `json:"ot_duration"`
+	ExceptionDuration int `json:"exception_duration"`
 }
 
 type SPItem struct {
-	Count      uint32 `json:"count"`
-	Duration   uint32 `json:"duration"`
-	TimeType   uint32 `json:"time_type"`
-	Type       uint32 `json:"type"`
-	VacationID uint32 `json:"vacation_id"`
+	Count      int    `json:"count"`
+	Duration   int    `json:"duration"`
+	TimeType   int    `json:"time_type"`
+	Type       int    `json:"type"`
+	VacationID int    `json:"vacation_id"`
 	Name       string `json:"name"`
 }
 
 type OverworkInfo struct {
-	WorkdayOverSec uint32 `json:"workday_over_sec"`
+	WorkdayOverSec int `json:"workday_over_sec"`
 }
 
 type ParamsCheckinDayData struct {
@@ -429,7 +429,7 @@ type ResultCheckinScheduleListGet struct {
 
 type UserCheckinSchedule struct {
 	UserID    string           `json:"userid"`
-	YearMonth uint32           `json:"yearmonth"`
+	YearMonth int              `json:"yearmonth"`
 	GroupID   int64            `json:"groupid"`
 	GroupName string           `json:"groupname"`
 	Schedule  *CheckinSchedule `json:"schedule"`
@@ -440,7 +440,7 @@ type CheckinSchedule struct {
 }
 
 type Schedule struct {
-	Day          uint32        `json:"day"`
+	Day          int           `json:"day"`
 	ScheduleInfo *ScheduleInfo `json:"schedule_info"`
 }
 
@@ -451,11 +451,11 @@ type ScheduleInfo struct {
 }
 
 type ScheduleTimeSection struct {
-	ID               int64  `json:"id"`
-	WorkSec          uint32 `json:"work_sec"`
-	OffWorkSec       uint32 `json:"off_work_sec"`
-	RemindWorkSec    uint32 `json:"remind_work_sec"`
-	RemindOffWorkSec uint32 `json:"remind_off_work_sec"`
+	ID               int64 `json:"id"`
+	WorkSec          int   `json:"work_sec"`
+	OffWorkSec       int   `json:"off_work_sec"`
+	RemindWorkSec    int   `json:"remind_work_sec"`
+	RemindOffWorkSec int   `json:"remind_off_work_sec"`
 }
 
 func GetCheckinScheduleList(params *ParamsCheckinScheduleListGet, result *ResultCheckinScheduleListGet) wx.Action {
@@ -471,13 +471,13 @@ func GetCheckinScheduleList(params *ParamsCheckinScheduleListGet, result *Result
 
 type ParamsCheckinScheduleListSet struct {
 	GroupID   int64           `json:"groupid"`
-	YearMonth uint32          `json:"yearmonth"`
+	YearMonth int             `json:"yearmonth"`
 	Items     []*ScheduleItem `json:"items"`
 }
 
 type ScheduleItem struct {
 	UserID     string `json:"userid"`
-	Day        uint32 `json:"day"`
+	Day        int    `json:"day"`
 	ScheduleID int64  `json:"schedule_id"`
 }
 

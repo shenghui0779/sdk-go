@@ -17,10 +17,10 @@ type ParamsMeetingCreate struct {
 	CreatorUserID   string           `json:"creator_userid"`
 	Title           string           `json:"title"`
 	MeetingStart    int64            `json:"meeting_start"`
-	MeetingDuration uint32           `json:"meeting_duration"`
+	MeetingDuration int              `json:"meeting_duration"`
 	Description     string           `json:"description,omitempty"`
 	Type            int              `json:"type"`
-	RemindTime      uint32           `json:"remind_time,omitempty"`
+	RemindTime      int              `json:"remind_time,omitempty"`
 	AgentID         int64            `json:"agentid,omitempty"`
 	Attendees       *ParamsAttendees `json:"attendees,omitempty"`
 }
@@ -44,10 +44,10 @@ type ParamsMeetingUpdate struct {
 	MeetingID       string           `json:"meetingid"`
 	Title           string           `json:"title,omitempty"`
 	MeetingStart    int64            `json:"meeting_start,omitempty"`
-	MeetingDuration uint32           `json:"meeting_duration,omitempty"`
+	MeetingDuration int              `json:"meeting_duration,omitempty"`
 	Description     string           `json:"description,omitempty"`
 	Type            int              `json:"type,omitempty"`
-	RemindTime      uint32           `json:"remind_time,omitempty"`
+	RemindTime      int              `json:"remind_time,omitempty"`
 	AgentID         int64            `json:"agentid,omitempty"`
 	Attendees       *ParamsAttendees `json:"attendees,omitempty"`
 }
@@ -103,14 +103,14 @@ type ResultMeetingInfoGet struct {
 	CreatorUserID          string            `json:"creator_userid"`
 	Title                  string            `json:"title"`
 	ReserveMeetingStart    int64             `json:"reserve_meeting_start"`
-	ReserveMeetingDuration uint32            `json:"reserve_meeting_duration"`
+	ReserveMeetingDuration int               `json:"reserve_meeting_duration"`
 	MeetingStart           int64             `json:"meeting_start"`
-	MeetingDuration        uint32            `json:"meeting_duration"`
+	MeetingDuration        int               `json:"meeting_duration"`
 	Description            string            `json:"description"`
 	MainDepartment         int64             `json:"main_department"`
 	Type                   int               `json:"type"`
 	Status                 int               `json:"status"`
-	RemindTime             uint32            `json:"remind_time"`
+	RemindTime             int               `json:"remind_time"`
 	Attendees              *MeetingAttendees `json:"attendees"`
 }
 

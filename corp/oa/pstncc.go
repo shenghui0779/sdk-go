@@ -38,10 +38,10 @@ type ParamsPstnccStatesGet struct {
 }
 
 type ResultPstnccStatesGet struct {
-	IsTalked int    `json:"istalked"`
-	CallTime int64  `json:"calltime"`
-	TalkTime uint32 `json:"talktime"`
-	Reason   int    `json:"reason"`
+	IsTalked int   `json:"istalked"`
+	CallTime int64 `json:"calltime"`
+	TalkTime int   `json:"talktime"`
+	Reason   int   `json:"reason"`
 }
 
 func GetPstnccStates(params *ParamsPstnccStatesGet, result *ResultPstnccStatesGet) wx.Action {
