@@ -42,7 +42,9 @@ func TestUnifyOrder(t *testing.T) {
 	<trade_type>APP</trade_type>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "1add1a30ac87aa2db72f57a2375d8fec"
@@ -109,7 +111,9 @@ func TestQueryOrderByTransactionID(t *testing.T) {
 	<trade_state>SUCCESS</trade_state>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "ec2316275641faa3aacf3cc599e8730f"
@@ -178,7 +182,9 @@ func TestQueryOrderByOutTradeNO(t *testing.T) {
 	<trade_state>SUCCESS</trade_state>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "ec2316275641faa3aacf3cc599e8730f"
@@ -236,7 +242,9 @@ func TestCloseOrder(t *testing.T) {
 	<result_msg>OK</result_msg>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "4ca93f17ddf3443ceabf72f26d64fe0e"

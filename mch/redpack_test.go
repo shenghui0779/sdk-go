@@ -43,7 +43,9 @@ func TestSendNormalRedpack(t *testing.T) {
 	<total_amount>1</total_amount>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
@@ -110,7 +112,9 @@ func TestSendGroupRedpack(t *testing.T) {
 	<total_amount>1</total_amount>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
@@ -176,7 +180,9 @@ func TestSendMinipRedpack(t *testing.T) {
 	<package>sendid=242e8abd163d300019b2cae74ba8e8c06e3f0e51ab84d16b3c80decd22a5b672&ver=8&sign=4110d649a5aef52dd6b95654ddf91ca7d5411ac159ace4e1a766b7d3967a1c3dfe1d256811445a4abda2d9cfa4a9b377a829258bd00d90313c6c346f2349fe5d&mchid=11475856&appid=wxd27ebc41b85ce36d</package>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
@@ -237,7 +243,9 @@ func TestQueryRedpackByBillNO(t *testing.T) {
 	<send_time>2016-08-08 21:49:22</send_time>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"

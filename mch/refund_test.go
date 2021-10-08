@@ -41,7 +41,9 @@ func TestRefundByTransactionID(t *testing.T) {
 	<refund_fee>1</refund_fee>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
@@ -103,7 +105,9 @@ func TestRefundByOutTradeNO(t *testing.T) {
 	<refund_fee>1</refund_fee>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
@@ -164,7 +168,9 @@ func TestQueryRefundByRefundID(t *testing.T) {
 	<transaction_id>1008450740201411110005820873</transaction_id>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
@@ -223,7 +229,9 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 	<transaction_id>1008450740201411110005820873</transaction_id>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
@@ -282,7 +290,9 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 	<transaction_id>1008450740201411110005820873</transaction_id>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
@@ -341,7 +351,9 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 	<transaction_id>1008450740201411110005820873</transaction_id>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"

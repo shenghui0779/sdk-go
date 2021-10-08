@@ -40,7 +40,9 @@ func TestTransferToBalance(t *testing.T) {
 	<payment_time>2015-05-19 15:26:59</payment_time>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS"
@@ -99,7 +101,9 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 	<desc>福利测试</desc>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
@@ -155,7 +159,9 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 		"cmms_amt":         "0",
 // 	}, nil)
 
-// 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+// 	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+// 	assert.Nil(t, err)
 
 // 	mch.nonce = func(size int) string {
 // 		return "50780e0cca98c8c8e814883e5caa672e"
@@ -212,7 +218,9 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 	<reason>福利测试</reason>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"
@@ -265,7 +273,9 @@ DQIDAQAB
 -----END PUBLIC KEY-----</pub_key>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "50780e0cca98c8c8e814883e5caa672e"

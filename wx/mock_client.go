@@ -95,6 +95,18 @@ func (mr *MockClientMockRecorder) PostXML(ctx, reqURL, body interface{}, options
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostXML", reflect.TypeOf((*MockClient)(nil).PostXML), varargs...)
 }
 
+// SetLogger mocks base method.
+func (m *MockClient) SetLogger(l Logger) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetLogger", l)
+}
+
+// SetLogger indicates an expected call of SetLogger.
+func (mr *MockClientMockRecorder) SetLogger(l interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetLogger", reflect.TypeOf((*MockClient)(nil).SetLogger), l)
+}
+
 // Upload mocks base method.
 func (m *MockClient) Upload(ctx context.Context, reqURL string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error) {
 	m.ctrl.T.Helper()
@@ -113,4 +125,39 @@ func (mr *MockClientMockRecorder) Upload(ctx, reqURL, form interface{}, options 
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, reqURL, form}, options...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upload", reflect.TypeOf((*MockClient)(nil).Upload), varargs...)
+}
+
+// MockLogger is a mock of Logger interface.
+type MockLogger struct {
+	ctrl     *gomock.Controller
+	recorder *MockLoggerMockRecorder
+}
+
+// MockLoggerMockRecorder is the mock recorder for MockLogger.
+type MockLoggerMockRecorder struct {
+	mock *MockLogger
+}
+
+// NewMockLogger creates a new mock instance.
+func NewMockLogger(ctrl *gomock.Controller) *MockLogger {
+	mock := &MockLogger{ctrl: ctrl}
+	mock.recorder = &MockLoggerMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockLogger) EXPECT() *MockLoggerMockRecorder {
+	return m.recorder
+}
+
+// Log mocks base method.
+func (m *MockLogger) Log(ctx context.Context, data *LogData) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Log", ctx, data)
+}
+
+// Log indicates an expected call of Log.
+func (mr *MockLoggerMockRecorder) Log(ctx, data interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Log", reflect.TypeOf((*MockLogger)(nil).Log), ctx, data)
 }

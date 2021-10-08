@@ -23,8 +23,8 @@ func TestAuthURL(t *testing.T) {
 		return "STATE"
 	}
 
-	assert.Equal(t, "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=RedirectURL&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect", oa.AuthURL(ScopeSnsapiBase, "RedirectURL"))
-	assert.Equal(t, "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=RedirectURL&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect", oa.AuthURL(ScopeSnsapiUser, "RedirectURL"))
+	assert.Equal(t, "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=RedirectURL&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect", oa.WebAuthURL(ScopeSnsapiBase, "RedirectURL"))
+	assert.Equal(t, "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=RedirectURL&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect", oa.WebAuthURL(ScopeSnsapiUser, "RedirectURL"))
 }
 
 func TestCode2AuthToken(t *testing.T) {

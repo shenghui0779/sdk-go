@@ -40,7 +40,9 @@ func TestAPPEntrust(t *testing.T) {
 	<pre_entrustweb_id>5778aadY9nltAsZzXixCkFIGYnV2V</pre_entrustweb_id>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
@@ -77,7 +79,9 @@ func TestOAEntrust(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
@@ -104,7 +108,9 @@ func TestMPEntrust(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
@@ -142,7 +148,9 @@ func TestH5Entrust(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
@@ -207,7 +215,9 @@ func TestEntrustByOrder(t *testing.T) {
 	<out_trade_no>123456</out_trade_no>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
@@ -280,7 +290,9 @@ func TestQueryContractByID(t *testing.T) {
 	<sign>35B3B9261A6A4E75BFB560FE0D6EA8CE</sign>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
@@ -346,7 +358,9 @@ func TestQueryContractByCode(t *testing.T) {
 	<sign>35B3B9261A6A4E75BFB560FE0D6EA8CE</sign>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
@@ -408,7 +422,9 @@ func TestPappayApply(t *testing.T) {
 	<result_code>SUCCESS</result_code>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
@@ -460,7 +476,9 @@ func TestDeleteContractByID(t *testing.T) {
 	<sign>D1F898877B9FC523A6F2FC993BE5B78F</sign>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
@@ -505,7 +523,9 @@ func TestDeleteContractByCode(t *testing.T) {
 	<sign>D1F898877B9FC523A6F2FC993BE5B78F</sign>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "IITRi8Iabbblz1Jc"
@@ -561,7 +581,9 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 	<sign>9C2A03FD2D080D1B9618946C73C7608D</sign>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"
@@ -630,7 +652,9 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 	<sign>9C2A03FD2D080D1B9618946C73C7608D</sign>
 </xml>`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "0b9f35f484df17a732e537c37708d1d0"

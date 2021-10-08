@@ -12,13 +12,15 @@ import (
 )
 
 func TestLoadCertFromPemBlock(t *testing.T) {
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	_, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", wx.WithCertPEMBlock(certBlock, keyBlock))
 
-	assert.Nil(t, mch.LoadCertificate(WithCertPEMBlock(certBlock, keyBlock)))
+	assert.Nil(t, err)
 }
 
 func TestAccount(t *testing.T) {
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	assert.Equal(t, "wx2421b1c4370ec43b", mch.AppID())
 	assert.Equal(t, "10000100", mch.MchID())
@@ -27,7 +29,9 @@ func TestAccount(t *testing.T) {
 
 // 涉及时间戳，签名会变化（已通过固定时间戳验证）
 // func TestAPPAPI(t *testing.T) {
-// 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+// 	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+// 	assert.Nil(t, err)
 
 // 	mch.nonce = func(size int) string {
 // 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
@@ -48,7 +52,9 @@ func TestAccount(t *testing.T) {
 
 // 涉及时间戳，签名会变化（已通过固定时间戳验证）
 // func TestJSAPI(t *testing.T) {
-// 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+// 	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+//  assert.Nil(t, err)
 
 // 	mch.nonce = func(size int) string {
 // 		return "e61463f8efa94090b1f366cccfbbb444"
@@ -68,7 +74,9 @@ func TestAccount(t *testing.T) {
 
 // 涉及时间戳，签名会变化（已通过固定时间戳验证）
 // func TestMinipRedpackJSAPI(t *testing.T) {
-// 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+// 	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+// 	assert.Nil(t, err)
 
 // 	mch.nonce = func(size int) string {
 // 		return "e61463f8efa94090b1f366cccfbbb444"
@@ -104,7 +112,9 @@ func TestDownloadBill(t *testing.T) {
 总交易单数,总交易额,总退款金额,总代金券或立减优惠退款金额,手续费总金额
 2,0.02,0.0,0.0,0`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "21df7dc9cd8616b56919f20d9f679233"
@@ -141,7 +151,9 @@ func TestDownloadFundFlow(t *testing.T) {
 总交易单数,总交易额,总退款金额,总代金券或立减优惠退款金额,手续费总金额
 2,0.02,0.0,0.0,0`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "21df7dc9cd8616b56919f20d9f679233"
@@ -179,7 +191,9 @@ func TestBatchQueryComment(t *testing.T) {
 2017-07-01 11:00:05,1001690740201411100005734278,5,不错，支付渠道很方便
 2017-07-01 11:30:05,1001690740201411100005734250,4,东西还算符合预期`), nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	mch.nonce = func(size uint) string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
@@ -197,7 +211,9 @@ func TestBatchQueryComment(t *testing.T) {
 }
 
 func TestSignWithMD5(t *testing.T) {
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	m := wx.WXML{
 		"appid":     "wx2421b1c4370ec43b",
@@ -213,7 +229,9 @@ func TestSignWithMD5(t *testing.T) {
 }
 
 func TestSignWithHMacSHA256(t *testing.T) {
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	m := wx.WXML{
 		"appid":     "wx2421b1c4370ec43b",
@@ -229,7 +247,9 @@ func TestSignWithHMacSHA256(t *testing.T) {
 }
 
 func TestVerifyWXMLResult(t *testing.T) {
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	m := wx.WXML{
 		"return_code": "SUCCESS",
@@ -247,7 +267,9 @@ func TestVerifyWXMLResult(t *testing.T) {
 }
 
 func TestDecryptWithAES256ECB(t *testing.T) {
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+
+	assert.Nil(t, err)
 
 	info, err := mch.DecryptWithAES256ECB("4gS8kbcHysCW7bHqyEU0M4GTNkgJQP6/zKHbA/E3CvwLlNgCKUkGRy0OpONZjd4saggSnB6Fr7dHRYn6tvu8XDRU6t9IC3GuUKHs3SXmFKkm5cy3YR0oWIZFU4C5LV9LU7U3hwvUSZNx1QcFQXX9yZz68Wq8pwf/DeZ6iOXy/XRulylo75C7n0p3dMm/yJamZ44ir2iwWwEis3Tiif9Y6foLxrFA+fESQK1aH/OEZhIrJPIlnrtoxGJVJfoWAOYrC13a52BaR7CHKmNhAtw60n+XBUPLx5VzwpHKf3zZB1EpCngiVGcxmEAy3I59wotsScP4iaUeObWqPs7RYdQCiFQ9oRo4/c6bUWocW6HfOJGyWXj3VNfZtjTp1J6R05bP/1PCNV9FIMlt+owfcjTPO4pmRx0SpuKPy7j80APUCyC4g/0FU2ppbw/jN3faXAOV/1+Vl5vrDWxg2hiWm9JCttJ5kAHD/9XB6hfM0BH4iwf/Z/FZO+ECvO2A9buqnpCeOYWsOZNN1Z2Ow9kfJXhiDs/N0UICa2lodyl44nBrbP3amju/Zm6yyyFr74jl2GUsGO3PBrqfP1mbX96WiG09BcjQp1PAw40kfw32o7LW8ZT7DakPEGf0Khhuy+xbdusziU/CihrSEIUJP2qlK2/WrM3MtKE7qMqGBMDTG/n/BB1B82zfpNEh1py0CKTS+ezCKQp4IlRnMZhAMtyOfcKLbMEwOF1u3TdfNh+GSXPbEdydvKTcrMddQ5bbUosAT0d+dcPSPlM8Ckq6OPWJfyaySg8x1PM39psr2UqhJGFQ/kcDLzCYt1gVX+qjOdMC0v0IBG+YszRCIvJkNGues9wip94bkBWQeHdtuES+XZS9wIR0jwIA5G+mJJD3tRW/JpCXeIVgW84XStyaniaekKdo/Q6lkmNwtztmzB0Ub6ct/rQPMdTzN/abK9lKoSRhUP5Hq3yjxpWFegmV3TtECOaAtSj8cubVTONJL2m2vzF7RpOCXbPq7TuRyVqYF1fTBJH50z8YV7B5zZ5f1JU2tCMvRaIe1jZ0yyZLytG/dONZ+ee7rjV3lKvcHiHEASz1EtvM")
 
