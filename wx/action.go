@@ -17,7 +17,7 @@ const (
 	MethodNone   ActionMethod = "NONE"
 )
 
-// Action is the interface that handle wechat a
+// Action is the interface that handle wechat api
 type Action interface {
 	// URL returns request url
 	URL(accessToken ...string) string
