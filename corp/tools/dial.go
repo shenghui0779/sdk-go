@@ -26,10 +26,10 @@ type DialCallee struct {
 }
 
 type ParamsDialRecordGet struct {
-	StartTime int64 `json:"start_time"`
-	EndTime   int64 `json:"end_time"`
-	Offset    int   `json:"offset"`
-	Limit     int   `json:"limit"`
+	StartTime int64 `json:"start_time,omitempty"`
+	EndTime   int64 `json:"end_time,omitempty"`
+	Offset    int   `json:"offset,omitempty"`
+	Limit     int   `json:"limit,omitempty"`
 }
 
 type ResultDialRecordGet struct {

@@ -187,3 +187,12 @@ const (
 	CorpToolsWedriveFileShare         = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_share"
 	CorpToolsDialGetRecord            = "https://qyapi.weixin.qq.com/cgi-bin/dial/get_dial_record"
 )
+
+// payment
+const (
+	CorpPaymentMerchantAdd    = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/addmerchant"
+	CorpPaymentMerchantGet    = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/getmerchant"
+	CorpPaymentMerchantDel    = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/delmerchant"
+	CorpPaymentMchUseScopeSet = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/set_mch_use_scope"
+	CorpPaymentBillListGet    = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/get_bill_list"
+)
