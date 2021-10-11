@@ -203,3 +203,11 @@ const (
 	CorpGroupGetToken             = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/gettoken"
 	CorpGroupMinipTransferSession = "https://qyapi.weixin.qq.com/cgi-bin/miniprogram/transfer_session"
 )
+
+// msgaudit
+const (
+	CorpMsgAuditGetPermitUserList = "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/get_permit_user_list"
+	CorpMsgAuditCheckSingleAgree  = "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/check_single_agree"
+	CorpMsgAuditCheckRoomAgree    = "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/check_room_agree"
+	CorpMsgAuditGroupChatGet      = "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/groupchat/get"
+)

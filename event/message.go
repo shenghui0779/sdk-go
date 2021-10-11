@@ -94,6 +94,8 @@ const (
 	EventModifySchedule             EventType = "modify_schedule"              // 修改日程
 	EventDeleteSchedule             EventType = "delete_schedule"              // 删除日程
 	EventLivingStatusChange         EventType = "living_status_change"         // 直播状态变更
+	EventExternalContact            EventType = "change_external_contact"      // 客户同意进行聊天内容存档
+	EventMsgAuditNotify             EventType = "msgaudit_notify"              // 企业会话存档通知
 )
 
 // JobType 任务类型
