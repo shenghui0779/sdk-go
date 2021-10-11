@@ -196,3 +196,10 @@ const (
 	CorpPaymentMchUseScopeSet = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/set_mch_use_scope"
 	CorpPaymentBillListGet    = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/get_bill_list"
 )
+
+// cropgroup
+const (
+	CorpGroupListAppShareInfo     = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/list_app_share_info"
+	CorpGroupGetToken             = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/gettoken"
+	CorpGroupMinipTransferSession = "https://qyapi.weixin.qq.com/cgi-bin/miniprogram/transfer_session"
+)
