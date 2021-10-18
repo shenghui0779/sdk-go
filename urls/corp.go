@@ -211,3 +211,11 @@ const (
 	CorpMsgAuditCheckRoomAgree    = "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/check_room_agree"
 	CorpMsgAuditGroupChatGet      = "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/groupchat/get"
 )
+
+// invoice
+const (
+	CorpInvoiceGetInfo                    = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/getinvoiceinfo"
+	CorpInvoiceBatchGetInfo               = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/getinvoiceinfobatch"
+	CorpInvoiceUpdateReimburseStatus      = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updateinvoicestatus"
+	CorpInvoiceBatchUpdateReimburseStatus = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updatestatusbatch"
+)
