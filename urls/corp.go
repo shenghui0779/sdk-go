@@ -219,3 +219,32 @@ const (
 	CorpInvoiceUpdateReimburseStatus      = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updateinvoicestatus"
 	CorpInvoiceBatchUpdateReimburseStatus = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updatestatusbatch"
 )
+
+// school
+const (
+	CorpSchoolGetSubscribeQRCode = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_subscribe_qr_code"
+	CorpSchoolSetSubscribeMode   = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/set_subscribe_mode"
+	CorpSchoolGetSubscribeMode   = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_subscribe_mode"
+	CorpSchoolMessageSend        = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send"
+	CorpSchoolStudentCreate      = "https://qyapi.weixin.qq.com/cgi-bin/school/user/create_student"
+	CorpSchoolStudentBatchCreate = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_create_student"
+	CorpSchoolStudentDelete      = "https://qyapi.weixin.qq.com/cgi-bin/school/user/delete_student"
+	CorpSchoolStudentBatchDelete = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_delete_student"
+	CorpSchoolStudentUpdate      = "https://qyapi.weixin.qq.com/cgi-bin/school/user/update_student"
+	CorpSchoolStudentBatchUpdate = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_update_student"
+	CorpSchoolParentCreate       = "https://qyapi.weixin.qq.com/cgi-bin/school/user/create_parent"
+	CorpSchoolParentBatchCreate  = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_create_parent"
+	CorpSchoolParentDelete       = "https://qyapi.weixin.qq.com/cgi-bin/school/user/delete_parent"
+	CorpSchoolParentBatchDelete  = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_delete_parent"
+	CorpSchoolParentUpdate       = "https://qyapi.weixin.qq.com/cgi-bin/school/user/update_parent"
+	CorpSchoolParentBatchUpdate  = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_update_parent"
+	CorpSchoolUserGet            = "https://qyapi.weixin.qq.com/cgi-bin/school/user/get"
+	CorpSchoolUserList           = "https://qyapi.weixin.qq.com/cgi-bin/school/user/list"
+	CorpSchoolSetArchSyncMode    = "https://qyapi.weixin.qq.com/cgi-bin/school/set_arch_sync_mode"
+	CorpSchoolParentList         = "https://qyapi.weixin.qq.com/cgi-bin/school/user/list_parent"
+	CorpSchoolDepartmentCreate   = "https://qyapi.weixin.qq.com/cgi-bin/school/department/create"
+	CorpSchoolDepartmentUpdate   = "https://qyapi.weixin.qq.com/cgi-bin/school/department/update"
+	CorpSchoolDepartmentDelete   = "https://qyapi.weixin.qq.com/cgi-bin/school/department/delete"
+	CorpSchoolDepartmentList     = "https://qyapi.weixin.qq.com/cgi-bin/school/department/list"
+	CorpSchoolSetUpgradeInfo     = "https://qyapi.weixin.qq.com/cgi-bin/school/set_upgrade_info"
+)
