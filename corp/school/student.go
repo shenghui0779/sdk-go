@@ -39,3 +39,60 @@ type StudentErrResult struct {
 	ErrCode       int    `json:"errcode"`
 	ErrMsg        string `json:"errmsg"`
 }
+
+type ParamsStudentBatchCreate struct {
+	Students []*ParamsStudentCreate `json:"students"`
+}
+
+type ResultStudentBatchCreate struct {
+	ResultList []*StudentErrResult `json:"result_list"`
+}
+
+func BatchCreateStudent(params *ParamsStudentBatchCreate, result *ResultStudentBatchCreate) wx.Action {
+	return wx.NewPostAction(urls.CorpSchoolStudentBatchCreate,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsStudentBatchDelete struct {
+	UserIDList []string `json:"useridlist"`
+}
+
+type ResultStudentBatchDelete struct {
+	ResultList []*StudentErrResult `json:"result_list"`
+}
+
+func BatchDeleteStudent(params *ParamsStudentBatchDelete, result *ResultStudentBatchDelete) wx.Action {
+	return wx.NewPostAction(urls.CorpSchoolStudentBatchDelete,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsStudentBatchUpdate struct {
+	Students []*ParamsStudentUpdate `json:"students"`
+}
+
+type ResultStudentBatchUpdate struct {
+	ResultList []*StudentErrResult `json:"result_list"`
+}
+
+func BatchUpdateStudent(params *ParamsStudentBatchUpdate, result *ResultStudentBatchUpdate) wx.Action {
+	return wx.NewPostAction(urls.CorpSchoolStudentBatchUpdate,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
