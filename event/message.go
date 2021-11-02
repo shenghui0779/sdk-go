@@ -43,7 +43,7 @@ type EventType string
 // 微信支持的事件类型（统一小写匹配）
 const (
 	EventSubscribe                  EventType = "subscribe"                    // 关注
-	EventUnSubscribe                EventType = "unsubscribe"                  // 取消关注
+	EventUnsubscribe                EventType = "unsubscribe"                  // 取消关注
 	EventScan                       EventType = "scan"                         // 扫码
 	EventLocation                   EventType = "location"                     // 上报地理位置
 	EventClick                      EventType = "click"                        // 点击自定义菜单
@@ -119,6 +119,23 @@ const (
 	CardButtonInteraction   CorpCardType = "button_interaction"   // 按钮交互型
 	CardVoteInteraction     CorpCardType = "vote_interaction"     // 投票选择型
 	CardMultipleInteraction CorpCardType = "multiple_interaction" // 多项选择型
+)
+
+// ChangeType 变更类型
+type ChangeType string
+
+const (
+	ChangeCreateStudent    ChangeType = "create_student"    // 创建学生
+	ChangeUpdateStudent    ChangeType = "update_student"    // 更新学生
+	ChangeDeleteStudent    ChangeType = "delete_student"    // 删除学生
+	ChangeCreateParent     ChangeType = "create_parent"     // 创建家长
+	ChangeUpdateParent     ChangeType = "update_parent"     // 更新家长
+	ChangeDeleteParent     ChangeType = "delete_parent"     // 删除家长
+	ChangeSubscribe        ChangeType = "subscribe"         // 家长关注
+	ChangeUnsubscribe      ChangeType = "unsubscribe"       // 家长取消关注
+	ChangeCreateDepartment ChangeType = "create_department" // 创建部门
+	ChangeUpdateDepartment ChangeType = "update_department" // 更新部门
+	ChangeDeleteDepartment ChangeType = "delete_department" // 删除部门
 )
 
 // EventMessage 微信公众平台事件推送加密消息（兼容/安全模式）
