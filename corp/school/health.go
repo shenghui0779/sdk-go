@@ -139,3 +139,73 @@ func GetHealthReportAnswer(params *ParamsHealthReportAnswerGet, result *ResultHe
 		}),
 	)
 }
+
+type HealthInfo struct {
+	UserID             string               `json:"userid"`
+	HealthQRCodeStatus int                  `json:"health_qrcode_status"`
+	SelfSubmit         int                  `json:"self_submit"`
+	ReportValues       []*HealthReportValue `json:"report_values"`
+}
+
+type ParamsHealthInfoGet struct {
+	Date    string `json:"date"`
+	NextKey string `json:"next_key"`
+	Limit   int    `json:"limit"`
+}
+
+type ResultHealthInfoGet struct {
+	HealthInfos       []*HealthInfo             `json:"health_infos"`
+	QuestionTemplates []*HealthQuestionTemplate `json:"question_templates"`
+	TemplateID        string                    `json:"template_id"`
+	Ending            int                       `json:"ending"`
+	NextKey           string                    `json:"next_key"`
+}
+
+func GetTeacherHealthInfo(params *ParamsHealthInfoGet, result *ResultHealthInfoGet) wx.Action {
+	return wx.NewPostAction(urls.CorpSchoolGetTeacherHealthInfo,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+func GetStudentHealthInfo(params *ParamsHealthInfoGet, result *ResultHealthInfoGet) wx.Action {
+	return wx.NewPostAction(urls.CorpSchoolGetStudentHealthInfo,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type HealthQRCode struct {
+	ErrCode    int    `json:"errcode"`
+	ErrMsg     string `json:"errmsg"`
+	UserID     string `json:"userid"`
+	QRCodeData string `json:"qrcode_data"`
+}
+
+type ParamsHealthQRCodeGet struct {
+	Type    int      `json:"type"`
+	UserIDs []string `json:"userids"`
+}
+
+type ResultHealthQRCodeGet struct {
+	ResultList []*HealthQRCode `json:"result_list"`
+}
+
+func GetHealthQRCode(params *ParamsHealthQRCodeGet, result *ResultHealthQRCodeGet) wx.Action {
+	return wx.NewPostAction(urls.CorpSchoolGetHealthQRCode,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
