@@ -13,11 +13,11 @@ type ResidentGrid struct {
 	GridAdmin []string `json:"grid_admin"`
 }
 
-type ResultResidentGridInfoGet struct {
+type ResultResidentGridInfo struct {
 	GridList []*ResidentGrid `json:"grid_list"`
 }
 
-func GetResidentGridInfo(result *ResultResidentGridInfoGet) wx.Action {
+func GetResidentGridInfo(result *ResultResidentGridInfo) wx.Action {
 	return wx.NewGetAction(urls.CorpReportGetResidentGridInfo,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -25,11 +25,11 @@ func GetResidentGridInfo(result *ResultResidentGridInfoGet) wx.Action {
 	)
 }
 
-type ParamsResidentCorpStatusGet struct {
+type ParamsResidentCorpStatus struct {
 	GridID string `json:"grid_id"`
 }
 
-type ResultResidentCorpStatusGet struct {
+type ResultResidentCorpStatus struct {
 	Processing    int `json:"processing"`
 	AddedToday    int `json:"added_today"`
 	SolvedToday   int `json:"solved_today"`
@@ -39,7 +39,7 @@ type ResultResidentCorpStatusGet struct {
 	TotalSolved   int `json:"total_solved"`
 }
 
-func GetResidentCorpStatus(params *ParamsResidentCorpStatusGet, result *ResultResidentCorpStatusGet) wx.Action {
+func GetResidentCorpStatus(params *ParamsResidentCorpStatus, result *ResultResidentCorpStatus) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGetResidentCorpStatus,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -50,18 +50,18 @@ func GetResidentCorpStatus(params *ParamsResidentCorpStatusGet, result *ResultRe
 	)
 }
 
-type ParamsResidentUserStatusGet struct {
+type ParamsResidentUserStatus struct {
 	UserID string `json:"userid"`
 }
 
-type ResultResidentUserStatusGet struct {
+type ResultResidentUserStatus struct {
 	Processing  int `json:"processing"`
 	AddedToday  int `json:"added_today"`
 	SolvedToday int `json:"solved_today"`
 	Pending     int `json:"pending"`
 }
 
-func GetResidentUserStatus(params *ParamsResidentUserStatusGet, result *ResultResidentUserStatusGet) wx.Action {
+func GetResidentUserStatus(params *ParamsResidentUserStatus, result *ResultResidentUserStatus) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGetResidentUserStatus,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -81,15 +81,15 @@ type ResidentCategoryStatistic struct {
 	TotalSolved   int    `json:"total_solved"`
 }
 
-type ParamsResidentCategoryStatisticGet struct {
+type ParamsResidentCategoryStatistic struct {
 	CategoryID string `json:"category_id"`
 }
 
-type ResultResidentCategoryStatisticGet struct {
+type ResultResidentCategoryStatistic struct {
 	DashboardList []*ResidentCategoryStatistic `json:"dashboard_list"`
 }
 
-func GetResidentCategoryStatistic(params *ParamsResidentCategoryStatisticGet, result *ResultResidentCategoryStatisticGet) wx.Action {
+func GetResidentCategoryStatistic(params *ParamsResidentCategoryStatistic, result *ResultResidentCategoryStatistic) wx.Action {
 	return wx.NewPostAction(urls.CorpReportResidentCategoryStatistic,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -118,19 +118,19 @@ type ResidentOrder struct {
 	ProcessList      []*Process `json:"process_list"`
 }
 
-type ParamsResidentOrderListGet struct {
+type ParamsResidentOrderList struct {
 	BeginCreateTime int64  `json:"begin_create_time,omitempty"`
 	BeginModifyTime int64  `json:"begin_modify_time,omitempty"`
 	Cursor          string `json:"cursor,omitempty"`
 	Limit           int    `json:"limit,omitempty"`
 }
 
-type ResultResidentOrderListGet struct {
+type ResultResidentOrderList struct {
 	NextCursor string           `json:"next_cursor"`
 	OrderList  []*ResidentOrder `json:"order_list"`
 }
 
-func GetResidentOrderList(params *ParamsResidentOrderListGet, result *ResultResidentOrderListGet) wx.Action {
+func GetResidentOrderList(params *ParamsResidentOrderList, result *ResultResidentOrderList) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGetResidentOrderList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -141,15 +141,15 @@ func GetResidentOrderList(params *ParamsResidentOrderListGet, result *ResultResi
 	)
 }
 
-type ParamsResidentOrderInfoGet struct {
+type ParamsResidentOrderInfo struct {
 	OrderID string `json:"order_id"`
 }
 
-type ResultResidentOrderInfoGet struct {
+type ResultResidentOrderInfo struct {
 	OrderInfo *ResidentOrder `json:"order_info"`
 }
 
-func GetResidentOrderInfo(params *ParamsResidentOrderInfoGet, result *ResultResidentOrderInfoGet) wx.Action {
+func GetResidentOrderInfo(params *ParamsResidentOrderInfo, result *ResultResidentOrderInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGetResidentOrderInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

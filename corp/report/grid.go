@@ -81,7 +81,7 @@ type ResultGridList struct {
 	GridList []*Grid `json:"grid_list"`
 }
 
-func ListGrid(params *ParamsGridList, result *ResultGridList) wx.Action {
+func GetGridList(params *ParamsGridList, result *ResultGridList) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGridList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -92,16 +92,16 @@ func ListGrid(params *ParamsGridList, result *ResultGridList) wx.Action {
 	)
 }
 
-type ParamsUserGridInfoGet struct {
+type ParamsUserGridInfo struct {
 	UserID string `json:"userid"`
 }
 
-type ResultUserGridInfoGet struct {
+type ResultUserGridInfo struct {
 	ManageGrids []*Grid `json:"manage_grids"`
 	JoinedGrids []*Grid `json:"joined_grids"`
 }
 
-func GetUserGridInfo(params *ParamsUserGridInfoGet, result *ResultUserGridInfoGet) wx.Action {
+func GetUserGridInfo(params *ParamsUserGridInfo, result *ResultUserGridInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGetUserGridInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

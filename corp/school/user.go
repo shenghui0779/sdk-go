@@ -39,7 +39,7 @@ type ResultUserList struct {
 	Students []*Student `json:"students"`
 }
 
-func ListUser(params *ParamsUserList, result *ResultUserList) wx.Action {
+func GetUserList(params *ParamsUserList, result *ResultUserList) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolUserList,
 		wx.WithQuery("department_id", strconv.FormatInt(params.DepartmentID, 10)),
 		wx.WithQuery("fetch_child", strconv.Itoa(params.FetchChild)),
@@ -65,7 +65,7 @@ type ResultParentList struct {
 	Parents []*Parent `json:"parents"`
 }
 
-func ListParent(departmentID int64, result *ResultParentList) wx.Action {
+func GetParentList(departmentID int64, result *ResultParentList) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolParentList,
 		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),
 		wx.WithDecode(func(resp []byte) error {

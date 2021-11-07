@@ -21,7 +21,7 @@ type ResultAppShareInfoList struct {
 	CorpList []*CorpInfo `json:"corp_list"`
 }
 
-func ListAppShareInfo(params *ParamsAppShareInfoList, result *ResultAppShareInfoList) wx.Action {
+func GetAppShareInfoList(params *ParamsAppShareInfoList, result *ResultAppShareInfoList) wx.Action {
 	return wx.NewPostAction(urls.CorpGroupListAppShareInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

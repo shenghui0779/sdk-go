@@ -30,11 +30,11 @@ type PatrolGrid struct {
 	GridAdmin []string `json:"grid_admin"`
 }
 
-type ResultPatrolGridInfoGet struct {
+type ResultPatrolGridInfo struct {
 	GridList []*PatrolGrid `json:"grid_list"`
 }
 
-func GetPatrolGridInfo(result *ResultPatrolGridInfoGet) wx.Action {
+func GetPatrolGridInfo(result *ResultPatrolGridInfo) wx.Action {
 	return wx.NewGetAction(urls.CorpReportGetPatrolGridInfo,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -42,11 +42,11 @@ func GetPatrolGridInfo(result *ResultPatrolGridInfoGet) wx.Action {
 	)
 }
 
-type ParamsPatrolCorpStatusGet struct {
+type ParamsPatrolCorpStatus struct {
 	GridID string `json:"grid_id"`
 }
 
-type ResultPatrolCorpStatusGet struct {
+type ResultPatrolCorpStatus struct {
 	Processing   int `json:"processing"`
 	AddedToday   int `json:"added_today"`
 	SolvedToday  int `json:"solved_today"`
@@ -55,7 +55,7 @@ type ResultPatrolCorpStatusGet struct {
 	TotalSolved  int `json:"total_solved"`
 }
 
-func GetPatrolCorpStatus(params *ParamsPatrolCorpStatusGet, result *ResultPatrolCorpStatusGet) wx.Action {
+func GetPatrolCorpStatus(params *ParamsPatrolCorpStatus, result *ResultPatrolCorpStatus) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGetPatrolCorpStatus,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -66,17 +66,17 @@ func GetPatrolCorpStatus(params *ParamsPatrolCorpStatusGet, result *ResultPatrol
 	)
 }
 
-type ParamsPatrolUserStatusGet struct {
+type ParamsPatrolUserStatus struct {
 	UserID string `json:"userid"`
 }
 
-type ResultPatrolUserStatusGet struct {
+type ResultPatrolUserStatus struct {
 	Processing  int `json:"processing"`
 	AddedToday  int `json:"added_today"`
 	SolvedToday int `json:"solved_today"`
 }
 
-func GetPatrolUserStatus(params *ParamsPatrolUserStatusGet, result *ResultPatrolUserStatusGet) wx.Action {
+func GetPatrolUserStatus(params *ParamsPatrolUserStatus, result *ResultPatrolUserStatus) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGetPatrolUserStatus,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -96,15 +96,15 @@ type PatrolCategoryStatistic struct {
 	TotalSolved   int    `json:"total_solved"`
 }
 
-type ParamsPatrolCategoryStatisticGet struct {
+type ParamsPatrolCategoryStatistic struct {
 	CategoryID string `json:"category_id"`
 }
 
-type ResultPatrolCategoryStatisticGet struct {
+type ResultPatrolCategoryStatistic struct {
 	DashboardList []*PatrolCategoryStatistic `json:"dashboard_list"`
 }
 
-func GetPatrolCategoryStatistic(params *ParamsPatrolCategoryStatisticGet, result *ResultPatrolCategoryStatisticGet) wx.Action {
+func GetPatrolCategoryStatistic(params *ParamsPatrolCategoryStatistic, result *ResultPatrolCategoryStatistic) wx.Action {
 	return wx.NewPostAction(urls.CorpReportPatrolCategoryStatistic,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -130,19 +130,19 @@ type PatrolOrder struct {
 	ProcessList      []*Process `json:"process_list"`
 }
 
-type ParamsPatrolOrderListGet struct {
+type ParamsPatrolOrderList struct {
 	BeginCreateTime int64  `json:"begin_create_time,omitempty"`
 	BeginModifyTime int64  `json:"begin_modify_time,omitempty"`
 	Cursor          string `json:"cursor,omitempty"`
 	Limit           int    `json:"limit,omitempty"`
 }
 
-type ResultPatrolOrderListGet struct {
+type ResultPatrolOrderList struct {
 	NextCursor string         `json:"next_cursor"`
 	OrderList  []*PatrolOrder `json:"order_list"`
 }
 
-func GetPatrolOrderList(params *ParamsPatrolOrderListGet, result *ResultPatrolOrderListGet) wx.Action {
+func GetPatrolOrderList(params *ParamsPatrolOrderList, result *ResultPatrolOrderList) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGetPatrolOrderList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -153,15 +153,15 @@ func GetPatrolOrderList(params *ParamsPatrolOrderListGet, result *ResultPatrolOr
 	)
 }
 
-type ParamsPatrolOrderInfoGet struct {
+type ParamsPatrolOrderInfo struct {
 	OrderID string `json:"order_id"`
 }
 
-type ResultPatrolOrderInfoGet struct {
+type ResultPatrolOrderInfo struct {
 	OrderInfo *PatrolOrder `json:"order_info"`
 }
 
-func GetPatrolOrderInfo(params *ParamsPatrolOrderInfoGet, result *ResultPatrolOrderInfoGet) wx.Action {
+func GetPatrolOrderInfo(params *ParamsPatrolOrderInfo, result *ResultPatrolOrderInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGetPatrolOrderInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

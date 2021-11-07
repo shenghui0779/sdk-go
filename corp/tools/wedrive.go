@@ -195,7 +195,7 @@ type ResultWedriveFileList struct {
 	FileList  *WedriveFileList `json:"file_list"`
 }
 
-func ListWedriveFile(params *ParamsWedriveFileList, result *ResultWedriveFileList) wx.Action {
+func GetWedriveFileList(params *ParamsWedriveFileList, result *ResultWedriveFileList) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsWedriveFileList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

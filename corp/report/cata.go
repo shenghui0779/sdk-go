@@ -66,7 +66,7 @@ type ResultGridCataList struct {
 	CataList []*GridCata `json:"cata_list"`
 }
 
-func ListGridData(result *ResultGridCataList) wx.Action {
+func GetGridCataList(result *ResultGridCataList) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGridCataList,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
