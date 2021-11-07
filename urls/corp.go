@@ -262,3 +262,28 @@ const (
 	CorpSchoolGetPaymentResult       = "https://qyapi.weixin.qq.com/cgi-bin/school/get_payment_result"
 	CorpSchoolGetTrade               = "https://qyapi.weixin.qq.com/cgi-bin/school/get_trade"
 )
+
+// report
+const (
+	CorpReportGridAdd                   = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/add"
+	CorpReportGridUpdate                = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/update"
+	CorpReportGridDelete                = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/delete"
+	CorpReportGridList                  = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/list"
+	CorpReportGetUserGridInfo           = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/get_user_grid_info"
+	CorpReportGridCataAdd               = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/add_cata"
+	CorpReportGridCataUpdate            = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/update_cata"
+	CorpReportGridCataDelete            = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/delete_cata"
+	CorpReportGridCataList              = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/list_cata"
+	CorpReportGetPatrolGridInfo         = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_grid_info"
+	CorpReportGetPatrolCorpStatus       = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_corp_status"
+	CorpReportGetPatrolUserStatus       = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_user_status"
+	CorpReportPatrolCategoryStatistic   = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/category_statistic"
+	CorpReportGetPatrolOrderList        = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_order_list"
+	CorpReportGetPatrolOrderInfo        = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_order_info"
+	CorpReportGetResidentGridInfo       = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_grid_info"
+	CorpReportGetResidentCorpStatus     = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_corp_status"
+	CorpReportGetResidentUserStatus     = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_user_status"
+	CorpReportResidentCategoryStatistic = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/category_statistic"
+	CorpReportGetResidentOrderList      = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_order_list"
+	CorpReportGetResidentOrderInfo      = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_order_info"
+)
