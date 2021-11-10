@@ -115,24 +115,19 @@ func AddNews(dest *MaterialAddResult, articles ...*NewsArticle) wx.Action {
 	)
 }
 
-// MaterialAddResult 永久素材新增结果
-type MaterialUpdateResult struct {
-
-}
-
 type UpdateArticles struct {
-	MediaID string `json:"media_id"`
-	Index string `json:"index"`
+	MediaID  string   `json:"media_id"`
+	Index    string   `json:"index"`
 	Articles Articles `json:"articles"`
 }
 
 type Articles struct {
-	Title string `json:"title"`
-	ThumbMediaID string `json:"thumb_media_id"`
-	Author string `json:"author"`
-	Digest string `json:"digest"`
-	ShowCoverPic int `json:"show_cover_pic"`
-	Content string `json:"content"`
+	Title            string `json:"title"`
+	ThumbMediaID     string `json:"thumb_media_id"`
+	Author           string `json:"author"`
+	Digest           string `json:"digest"`
+	ShowCoverPic     int    `json:"show_cover_pic"`
+	Content          string `json:"content"`
 	ContentSourceURL string `json:"content_source_url"`
 }
 
@@ -150,13 +145,13 @@ type GetArticle struct {
 	NewsItem []*NewsItem `json:"news_item"`
 }
 type NewsItem struct {
-	Title string `json:"title"`
-	ThumbMediaID string `json:"thumb_media_id"`
-	ShowCoverPic int `json:"show_cover_pic"`
-	Author string `json:"author"`
-	Digest string `json:"digest"`
-	Content string `json:"content"`
-	URL string `json:"url"`
+	Title            string `json:"title"`
+	ThumbMediaID     string `json:"thumb_media_id"`
+	ShowCoverPic     int    `json:"show_cover_pic"`
+	Author           string `json:"author"`
+	Digest           string `json:"digest"`
+	Content          string `json:"content"`
+	URL              string `json:"url"`
 	ContentSourceURL string `json:"content_source_url"`
 }
 
