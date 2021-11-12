@@ -18,15 +18,15 @@ type MediaType string
 // 微信支持的素材类型
 const MediaImage MediaType = "image" // 图片
 
-// MediaUploadResult  临时素材上传信息
-type MediaUploadResult struct {
-	Type      string `json:"type"`
-	MediaID   string `json:"media_id"`
-	CreatedAt int64  `json:"created_at"`
+// ResultMediaUpload  临时素材上传结果
+type ResultMediaUpload struct {
+	Type      MediaType `json:"type"`
+	MediaID   string    `json:"media_id"`
+	CreatedAt int64     `json:"created_at"`
 }
 
 // UploadMedia 上传临时素材到微信服务器
-func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.Action {
+func UploadMedia(mediaType MediaType, path string, result *ResultMediaUpload) wx.Action {
 	_, filename := filepath.Split(path)
 
 	return wx.NewUploadAction(urls.MinipMediaUpload,
@@ -45,13 +45,13 @@ func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.A
 			return ioutil.ReadFile(path)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
 // UploadMediaByURL 上传临时素材到微信服务器
-func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, resourceURL string) wx.Action {
+func UploadMediaByURL(mediaType MediaType, filename, resourceURL string, result *ResultMediaUpload) wx.Action {
 	return wx.NewUploadAction(urls.MinipMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUploadField(&wx.UploadField{
@@ -70,7 +70,7 @@ func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, re
 			return ioutil.ReadAll(resp.Body)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

@@ -25,12 +25,12 @@ func TestGetPaidUnionIDByTransactionID(t *testing.T) {
 	mp := New("APPID", "APPSECRET")
 	mp.client = client
 
-	dest := new(PaidUnionID)
+	result := new(ResultPaidUnionID)
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetPaidUnionIDByTransactionID(dest, "OPENID", "TRANSACTION_ID"))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetPaidUnionIDByTransactionID("OPENID", "TRANSACTION_ID", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "oTmHYjg-tElZ68xxxxxxxxhy1Rgk", dest.UnionID)
+	assert.Equal(t, "oTmHYjg-tElZ68xxxxxxxxhy1Rgk", result.UnionID)
 }
 
 func TestGetPaidUnionIDByOutTradeNO(t *testing.T) {
@@ -48,10 +48,10 @@ func TestGetPaidUnionIDByOutTradeNO(t *testing.T) {
 	mp := New("APPID", "APPSECRET")
 	mp.client = client
 
-	dest := new(PaidUnionID)
+	result := new(ResultPaidUnionID)
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetPaidUnionIDByOutTradeNO(dest, "OPENID", "MCH_ID", "OUT_TRADE_NO"))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetPaidUnionIDByOutTradeNO("OPENID", "MCH_ID", "OUT_TRADE_NO", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "oTmHYjg-tElZ68xxxxxxxxhy1Rgk", dest.UnionID)
+	assert.Equal(t, "oTmHYjg-tElZ68xxxxxxxxhy1Rgk", result.UnionID)
 }
