@@ -103,7 +103,7 @@ func (mp *Minip) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (
 }
 
 // DecryptAuthInfo 解密授权信息
-func (mp *Minip) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData string) error {
+func (mp *Minip) DecryptAuthInfo(sessionKey, iv, encryptedData string, result AuthInfo) error {
 	key, err := base64.StdEncoding.DecodeString(sessionKey)
 
 	if err != nil {
@@ -130,12 +130,12 @@ func (mp *Minip) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData st
 		return err
 	}
 
-	if err := json.Unmarshal(b, dest); err != nil {
+	if err := json.Unmarshal(b, result); err != nil {
 		return err
 	}
 
-	if dest.AppID() != mp.appid {
-		return fmt.Errorf("appid mismatch, want: %s, got: %s", mp.appid, dest.AppID())
+	if result.AppID() != mp.appid {
+		return fmt.Errorf("appid mismatch, want: %s, got: %s", mp.appid, result.AppID())
 	}
 
 	return nil

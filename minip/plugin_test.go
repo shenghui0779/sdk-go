@@ -54,28 +54,30 @@ func TestGetPluginDevApplyList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]*PluginDevApplyInfo, 0)
+	result := new(ResultPluginDevApplyList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetPluginDevApplyList(&dest, 1, 10))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetPluginDevApplyList(1, 10, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []*PluginDevApplyInfo{
-		{
-			AppID:      "xxxxxxxxxxxxx",
-			Status:     1,
-			Nickname:   "名称",
-			HeadImgURL: "**********",
-			Categories: []yiigo.X{
-				{
-					"first":  "IT科技",
-					"second": "硬件与设备",
+	assert.Equal(t, &ResultPluginDevApplyList{
+		ApplyList: []*PluginDevApplyInfo{
+			{
+				AppID:      "xxxxxxxxxxxxx",
+				Status:     1,
+				Nickname:   "名称",
+				HeadImgURL: "**********",
+				Categories: []yiigo.X{
+					{
+						"first":  "IT科技",
+						"second": "硬件与设备",
+					},
 				},
+				CreateTime: "1536305096",
+				ApplyURL:   "*******",
+				Reason:     "polo has gone",
 			},
-			CreateTime: "1536305096",
-			ApplyURL:   "*******",
-			Reason:     "polo has gone",
 		},
-	}, dest)
+	}, result)
 }
 
 func TestGetPluginList(t *testing.T) {
@@ -98,19 +100,21 @@ func TestGetPluginList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]*PluginInfo, 0)
+	result := new(ResultPluginList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetPluginList(&dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetPluginList(result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []*PluginInfo{
-		{
-			AppID:      "aaaa",
-			Status:     1,
-			Nickname:   "插件昵称",
-			HeadImgURL: "http://plugin.qq.com",
+	assert.Equal(t, &ResultPluginList{
+		PluginList: []*PluginInfo{
+			{
+				AppID:      "aaaa",
+				Status:     1,
+				Nickname:   "插件昵称",
+				HeadImgURL: "http://plugin.qq.com",
+			},
 		},
-	}, dest)
+	}, result)
 }
 
 func TestSetDevPluginApplyStatus(t *testing.T) {
@@ -124,7 +128,13 @@ func TestSetDevPluginApplyStatus(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetDevPluginApplyStatus("dev_agree", "APPID", ""))
+	params := &ParamsDevPluginApplyStatus{
+		Action: PluginDevAgree,
+		AppID:  "APPID",
+		Reason: "",
+	}
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetDevPluginApplyStatus(params))
 
 	assert.Nil(t, err)
 }

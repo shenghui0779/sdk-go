@@ -21,36 +21,17 @@ func TestSendUniformMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	msg := &UniformMessage{
-		MPTemplateMessage: &TemplateMessage{
+	params := &ParamsUniformMsg{
+		ToUser: "OPENID",
+		MPTemplateMsg: &MPTemplateMsg{
+			AppID:      "APPID",
 			TemplateID: "TEMPLATE_ID",
-			Page:       "page/page/index",
-			FormID:     "FORMID",
-			Data: MessageBody{
-				"keyword1": {
-					"value": "339208499",
-				},
-				"keyword2": {
-					"value": "2015年01月05日 12:30",
-				},
-				"keyword3": {
-					"value": "腾讯微信总部",
-				},
-				"keyword4": {
-					"value": "广州市海珠区新港中路397号",
-				},
-			},
-			EmphasisKeyword: "keyword1.DATA",
-		},
-		OATemplateMessage: &OATemplateMessage{
-			AppID:       "APPID",
-			TemplateID:  "TEMPLATE_ID",
-			RedirectURL: "http://weixin.qq.com/download",
-			MiniProgram: &MessageMinip{
+			URL:        "http://weixin.qq.com/download",
+			Minip: &MsgMinip{
 				AppID:    "xiaochengxuappid12345",
 				Pagepath: "index?foo=bar",
 			},
-			Data: MessageBody{
+			Data: MsgBody{
 				"first": {
 					"value": "恭喜你购买成功！",
 					"color": "#173177",
@@ -75,7 +56,7 @@ func TestSendUniformMessage(t *testing.T) {
 		},
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendUniformMessage("OPENID", msg))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendUniformMessage(params))
 
 	assert.Nil(t, err)
 }
@@ -91,10 +72,11 @@ func TestSendSubscribeMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	msg := &SubscribeMessage{
+	params := &ParamsSubscribeMsg{
+		ToUser:     "OPENID",
 		TemplateID: "TEMPLATE_ID",
 		Page:       "index",
-		Data: MessageBody{
+		Data: MsgBody{
 			"number01": {
 				"value": "339208499",
 			},
@@ -108,48 +90,11 @@ func TestSendSubscribeMessage(t *testing.T) {
 				"value": "广州市新港中路397号",
 			},
 		},
-		MinipState: "developer",
+		MinipState: MinipDeveloper,
 		Lang:       "zh_CN",
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMessage("OPENID", msg))
-
-	assert.Nil(t, err)
-}
-
-func TestSendTemplateMessage(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := wx.NewMockClient(ctrl)
-
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=ACCESS_TOKEN", []byte(`{"data":{"keyword1":{"value":"339208499"},"keyword2":{"value":"2015年01月05日 12:30"},"keyword3":{"value":"腾讯微信总部"},"keyword4":{"value":"广州市海珠区新港中路397号"}},"emphasis_keyword":"keyword1.DATA","form_id":"FORMID","page":"index","template_id":"TEMPLATE_ID","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
-
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
-
-	msg := &TemplateMessage{
-		TemplateID: "TEMPLATE_ID",
-		Page:       "index",
-		FormID:     "FORMID",
-		Data: MessageBody{
-			"keyword1": {
-				"value": "339208499",
-			},
-			"keyword2": {
-				"value": "2015年01月05日 12:30",
-			},
-			"keyword3": {
-				"value": "腾讯微信总部",
-			},
-			"keyword4": {
-				"value": "广州市海珠区新港中路397号",
-			},
-		},
-		EmphasisKeyword: "keyword1.DATA",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendTemplateMessage("OPENID", msg))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMessage(params))
 
 	assert.Nil(t, err)
 }
@@ -197,10 +142,10 @@ func TestSendKFLinkMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	msg := &KFLinkMessage{
+	msg := &MsgLink{
 		Title:       "Happy Day",
 		Description: "Is Really A Happy Day",
-		RedirectURL: "URL",
+		URL:         "URL",
 		ThumbURL:    "THUMB_URL",
 	}
 
@@ -220,7 +165,7 @@ func TestSendKFMinipMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	msg := &KFMinipMessage{
+	msg := &MsgMinipPage{
 		Title:        "title",
 		Pagepath:     "pagepath",
 		ThumbMediaID: "thumb_media_id",
@@ -242,7 +187,7 @@ func TestSetTyping(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetTyping("OPENID", Typing))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFTyping("OPENID", Typing))
 
 	assert.Nil(t, err)
 }

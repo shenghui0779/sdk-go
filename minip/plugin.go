@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/shenghui0779/yiigo"
-	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -24,15 +23,23 @@ var (
 	PluginUnbind       PluginAction = "unbind"         // 删除已添加的插件
 )
 
+type ParamsPluginApply struct {
+	Action      PluginAction `json:"action"`
+	PluginAppID string       `json:"plugin_appid"`
+	Reason      string       `json:"reason"`
+}
+
 // ApplyPlugin 向插件开发者发起使用插件的申请
 func ApplyPlugin(pluginAppID, reason string) wx.Action {
+	params := &ParamsPluginApply{
+		Action:      PluginApply,
+		PluginAppID: pluginAppID,
+		Reason:      reason,
+	}
+
 	return wx.NewPostAction(urls.MinipPluginManage,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"action":       PluginApply,
-				"plugin_appid": pluginAppID,
-				"reason":       reason,
-			})
+			return json.Marshal(params)
 		}),
 	)
 }
@@ -49,18 +56,30 @@ type PluginDevApplyInfo struct {
 	Reason     string    `json:"reason"`      // 使用者的申请说明
 }
 
+type ParamsPluginDevApplyList struct {
+	Action PluginAction `json:"action"`
+	Page   int          `json:"page"`
+	Num    int          `json:"num"`
+}
+
+type ResultPluginDevApplyList struct {
+	ApplyList []*PluginDevApplyInfo `json:"apply_list"`
+}
+
 // GetPluginDevApplyList 获取当前所有插件使用方（供插件开发者调用）
-func GetPluginDevApplyList(dest *[]*PluginDevApplyInfo, page, num int) wx.Action {
+func GetPluginDevApplyList(page, num int, result *ResultPluginDevApplyList) wx.Action {
+	params := &ParamsPluginDevApplyList{
+		Action: PluginDevApplyList,
+		Page:   page,
+		Num:    num,
+	}
+
 	return wx.NewPostAction(urls.MinipPluginDevManage,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"action": PluginDevApplyList,
-				"page":   page,
-				"num":    num,
-			})
+			return json.Marshal(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "apply_list").Raw), dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
@@ -73,45 +92,58 @@ type PluginInfo struct {
 	HeadImgURL string `json:"headimgurl"` // 插件头像
 }
 
+type ParamsPluginList struct {
+	Action PluginAction `json:"action"`
+}
+
+type ResultPluginList struct {
+	PluginList []*PluginInfo `json:"plugin_list"`
+}
+
 // GetPluginList 查询已添加的插件
-func GetPluginList(dest *[]*PluginInfo) wx.Action {
+func GetPluginList(result *ResultPluginList) wx.Action {
+	params := &ParamsPluginList{Action: PluginList}
+
 	return wx.NewPostAction(urls.MinipPluginManage,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{"action": PluginList})
+			return json.Marshal(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "plugin_list").Raw), dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
+type ParamsDevPluginApplyStatus struct {
+	Action PluginAction `json:"action"`
+	AppID  string       `json:"app_id"`
+	Reason string       `json:"reason"`
+}
+
 // SetDevPluginApplyStatus 修改插件使用申请的状态（供插件开发者调用）
-func SetDevPluginApplyStatus(action PluginAction, appid, reason string) wx.Action {
+func SetDevPluginApplyStatus(params *ParamsDevPluginApplyStatus) wx.Action {
 	return wx.NewPostAction(urls.MinipPluginDevManage,
 		wx.WithBody(func() ([]byte, error) {
-			params := yiigo.X{"action": action}
-
-			if len(appid) != 0 {
-				params["appid"] = appid
-			}
-
-			if len(reason) != 0 {
-				params["reason"] = reason
-			}
-
 			return json.Marshal(params)
 		}),
 	)
 }
 
+type ParamsPluginUnbind struct {
+	Action      PluginAction `json:"action"`
+	PluginAppID string       `json:"plugin_appid"`
+}
+
 // UnbindPlugin 删除已添加的插件
 func UnbindPlugin(pluginAppID string) wx.Action {
+	params := &ParamsPluginUnbind{
+		Action:      PluginUnbind,
+		PluginAppID: pluginAppID,
+	}
+
 	return wx.NewPostAction(urls.MinipPluginManage,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"action":       PluginUnbind,
-				"plugin_appid": pluginAppID,
-			})
+			return json.Marshal(params)
 		}),
 	)
 }

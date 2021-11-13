@@ -13,7 +13,7 @@ const (
 	MinipSubscribeMessageSend = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send"
 	MinipTemplateMessageSend  = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"
 	MinipKFMessageSend        = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
-	MinipSetTyping            = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
+	MinipKFTypingSend         = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 )
 
 // qrcode

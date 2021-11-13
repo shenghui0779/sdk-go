@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/shenghui0779/yiigo"
-	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -42,24 +41,24 @@ func ImageSecCheck(path string) wx.Action {
 	)
 }
 
-// MediaSecAsyncResult 异步校验结果
-type MediaSecAsyncResult struct {
+type ParamsMediaCheckAsync struct {
+	MediaType SecMediaType `json:"media_type"`
+	MediaURL  string       `json:"media_url"`
+}
+
+// ResultMediaCheckAsync 异步校验结果
+type ResultMediaCheckAsync struct {
 	TraceID string // 任务id，用于匹配异步推送结果
 }
 
-// MediaSecCheckAsync 异步校验图片/音频是否含有违法违规内容
-func MediaSecCheckAsync(dest *MediaSecAsyncResult, mediaType SecMediaType, mediaURL string) wx.Action {
+// MediaCheckAsync 异步校验图片/音频是否含有违法违规内容
+func MediaCheckAsync(params *ParamsMediaCheckAsync, result *ResultMediaCheckAsync) wx.Action {
 	return wx.NewPostAction(urls.MinipMediaCheckAsync,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"media_type": mediaType,
-				"media_url":  mediaURL,
-			})
+			return json.Marshal(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			dest.TraceID = gjson.GetBytes(resp, "trace_id").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

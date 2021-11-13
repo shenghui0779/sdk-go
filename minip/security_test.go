@@ -42,12 +42,16 @@ func TestMediaCheckAsync(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(MediaSecAsyncResult)
+	params := &ParamsMediaCheckAsync{
+		MediaType: SecMediaImage,
+		MediaURL:  "https://developers.weixin.qq.com/miniprogram/assets/images/head_global_z_@all.png",
+	}
+	result := new(ResultMediaCheckAsync)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", MediaSecCheckAsync(dest, SecMediaImage, "https://developers.weixin.qq.com/miniprogram/assets/images/head_global_z_@all.png"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", MediaCheckAsync(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "967e945cd8a3e458f3c74dcb886068e9", dest.TraceID)
+	assert.Equal(t, "967e945cd8a3e458f3c74dcb886068e9", result.TraceID)
 }
 
 func TestMsgSecCheck(t *testing.T) {

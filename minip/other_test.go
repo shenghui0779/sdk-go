@@ -26,7 +26,7 @@ func TestInvokeService(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	data := &InvokeData{
+	params := &ParamsServiceInvoke{
 		Service: "wx79ac3de8be320b71",
 		API:     "OcrAllInOne",
 		Data: yiigo.X{
@@ -37,12 +37,14 @@ func TestInvokeService(t *testing.T) {
 		ClientMsgID: "id123",
 	}
 
-	dest := new(InvokeResult)
+	result := new(ResultServiceInvoke)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", InvokeService(dest, data))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", InvokeService(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, `{"idcard_res":{"type":0,"name":{"text":"abc","pos"…0312500}}},"image_width":480,"image_height":304}}`, dest.Data)
+	assert.Equal(t, &ResultServiceInvoke{
+		Data: `{"idcard_res":{"type":0,"name":{"text":"abc","pos"…0312500}}},"image_width":480,"image_height":304}}`,
+	}, result)
 }
 
 func TestSoterVerify(t *testing.T) {
@@ -60,18 +62,20 @@ func TestSoterVerify(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	sign := &SoterSignature{
+	params := &ParamsSoterVerify{
 		OpenID:        "$openid",
 		JSONString:    "$resultJSON",
 		JSONSignature: "$resultJSONSignature",
 	}
 
-	dest := new(SoterVerifyResult)
+	result := new(ResultSoterVerify)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SoterVerify(dest, sign))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SoterVerify(params, result))
 
 	assert.Nil(t, err)
-	assert.True(t, dest.OK)
+	assert.Equal(t, &ResultSoterVerify{
+		IsOK: true,
+	}, result)
 }
 
 func TestGetUserRiskRank(t *testing.T) {
@@ -89,7 +93,7 @@ func TestGetUserRiskRank(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	data := &UserRiskData{
+	params := &ParamsUserRisk{
 		AppID:        "APPID",
 		OpenID:       "OPENID",
 		Scene:        RiskCheat,
@@ -98,10 +102,12 @@ func TestGetUserRiskRank(t *testing.T) {
 		EmailAddress: "****@qq.com",
 	}
 
-	dest := new(UserRiskResult)
+	result := new(ResultUserRisk)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUserRiskRank(dest, data))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUserRiskRank(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, 0, dest.RiskRank)
+	assert.Equal(t, &ResultUserRisk{
+		RiskRank: 0,
+	}, result)
 }

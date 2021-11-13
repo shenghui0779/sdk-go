@@ -25,18 +25,23 @@ type ResultMediaUpload struct {
 	CreatedAt int64     `json:"created_at"`
 }
 
+type ParamsMediaUpload struct {
+	MediaType MediaType `json:"media_type"`
+	Path      string    `json:"path"`
+}
+
 // UploadMedia 上传临时素材到微信服务器
-func UploadMedia(mediaType MediaType, path string, result *ResultMediaUpload) wx.Action {
-	_, filename := filepath.Split(path)
+func UploadMedia(params *ParamsMediaUpload, result *ResultMediaUpload) wx.Action {
+	_, filename := filepath.Split(params.Path)
 
 	return wx.NewUploadAction(urls.MinipMediaUpload,
-		wx.WithQuery("type", string(mediaType)),
+		wx.WithQuery("type", string(params.MediaType)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
 			Filename:  filename,
 		}),
 		wx.WithBody(func() ([]byte, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(params.Path))
 
 			if err != nil {
 				return nil, err
@@ -50,16 +55,22 @@ func UploadMedia(mediaType MediaType, path string, result *ResultMediaUpload) wx
 	)
 }
 
+type ParamsMediaUploadByURL struct {
+	MediaType MediaType
+	Filename  string
+	URL       string
+}
+
 // UploadMediaByURL 上传临时素材到微信服务器
-func UploadMediaByURL(mediaType MediaType, filename, resourceURL string, result *ResultMediaUpload) wx.Action {
+func UploadMediaByURL(params *ParamsMediaUploadByURL, result *ResultMediaUpload) wx.Action {
 	return wx.NewUploadAction(urls.MinipMediaUpload,
-		wx.WithQuery("type", string(mediaType)),
+		wx.WithQuery("type", string(params.MediaType)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
-			Filename:  filename,
+			Filename:  params.Filename,
 		}),
 		wx.WithBody(func() ([]byte, error) {
-			resp, err := yiigo.HTTPGet(context.TODO(), resourceURL)
+			resp, err := yiigo.HTTPGet(context.TODO(), params.URL)
 
 			if err != nil {
 				return nil, err
@@ -81,13 +92,13 @@ type Media struct {
 }
 
 // GetMedia 获取客服消息内的临时素材
-func GetMedia(dest *Media, mediaID string) wx.Action {
+func GetMedia(mediaID string, media *Media) wx.Action {
 	return wx.NewGetAction(urls.MinipMediaGet,
 		wx.WithQuery("media_id", mediaID),
 		wx.WithDecode(func(resp []byte) error {
-			dest.Buffer = make([]byte, len(resp))
+			media.Buffer = make([]byte, len(resp))
 
-			copy(dest.Buffer, resp)
+			copy(media.Buffer, resp)
 
 			return nil
 		}),

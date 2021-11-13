@@ -232,7 +232,7 @@ func OCRDriverLicense(mode OCRMode, path string, result *ResultDriverLicenseOCR)
 }
 
 // OCRDriverLicenseByURL 驾照识别
-func OCRDriverLicenseByURL(mode OCRMode, imgURL string, result ResultDriverLicenseOCR) wx.Action {
+func OCRDriverLicenseByURL(mode OCRMode, imgURL string, result *ResultDriverLicenseOCR) wx.Action {
 	return wx.NewPostAction(urls.MinipOCRDriverLicense,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
@@ -290,7 +290,7 @@ func OCRVehicleLicense(mode OCRMode, path string, result *ResultVehicleLicenseOC
 }
 
 // OCRVehicleLicenseByURL 行驶证识别
-func OCRVehicleLicenseByURL(mode OCRMode, imgURL string, result ResultVehicleLicenseOCR) wx.Action {
+func OCRVehicleLicenseByURL(mode OCRMode, imgURL string, result *ResultVehicleLicenseOCR) wx.Action {
 	return wx.NewPostAction(urls.MinipOCRVehicleLicense,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),

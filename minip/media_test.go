@@ -28,16 +28,20 @@ func TestUploadMedia(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(MediaUploadResult)
+	params := &ParamsMediaUpload{
+		MediaType: MediaImage,
+		Path:      "../test/test.jpg",
+	}
+	result := new(ResultMediaUpload)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(dest, MediaImage, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &MediaUploadResult{
+	assert.Equal(t, &ResultMediaUpload{
 		Type:      "image",
 		MediaID:   "MEDIA_ID",
 		CreatedAt: 1606717010,
-	}, dest)
+	}, result)
 }
 
 func TestUploadMediaByURL(t *testing.T) {
@@ -57,16 +61,21 @@ func TestUploadMediaByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(MediaUploadResult)
+	params := &ParamsMediaUploadByURL{
+		MediaType: MediaImage,
+		Filename:  "test.png",
+		URL:       "https://golang.google.cn/doc/gopher/pkg.png",
+	}
+	result := new(ResultMediaUpload)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMediaByURL(dest, MediaImage, "../test/test.png", "https://golang.google.cn/doc/gopher/pkg.png"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMediaByURL(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &MediaUploadResult{
+	assert.Equal(t, &ResultMediaUpload{
 		Type:      "image",
 		MediaID:   "MEDIA_ID",
 		CreatedAt: 1606717010,
-	}, dest)
+	}, result)
 }
 
 func TestGetMedia(t *testing.T) {
@@ -80,10 +89,10 @@ func TestGetMedia(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(Media)
+	result := new(Media)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetMedia(dest, "MEDIA_ID"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetMedia("MEDIA_ID", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "BUFFER", string(dest.Buffer))
+	assert.Equal(t, "BUFFER", string(result.Buffer))
 }

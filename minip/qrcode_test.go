@@ -10,32 +10,6 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-func TestQRCodeOption(t *testing.T) {
-	options := []QRCodeOption{
-		WithQRCodeWidth(430),
-		WithQRCodePage("pages/index"),
-		WithQRCodeAutoColor(),
-		WithQRCodeLineColor(1, 2, 3),
-		WithQRCodeIsHyaline(),
-	}
-
-	settings := new(qrcodeSettings)
-
-	for _, f := range options {
-		f(settings)
-	}
-
-	assert.Equal(t, 430, settings.width)
-	assert.Equal(t, "pages/index", settings.page)
-	assert.True(t, settings.autoColor)
-	assert.Equal(t, map[string]int{
-		"r": 1,
-		"g": 2,
-		"b": 3,
-	}, settings.lineColor)
-	assert.True(t, settings.isHyaline)
-}
-
 func TestCreateQRCode(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -47,12 +21,16 @@ func TestCreateQRCode(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(QRCode)
+	params := &ParamsQRCodeCreate{
+		Path:  "page/index/index",
+		Width: 430,
+	}
+	qrcode := new(QRCode)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateQRCode(dest, "page/index/index", WithQRCodeWidth(430)))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateQRCode(params, qrcode))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "BUFFER", string(dest.Buffer))
+	assert.Equal(t, "BUFFER", string(qrcode.Buffer))
 }
 
 func TestGetQRCode(t *testing.T) {
@@ -66,12 +44,16 @@ func TestGetQRCode(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(QRCode)
+	params := &ParamsQRCodeGet{
+		Path:  "page/index/index",
+		Width: 430,
+	}
+	qrcode := new(QRCode)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetQRCode(dest, "page/index/index", WithQRCodeWidth(430)))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetQRCode(params, qrcode))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "BUFFER", string(dest.Buffer))
+	assert.Equal(t, "BUFFER", string(qrcode.Buffer))
 }
 
 func TestGetUnlimitQRCode(t *testing.T) {
@@ -85,10 +67,14 @@ func TestGetUnlimitQRCode(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(QRCode)
+	params := &ParamsQRCodeUnlimit{
+		Scene: "a=1",
+		Width: 430,
+	}
+	qrcode := new(QRCode)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUnlimitQRCode(dest, "a=1"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUnlimitQRCode(params, qrcode))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "BUFFER", string(dest.Buffer))
+	assert.Equal(t, "BUFFER", string(qrcode.Buffer))
 }
