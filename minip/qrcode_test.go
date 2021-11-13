@@ -69,7 +69,6 @@ func TestGetUnlimitQRCode(t *testing.T) {
 
 	params := &ParamsQRCodeUnlimit{
 		Scene: "a=1",
-		Width: 430,
 	}
 	qrcode := new(QRCode)
 

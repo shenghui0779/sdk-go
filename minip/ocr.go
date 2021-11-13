@@ -111,7 +111,7 @@ func OCRIDCardBackByURL(mode OCRMode, imgURL string, result *ResultIDCardBackOCR
 
 // ResultBankCardOCR 银行卡识别结果
 type ResultBankCardOCR struct {
-	ID string `json:"id"`
+	Number string `json:"number"`
 }
 
 // OCRBankCard 银行卡识别
@@ -152,7 +152,7 @@ func OCRBankCardByURL(mode OCRMode, imgURL string, result *ResultBankCardOCR) wx
 
 // ResultPlateNumberOCR 车牌号识别结果
 type ResultPlateNumberOCR struct {
-	ID string `json:"id"`
+	Number string `json:"number"`
 }
 
 // OCRPlateNumber 车牌号识别
@@ -354,23 +354,23 @@ func OCRBusinessLicenseByURL(mode OCRMode, imgURL string, result *ResultBusiness
 	)
 }
 
-// PrintedTextItem 通用印刷体内容项
-type PrintedTextItem struct {
+// CommOCRItem 通用印刷体内容项
+type CommOCRItem struct {
 	Text string        `json:"text"`
 	Pos  ImagePosition `json:"pos"`
 }
 
-// ResultPrintedTextOCR 通用印刷体识别结果
-type ResultPrintedTextOCR struct {
-	Items   []*PrintedTextItem `json:"items"`
-	ImgSize ImageSize          `json:"img_size"`
+// ResultCommOCR 通用印刷体识别结果
+type ResultCommOCR struct {
+	Items   []*CommOCRItem `json:"items"`
+	ImgSize ImageSize      `json:"img_size"`
 }
 
 // OCRPrintedText 通用印刷体识别
-func OCRPrintedText(mode OCRMode, path string, result *ResultPrintedTextOCR) wx.Action {
+func OCRPrintedText(mode OCRMode, path string, result *ResultCommOCR) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.MinipOCRPrintedText,
+	return wx.NewUploadAction(urls.MinipOCRComm,
 		wx.WithQuery("type", string(mode)),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "img",
@@ -391,9 +391,9 @@ func OCRPrintedText(mode OCRMode, path string, result *ResultPrintedTextOCR) wx.
 	)
 }
 
-// OCRPrintedTextByURL 通用印刷体识别
-func OCRPrintedTextByURL(mode OCRMode, imgURL string, result *ResultPrintedTextOCR) wx.Action {
-	return wx.NewPostAction(urls.MinipOCRPrintedText,
+// OCRCommByURL 通用印刷体识别
+func OCRCommByURL(mode OCRMode, imgURL string, result *ResultCommOCR) wx.Action {
+	return wx.NewPostAction(urls.MinipOCRComm,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {

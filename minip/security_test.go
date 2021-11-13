@@ -51,7 +51,9 @@ func TestMediaCheckAsync(t *testing.T) {
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", MediaCheckAsync(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "967e945cd8a3e458f3c74dcb886068e9", result.TraceID)
+	assert.Equal(t, &ResultMediaCheckAsync{
+		TraceID: "967e945cd8a3e458f3c74dcb886068e9",
+	}, result)
 }
 
 func TestMsgSecCheck(t *testing.T) {

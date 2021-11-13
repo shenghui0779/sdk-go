@@ -33,7 +33,7 @@ func TestGetPluginDevApplyList(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", []byte(`{"action":"dev_apply_list","num":10,"page":1}`)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", []byte(`{"action":"dev_apply_list","page":1,"num":10}`)).Return([]byte(`{
 		"errcode": 0,
 		"errmsg": "ok",
 		"apply_list": [{
@@ -131,7 +131,6 @@ func TestSetDevPluginApplyStatus(t *testing.T) {
 	params := &ParamsDevPluginApplyStatus{
 		Action: PluginDevAgree,
 		AppID:  "APPID",
-		Reason: "",
 	}
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetDevPluginApplyStatus(params))

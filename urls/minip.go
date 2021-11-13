@@ -57,7 +57,7 @@ const (
 	MinipOCRDriverLicense   = "https://api.weixin.qq.com/cv/ocr/drivinglicense"
 	MinipOCRVehicleLicense  = "https://api.weixin.qq.com/cv/ocr/driving"
 	MinipOCRBusinessLicense = "https://api.weixin.qq.com/cv/ocr/bizlicense"
-	MinipOCRPrintedText     = "https://api.weixin.qq.com/cv/ocr/comm"
+	MinipOCRComm            = "https://api.weixin.qq.com/cv/ocr/comm"
 )
 
 // other

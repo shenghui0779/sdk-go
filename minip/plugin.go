@@ -116,8 +116,8 @@ func GetPluginList(result *ResultPluginList) wx.Action {
 
 type ParamsDevPluginApplyStatus struct {
 	Action PluginAction `json:"action"`
-	AppID  string       `json:"app_id"`
-	Reason string       `json:"reason"`
+	AppID  string       `json:"appid,omitempty"`
+	Reason string       `json:"reason,omitempty"`
 }
 
 // SetDevPluginApplyStatus 修改插件使用申请的状态（供插件开发者调用）

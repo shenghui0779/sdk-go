@@ -48,7 +48,7 @@ type ParamsMediaCheckAsync struct {
 
 // ResultMediaCheckAsync 异步校验结果
 type ResultMediaCheckAsync struct {
-	TraceID string // 任务id，用于匹配异步推送结果
+	TraceID string `json:"trace_id"` // 任务id，用于匹配异步推送结果
 }
 
 // MediaCheckAsync 异步校验图片/音频是否含有违法违规内容

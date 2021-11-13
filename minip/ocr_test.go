@@ -152,7 +152,7 @@ func TestOCRBankCard(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultBankCardOCR{
-		ID: "622213XXXXXXXXX",
+		Number: "622213XXXXXXXXX",
 	}, result)
 }
 
@@ -177,7 +177,7 @@ func TestOCRBankCardByURL(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultBankCardOCR{
-		ID: "622213XXXXXXXXX",
+		Number: "622213XXXXXXXXX",
 	}, result)
 }
 
@@ -202,7 +202,7 @@ func TestOCRPlateNumber(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultPlateNumberOCR{
-		ID: "苏A123456",
+		Number: "苏A123456",
 	}, result)
 }
 
@@ -227,7 +227,7 @@ func TestOCRPlateNumberByURL(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultPlateNumberOCR{
-		ID: "苏A123456",
+		Number: "苏A123456",
 	}, result)
 }
 
@@ -679,13 +679,13 @@ func TestOCRPrintedText(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	result := new(ResultPrintedTextOCR)
+	result := new(ResultCommOCR)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedText(OCRPhoto, "../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultPrintedTextOCR{
-		Items: []*PrintedTextItem{
+	assert.Equal(t, &ResultCommOCR{
+		Items: []*CommOCRItem{
 			{
 				Text: "腾讯",
 				Pos: ImagePosition{
@@ -798,13 +798,13 @@ func TestOCRPrintedTextByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	result := new(ResultPrintedTextOCR)
+	result := new(ResultCommOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedTextByURL(OCRPhoto, "ENCODE_URL", result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRCommByURL(OCRPhoto, "ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultPrintedTextOCR{
-		Items: []*PrintedTextItem{
+	assert.Equal(t, &ResultCommOCR{
+		Items: []*CommOCRItem{
 			{
 				Text: "腾讯",
 				Pos: ImagePosition{
