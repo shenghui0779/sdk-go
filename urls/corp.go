@@ -1,5 +1,8 @@
 package urls
 
+// oauth
+const QRCodeAuthorize = "https://open.work.weixin.qq.com/wwopen/sso/qrConnect"
+
 const (
 	CorpCgiBinAccessToken  = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
 	CorpCgiBinAPIDomainIP  = "https://qyapi.weixin.qq.com/cgi-bin/get_api_domain_ip"

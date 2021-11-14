@@ -3,9 +3,6 @@ package offia
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/yiigo"
-	"github.com/tidwall/gjson"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -14,38 +11,22 @@ import (
 type MenuButtonType string
 
 // 微信支持的按钮
+// 注意: 草稿接口灰度完成后，将不再支持图文信息类型的 media_id 和 view_limited，有需要的，请使用 article_id 和 article_view_limited 代替
 const (
-	ButtonClick           MenuButtonType = "click"              // 点击推事件用户点击click类型按钮后，微信服务器会通过消息接口推送消息类型为event的结构给开发者（参考消息接口指南），并且带上按钮中开发者填写的key值，开发者可以通过自定义的key值与用户进行交互。
-	ButtonView            MenuButtonType = "view"               // 跳转URL用户点击view类型按钮后，微信客户端将会打开开发者在按钮中填写的网页URL，可与网页授权获取用户基本信息接口结合，获得用户基本信息。
-	ButtonScanCodePush    MenuButtonType = "scancode_push"      // 扫码推事件用户点击按钮后，微信客户端将调起扫一扫工具，完成扫码操作后显示扫描结果（如果是URL，将进入URL），且会将扫码的结果传给开发者，开发者可以下发消息。
-	ButtonScanCodeWaitMsg MenuButtonType = "scancode_waitmsg"   // 扫码推事件且弹出“消息接收中”提示框用户点击按钮后，微信客户端将调起扫一扫工具，完成扫码操作后，将扫码的结果传给开发者，同时收起扫一扫工具，然后弹出“消息接收中”提示框，随后可能会收到开发者下发的消息。
-	ButtonPicSysPhoto     MenuButtonType = "pic_sysphoto"       // 弹出系统拍照发图用户点击按钮后，微信客户端将调起系统相机，完成拍照操作后，会将拍摄的相片发送给开发者，并推送事件给开发者，同时收起系统相机，随后可能会收到开发者下发的消息。
-	ButtonPicPhotoOrAlbum MenuButtonType = "pic_photo_or_album" // 弹出拍照或者相册发图用户点击按钮后，微信客户端将弹出选择器供用户选择“拍照”或者“从手机相册选择”。用户选择后即走其他两种流程。
-	ButtonPicWeixin       MenuButtonType = "pic_weixin"         // 弹出微信相册发图器用户点击按钮后，微信客户端将调起微信相册，完成选择操作后，将选择的相片发送给开发者的服务器，并推送事件给开发者，同时收起相册，随后可能会收到开发者下发的消息。
-	ButtonLocationSelect  MenuButtonType = "location_select"    // 弹出地理位置选择器用户点击按钮后，微信客户端将调起地理位置选择工具，完成选择操作后，将选择的地理位置发送给开发者的服务器，同时收起位置选择工具，随后可能会收到开发者下发的消息。
-	ButtonMedia           MenuButtonType = "media_id"           // 下发消息（除文本消息）用户点击media_id类型按钮后，微信服务器会将开发者填写的永久素材id对应的素材下发给用户，永久素材类型可以是图片、音频、视频、图文消息。请注意：永久素材id必须是在“素材管理/新增永久素材”接口上传后获得的合法id。
-	ButtonViewLimited     MenuButtonType = "view_limited"       // 跳转图文消息URL用户点击view_limited类型按钮后，微信客户端将打开开发者在按钮中填写的永久素材id对应的图文消息URL，永久素材类型只支持图文消息。请注意：永久素材id必须是在“素材管理/新增永久素材”接口上传后获得的合法id。​
-	ButtonMinip           MenuButtonType = "miniprogram"        // 小程序页面跳转，不支持小程序的老版本客户端将打开指定的URL。
+	ButtonClick              MenuButtonType = "click"                // 点击推事件用户点击click类型按钮后，微信服务器会通过消息接口推送消息类型为event的结构给开发者（参考消息接口指南），并且带上按钮中开发者填写的key值，开发者可以通过自定义的key值与用户进行交互。
+	ButtonView               MenuButtonType = "view"                 // 跳转URL用户点击view类型按钮后，微信客户端将会打开开发者在按钮中填写的网页URL，可与网页授权获取用户基本信息接口结合，获得用户基本信息。
+	ButtonScanCodePush       MenuButtonType = "scancode_push"        // 扫码推事件用户点击按钮后，微信客户端将调起扫一扫工具，完成扫码操作后显示扫描结果（如果是URL，将进入URL），且会将扫码的结果传给开发者，开发者可以下发消息。
+	ButtonScanCodeWaitMsg    MenuButtonType = "scancode_waitmsg"     // 扫码推事件且弹出“消息接收中”提示框用户点击按钮后，微信客户端将调起扫一扫工具，完成扫码操作后，将扫码的结果传给开发者，同时收起扫一扫工具，然后弹出“消息接收中”提示框，随后可能会收到开发者下发的消息。
+	ButtonPicSysPhoto        MenuButtonType = "pic_sysphoto"         // 弹出系统拍照发图用户点击按钮后，微信客户端将调起系统相机，完成拍照操作后，会将拍摄的相片发送给开发者，并推送事件给开发者，同时收起系统相机，随后可能会收到开发者下发的消息。
+	ButtonPicPhotoOrAlbum    MenuButtonType = "pic_photo_or_album"   // 弹出拍照或者相册发图用户点击按钮后，微信客户端将弹出选择器供用户选择“拍照”或者“从手机相册选择”。用户选择后即走其他两种流程。
+	ButtonPicWeixin          MenuButtonType = "pic_weixin"           // 弹出微信相册发图器用户点击按钮后，微信客户端将调起微信相册，完成选择操作后，将选择的相片发送给开发者的服务器，并推送事件给开发者，同时收起相册，随后可能会收到开发者下发的消息。
+	ButtonLocationSelect     MenuButtonType = "location_select"      // 弹出地理位置选择器用户点击按钮后，微信客户端将调起地理位置选择工具，完成选择操作后，将选择的地理位置发送给开发者的服务器，同时收起位置选择工具，随后可能会收到开发者下发的消息。
+	ButtonMedia              MenuButtonType = "media_id"             // 下发消息（除文本消息）用户点击 media_id 类型按钮后，微信服务器会将开发者填写的永久素材id对应的素材下发给用户，永久素材类型可以是图片、音频、视频、图文消息。请注意：永久素材id必须是在“素材管理/新增永久素材”接口上传后获得的合法id。
+	ButtonViewLimited        MenuButtonType = "view_limited"         // 跳转图文消息URL用户点击view_limited类型按钮后，微信客户端将打开开发者在按钮中填写的永久素材id对应的图文消息URL，永久素材类型只支持图文消息。请注意：永久素材id必须是在“素材管理/新增永久素材”接口上传后获得的合法id。
+	ButtonArticle            MenuButtonType = "article_id"           // 用户点击 article_id 类型按钮后，微信客户端将会以卡片形式，下发开发者在按钮中填写的图文消息。
+	ButtonArticleViewLimited MenuButtonType = "article_view_limited" // 类似 view_limited，但不使用 media_id 而使用 article_id。
+	ButtonMinip              MenuButtonType = "miniprogram"          // 小程序页面跳转，不支持小程序的老版本客户端将打开指定的URL。
 )
-
-// MenuInfo 自定义菜单信息
-type MenuInfo struct {
-	Menu            Menu               `json:"menu"`            // 普通菜单
-	ConditionalMenu []*ConditionalMenu `json:"conditionalmenu"` // 个性化菜单
-}
-
-// Menu 普通菜单
-type Menu struct {
-	Button []*MenuButton `json:"button"` // 菜单按钮
-	MenuID int64         `json:"menuid"` // 菜单ID（有个性化菜单时返回）
-}
-
-// ConditionalMenu 个性化菜单
-type ConditionalMenu struct {
-	Button    []*MenuButton `json:"button"`    // 菜单按钮
-	MatchRule MenuMatchRule `json:"matchrule"` // 菜单匹配规则
-	MenuID    int64         `json:"menuid"`    // 菜单ID
-}
 
 // MenuButton 菜单按钮
 type MenuButton struct {
@@ -56,59 +37,87 @@ type MenuButton struct {
 	AppID     string         `json:"appid,omitempty"`      // miniprogram类型必须，小程序的appid（仅认证公众号可配置）
 	Pagepath  string         `json:"pagepath,omitempty"`   // miniprogram类型必须，小程序的页面路径
 	MediaID   string         `json:"media_id,omitempty"`   // media_id类型和view_limited类型必须，调用新增永久素材接口返回的合法media_id
+	ArticleID string         `json:"article_id,omitempty"` // article_id类型和article_view_limited类型必须
 	SubButton []*MenuButton  `json:"sub_button,omitempty"` // 二级菜单数组，个数应为1~5个
+}
+
+type ParamsMenuCreate struct {
+	Button []*MenuButton `json:"button"`
+}
+
+// CreateMenu 创建自定义菜单
+func CreateMenu(params *ParamsMenuCreate) wx.Action {
+	return wx.NewPostAction(urls.OffiaMenuCreate,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+	)
 }
 
 // MenuMatchRule 菜单匹配规则
 type MenuMatchRule struct {
 	TagID              string `json:"tag_id,omitempty"`               // 用户标签的id，可通过用户标签管理接口获取，不填则不做匹配
-	Sex                string `json:"sex,omitempty"`                  // 性别：男（1）女（2），不填则不做匹配
-	Country            string `json:"country,omitempty"`              // 国家信息，是用户在微信中设置的地区，具体请参考地区信息表，不填则不做匹配
-	Province           string `json:"province,omitempty"`             // 省份信息，是用户在微信中设置的地区，具体请参考地区信息表，不填则不做匹配
-	City               string `json:"city,omitempty"`                 // 城市信息，是用户在微信中设置的地区，具体请参考地区信息表，不填则不做匹配
 	ClientPlatformType string `json:"client_platform_type,omitempty"` // 客户端版本，当前只具体到系统型号：IOS(1), Android(2),Others(3)，不填则不做匹配
-	Language           string `json:"language,omitempty"`             // 语言信息，是用户在微信中设置的语言，具体请参考语言表，不填则不做匹配
 }
 
-// CreateMenu 创建自定义菜单
-func CreateMenu(buttons ...*MenuButton) wx.Action {
-	return wx.NewPostAction(urls.OffiaMenuCreate,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{"button": buttons})
-		}),
-	)
+type ParamsConditionalMenuCreate struct {
+	Button    []*MenuButton `json:"button"`
+	MatchRule MenuMatchRule `json:"matchrule"`
 }
 
 // CreateConditionalMenu 创建个性化菜单
-func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.Action {
+func CreateConditionalMenu(params *ParamsConditionalMenuCreate) wx.Action {
 	return wx.NewPostAction(urls.OffiaMenuAddConditional,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"button":    buttons,
-				"matchrule": matchRule,
-			})
+			return json.Marshal(params)
 		}),
 	)
+}
+
+type ParamsMenuMatch struct {
+	UserID string `json:"user_id"`
+}
+
+type ResultMenuMatch struct {
+	Button []*MenuButton `json:"button"`
 }
 
 // TryMatchMenu 测试匹配个性化菜单
-// 注意：user_id可以是粉丝的OpenID，也可以是粉丝的微信号。
-func TryMatchMenu(dest *[]*MenuButton, userID string) wx.Action {
+// user_id可以是粉丝的OpenID，也可以是粉丝的微信号。
+func TryMatchMenu(params *ParamsMenuMatch, result *ResultMenuMatch) wx.Action {
 	return wx.NewPostAction(urls.OffiaMenuTryMatch,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{"user_id": userID})
+			return json.Marshal(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "button").Raw), dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// GetMenu 查询自定义菜单
-func GetMenu(dest *MenuInfo) wx.Action {
-	return wx.NewGetAction(urls.OffiaMenuList,
+// ConditionalMenu 个性化菜单
+type ConditionalMenu struct {
+	Button    []*MenuButton `json:"button"`    // 菜单按钮
+	MatchRule MenuMatchRule `json:"matchrule"` // 菜单匹配规则
+	MenuID    int64         `json:"menuid"`    // 菜单ID
+}
+
+// Menu 普通菜单
+type Menu struct {
+	Button []*MenuButton `json:"button"` // 菜单按钮
+	MenuID int64         `json:"menuid"` // 菜单ID（有个性化菜单时返回）
+}
+
+type ResultMenuGet struct {
+	Menu            Menu               `json:"menu"`            // 普通菜单
+	ConditionalMenu []*ConditionalMenu `json:"conditionalmenu"` // 个性化菜单
+}
+
+// GetMenu 获取自定义菜单配置
+func GetMenu(result *ResultMenuGet) wx.Action {
+	return wx.NewGetAction(urls.OffiaMenuGet,
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
@@ -118,11 +127,15 @@ func DeleteMenu() wx.Action {
 	return wx.NewGetAction(urls.OffiaMenuDelete)
 }
 
+type ParamsConditionalMenuDelete struct {
+	MenuID string `json:"menuid"`
+}
+
 // DeleteConditional 删除个性化菜单
-func DeleteConditionalMenu(menuID string) wx.Action {
+func DeleteConditionalMenu(params *ParamsConditionalMenuDelete) wx.Action {
 	return wx.NewPostAction(urls.OffiaMenuDeleteConditional,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{"menuid": menuID})
+			return json.Marshal(params)
 		}),
 	)
 }
@@ -225,6 +238,24 @@ func ViewLimitedButton(name, mediaID string) *MenuButton {
 		Type:    ButtonViewLimited,
 		Name:    name,
 		MediaID: mediaID,
+	}
+}
+
+// ArticleButton 图文消息按钮
+func ArticleButton(name, articleID string) *MenuButton {
+	return &MenuButton{
+		Type:      ButtonArticle,
+		Name:      name,
+		ArticleID: articleID,
+	}
+}
+
+// ArticleViewLimitedButton 图文消息按钮
+func ArticleViewLimitedButton(name, articleID string) *MenuButton {
+	return &MenuButton{
+		Type:      ButtonArticleViewLimited,
+		Name:      name,
+		ArticleID: articleID,
 	}
 }
 

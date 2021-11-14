@@ -49,8 +49,8 @@ type MsgMinip struct {
 	Pagepath string `json:"pagepath"` // 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar），要求该小程序已发布，暂不支持小游戏
 }
 
-// MPTemplateMsg 统一服务消息数据
-type MPTemplateMsg struct {
+// TemplateMsg 统一服务消息数据
+type TemplateMsg struct {
 	AppID      string          `json:"appid"`       // 公众号appid，要求与小程序有绑定且同主体
 	TemplateID string          `json:"template_id"` // 模板ID
 	URL        string          `json:"url"`         // 模板跳转链接（海外帐号没有跳转能力）
@@ -60,8 +60,8 @@ type MPTemplateMsg struct {
 
 // ParamsUniformMsg 统一服务消息参数
 type ParamsUniformMsg struct {
-	ToUser        string         `json:"touser"` // 用户openid，可以是小程序的openid，也可以是mp_template_msg.appid对应的公众号的openid
-	MPTemplateMsg *MPTemplateMsg `json:"mp_template_msg"`
+	ToUser        string       `json:"touser"` // 用户openid，可以是小程序的openid，也可以是mp_template_msg.appid对应的公众号的openid
+	MPTemplateMsg *TemplateMsg `json:"mp_template_msg"`
 }
 
 // Uniform 发送统一服务消息

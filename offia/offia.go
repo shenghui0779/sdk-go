@@ -86,6 +86,18 @@ func (oa *Offia) WebAuthURL(scope AuthScope, redirectURL string, state ...string
 	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", urls.Oauth2Authorize, oa.appid, redirectURL, scope, paramState)
 }
 
+// SubscribeMsgAuthURL 公众号一次性订阅消息授权URL（请使用 URLEncode 对 redirectURL 进行处理）
+// [参考](https://developers.weixin.qq.com/doc/offiaccount/Message_Management/One-time_subscription_info.html)
+func (oa *Offia) SubscribeMsgAuthURL(scene, templateID, redirectURL string, reserved ...string) string {
+	paramReserved := oa.nonce(16)
+
+	if len(reserved) != 0 {
+		paramReserved = reserved[0]
+	}
+
+	return fmt.Sprintf("%s?action=get_confirm&appid=%s&template_id=%s&redirect_url=%s&reserved=%s#wechat_redirect", urls.SubscribeMsgAuth, oa.appid, templateID, redirectURL, paramReserved)
+}
+
 // Code2AuthToken 获取网页授权AccessToken
 func (oa *Offia) Code2AuthToken(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthToken, error) {
 	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", urls.OffiaSnsCode2Token, oa.appid, oa.appsecret, code), options...)

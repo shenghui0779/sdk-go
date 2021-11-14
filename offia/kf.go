@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/shenghui0779/yiigo"
-	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -34,11 +33,15 @@ type KFAccount struct {
 	InviteStatus     KFInviteStatus `json:"invite_status"`      // 邀请的状态，有等待确认“waiting”，被拒绝“rejected”， 过期“expired”
 }
 
+type ResultKFAccountList struct {
+	KFList []*KFAccount `json:"kf_list"`
+}
+
 // GetKFAccountList 获取客服列表
-func GetKFAccountList(dest *[]*KFAccount) wx.Action {
+func GetKFAccountList(result *ResultKFAccountList) wx.Action {
 	return wx.NewGetAction(urls.OffiaKFAccountList,
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "kf_list").Raw), dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
@@ -51,48 +54,56 @@ type KFOnline struct {
 	AcceptedCase int    `json:"accepted_case"` // 客服当前正在接待的会话数
 }
 
+type ResultKFOnlineList struct {
+	KFOnlineList []*KFOnline `json:"kf_online_list"`
+}
+
 // GetKFOnlineList 获取客服在线列表
-func GetKFOnlineList(dest *[]*KFOnline) wx.Action {
+func GetKFOnlineList(result *ResultKFOnlineList) wx.Action {
 	return wx.NewGetAction(urls.OffiaKFOnlineList,
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "kf_online_list").Raw), dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
+}
+
+type ParamsKFAccountAdd struct {
+	KFAccount string `json:"kf_account"` // 完整客服帐号，格式为：帐号前缀@公众号微信号，帐号前缀最多10个字符，必须是英文、数字字符或者下划线，后缀为公众号微信号，长度不超过30个字符
+	Nickname  string `json:"nickname"`   // 客服昵称，最长16个字
 }
 
 // AddKFAccount 添加客服账号
-// 完整客服帐号，格式为：帐号前缀@公众号微信号，帐号前缀最多10个字符，必须是英文、数字字符或者下划线，后缀为公众号微信号，长度不超过30个字符
-// 客服昵称，最长16个字
-func AddKFAccount(account, nickname string) wx.Action {
+func AddKFAccount(params *ParamsKFAccountAdd) wx.Action {
 	return wx.NewPostAction(urls.OffiaKFAccountAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"kf_account": account,
-				"nickname":   nickname,
-			})
+			return json.Marshal(params)
 		}),
 	)
 }
 
+type ParamsKFAccountUpdate struct {
+	KFAccount string `json:"kf_account"` // 完整客服帐号，格式为：帐号前缀@公众号微信号，帐号前缀最多10个字符，必须是英文、数字字符或者下划线，后缀为公众号微信号，长度不超过30个字符
+	Nickname  string `json:"nickname"`   // 客服昵称，最长16个字
+}
+
 // UpdateKFAccount 设置客服信息
-// 完整客服帐号，格式为：帐号前缀@公众号微信号，帐号前缀最多10个字符，必须是英文、数字字符或者下划线，后缀为公众号微信号，长度不超过30个字符
-// 客服昵称，最长16个字
-func UpdateKFAccount(account, nickname string) wx.Action {
+func UpdateKFAccount(params *ParamsKFAccountUpdate) wx.Action {
 	return wx.NewPostAction(urls.OffiaKFAccountUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"kf_account": account,
-				"nickname":   nickname,
-			})
+			return json.Marshal(params)
 		}),
 	)
+}
+
+type ParamsKFWorkerInvite struct {
+	Account  string `json:"account"`   // 完整客服帐号，格式为：帐号前缀@公众号微信号
+	InviteWX string `json:"invite_wx"` // 接收绑定邀请的客服微信号
 }
 
 // InviteKFWorker 邀请绑定客服帐号
 // 新添加的客服帐号是不能直接使用的，只有客服人员用微信号绑定了客服账号后，方可登录Web客服进行操作。
 // 发起一个绑定邀请到客服人员微信号，客服人员需要在微信客户端上用该微信号确认后帐号才可用。
 // 尚未绑定微信号的帐号可以进行绑定邀请操作，邀请未失效时不能对该帐号进行再次绑定微信号邀请。
-// 完整客服帐号，格式为：帐号前缀@公众号微信号
 func InviteKFWorker(account, inviteWeixin string) wx.Action {
 	return wx.NewPostAction(urls.OffiaKFInvite,
 		wx.WithBody(func() ([]byte, error) {
@@ -104,19 +115,23 @@ func InviteKFWorker(account, inviteWeixin string) wx.Action {
 	)
 }
 
+type ParamsKFAvatarUpload struct {
+	Account string // 完整客服帐号，格式为：帐号前缀@公众号微信号
+	Path    string // 文件大小为5M 以内
+}
+
 // UploadKFAvatar 上传客服头像
-// 完整客服帐号，格式为：帐号前缀@公众号微信号
-func UploadKFAvatar(account, path string) wx.Action {
-	_, filename := filepath.Split(path)
+func UploadKFAvatar(params *ParamsKFAvatarUpload) wx.Action {
+	_, filename := filepath.Split(params.Path)
 
 	return wx.NewUploadAction(urls.OffiaKFAvatarUpload,
-		wx.WithQuery("kf_account", account),
+		wx.WithQuery("kf_account", params.Account),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
 			Filename:  filename,
 		}),
 		wx.WithBody(func() ([]byte, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(params.Path))
 
 			if err != nil {
 				return nil, err
@@ -135,6 +150,34 @@ func DeleteKFAccount(account string) wx.Action {
 	)
 }
 
+type ParamsKFSessionCreate struct {
+	KFAccount string `json:"kf_account"` // 完整客服帐号，格式为：帐号前缀@公众号微信号
+	OpenID    string `json:"openid"`     // 粉丝的openid
+}
+
+// CreateKFSession 创建会话
+func CreateKFSession(params *ParamsKFSessionCreate) wx.Action {
+	return wx.NewPostAction(urls.OffiaKFSessionCreate,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+	)
+}
+
+type ParamsKFSessionClose struct {
+	KFAccount string `json:"kf_account"` // 完整客服帐号，格式为：帐号前缀@公众号微信号
+	OpenID    string `json:"openid"`     // 粉丝的openid
+}
+
+// CloseKFSession 关闭会话
+func CloseKFSession(params *ParamsKFSessionClose) wx.Action {
+	return wx.NewPostAction(urls.OffiaKFSessionClose,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+	)
+}
+
 // KFSession 客服会话
 type KFSession struct {
 	KFAccount  string `json:"kf_account"`  // 正在接待的客服，为空表示没有人在接待
@@ -143,50 +186,28 @@ type KFSession struct {
 	LatestTime int64  `json:"latest_time"` // 粉丝的最后一条消息的时间
 }
 
-// CreateKFSession 创建会话
-// 完整客服帐号，格式为：帐号前缀@公众号微信号
-func CreateKFSession(account, openid string) wx.Action {
-	return wx.NewPostAction(urls.OffiaKFSessionCreate,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"kf_account": account,
-				"openid":     openid,
-			})
-		}),
-	)
-}
-
-// CloseKFSession 关闭会话
-// 完整客服帐号，格式为：帐号前缀@公众号微信号
-func CloseKFSession(account, openid string) wx.Action {
-	return wx.NewPostAction(urls.OffiaKFSessionClose,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"kf_account": account,
-				"openid":     openid,
-			})
-		}),
-	)
-}
-
 // GetKFSession 获取客户会话状态
 // 获取一个客户的会话，如果不存在，则kf_account为空。
-func GetKFSession(dest *KFSession, openid string) wx.Action {
+func GetKFSession(openid string, result *KFSession) wx.Action {
 	return wx.NewGetAction(urls.OffiaKFSessionGet,
 		wx.WithQuery("openid", openid),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
+}
+
+type ResultKFSessionList struct {
+	SessionList []*KFSession `json:"sessionlist"`
 }
 
 // GetKFSessionList 获取客服会话列表
 // 完整客服帐号，格式为：帐号前缀@公众号微信号
-func GetKFSessionList(dest *[]*KFSession, account string) wx.Action {
+func GetKFSessionList(account string, result *ResultKFSessionList) wx.Action {
 	return wx.NewGetAction(urls.OffiaKFSessionList,
 		wx.WithQuery("kf_account", account),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "sessionlist").Raw), dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
@@ -199,10 +220,10 @@ type KFWaitCase struct {
 
 // GetKFWaitCase 获取未接入会话列表
 // 最多返回100条数据，按照来访顺序
-func GetKFWaitCase(dest *KFWaitCase) wx.Action {
+func GetKFWaitCase(result *KFWaitCase) wx.Action {
 	return wx.NewGetAction(urls.OffiaKFWaitCase,
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
@@ -216,8 +237,14 @@ type KFMsgRecord struct {
 	Time     int64  `json:"time"`     // 操作时间，unix时间戳
 }
 
-// KFMsgRecordList 客服聊天记录列表
-type KFMsgRecordList struct {
+type ParamsKFMsgRecordList struct {
+	MsgID     string `json:"msgid"`
+	StartTime int64  `json:"starttime"`
+	EndTime   int64  `json:"endtime"`
+	Number    int    `json:"number"`
+}
+
+type ResultKFMsgRecordList struct {
 	MsgID      int64          `json:"msgid"`
 	Number     int            `json:"number"`
 	RecordList []*KFMsgRecord `json:"recordlist"`
@@ -225,18 +252,13 @@ type KFMsgRecordList struct {
 
 // GetKFMsgRecordList 获取聊天记录（每次查询时段不能超过24小时）
 // 聊天记录中，对于图片、语音、视频，分别展示成文本格式的[image]、[voice]、[video]。
-func GetKFMsgRecordList(dest *KFMsgRecordList, msgid, starttime, endtime int64, number int) wx.Action {
+func GetKFMsgRecordList(params *ParamsKFMsgRecordList, result *ResultKFMsgRecordList) wx.Action {
 	return wx.NewPostAction(urls.OffiaKFMsgRecordList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"msgid":     msgid,
-				"starttime": starttime,
-				"endtime":   endtime,
-				"number":    number,
-			})
+			return json.Marshal(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

@@ -2,8 +2,8 @@ package urls
 
 // oauth
 const (
-	Oauth2Authorize = "https://open.weixin.qq.com/connect/oauth2/authorize"
-	QRCodeAuthorize = "https://open.work.weixin.qq.com/wwopen/sso/qrConnect"
+	Oauth2Authorize  = "https://open.weixin.qq.com/connect/oauth2/authorize"
+	SubscribeMsgAuth = "https://mp.weixin.qq.com/mp/subscribemsg"
 )
 
 // cgi-bin
@@ -15,9 +15,10 @@ const (
 // menu
 const (
 	OffiaMenuCreate            = "https://api.weixin.qq.com/cgi-bin/menu/create"
+	OffiaGetCurSelfMenuInfo    = "https://api.weixin.qq.com/cgi-bin/get_current_selfmenu_info"
 	OffiaMenuAddConditional    = "https://api.weixin.qq.com/cgi-bin/menu/addconditional"
 	OffiaMenuTryMatch          = "https://api.weixin.qq.com/cgi-bin/menu/trymatch"
-	OffiaMenuList              = "https://api.weixin.qq.com/cgi-bin/menu/get"
+	OffiaMenuGet               = "https://api.weixin.qq.com/cgi-bin/menu/get"
 	OffiaMenuDelete            = "https://api.weixin.qq.com/cgi-bin/menu/delete"
 	OffiaMenuDeleteConditional = "https://api.weixin.qq.com/cgi-bin/menu/delconditional"
 )
@@ -32,21 +33,24 @@ const (
 
 // subscriber
 const (
-	OffiaSubscriberGet      = "https://api.weixin.qq.com/cgi-bin/user/info"
-	OffiaSubscriberBatchGet = "https://api.weixin.qq.com/cgi-bin/user/info/batchget"
-	OffiaSubscriberList     = "https://api.weixin.qq.com/cgi-bin/user/get"
-	OffiaBlackListGet       = "https://api.weixin.qq.com/cgi-bin/tags/members/getblacklist"
-	OffiaBatchBlackList     = "https://api.weixin.qq.com/cgi-bin/tags/members/batchblacklist"
-	OffiaBatchUnBlackList   = "https://api.weixin.qq.com/cgi-bin/tags/members/batchunblacklist"
-	OffiaUserRemarkSet      = "https://api.weixin.qq.com/cgi-bin/user/info/updateremark"
+	OffiaUserGet          = "https://api.weixin.qq.com/cgi-bin/user/info"
+	OffiaUserBatchGet     = "https://api.weixin.qq.com/cgi-bin/user/info/batchget"
+	OffiaUserList         = "https://api.weixin.qq.com/cgi-bin/user/get"
+	OffiaBlackListGet     = "https://api.weixin.qq.com/cgi-bin/tags/members/getblacklist"
+	OffiaBatchBlackList   = "https://api.weixin.qq.com/cgi-bin/tags/members/batchblacklist"
+	OffiaBatchUnBlackList = "https://api.weixin.qq.com/cgi-bin/tags/members/batchunblacklist"
+	OffiaUserRemarkSet    = "https://api.weixin.qq.com/cgi-bin/user/info/updateremark"
 )
 
 // message
 const (
-	OffiaTemplateList         = "https://api.weixin.qq.com/cgi-bin/template/get_all_private_template"
-	OffiaTemplateDelete       = "https://api.weixin.qq.com/cgi-bin/template/del_private_template"
-	OffiaTemplateMessageSend  = "https://api.weixin.qq.com/cgi-bin/message/template/send"
-	OffiaSubscribeMessageSend = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"
+	OffiaSetIndustry      = "https://api.weixin.qq.com/cgi-bin/template/api_set_industry"
+	OffiaGetIndustry      = "https://api.weixin.qq.com/cgi-bin/template/get_industry"
+	OffiaTemplateAdd      = "https://api.weixin.qq.com/cgi-bin/template/api_add_template"
+	OffiaTemplateList     = "https://api.weixin.qq.com/cgi-bin/template/get_all_private_template"
+	OffiaTemplateDelete   = "https://api.weixin.qq.com/cgi-bin/template/del_private_template"
+	OffiaTemplateMsgSend  = "https://api.weixin.qq.com/cgi-bin/message/template/send"
+	OffiaSubscribeMsgSend = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"
 )
 
 // popularize
@@ -81,7 +85,7 @@ const (
 	OffiaOCRDriverLicense   = "https://api.weixin.qq.com/cv/ocr/drivinglicense"
 	OffiaOCRVehicleLicense  = "https://api.weixin.qq.com/cv/ocr/driving"
 	OffiaOCRBusinessLicense = "https://api.weixin.qq.com/cv/ocr/bizlicense"
-	OffiaOCRPrintedText     = "https://api.weixin.qq.com/cv/ocr/comm"
+	OffiaOCRComm            = "https://api.weixin.qq.com/cv/ocr/comm"
 )
 
 // KF
@@ -99,6 +103,6 @@ const (
 	OffiaKFSessionList   = "https://api.weixin.qq.com/customservice/kfsession/getsessionlist"
 	OffiaKFWaitCase      = "https://api.weixin.qq.com/customservice/kfsession/getwaitcase"
 	OffiaKFMsgRecordList = "https://api.weixin.qq.com/customservice/msgrecord/getmsglist"
-	OffiaKFMessageSend   = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
+	OffiaKFMsgSend       = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
 	OffiaSetTyping       = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 )

@@ -23,7 +23,7 @@ func TestSendUniformMessage(t *testing.T) {
 
 	params := &ParamsUniformMsg{
 		ToUser: "OPENID",
-		MPTemplateMsg: &MPTemplateMsg{
+		MPTemplateMsg: &TemplateMsg{
 			AppID:      "APPID",
 			TemplateID: "TEMPLATE_ID",
 			URL:        "http://weixin.qq.com/download",

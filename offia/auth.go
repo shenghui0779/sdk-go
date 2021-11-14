@@ -38,8 +38,8 @@ func CheckAuthToken(openid string) wx.Action {
 	)
 }
 
-// AuthUser 授权用户信息
-type AuthUser struct {
+// ResultAuthInfo 授权用户信息
+type ResultAuthInfo struct {
 	OpenID     string   `json:"openid"`
 	UnionID    string   `json:"unionid"`
 	Nickname   string   `json:"nickname"`
@@ -51,13 +51,13 @@ type AuthUser struct {
 	Privilege  []string `json:"privilege"`
 }
 
-// GetAuthUser 获取授权用户信息（注意：使用网页授权的access_token）
-func GetAuthUser(dest *AuthUser, openid string) wx.Action {
+// GetAuthInfo 获取授权用户信息（注意：使用网页授权的access_token）
+func GetAuthInfo(openid string, result *ResultAuthInfo) wx.Action {
 	return wx.NewGetAction(urls.OffiaSnsUserInfo,
 		wx.WithQuery("openid", openid),
 		wx.WithQuery("lang", "zh_CN"),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
@@ -78,18 +78,18 @@ type JSSDKSign struct {
 	Timestamp int64  `json:"timestamp"`
 }
 
-// JSSDKTicket 公众号 JS-SDK ticket
-type JSSDKTicket struct {
+// ResultJSSDKTicket 公众号 JS-SDK ticket
+type ResultJSSDKTicket struct {
 	Ticket    string `json:"ticket"`
 	ExpiresIn int64  `json:"expires_in"`
 }
 
 // GetJSSDKTicket 获取 JS-SDK ticket (注意：使用普通access_token)
-func GetJSSDKTicket(dest *JSSDKTicket, t TicketType) wx.Action {
+func GetJSSDKTicket(t TicketType, result *ResultJSSDKTicket) wx.Action {
 	return wx.NewGetAction(urls.OffiaCgiBinTicket,
 		wx.WithQuery("type", string(t)),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

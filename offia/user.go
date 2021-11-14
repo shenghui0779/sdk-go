@@ -4,33 +4,32 @@ import (
 	"encoding/json"
 
 	"github.com/shenghui0779/yiigo"
-	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
-// MaxSubscriberListCount 关注列表的最大数目
-const MaxSubscriberListCount = 10000
+// MaxUserListCount 关注列表的最大数目
+const MaxUserListCount = 10000
 
 // SubscribeScene 关注的渠道来源
 type SubscribeScene string
 
 // 微信支持的关注的渠道来源
 const (
-	SceneSearch           SubscribeScene = "ADD_SCENE_SEARCH"               // 公众号搜索
-	SceneQRCode           SubscribeScene = "ADD_SCENE_QR_CODE"              // 扫描二维码
-	SceneAccountMigration SubscribeScene = "ADD_SCENE_ACCOUNT_MIGRATION"    // 公众号迁移
-	SceneProfileCard      SubscribeScene = "ADD_SCENE_PROFILE_CARD"         // 名片分享
-	SceneProfileLink      SubscribeScene = "ADD_SCENE_PROFILE_LINK"         // 图文页内名称点击
-	SceneProfileItem      SubscribeScene = "ADD_SCENE_PROFILE_ITEM"         // 图文页右上角菜单
-	ScenePaid             SubscribeScene = "ADD_SCENE_PAID"                 // 支付后关注
-	SceneWechatAD         SubscribeScene = "ADD_SCENE_WECHAT_ADVERTISEMENT" // 微信广告
-	SceneOthers           SubscribeScene = "ADD_SCENE_OTHERS"               // 其他
+	SubscribeSearch           SubscribeScene = "ADD_SCENE_SEARCH"               // 公众号搜索
+	SubscribeQRCode           SubscribeScene = "ADD_SCENE_QR_CODE"              // 扫描二维码
+	SubscribeAccountMigration SubscribeScene = "ADD_SCENE_ACCOUNT_MIGRATION"    // 公众号迁移
+	SubscribeProfileCard      SubscribeScene = "ADD_SCENE_PROFILE_CARD"         // 名片分享
+	SubscribeProfileLink      SubscribeScene = "ADD_SCENE_PROFILE_LINK"         // 图文页内名称点击
+	SubscribeProfileItem      SubscribeScene = "ADD_SCENE_PROFILE_ITEM"         // 图文页右上角菜单
+	SubscribePaid             SubscribeScene = "ADD_SCENE_PAID"                 // 支付后关注
+	SubscribeWechatAD         SubscribeScene = "ADD_SCENE_WECHAT_ADVERTISEMENT" // 微信广告
+	SubscribeOthers           SubscribeScene = "ADD_SCENE_OTHERS"               // 其他
 )
 
-// SubscriberInfo 关注用户信息
-type SubscriberInfo struct {
+// UserInfo 关注用户信息
+type UserInfo struct {
 	Subscribe      int            `json:"subscribe"`       // 用户是否订阅该公众号标识，值为0时，代表此用户没有关注该公众号，拉取不到其余信息。
 	OpenID         string         `json:"openid"`          // 用户的标识，对当前公众号唯一
 	NickName       string         `json:"nickname"`        // 用户的昵称
@@ -50,54 +49,63 @@ type SubscriberInfo struct {
 	QRSceneStr     string         `json:"qr_scene_str"`    // 二维码扫码场景描述（开发者自定义）
 }
 
-// SubscriberList 关注列表
-type SubscriberList struct {
-	Total      int                `json:"total"`
-	Count      int                `json:"count"`
-	Data       SubscriberListData `json:"data"`
-	NextOpenID string             `json:"next_openid"`
+// UserList 关注列表
+type UserList struct {
+	Total      int          `json:"total"`
+	Count      int          `json:"count"`
+	Data       UserListData `json:"data"`
+	NextOpenID string       `json:"next_openid"`
 }
 
-// SubscriberListData 关注列表数据
-type SubscriberListData struct {
+// UserListData 关注列表数据
+type UserListData struct {
 	OpenID []string `json:"openid"`
 }
 
-// GetSubscriberInfo 获取关注用户信息
-func GetSubscriberInfo(dest *SubscriberInfo, openid string) wx.Action {
-	return wx.NewGetAction(urls.OffiaSubscriberGet,
-		wx.WithQuery("openid", openid),
-		wx.WithQuery("lang", "zh_CN"),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		}),
-	)
+type ParamsUserGet struct {
+	OpenID string `json:"open_id"`
+	Lang   string `json:"lang,omitempty"`
 }
 
-// BatchGetSubscribers 批量关注用户信息
-func BatchGetSubscribers(dest *[]*SubscriberInfo, openids ...string) wx.Action {
-	return wx.NewPostAction(urls.OffiaSubscriberBatchGet,
+// GetUser 获取关注用户信息
+func GetUser(params *ParamsUserGet, result *UserInfo) wx.Action {
+	options := []wx.ActionOption{
+		wx.WithQuery("openid", params.OpenID),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	}
+
+	if len(params.Lang) != 0 {
+		options = append(options, wx.WithQuery("lang", params.Lang))
+	}
+
+	return wx.NewGetAction(urls.OffiaUserGet, options...)
+}
+
+type ParamsUserBatchGet struct {
+	UserList []*ParamsUserGet `json:"user_list"`
+}
+
+type ResultUserBatchGet struct {
+	UserInfoList []*UserInfo `json:"user_info_list"`
+}
+
+// BatchGetUser 批量关注用户信息
+func BatchGetUser(params *ParamsUserBatchGet, result *ResultUserBatchGet) wx.Action {
+	return wx.NewPostAction(urls.OffiaUserBatchGet,
 		wx.WithBody(func() ([]byte, error) {
-			userList := make([]map[string]string, 0, len(openids))
-
-			for _, v := range openids {
-				userList = append(userList, map[string]string{
-					"openid": v,
-					"lang":   "zh_CN",
-				})
-			}
-
-			return json.Marshal(yiigo.X{"user_list": userList})
+			return json.Marshal(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "user_info_list").Raw), dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// GetSubscriberList 获取关注用户列表
-func GetSubscriberList(dest *SubscriberList, nextOpenID ...string) wx.Action {
-	return wx.NewGetAction(urls.OffiaSubscriberList,
+// GetUserList 获取关注用户列表
+func GetUserList(dest *UserList, nextOpenID ...string) wx.Action {
+	return wx.NewGetAction(urls.OffiaUserList,
 		wx.WithQuery("next_openid", nextOpenID[0]),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -106,7 +114,7 @@ func GetSubscriberList(dest *SubscriberList, nextOpenID ...string) wx.Action {
 }
 
 // GetBlackList 获取用户黑名单列表
-func GetBlackList(dest *SubscriberList, beginOpenID ...string) wx.Action {
+func GetBlackList(dest *UserList, beginOpenID ...string) wx.Action {
 	return wx.NewPostAction(urls.OffiaBlackListGet,
 		wx.WithBody(func() ([]byte, error) {
 			params := yiigo.X{
@@ -125,8 +133,8 @@ func GetBlackList(dest *SubscriberList, beginOpenID ...string) wx.Action {
 	)
 }
 
-// BlackSubscribers 拉黑用户
-func BlackSubscribers(openids ...string) wx.Action {
+// BlackUsers 拉黑用户
+func BlackUsers(openids ...string) wx.Action {
 	return wx.NewPostAction(urls.OffiaBatchBlackList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"openid_list": openids})
@@ -134,8 +142,8 @@ func BlackSubscribers(openids ...string) wx.Action {
 	)
 }
 
-// UnBlackSubscriber 取消拉黑用户
-func UnBlackSubscribers(openids ...string) wx.Action {
+// UnBlackUser 取消拉黑用户
+func UnBlackUsers(openids ...string) wx.Action {
 	return wx.NewPostAction(urls.OffiaBatchUnBlackList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{"openid_list": openids})
