@@ -9,11 +9,11 @@ const (
 
 // msg
 const (
-	MinipUniformMessageSend   = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send"
-	MinipSubscribeMessageSend = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send"
-	MinipTemplateMessageSend  = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"
-	MinipKFMessageSend        = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
-	MinipKFTypingSend         = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
+	MinipUniformMsgSend   = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send"
+	MinipSubscribeMsgSend = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send"
+	MinipTemplateMsgSend  = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"
+	MinipKFMsgSend        = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
+	MinipKFTypingSend     = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 )
 
 // qrcode

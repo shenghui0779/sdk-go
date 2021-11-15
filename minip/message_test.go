@@ -31,7 +31,7 @@ func TestSendUniformMessage(t *testing.T) {
 				AppID:    "xiaochengxuappid12345",
 				Pagepath: "index?foo=bar",
 			},
-			Data: MsgTemplateData{
+			Data: MsgTemplData{
 				"first": {
 					Value: "恭喜你购买成功！",
 					Color: "#173177",
@@ -56,7 +56,7 @@ func TestSendUniformMessage(t *testing.T) {
 		},
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendUniformMessage(params))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendUniformMsg(params))
 
 	assert.Nil(t, err)
 }
@@ -78,7 +78,7 @@ func TestSendSubscribeMessage(t *testing.T) {
 		Page:       "index",
 		MinipState: MinipDeveloper,
 		Lang:       "zh_CN",
-		Data: MsgTemplateData{
+		Data: MsgTemplData{
 			"date01": {
 				Value: "2015年01月05日",
 			},
@@ -94,7 +94,7 @@ func TestSendSubscribeMessage(t *testing.T) {
 		},
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMessage(params))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMsg(params))
 
 	assert.Nil(t, err)
 }
@@ -110,7 +110,7 @@ func TestSendKFTextMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFTextMessage("OPENID", "Hello World"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFTextMsg("OPENID", &KFText{Content: "Hello World"}))
 
 	assert.Nil(t, err)
 }
@@ -126,7 +126,7 @@ func TestSendKFImageMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFImageMessage("OPENID", "MEDIA_ID"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFImageMsg("OPENID", &KFMedia{MediaID: "MEDIA_ID"}))
 
 	assert.Nil(t, err)
 }
@@ -142,14 +142,12 @@ func TestSendKFLinkMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	msg := &MsgLink{
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFLinkMsg("OPENID", &KFLink{
 		Title:       "Happy Day",
 		Description: "Is Really A Happy Day",
 		URL:         "URL",
 		ThumbURL:    "THUMB_URL",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFLinkMessage("OPENID", msg))
+	}))
 
 	assert.Nil(t, err)
 }
@@ -165,13 +163,11 @@ func TestSendKFMinipMessage(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	msg := &MsgMinipPage{
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFMinipMsg("OPENID", &KFMinipPage{
 		Title:        "title",
 		Pagepath:     "pagepath",
 		ThumbMediaID: "thumb_media_id",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFMinipMessage("OPENID", msg))
+	}))
 
 	assert.Nil(t, err)
 }
