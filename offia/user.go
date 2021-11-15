@@ -3,8 +3,6 @@ package offia
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -17,15 +15,15 @@ type SubscribeScene string
 
 // 微信支持的关注的渠道来源
 const (
-	SubscribeSearch           SubscribeScene = "ADD_SCENE_SEARCH"               // 公众号搜索
-	SubscribeQRCode           SubscribeScene = "ADD_SCENE_QR_CODE"              // 扫描二维码
-	SubscribeAccountMigration SubscribeScene = "ADD_SCENE_ACCOUNT_MIGRATION"    // 公众号迁移
-	SubscribeProfileCard      SubscribeScene = "ADD_SCENE_PROFILE_CARD"         // 名片分享
-	SubscribeProfileLink      SubscribeScene = "ADD_SCENE_PROFILE_LINK"         // 图文页内名称点击
-	SubscribeProfileItem      SubscribeScene = "ADD_SCENE_PROFILE_ITEM"         // 图文页右上角菜单
-	SubscribePaid             SubscribeScene = "ADD_SCENE_PAID"                 // 支付后关注
-	SubscribeWechatAD         SubscribeScene = "ADD_SCENE_WECHAT_ADVERTISEMENT" // 微信广告
-	SubscribeOthers           SubscribeScene = "ADD_SCENE_OTHERS"               // 其他
+	AddSceneSearch           SubscribeScene = "ADD_SCENE_SEARCH"               // 公众号搜索
+	AddSceneQRCode           SubscribeScene = "ADD_SCENE_QR_CODE"              // 扫描二维码
+	AddSceneAccountMigration SubscribeScene = "ADD_SCENE_ACCOUNT_MIGRATION"    // 公众号迁移
+	AddSceneProfileCard      SubscribeScene = "ADD_SCENE_PROFILE_CARD"         // 名片分享
+	AddSceneProfileLink      SubscribeScene = "ADD_SCENE_PROFILE_LINK"         // 图文页内名称点击
+	AddSceneProfileItem      SubscribeScene = "ADD_SCENE_PROFILE_ITEM"         // 图文页右上角菜单
+	AddScenePaid             SubscribeScene = "ADD_SCENE_PAID"                 // 支付后关注
+	AddSceneWechatAD         SubscribeScene = "ADD_SCENE_WECHAT_ADVERTISEMENT" // 微信广告
+	AddSceneOthers           SubscribeScene = "ADD_SCENE_OTHERS"               // 其他
 )
 
 // UserInfo 关注用户信息
@@ -47,19 +45,6 @@ type UserInfo struct {
 	SubscribeScene SubscribeScene `json:"subscribe_scene"` // 用户关注的渠道来源
 	QRScene        int64          `json:"qr_scene"`        // 二维码扫码场景（开发者自定义）
 	QRSceneStr     string         `json:"qr_scene_str"`    // 二维码扫码场景描述（开发者自定义）
-}
-
-// UserList 关注列表
-type UserList struct {
-	Total      int          `json:"total"`
-	Count      int          `json:"count"`
-	Data       UserListData `json:"data"`
-	NextOpenID string       `json:"next_openid"`
-}
-
-// UserListData 关注列表数据
-type UserListData struct {
-	OpenID []string `json:"openid"`
 }
 
 type ParamsUserGet struct {
@@ -103,62 +88,108 @@ func BatchGetUser(params *ParamsUserBatchGet, result *ResultUserBatchGet) wx.Act
 	)
 }
 
+type UserListData struct {
+	OpenID []string `json:"openid"`
+}
+
+type ResultUserList struct {
+	Total      int          `json:"total"`
+	Count      int          `json:"count"`
+	Data       UserListData `json:"data"`
+	NextOpenID string       `json:"next_openid"`
+}
+
 // GetUserList 获取关注用户列表
-func GetUserList(dest *UserList, nextOpenID ...string) wx.Action {
-	return wx.NewGetAction(urls.OffiaUserList,
-		wx.WithQuery("next_openid", nextOpenID[0]),
+func GetUserList(nextOpenID string, result *ResultUserList) wx.Action {
+	options := []wx.ActionOption{
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
+		}),
+	}
+
+	if len(nextOpenID) != 0 {
+		options = append(options, wx.WithQuery("next_openid", nextOpenID))
+	}
+
+	return wx.NewGetAction(urls.OffiaUserList, options...)
+}
+
+type ParamsBlackList struct {
+	BeginOpenID string `json:"begin_openid"`
+}
+
+type ResultBlackList struct {
+	Total      int          `json:"total"`
+	Count      int          `json:"count"`
+	Data       UserListData `json:"data"`
+	NextOpenID string       `json:"next_openid"`
+}
+
+// GetBlackList 获取用户黑名单列表
+func GetBlackList(beginOpenID string, result *ResultBlackList) wx.Action {
+	params := &ParamsBlackList{
+		BeginOpenID: beginOpenID,
+	}
+
+	return wx.NewPostAction(urls.OffiaBlackListGet,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// GetBlackList 获取用户黑名单列表
-func GetBlackList(dest *UserList, beginOpenID ...string) wx.Action {
-	return wx.NewPostAction(urls.OffiaBlackListGet,
-		wx.WithBody(func() ([]byte, error) {
-			params := yiigo.X{
-				"begin_openid": "",
-			}
-
-			if len(beginOpenID) != 0 {
-				params["begin_openid"] = beginOpenID[0]
-			}
-
-			return json.Marshal(params)
-		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		}),
-	)
+type ParamsBlackUsers struct {
+	OpenIDList []string `json:"openid_list"`
 }
 
 // BlackUsers 拉黑用户
 func BlackUsers(openids ...string) wx.Action {
+	params := &ParamsBlackUsers{
+		OpenIDList: openids,
+	}
+
 	return wx.NewPostAction(urls.OffiaBatchBlackList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{"openid_list": openids})
+			return json.Marshal(params)
 		}),
 	)
+}
+
+type ParamsUnBlackUsers struct {
+	OpenIDList []string `json:"openid_list"`
 }
 
 // UnBlackUser 取消拉黑用户
 func UnBlackUsers(openids ...string) wx.Action {
+	params := &ParamsUnBlackUsers{
+		OpenIDList: openids,
+	}
+
 	return wx.NewPostAction(urls.OffiaBatchUnBlackList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{"openid_list": openids})
+			return json.Marshal(params)
 		}),
 	)
 }
 
+type ParamsUserRemark struct {
+	OpenID string `json:"openid"`
+	Remark string `json:"remark"`
+}
+
 // SetUserRemark 设置用户备注名（该接口暂时开放给微信认证的服务号）
 func SetUserRemark(openid, remark string) wx.Action {
+	params := &ParamsUserRemark{
+		OpenID: openid,
+		Remark: remark,
+	}
+
 	return wx.NewPostAction(urls.OffiaUserRemarkSet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"openid": openid,
-				"remark": remark,
-			})
+			return json.Marshal(params)
 		}),
 	)
 }

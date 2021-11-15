@@ -40,9 +40,9 @@ func TestGetKFAccountList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]*KFAccount, 0)
+	result := make([]*KFAccount, 0)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFAccountList(&dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFAccountList(&result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, []*KFAccount{
@@ -62,7 +62,7 @@ func TestGetKFAccountList(t *testing.T) {
 			InviteExpireTime: 123456789,
 			InviteStatus:     InviteWaiting,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestGetKFOnlineList(t *testing.T) {
@@ -91,9 +91,9 @@ func TestGetKFOnlineList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]*KFOnline, 0)
+	result := make([]*KFOnline, 0)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFOnlineList(&dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFOnlineList(&result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, []*KFOnline{
@@ -109,7 +109,7 @@ func TestGetKFOnlineList(t *testing.T) {
 			Status:       1,
 			AcceptedCase: 2,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestAddKFAccount(t *testing.T) {
@@ -238,15 +238,15 @@ func TestGetKFSession(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(KFSession)
+	result := new(KFSession)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFSession(dest, "OPENID"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFSession(result, "OPENID"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &KFSession{
 		KFAccount:  "test1@test",
 		CreateTime: 123456789,
-	}, dest)
+	}, result)
 }
 
 func TestGetKFSessionList(t *testing.T) {
@@ -271,9 +271,9 @@ func TestGetKFSessionList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]*KFSession, 0)
+	result := make([]*KFSession, 0)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFSessionList(&dest, "KFACCOUNT"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFSessionList(&result, "KFACCOUNT"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, []*KFSession{
@@ -285,7 +285,7 @@ func TestGetKFSessionList(t *testing.T) {
 			OpenID:     "OPENID2",
 			CreateTime: 123456790,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestGetKFWaitCase(t *testing.T) {
@@ -311,9 +311,9 @@ func TestGetKFWaitCase(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(KFWaitCase)
+	result := new(KFWaitCase)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFWaitCase(dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFWaitCase(result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &KFWaitCase{
@@ -328,7 +328,7 @@ func TestGetKFWaitCase(t *testing.T) {
 				LatestTime: 123456790,
 			},
 		},
-	}, dest)
+	}, result)
 }
 
 func TestGetKFMsgRecordList(t *testing.T) {
@@ -361,9 +361,9 @@ func TestGetKFMsgRecordList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(KFMsgRecordList)
+	result := new(KFMsgRecordList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFMsgRecordList(dest, 1, 987654321, 987654321, 10000))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetKFMsgRecordList(result, 1, 987654321, 987654321, 10000))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &KFMsgRecordList{
@@ -385,5 +385,5 @@ func TestGetKFMsgRecordList(t *testing.T) {
 				Time:     1400563731,
 			},
 		},
-	}, dest)
+	}, result)
 }

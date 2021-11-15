@@ -26,7 +26,7 @@ func TestCheckAuthToken(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetAuthUser(t *testing.T) {
+func TestGetAuthInfo(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -47,11 +47,11 @@ func TestGetAuthUser(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(AuthUser)
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetAuthUser(dest, "OPENID"))
+	result := new(ResultAuthInfo)
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetAuthInfo("OPENID", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &AuthUser{
+	assert.Equal(t, &ResultAuthInfo{
 		OpenID:     "OPENID",
 		UnionID:    "o6_bmasdasdsad6_2sgVt7hMZOPfL",
 		Nickname:   "NICKNAME",
@@ -61,7 +61,7 @@ func TestGetAuthUser(t *testing.T) {
 		Country:    "COUNTRY",
 		HeadImgURL: "https://thirdwx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46",
 		Privilege:  []string{"PRIVILEGE1", "PRIVILEGE2"},
-	}, dest)
+	}, result)
 }
 
 func TestGetJSAPITicket(t *testing.T) {
@@ -80,12 +80,12 @@ func TestGetJSAPITicket(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(JSSDKTicket)
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetJSSDKTicket(dest, JSAPITicket))
+	result := new(ResultApiTicket)
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetApiTicket(JSAPITicket, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &JSSDKTicket{
+	assert.Equal(t, &ResultApiTicket{
 		Ticket:    "bxLdikRXVbTPdHSM05e5u5sUoXNKd8-41ZO3MhKoyN5OfkWITDGgnr2fwJ0m9E8NYzWKVZvdVtaUgWvsdshFKA",
 		ExpiresIn: 7200,
-	}, dest)
+	}, result)
 }

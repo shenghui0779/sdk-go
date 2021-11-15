@@ -84,7 +84,11 @@ type ResultMenuMatch struct {
 
 // TryMatchMenu 测试匹配个性化菜单
 // user_id可以是粉丝的OpenID，也可以是粉丝的微信号。
-func TryMatchMenu(params *ParamsMenuMatch, result *ResultMenuMatch) wx.Action {
+func TryMatchMenu(userID string, result *ResultMenuMatch) wx.Action {
+	params := &ParamsMenuMatch{
+		UserID: userID,
+	}
+
 	return wx.NewPostAction(urls.OffiaMenuTryMatch,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -132,7 +136,11 @@ type ParamsConditionalMenuDelete struct {
 }
 
 // DeleteConditional 删除个性化菜单
-func DeleteConditionalMenu(params *ParamsConditionalMenuDelete) wx.Action {
+func DeleteConditionalMenu(menuID string) wx.Action {
+	params := &ParamsConditionalMenuDelete{
+		MenuID: menuID,
+	}
+
 	return wx.NewPostAction(urls.OffiaMenuDeleteConditional,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

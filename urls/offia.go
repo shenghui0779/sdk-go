@@ -44,13 +44,13 @@ const (
 
 // message
 const (
-	OffiaSetIndustry      = "https://api.weixin.qq.com/cgi-bin/template/api_set_industry"
-	OffiaGetIndustry      = "https://api.weixin.qq.com/cgi-bin/template/get_industry"
-	OffiaTemplateAdd      = "https://api.weixin.qq.com/cgi-bin/template/api_add_template"
-	OffiaTemplateList     = "https://api.weixin.qq.com/cgi-bin/template/get_all_private_template"
-	OffiaTemplateDelete   = "https://api.weixin.qq.com/cgi-bin/template/del_private_template"
-	OffiaTemplateMsgSend  = "https://api.weixin.qq.com/cgi-bin/message/template/send"
-	OffiaSubscribeMsgSend = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"
+	OffiaSetIndustry              = "https://api.weixin.qq.com/cgi-bin/template/api_set_industry"
+	OffiaGetIndustry              = "https://api.weixin.qq.com/cgi-bin/template/get_industry"
+	OffiaTemplateAdd              = "https://api.weixin.qq.com/cgi-bin/template/api_add_template"
+	OffiaGetAllPrivateTemplate    = "https://api.weixin.qq.com/cgi-bin/template/get_all_private_template"
+	OffiaDelPrivateTemplate       = "https://api.weixin.qq.com/cgi-bin/template/del_private_template"
+	OffiaTemplateMsgSend          = "https://api.weixin.qq.com/cgi-bin/message/template/send"
+	OffiaSubscribeTemplateMsgSend = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"
 )
 
 // popularize

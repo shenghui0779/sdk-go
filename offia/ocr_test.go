@@ -31,18 +31,18 @@ func TestOCRIDCardFront(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(IDCardFront)
+	result := new(ResultIDCardFrontOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardFront(dest, OCRPhoto, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardFront(OCRPhoto, "../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &IDCardFront{
+	assert.Equal(t, &ResultIDCardFrontOCR{
 		Name:        "张三",
 		ID:          "123456789012345678",
 		Addr:        "广东省广州市",
 		Gender:      "男",
 		Nationality: "汉",
-	}, dest)
+	}, result)
 }
 
 func TestOCRIDCardFrontByURL(t *testing.T) {
@@ -65,18 +65,18 @@ func TestOCRIDCardFrontByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(IDCardFront)
+	result := new(ResultIDCardFrontOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardFrontByURL(dest, OCRPhoto, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardFrontByURL(OCRPhoto, "ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &IDCardFront{
+	assert.Equal(t, &ResultIDCardFrontOCR{
 		Name:        "张三",
 		ID:          "123456789012345678",
 		Addr:        "广东省广州市",
 		Gender:      "男",
 		Nationality: "汉",
-	}, dest)
+	}, result)
 }
 
 func TestOCRIDCardBack(t *testing.T) {
@@ -95,12 +95,14 @@ func TestOCRIDCardBack(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(IDCardBack)
+	result := new(ResultIDCardBackOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardBack(dest, OCRPhoto, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardBack(OCRPhoto, "../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "20070105-20270105", dest.ValidDate)
+	assert.Equal(t, &ResultIDCardBackOCR{
+		ValidDate: "20070105-20270105",
+	}, result)
 }
 
 func TestOCRIDCardBackByURL(t *testing.T) {
@@ -119,12 +121,14 @@ func TestOCRIDCardBackByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(IDCardBack)
+	result := new(ResultIDCardBackOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardBackByURL(dest, OCRPhoto, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRIDCardBackByURL(OCRPhoto, "ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "20070105-20270105", dest.ValidDate)
+	assert.Equal(t, &ResultIDCardBackOCR{
+		ValidDate: "20070105-20270105",
+	}, result)
 }
 
 func TestOCRBankCard(t *testing.T) {
@@ -142,12 +146,14 @@ func TestOCRBankCard(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(BankCard)
+	result := new(ResultBankCardOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBankCard(dest, OCRPhoto, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBankCard(OCRPhoto, "../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "622213XXXXXXXXX", dest.ID)
+	assert.Equal(t, &ResultBankCardOCR{
+		Number: "622213XXXXXXXXX",
+	}, result)
 }
 
 func TestOCRBankCardByURL(t *testing.T) {
@@ -165,12 +171,14 @@ func TestOCRBankCardByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(BankCard)
+	result := new(ResultBankCardOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBankCardByURL(dest, OCRPhoto, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBankCardByURL(OCRPhoto, "ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "622213XXXXXXXXX", dest.ID)
+	assert.Equal(t, &ResultBankCardOCR{
+		Number: "622213XXXXXXXXX",
+	}, result)
 }
 
 func TestOCRPlateNumber(t *testing.T) {
@@ -188,12 +196,14 @@ func TestOCRPlateNumber(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(PlateNumber)
+	result := new(ResultPlateNumberOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPlateNumber(dest, OCRPhoto, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPlateNumber(OCRPhoto, "../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "苏A123456", dest.ID)
+	assert.Equal(t, &ResultPlateNumberOCR{
+		Number: "苏A123456",
+	}, result)
 }
 
 func TestOCRPlateNumberByURL(t *testing.T) {
@@ -211,12 +221,14 @@ func TestOCRPlateNumberByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(PlateNumber)
+	result := new(ResultPlateNumberOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPlateNumberByURL(dest, OCRPhoto, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPlateNumberByURL(OCRPhoto, "ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "苏A123456", dest.ID)
+	assert.Equal(t, &ResultPlateNumberOCR{
+		Number: "苏A123456",
+	}, result)
 }
 
 func TestOCRDriverLicense(t *testing.T) {
@@ -244,12 +256,12 @@ func TestOCRDriverLicense(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(DriverLicense)
+	result := new(ResultDriverLicenseOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRDriverLicense(dest, OCRPhoto, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRDriverLicense(OCRPhoto, "../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &DriverLicense{
+	assert.Equal(t, &ResultDriverLicenseOCR{
 		IDNum:        "660601xxxxxxxx1234",
 		Name:         "张三",
 		Sex:          "男",
@@ -261,7 +273,7 @@ func TestOCRDriverLicense(t *testing.T) {
 		ValidFrom:    "2018-07-06",
 		ValidTo:      "2020-07-01",
 		OfficialSeal: "xx市公安局公安交通管理局",
-	}, dest)
+	}, result)
 }
 
 func TestOCRDriverLicenseByURL(t *testing.T) {
@@ -289,12 +301,12 @@ func TestOCRDriverLicenseByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(DriverLicense)
+	result := new(ResultDriverLicenseOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRDriverLicenseByURL(dest, OCRPhoto, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRDriverLicenseByURL(OCRPhoto, "ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &DriverLicense{
+	assert.Equal(t, &ResultDriverLicenseOCR{
 		IDNum:        "660601xxxxxxxx1234",
 		Name:         "张三",
 		Sex:          "男",
@@ -306,7 +318,7 @@ func TestOCRDriverLicenseByURL(t *testing.T) {
 		ValidFrom:    "2018-07-06",
 		ValidTo:      "2020-07-01",
 		OfficialSeal: "xx市公安局公安交通管理局",
-	}, dest)
+	}, result)
 }
 
 func TestOCRVehicleLicense(t *testing.T) {
@@ -325,22 +337,24 @@ func TestOCRVehicleLicense(t *testing.T) {
 		"engine_num": "J3xxxxx3",
 		"register_date": "2018-07-06",
 		"issue_date": "2018-07-01",
+		"plate_num": "粤xxxxx",
 		"plate_num_b": "粤xxxxx",
 		"record": "441xxxxxx3",
 		"passengers_num": "7人",
 		"total_quality": "2700kg",
-		"prepare_quality": "1995kg"
+		"prepare_quality": "1995kg",
+		"overall_size": "4582x1795x1458mm"
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(VehicleLicense)
+	result := new(ResultVehicleLicenseOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRVehicleLicense(dest, OCRPhoto, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRVehicleLicense(OCRPhoto, "../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &VehicleLicense{
+	assert.Equal(t, &ResultVehicleLicenseOCR{
 		VehicleType:    "小型普通客⻋",
 		Owner:          "东莞市xxxxx机械厂",
 		Addr:           "广东省东莞市xxxxx号",
@@ -350,12 +364,14 @@ func TestOCRVehicleLicense(t *testing.T) {
 		EngineNum:      "J3xxxxx3",
 		RegisterDate:   "2018-07-06",
 		IssueDate:      "2018-07-01",
+		PlateNum:       "粤xxxxx",
 		PlateNumB:      "粤xxxxx",
 		Record:         "441xxxxxx3",
 		PassengersNum:  "7人",
 		TotalQuality:   "2700kg",
 		PrepareQuality: "1995kg",
-	}, dest)
+		OverallSize:    "4582x1795x1458mm",
+	}, result)
 }
 
 func TestOCRVehicleLicenseByURL(t *testing.T) {
@@ -374,22 +390,24 @@ func TestOCRVehicleLicenseByURL(t *testing.T) {
 		"engine_num": "J3xxxxx3",
 		"register_date": "2018-07-06",
 		"issue_date": "2018-07-01",
+		"plate_num": "粤xxxxx",
 		"plate_num_b": "粤xxxxx",
 		"record": "441xxxxxx3",
 		"passengers_num": "7人",
 		"total_quality": "2700kg",
-		"prepare_quality": "1995kg"
+		"prepare_quality": "1995kg",
+		"overall_size": "4582x1795x1458mm"
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(VehicleLicense)
+	result := new(ResultVehicleLicenseOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRVehicleLicenseByURL(dest, OCRPhoto, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRVehicleLicenseByURL(OCRPhoto, "ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &VehicleLicense{
+	assert.Equal(t, &ResultVehicleLicenseOCR{
 		VehicleType:    "小型普通客⻋",
 		Owner:          "东莞市xxxxx机械厂",
 		Addr:           "广东省东莞市xxxxx号",
@@ -399,12 +417,14 @@ func TestOCRVehicleLicenseByURL(t *testing.T) {
 		EngineNum:      "J3xxxxx3",
 		RegisterDate:   "2018-07-06",
 		IssueDate:      "2018-07-01",
+		PlateNum:       "粤xxxxx",
 		PlateNumB:      "粤xxxxx",
 		Record:         "441xxxxxx3",
 		PassengersNum:  "7人",
 		TotalQuality:   "2700kg",
 		PrepareQuality: "1995kg",
-	}, dest)
+		OverallSize:    "4582x1795x1458mm",
+	}, result)
 }
 
 func TestOCRBusinessLicense(t *testing.T) {
@@ -457,12 +477,12 @@ func TestOCRBusinessLicense(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(BusinessLicense)
+	result := new(ResultBusinessLicenseOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBusinessLicense(dest, OCRPhoto, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBusinessLicense(OCRPhoto, "../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &BusinessLicense{
+	assert.Equal(t, &ResultBusinessLicenseOCR{
 		RegNum:              "123123",
 		Serial:              "123123",
 		LegalRepresentative: "张三",
@@ -499,7 +519,7 @@ func TestOCRBusinessLicense(t *testing.T) {
 			W: 966,
 			H: 728,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestOCRBusinessLicenseByURL(t *testing.T) {
@@ -552,12 +572,12 @@ func TestOCRBusinessLicenseByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(BusinessLicense)
+	result := new(ResultBusinessLicenseOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBusinessLicenseByURL(dest, OCRPhoto, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRBusinessLicenseByURL(OCRPhoto, "ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &BusinessLicense{
+	assert.Equal(t, &ResultBusinessLicenseOCR{
 		RegNum:              "123123",
 		Serial:              "123123",
 		LegalRepresentative: "张三",
@@ -594,7 +614,7 @@ func TestOCRBusinessLicenseByURL(t *testing.T) {
 			W: 966,
 			H: 728,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestOCRPrintedText(t *testing.T) {
@@ -659,13 +679,13 @@ func TestOCRPrintedText(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(PrintedText)
+	result := new(ResultCommOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedText(dest, OCRPhoto, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedText(OCRPhoto, "../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &PrintedText{
-		Items: []*PrintedTextItem{
+	assert.Equal(t, &ResultCommOCR{
+		Items: []*CommOCRItem{
 			{
 				Text: "腾讯",
 				Pos: ImagePosition{
@@ -713,7 +733,7 @@ func TestOCRPrintedText(t *testing.T) {
 			W: 1280,
 			H: 720,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestOCRPrintedTextByURL(t *testing.T) {
@@ -778,13 +798,13 @@ func TestOCRPrintedTextByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(PrintedText)
+	result := new(ResultCommOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedTextByURL(dest, OCRPhoto, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRCommByURL(OCRPhoto, "ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &PrintedText{
-		Items: []*PrintedTextItem{
+	assert.Equal(t, &ResultCommOCR{
+		Items: []*CommOCRItem{
 			{
 				Text: "腾讯",
 				Pos: ImagePosition{
@@ -832,5 +852,5 @@ func TestOCRPrintedTextByURL(t *testing.T) {
 			W: 1280,
 			H: 720,
 		},
-	}, dest)
+	}, result)
 }

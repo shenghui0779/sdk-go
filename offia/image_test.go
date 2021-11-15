@@ -43,12 +43,12 @@ func TestAICrop(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(AICropResult)
+	result := new(ResultAICrop)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICrop(dest, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICrop("../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &AICropResult{
+	assert.Equal(t, &ResultAICrop{
 		Results: []*CropPosition{
 			{
 				CropLeft:   112,
@@ -67,7 +67,7 @@ func TestAICrop(t *testing.T) {
 			W: 966,
 			H: 728,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestAICropByURL(t *testing.T) {
@@ -102,12 +102,12 @@ func TestAICropByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(AICropResult)
+	result := new(ResultAICrop)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICropByURL(dest, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICropByURL("ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &AICropResult{
+	assert.Equal(t, &ResultAICrop{
 		Results: []*CropPosition{
 			{
 				CropLeft:   112,
@@ -126,7 +126,7 @@ func TestAICropByURL(t *testing.T) {
 			W: 966,
 			H: 728,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestScanQRCode(t *testing.T) {
@@ -201,12 +201,12 @@ func TestScanQRCode(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(QRCodeScanResult)
+	result := new(ResultQRCodeScan)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCode(dest, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCode("../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &QRCodeScanResult{
+	assert.Equal(t, &ResultQRCodeScan{
 		CodeResults: []*QRCodeScanData{
 			{
 				TypeName: "QR_CODE",
@@ -301,7 +301,7 @@ func TestScanQRCode(t *testing.T) {
 			W: 1000,
 			H: 900,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestScanQRCodeByURL(t *testing.T) {
@@ -376,12 +376,12 @@ func TestScanQRCodeByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(QRCodeScanResult)
+	result := new(ResultQRCodeScan)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCodeByURL(dest, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCodeByURL("ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &QRCodeScanResult{
+	assert.Equal(t, &ResultQRCodeScan{
 		CodeResults: []*QRCodeScanData{
 			{
 				TypeName: "QR_CODE",
@@ -476,7 +476,7 @@ func TestScanQRCodeByURL(t *testing.T) {
 			W: 1000,
 			H: 900,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestSuperreSolution(t *testing.T) {
@@ -494,14 +494,14 @@ func TestSuperreSolution(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(SuperreSolutionResult)
+	result := new(ResultSuperreSolution)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolution(dest, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolution("../test/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &SuperreSolutionResult{
+	assert.Equal(t, &ResultSuperreSolution{
 		MediaID: "6WXsIXkG7lXuDLspD9xfm5dsvHzb0EFl0li6ySxi92ap8Vl3zZoD9DpOyNudeJGB",
-	}, dest)
+	}, result)
 }
 
 func TestSuperreSolutionByURL(t *testing.T) {
@@ -519,12 +519,12 @@ func TestSuperreSolutionByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(SuperreSolutionResult)
+	result := new(ResultSuperreSolution)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolutionByURL(dest, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolutionByURL("ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &SuperreSolutionResult{
+	assert.Equal(t, &ResultSuperreSolution{
 		MediaID: "6WXsIXkG7lXuDLspD9xfm5dsvHzb0EFl0li6ySxi92ap8Vl3zZoD9DpOyNudeJGB",
-	}, dest)
+	}, result)
 }

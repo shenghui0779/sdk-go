@@ -78,14 +78,14 @@ type JSSDKSign struct {
 	Timestamp int64  `json:"timestamp"`
 }
 
-// ResultJSSDKTicket 公众号 JS-SDK ticket
-type ResultJSSDKTicket struct {
+// ResultApiTicket 公众号 api ticket
+type ResultApiTicket struct {
 	Ticket    string `json:"ticket"`
 	ExpiresIn int64  `json:"expires_in"`
 }
 
-// GetJSSDKTicket 获取 JS-SDK ticket (注意：使用普通access_token)
-func GetJSSDKTicket(t TicketType, result *ResultJSSDKTicket) wx.Action {
+// GetApiTicket 获取 JS-SDK ticket (注意：使用普通access_token)
+func GetApiTicket(t TicketType, result *ResultApiTicket) wx.Action {
 	return wx.NewGetAction(urls.OffiaCgiBinTicket,
 		wx.WithQuery("type", string(t)),
 		wx.WithDecode(func(resp []byte) error {

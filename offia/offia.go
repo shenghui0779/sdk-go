@@ -252,12 +252,12 @@ func (oa *Offia) Reply(openid string, reply event.Reply) (*event.ReplyMessage, e
 }
 
 // JSSDKSign 生成 JS-SDK 签名
-func (oa *Offia) JSSDKSign(jsapiTicket, url string) *JSSDKSign {
+func (oa *Offia) JSSDKSign(ticket, url string) *JSSDKSign {
 	noncestr := oa.nonce(16)
 	now := time.Now().Unix()
 
 	h := sha1.New()
-	h.Write([]byte(fmt.Sprintf("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s", jsapiTicket, noncestr, now, url)))
+	h.Write([]byte(fmt.Sprintf("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s", ticket, noncestr, now, url)))
 
 	return &JSSDKSign{
 		Signature: hex.EncodeToString(h.Sum(nil)),

@@ -38,15 +38,15 @@ func GetIndustry(result *ResultIndustryGet) wx.Action {
 	)
 }
 
-type ParamsTemplateAdd struct {
+type ParamsTemplAdd struct {
 	TemplateIDShort string `json:"template_id_short"`
 }
 
-type ResultTemplateAdd struct {
+type ResultTemplAdd struct {
 	TemplateID string `json:"template_id"`
 }
 
-func AddTemplate(params *ParamsTemplateAdd, result *ResultTemplateAdd) wx.Action {
+func AddTemplate(params *ParamsTemplAdd, result *ResultTemplAdd) wx.Action {
 	return wx.NewPostAction(urls.OffiaTemplateAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -71,9 +71,9 @@ type ResultAllPrivateTemplate struct {
 	TemplateList []*TemplateInfo `json:"template_list"`
 }
 
-// GetAllPrivateTemplate 获取模板列表
+// GetAllPrivateTempl 获取模板列表
 func GetAllPrivateTemplate(result *ResultAllPrivateTemplate) wx.Action {
-	return wx.NewGetAction(urls.OffiaTemplateList,
+	return wx.NewGetAction(urls.OffiaGetAllPrivateTemplate,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
@@ -84,22 +84,26 @@ type ParamsPrivateTemplateDel struct {
 	TemplateID string `json:"template_id"`
 }
 
-// DelPrivateTemplate 删除模板
-func DelPrivateTemplate(params *ParamsPrivateTemplateDel) wx.Action {
-	return wx.NewPostAction(urls.OffiaTemplateDelete,
+// DelPrivateTempl 删除模板
+func DelPrivateTemplate(templID string) wx.Action {
+	params := &ParamsPrivateTemplateDel{
+		TemplateID: templID,
+	}
+
+	return wx.NewPostAction(urls.OffiaDelPrivateTemplate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
 	)
 }
 
-type MsgTemplateValue struct {
+type MsgTemplValue struct {
 	Value string `json:"value"`
 	Color string `json:"color,omitempty"`
 }
 
-// MsgTemplateData 消息模板内容
-type MsgTemplateData map[string]*MsgTemplateValue
+// MsgTemplData 消息模板内容
+type MsgTemplData map[string]*MsgTemplValue
 
 // MsgMinip 跳转小程序
 type MsgMinip struct {
@@ -107,13 +111,12 @@ type MsgMinip struct {
 	Pagepath string `json:"pagepath,omitempty"` // 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar），要求该小程序已发布，暂不支持小游戏
 }
 
-// TemplateMsg 公众号模板消息
 type ParamsTemplateMsg struct {
-	ToUser     string          `json:"touser"`                // 接收者openid
-	TemplateID string          `json:"template_id"`           // 模板ID
-	URL        string          `json:"url,omitempty"`         // 模板跳转链接（海外帐号没有跳转能力）
-	Minip      *MsgMinip       `json:"miniprogram,omitempty"` // 跳小程序所需数据，不需跳小程序可不用传该数据
-	Data       MsgTemplateData `json:"data"`                  // 模板内容，格式形如：{"key1":{"value":"V","color":"#"},"key2":{"value": "V","color":"#"}}
+	ToUser     string       `json:"touser"`                // 接收者openid
+	TemplateID string       `json:"template_id"`           // 模板ID
+	URL        string       `json:"url,omitempty"`         // 模板跳转链接（海外帐号没有跳转能力）
+	Minip      *MsgMinip    `json:"miniprogram,omitempty"` // 跳小程序所需数据，不需跳小程序可不用传该数据
+	Data       MsgTemplData `json:"data"`                  // 模板内容，格式形如：{"key1":{"value":"V","color":"#"},"key2":{"value": "V","color":"#"}}
 }
 
 // SendTemplateMsg 发送模板消息
@@ -126,18 +129,18 @@ func SendTemplateMsg(params *ParamsTemplateMsg) wx.Action {
 }
 
 type ParamsTemplateMsgSubscribe struct {
-	ToUser     string          `json:"touser"`                // 接收者openid
-	Scene      string          `json:"scene"`                 // 订阅场景值
-	Title      string          `json:"title"`                 // 消息标题，15字以内
-	TemplateID string          `json:"template_id"`           // 模板ID
-	URL        string          `json:"url,omitempty"`         // 点击消息跳转的链接，需要有ICP备案
-	Minip      *MsgMinip       `json:"miniprogram,omitempty"` // 跳小程序所需数据，不需跳小程序可不用传该数据
-	Data       MsgTemplateData `json:"data"`                  // 消息正文，value为消息内容文本（200字以内），没有固定格式，可用\n换行，color为整段消息内容的字体颜色（目前仅支持整段消息为一种颜色）
+	ToUser     string       `json:"touser"`                // 接收者openid
+	Scene      string       `json:"scene"`                 // 订阅场景值
+	Title      string       `json:"title"`                 // 消息标题，15字以内
+	TemplateID string       `json:"template_id"`           // 模板ID
+	URL        string       `json:"url,omitempty"`         // 点击消息跳转的链接，需要有ICP备案
+	Minip      *MsgMinip    `json:"miniprogram,omitempty"` // 跳小程序所需数据，不需跳小程序可不用传该数据
+	Data       MsgTemplData `json:"data"`                  // 消息正文，value为消息内容文本（200字以内），没有固定格式，可用\n换行，color为整段消息内容的字体颜色（目前仅支持整段消息为一种颜色）
 }
 
-// SubscribeTemplateMsg 推送订阅模板消息给到授权微信用户
-func SubscribeTemplateMsg(params *ParamsTemplateMsgSubscribe) wx.Action {
-	return wx.NewPostAction(urls.OffiaSubscribeMsgSend,
+// SendSubscribeTemplateMsg 推送订阅模板消息给到授权微信用户
+func SendSubscribeTemplateMsg(params *ParamsTemplateMsgSubscribe) wx.Action {
+	return wx.NewPostAction(urls.OffiaSubscribeTemplateMsgSend,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

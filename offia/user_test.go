@@ -10,7 +10,7 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-func TestGetSubscriberInfo(t *testing.T) {
+func TestGetUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -39,12 +39,15 @@ func TestGetSubscriberInfo(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(SubscriberInfo)
+	params := &ParamsUserGet{
+		OpenID: "OPENID",
+	}
+	result := new(UserInfo)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetSubscriberInfo(dest, "OPENID"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUser(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &SubscriberInfo{
+	assert.Equal(t, &UserInfo{
 		Subscribe:      1,
 		OpenID:         "o6_bmjrPTlm6_2sgVt7hMZOPfL2M",
 		NickName:       "Band",
@@ -59,13 +62,13 @@ func TestGetSubscriberInfo(t *testing.T) {
 		Remark:         "",
 		GroupID:        0,
 		TagidList:      []int64{128, 2},
-		SubscribeScene: SceneQRCode,
+		SubscribeScene: AddSceneQRCode,
 		QRScene:        98765,
 		QRSceneStr:     "",
-	}, dest)
+	}, result)
 }
 
-func TestBatchGetSubscriberInfo(t *testing.T) {
+func TestBatchGetUserInfo(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -102,12 +105,22 @@ func TestBatchGetSubscriberInfo(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]*SubscriberInfo, 0)
+	params := &ParamsUserBatchGet{
+		UserList: []*ParamsUserGet{
+			{
+				OpenID: "otvxTs4dckWG7imySrJd6jSi0CWE",
+			},
+			{
+				OpenID: "otvxTs_JZ6SEiP0imdhpi50fuSZg",
+			},
+		},
+	}
+	result := new(ResultUserBatchGet)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetSubscribers(&dest, "otvxTs4dckWG7imySrJd6jSi0CWE", "otvxTs_JZ6SEiP0imdhpi50fuSZg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetUser(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []*SubscriberInfo{
+	assert.Equal(t, []*UserInfo{
 		{
 			Subscribe:      1,
 			OpenID:         "otvxTs4dckWG7imySrJd6jSi0CWE",
@@ -123,7 +136,7 @@ func TestBatchGetSubscriberInfo(t *testing.T) {
 			Remark:         "",
 			GroupID:        0,
 			TagidList:      []int64{128, 2},
-			SubscribeScene: SceneQRCode,
+			SubscribeScene: AddSceneQRCode,
 			QRScene:        98765,
 			QRSceneStr:     "",
 		},
@@ -131,10 +144,10 @@ func TestBatchGetSubscriberInfo(t *testing.T) {
 			Subscribe: 0,
 			OpenID:    "otvxTs_JZ6SEiP0imdhpi50fuSZg",
 		},
-	}, dest)
+	}, result)
 }
 
-func TestGetSubscriberList(t *testing.T) {
+func TestGetUserList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -152,19 +165,19 @@ func TestGetSubscriberList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(SubscriberList)
+	result := new(ResultUserList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetSubscriberList(dest, "NEXT_OPENID"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUserList("NEXT_OPENID", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &SubscriberList{
+	assert.Equal(t, &ResultUserList{
 		Total: 2,
 		Count: 2,
-		Data: SubscriberListData{
+		Data: UserListData{
 			OpenID: []string{"OPENID1", "OPENID2"},
 		},
 		NextOpenID: "NEXT_OPENID",
-	}, dest)
+	}, result)
 }
 
 func TestGetBlackList(t *testing.T) {
@@ -189,22 +202,22 @@ func TestGetBlackList(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(SubscriberList)
+	result := new(ResultBlackList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetBlackList(dest, "OPENID1"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetBlackList("OPENID1", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &SubscriberList{
+	assert.Equal(t, &ResultBlackList{
 		Total: 3,
 		Count: 3,
-		Data: SubscriberListData{
+		Data: UserListData{
 			OpenID: []string{"OPENID1", "OPENID2", "OPENID10000"},
 		},
 		NextOpenID: "OPENID10000",
-	}, dest)
+	}, result)
 }
 
-func TestBlackSubscribers(t *testing.T) {
+func TestBlackUsers(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -215,12 +228,12 @@ func TestBlackSubscribers(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BlackSubscribers("OPENID1", "OPENID2"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BlackUsers("OPENID1", "OPENID2"))
 
 	assert.Nil(t, err)
 }
 
-func TestUnBlackSubscribers(t *testing.T) {
+func TestUnBlackUsers(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -231,7 +244,7 @@ func TestUnBlackSubscribers(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UnBlackSubscribers("OPENID1", "OPENID2"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UnBlackUsers("OPENID1", "OPENID2"))
 
 	assert.Nil(t, err)
 }

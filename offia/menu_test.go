@@ -21,12 +21,18 @@ func TestCreateMenu(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	action := CreateMenu(
-		ClickButton("今日歌曲", "V1001_TODAY_MUSIC"),
-		GroupButton("菜单", ViewButton("搜索", "http://www.soso.com/"), MinipButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"), ClickButton("赞一下我们", "V1001_GOOD")),
-	)
+	params := &ParamsMenuCreate{
+		Button: []*MenuButton{
+			ClickButton("今日歌曲", "V1001_TODAY_MUSIC"),
+			GroupButton("菜单",
+				ViewButton("搜索", "http://www.soso.com/"),
+				MinipButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"),
+				ClickButton("赞一下我们", "V1001_GOOD"),
+			),
+		},
+	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", action)
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateMenu(params))
 
 	assert.Nil(t, err)
 }
@@ -42,22 +48,22 @@ func TestCreateConditionalMenu(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	matchRule := &MenuMatchRule{
-		TagID:              "2",
-		Sex:                "1",
-		Country:            "中国",
-		Province:           "广东",
-		City:               "广州",
-		ClientPlatformType: "2",
-		Language:           "zh_CN",
+	params := &ParamsConditionalMenuCreate{
+		Button: []*MenuButton{
+			ClickButton("今日歌曲", "V1001_TODAY_MUSIC"),
+			GroupButton("菜单",
+				ViewButton("搜索", "http://www.soso.com/"),
+				MinipButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"),
+				ClickButton("赞一下我们", "V1001_GOOD"),
+			),
+		},
+		MatchRule: MenuMatchRule{
+			TagID:              "2",
+			ClientPlatformType: "2",
+		},
 	}
 
-	action := CreateConditionalMenu(matchRule,
-		ClickButton("今日歌曲", "V1001_TODAY_MUSIC"),
-		GroupButton("菜单", ViewButton("搜索", "http://www.soso.com/"), MinipButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"), ClickButton("赞一下我们", "V1001_GOOD")),
-	)
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", action)
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateConditionalMenu(params))
 
 	assert.Nil(t, err)
 }
@@ -82,9 +88,9 @@ func TestTryMatchMenu(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := make([]*MenuButton, 0)
+	result := new(ResultMenuMatch)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", TryMatchMenu(&dest, "weixin"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", TryMatchMenu("weixin", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, []*MenuButton{
@@ -94,7 +100,7 @@ func TestTryMatchMenu(t *testing.T) {
 			URL:       "http://www.qq.com/",
 			SubButton: []*MenuButton{},
 		},
-	}, dest)
+	}, result)
 }
 
 func TestGetMenu(t *testing.T) {
@@ -150,10 +156,6 @@ func TestGetMenu(t *testing.T) {
 				],
 				"matchrule": {
 					"tag_id": "2",
-					"sex": "1",
-					"country": "中国",
-					"province": "广东",
-					"city": "广州",
 					"client_platform_type": "2"
 				},
 				"menuid": 208396993
@@ -164,12 +166,12 @@ func TestGetMenu(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
 
-	dest := new(MenuInfo)
+	result := new(ResultMenuGet)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetMenu(dest))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetMenu(result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &MenuInfo{
+	assert.Equal(t, &ResultMenuGet{
 		Menu: Menu{
 			Button: []*MenuButton{
 				{
@@ -220,17 +222,12 @@ func TestGetMenu(t *testing.T) {
 				},
 				MatchRule: MenuMatchRule{
 					TagID:              "2",
-					Sex:                "1",
-					Country:            "中国",
-					Province:           "广东",
-					City:               "广州",
 					ClientPlatformType: "2",
-					Language:           "",
 				},
 				MenuID: 208396993,
 			},
 		},
-	}, dest)
+	}, result)
 }
 
 func TestDeleteMenu(t *testing.T) {
