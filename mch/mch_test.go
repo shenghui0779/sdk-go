@@ -11,14 +11,8 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-func TestLoadCertFromPemBlock(t *testing.T) {
-	_, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", wx.WithCertPEMBlock(certBlock, keyBlock))
-
-	assert.Nil(t, err)
-}
-
-func TestAccount(t *testing.T) {
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+func TestNew(t *testing.T) {
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -112,7 +106,7 @@ func TestDownloadBill(t *testing.T) {
 总交易单数,总交易额,总退款金额,总代金券或立减优惠退款金额,手续费总金额
 2,0.02,0.0,0.0,0`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -151,7 +145,7 @@ func TestDownloadFundFlow(t *testing.T) {
 总交易单数,总交易额,总退款金额,总代金券或立减优惠退款金额,手续费总金额
 2,0.02,0.0,0.0,0`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -191,7 +185,7 @@ func TestBatchQueryComment(t *testing.T) {
 2017-07-01 11:00:05,1001690740201411100005734278,5,不错，支付渠道很方便
 2017-07-01 11:30:05,1001690740201411100005734250,4,东西还算符合预期`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -211,7 +205,7 @@ func TestBatchQueryComment(t *testing.T) {
 }
 
 func TestSignWithMD5(t *testing.T) {
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -229,7 +223,7 @@ func TestSignWithMD5(t *testing.T) {
 }
 
 func TestSignWithHMacSHA256(t *testing.T) {
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -247,7 +241,7 @@ func TestSignWithHMacSHA256(t *testing.T) {
 }
 
 func TestVerifyWXMLResult(t *testing.T) {
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -267,7 +261,7 @@ func TestVerifyWXMLResult(t *testing.T) {
 }
 
 func TestDecryptWithAES256ECB(t *testing.T) {
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -292,71 +286,12 @@ func TestDecryptWithAES256ECB(t *testing.T) {
 }
 
 var (
-	// tls certificate
-	certBlock []byte
-	keyBlock  []byte
 	// rsa key
 	privateKey []byte
 	publicKey  []byte
 )
 
 func TestMain(m *testing.M) {
-	certBlock = []byte(`-----BEGIN CERTIFICATE-----
-MIIEazCCA9SgAwIBAgIDHEZcMA0GCSqGSIb3DQEBBQUAMIGKMQswCQYDVQQGEwJD
-TjESMBAGA1UECBMJR3Vhbmdkb25nMREwDwYDVQQHEwhTaGVuemhlbjEQMA4GA1UE
-ChMHVGVuY2VudDEMMAoGA1UECxMDV1hHMRMwEQYDVQQDEwpNbXBheW1jaENBMR8w
-HQYJKoZIhvcNAQkBFhBtbXBheW1jaEB0ZW5jZW50MB4XDTE2MDMyNTEwMjAwMloX
-DTI2MDMyMzEwMjAwMlowgZsxCzAJBgNVBAYTAkNOMRIwEAYDVQQIEwlHdWFuZ2Rv
-bmcxETAPBgNVBAcTCFNoZW56aGVuMRAwDgYDVQQKEwdUZW5jZW50MQ4wDAYDVQQL
-EwVNTVBheTEwMC4GA1UEAxQn5Y2X5Lqs6JOd6bK45Lq6572R57uc56eR5oqA5pyJ
-6ZmQ5YWs5Y+4MREwDwYDVQQEEwgxMTQ1OTgyNTCCASIwDQYJKoZIhvcNAQEBBQAD
-ggEPADCCAQoCggEBALROHwnq98ftW1tsfi1ymsav+bAa2/Wq6oNuPXNCuHRwcpXB
-KCQa5iThh64Ud9UnO87fzZ2WHD9sacXAtbdh5m9IfYMXGIQMzHIkTyix94paFO6v
-wFJFkEJlwKJyg3AymXTDB/cNWXhZL/idz+ymy0wnuGuW1IVt0fa6eVQK1E7WNDi6
-dEG0GEX1NnxeEEoP6Pa+XGT3g+zgI5G0diRTTlDKiJhKgl+589JE6AFe6JqiVdIc
-5bzoaSzWdCkD7JfwvmRggbXRSsAQ2QMouqaeIMpwr5axkvEybleu2+mReqVB5pwE
-0+TwF56fbiAZCkc9y16qxleDRHsw3krGU/qb0wECAwEAAaOCAUYwggFCMAkGA1Ud
-EwQCMAAwLAYJYIZIAYb4QgENBB8WHSJDRVMtQ0EgR2VuZXJhdGUgQ2VydGlmaWNh
-dGUiMB0GA1UdDgQWBBRuLat+HKTimCUM74piXoMKLWPRTDCBvwYDVR0jBIG3MIG0
-gBQ+BSb2ImK0FVuIzWR+sNRip+WGdKGBkKSBjTCBijELMAkGA1UEBhMCQ04xEjAQ
-BgNVBAgTCUd1YW5nZG9uZzERMA8GA1UEBxMIU2hlbnpoZW4xEDAOBgNVBAoTB1Rl
-bmNlbnQxDDAKBgNVBAsTA1dYRzETMBEGA1UEAxMKTW1wYXltY2hDQTEfMB0GCSqG
-SIb3DQEJARYQbW1wYXltY2hAdGVuY2VudIIJALtUlyu8AOhXMA4GA1UdDwEB/wQE
-AwIGwDAWBgNVHSUBAf8EDDAKBggrBgEFBQcDAjANBgkqhkiG9w0BAQUFAAOBgQB8
-JjIjIbrLTsKeyhtUwosT26vAQlyIdZVKaX7iHmt6HKjZKpi6qziIMFYWj/K2AutE
-WGYW0ex09v5KORVBi4ahyJnDFyPC6k/5Dhe++4y4SPxJ/2EI7b0mpPxAF16VePt+
-2RhogAbMS+gv7ecrPv/H1jU+lvZR3ygxHnaG3BP3PA==
------END CERTIFICATE-----`)
-
-	keyBlock = []byte(`-----BEGIN PRIVATE KEY-----
-MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC0Th8J6vfH7Vtb
-bH4tcprGr/mwGtv1quqDbj1zQrh0cHKVwSgkGuYk4YeuFHfVJzvO382dlhw/bGnF
-wLW3YeZvSH2DFxiEDMxyJE8osfeKWhTur8BSRZBCZcCicoNwMpl0wwf3DVl4WS/4
-nc/spstMJ7hrltSFbdH2unlUCtRO1jQ4unRBtBhF9TZ8XhBKD+j2vlxk94Ps4COR
-tHYkU05QyoiYSoJfufPSROgBXuiaolXSHOW86Gks1nQpA+yX8L5kYIG10UrAENkD
-KLqmniDKcK+WsZLxMm5XrtvpkXqlQeacBNPk8Been24gGQpHPcteqsZXg0R7MN5K
-xlP6m9MBAgMBAAECggEBAKacyfHQPsdwfkstJiu5C20uj/w71aZeGfb5l686qFhw
-0HGx2/YBJUpPXaFvKIy/hHTWOpq0a8Xv2I30VfbvcJDE27aXUQA1E3cmNj/UtHoU
-Y+NsZLuhrHyuqiNyziKPn15WGrYgj9y2Da4fplN4jcQBsFk7N4dUxADKr/MJTsbJ
-ewkre7WLHaooylpB0ILi9W1cBsjG+z4xNaJcgye/2GlxWjRI2EUqXzSPXRpT0F2M
-pzg5s8JyPYXxKDktMBvyKLejFz61ULRYER0wC3/1Xpx5yWkDL1VbGvfRHEctFf4k
-ISAE6MFwlnKfBuW9PvEvo1xy7XgK7PClPI1LxXXgokECgYEA6/QwSpjqwxZ2WFRH
-IuFRYlTdfIgLuQ2nXKETNEfiYurK8WSD8hhSIf7YI6woUFaDk4a+ID5VONI48UwR
-MenYiKop6SgO3DQiOr3WzLX/n3/nGp5WCwYRlhZ8luuF2ro3vXwb7cBjz0Q/IbN6
-cAhrQWuFOgpj9/oM5Q7v2nkQNA8CgYEAw5+d9ZNig20EOcopAhXxn4VUg3Pkido7
-VMGdPlN3er8Ib3n34mWPTNvz9ouFRvZrb/YlTGAuaYn3NBd/XyF4khNxLEMJc5QU
-M1EmvciTSJraUE7x/AMpkX7lfGsaCwFRC6+KtqLIpc/EoRVrhJvTvLFg49e9Ripa
-58XqAnX0N+8CgYEAtbrBZvMX/WHTjHx8vZSkxgNvA3cU8FZfzKwSynWDG4STAhDU
-vyWUPLK3beIuupGnjXx9+v+HS9g+GzrnE3Z0W+4TkYxUxa0xn+SPB+Q1GXe9W3cP
-9jWaXeq70tFbqvc57ysjp55CQWTi6uX9K0SQtzZEyksua9OfEtzKR45uuGkCgYBu
-9j0tLRq2HcJF3WwBaN0TdReJMNWzc/wviVteHQ4qq+1m/jIjUyRDnof1kxJYPDKY
-4XAqsGvjJYT5IVL4bQ3tHeYWCzhzPM1whlmJURpqFpw67WzJXCnaA7a8KiwtjeOg
-00PFcPSLSRzpmjLQl2s1HxAsbRVJlYDW8yZXmvyaNQKBgHEPplp8BNBN3mKPeZ4m
-+ruMNs7DbFCA0b+QADEqSabD2xH25lf3LdB/xB0+CJZlBE6sxBbOE/FKkIST8ZUq
-TeF56obd7Ld7cYJEkNoqjyk8fH5ZLtT3AXlgIPc1zCmB9IhFFaUVsqqaAWfoBwA4
-fyBMdIgBndcj4ZDklE0z68SP
------END PRIVATE KEY-----`)
-
 	privateKey = []byte(`-----BEGIN RSA PRIVATE KEY-----
 MIIEogIBAAKCAQEAl1c+37GJSFSqbuHJ/wgeLzxLp7C2GYrjzVAnEF3xgjJVTltk
 Qzdu3u+fcB3c/dgHX/Zdv5fqVoOqvoOMk4N4zdGeaxN+Cm19c1gsxigNJDtm6Qno

@@ -5,7 +5,6 @@ import (
 	"crypto/hmac"
 	"crypto/md5"
 	"crypto/sha256"
-	"crypto/tls"
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
@@ -33,17 +32,11 @@ type Mch struct {
 }
 
 // New returns new wechat pay
-func New(appid, mchid, apikey string, options ...wx.MchCertOption) (*Mch, error) {
-	certs := make([]tls.Certificate, 0, len(options))
+func New(appid, mchid, apikey, p12cert string) (*Mch, error) {
+	cert, err := wx.P12FileToCert(p12cert, mchid)
 
-	for _, f := range options {
-		cert, err := f(mchid)
-
-		if err != nil {
-			return nil, err
-		}
-
-		certs = append(certs, cert)
+	if err != nil {
+		return nil, err
 	}
 
 	return &Mch{
@@ -54,7 +47,7 @@ func New(appid, mchid, apikey string, options ...wx.MchCertOption) (*Mch, error)
 			return wx.Nonce(16)
 		},
 		client: wx.NewDefaultClient(),
-		tlscli: wx.NewDefaultClient(certs...),
+		tlscli: wx.NewDefaultClient(cert),
 	}, nil
 }
 

@@ -40,7 +40,7 @@ func TestAPPEntrust(t *testing.T) {
 	<pre_entrustweb_id>5778aadY9nltAsZzXixCkFIGYnV2V</pre_entrustweb_id>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -79,7 +79,7 @@ func TestOAEntrust(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -108,7 +108,7 @@ func TestMPEntrust(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -148,7 +148,7 @@ func TestH5Entrust(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -215,7 +215,7 @@ func TestEntrustByOrder(t *testing.T) {
 	<out_trade_no>123456</out_trade_no>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -290,7 +290,7 @@ func TestQueryContractByID(t *testing.T) {
 	<sign>35B3B9261A6A4E75BFB560FE0D6EA8CE</sign>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -358,7 +358,7 @@ func TestQueryContractByCode(t *testing.T) {
 	<sign>35B3B9261A6A4E75BFB560FE0D6EA8CE</sign>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -422,7 +422,7 @@ func TestPappayApply(t *testing.T) {
 	<result_code>SUCCESS</result_code>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -476,7 +476,7 @@ func TestDeleteContractByID(t *testing.T) {
 	<sign>D1F898877B9FC523A6F2FC993BE5B78F</sign>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -523,7 +523,7 @@ func TestDeleteContractByCode(t *testing.T) {
 	<sign>D1F898877B9FC523A6F2FC993BE5B78F</sign>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -581,7 +581,7 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 	<sign>9C2A03FD2D080D1B9618946C73C7608D</sign>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -652,7 +652,7 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 	<sign>9C2A03FD2D080D1B9618946C73C7608D</sign>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 

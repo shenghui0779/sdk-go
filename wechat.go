@@ -6,12 +6,11 @@ import (
 	"github.com/shenghui0779/gochat/minip"
 	"github.com/shenghui0779/gochat/offia"
 	"github.com/shenghui0779/gochat/oplatform"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 // NewMch 微信商户
-func NewMch(appid, mchid, apikey string, options ...wx.MchCertOption) (*mch.Mch, error) {
-	return mch.New(appid, mchid, apikey, options...)
+func NewMch(appid, mchid, apikey, p12cert string) (*mch.Mch, error) {
+	return mch.New(appid, mchid, apikey, p12cert)
 }
 
 // NewOffia 微信公众号

@@ -40,7 +40,7 @@ func TestTransferToBalance(t *testing.T) {
 	<payment_time>2015-05-19 15:26:59</payment_time>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -101,7 +101,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 	<desc>福利测试</desc>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -218,7 +218,7 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 	<reason>福利测试</reason>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -273,7 +273,7 @@ DQIDAQAB
 -----END PUBLIC KEY-----</pub_key>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 

@@ -9,60 +9,26 @@ import (
 	"golang.org/x/crypto/pkcs12"
 )
 
-// MchCertOption 证书选项
-type MchCertOption func(mchid string) (tls.Certificate, error)
+func P12FileToCert(path, password string) (tls.Certificate, error) {
+	fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
 
-// WithCertP12File 通过p12(pfx)证书文件加载证书
-func WithCertP12File(path string) MchCertOption {
-	return func(mchid string) (tls.Certificate, error) {
-		fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
+	certPath, err := filepath.Abs(filepath.Clean(path))
 
-		certPath, err := filepath.Abs(filepath.Clean(path))
-
-		if err != nil {
-			return fail(err)
-		}
-
-		p12, err := ioutil.ReadFile(certPath)
-
-		if err != nil {
-			return fail(err)
-		}
-
-		return pkcs12ToCert(mchid, p12)
+	if err != nil {
+		return fail(err)
 	}
+
+	p12, err := ioutil.ReadFile(certPath)
+
+	if err != nil {
+		return fail(err)
+	}
+
+	return pkcs12ToPem(p12, password)
 }
 
-// WithCertPEMBlock 通过pem证书文本内容加载证书
-func WithCertPEMBlock(certBlock, keyBlock []byte) MchCertOption {
-	return func(mchid string) (tls.Certificate, error) {
-		return tls.X509KeyPair(certBlock, keyBlock)
-	}
-}
-
-// WithCertPEMFile 通过pem证书文件加载证书
-func WithCertPEMFile(certFile, keyFile string) MchCertOption {
-	return func(mchid string) (tls.Certificate, error) {
-		fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
-
-		certPath, err := filepath.Abs(filepath.Clean(certFile))
-
-		if err != nil {
-			return fail(err)
-		}
-
-		keyPath, err := filepath.Abs(filepath.Clean(keyFile))
-
-		if err != nil {
-			return fail(err)
-		}
-
-		return tls.LoadX509KeyPair(certPath, keyPath)
-	}
-}
-
-func pkcs12ToCert(mchid string, p12 []byte) (tls.Certificate, error) {
-	blocks, err := pkcs12.ToPEM(p12, mchid)
+func pkcs12ToPem(p12 []byte, password string) (tls.Certificate, error) {
+	blocks, err := pkcs12.ToPEM(p12, password)
 
 	if err != nil {
 		return tls.Certificate{}, err

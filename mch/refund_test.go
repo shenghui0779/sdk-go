@@ -41,7 +41,7 @@ func TestRefundByTransactionID(t *testing.T) {
 	<refund_fee>1</refund_fee>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -105,7 +105,7 @@ func TestRefundByOutTradeNO(t *testing.T) {
 	<refund_fee>1</refund_fee>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -168,7 +168,7 @@ func TestQueryRefundByRefundID(t *testing.T) {
 	<transaction_id>1008450740201411110005820873</transaction_id>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -229,7 +229,7 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 	<transaction_id>1008450740201411110005820873</transaction_id>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -290,7 +290,7 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 	<transaction_id>1008450740201411110005820873</transaction_id>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -351,7 +351,7 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 	<transaction_id>1008450740201411110005820873</transaction_id>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 

@@ -42,7 +42,7 @@ func TestUnifyOrder(t *testing.T) {
 	<trade_type>APP</trade_type>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -111,7 +111,7 @@ func TestQueryOrderByTransactionID(t *testing.T) {
 	<trade_state>SUCCESS</trade_state>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -182,7 +182,7 @@ func TestQueryOrderByOutTradeNO(t *testing.T) {
 	<trade_state>SUCCESS</trade_state>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -242,7 +242,7 @@ func TestCloseOrder(t *testing.T) {
 	<result_msg>OK</result_msg>
 </xml>`), nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
 
 	assert.Nil(t, err)
 
