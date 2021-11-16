@@ -12,20 +12,7 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type LinkedcorpPermList struct {
-	UserIDs       []string `json:"userids"`
-	DepartmentIDs []string `json:"department_ids"`
-}
-
-func GetLinkedcorpPermList(dest *LinkedcorpPermList) wx.Action {
-	return wx.NewPostAction(urls.CorpLinkedcorpPermList,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
-		}),
-	)
-}
-
-type LinkedcorpUser struct {
+type UserInfo struct {
 	UserID     string          `json:"userid"`
 	Name       string          `json:"name"`
 	Department []string        `json:"department"`
@@ -37,7 +24,7 @@ type LinkedcorpUser struct {
 	ExtAttr    *common.ExtAttr `json:"extattr"`
 }
 
-func GetLinkedcorpUser(dest *LinkedcorpUser, corpID, userID string) wx.Action {
+func GetUser(dest *UserInfo, corpID, userID string) wx.Action {
 	return wx.NewPostAction(urls.CorpLinkedcorpUserGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
@@ -50,7 +37,7 @@ func GetLinkedcorpUser(dest *LinkedcorpUser, corpID, userID string) wx.Action {
 	)
 }
 
-func GetLinkedcorpUserSimpleList(dest *[]*LinkedcorpUser, linkedID, departmentID string, fetchChild bool) wx.Action {
+func GetUserSimpleList(dest *[]*UserInfo, linkedID, departmentID string, fetchChild bool) wx.Action {
 	child := 0
 
 	if fetchChild {
@@ -70,7 +57,7 @@ func GetLinkedcorpUserSimpleList(dest *[]*LinkedcorpUser, linkedID, departmentID
 	)
 }
 
-func GetLinkedcorpUserList(dest *[]*LinkedcorpUser, linkedID, departmentID string, fetchChild bool) wx.Action {
+func GetUserList(dest *[]*UserInfo, linkedID, departmentID string, fetchChild bool) wx.Action {
 	child := 0
 
 	if fetchChild {
@@ -86,26 +73,6 @@ func GetLinkedcorpUserList(dest *[]*LinkedcorpUser, linkedID, departmentID strin
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "userlist").Raw), dest)
-		}),
-	)
-}
-
-type LinkedcorpDepartment struct {
-	DepartmentID   string `json:"department_id"`
-	DepartmentName string `json:"department_name"`
-	ParentID       string `json:"parentid"`
-	Order          int    `json:"order"`
-}
-
-func GetLinkedcorpDeparmentList(dest *[]*LinkedcorpDepartment, linkedID, departmentID string) wx.Action {
-	return wx.NewPostAction(urls.CorpLinkedcorpDepartmentList,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"department_id": fmt.Sprintf("%s/%s", linkedID, departmentID),
-			})
-		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "department_list").Raw), dest)
 		}),
 	)
 }
