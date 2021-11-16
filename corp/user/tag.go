@@ -1,4 +1,4 @@
-package addr_book
+package user
 
 import (
 	"encoding/json"
@@ -17,7 +17,7 @@ type Tag struct {
 
 // CreateTag 创建标签
 func CreateTag(data *Tag) wx.Action {
-	return wx.NewPostAction(urls.CorpAddrBookTagCreate,
+	return wx.NewPostAction(urls.CorpTagCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -30,7 +30,7 @@ func CreateTag(data *Tag) wx.Action {
 }
 
 func UpdateTag(data *Tag) wx.Action {
-	return wx.NewPostAction(urls.CorpAddrBookTagUpdate,
+	return wx.NewPostAction(urls.CorpTagUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
@@ -38,7 +38,7 @@ func UpdateTag(data *Tag) wx.Action {
 }
 
 func DeleteTag(tagID int64) wx.Action {
-	return wx.NewGetAction(urls.CorpAddrBookTagDelete,
+	return wx.NewGetAction(urls.CorpTagDelete,
 		wx.WithQuery("tagid", strconv.FormatInt(tagID, 10)),
 	)
 }
@@ -55,7 +55,7 @@ type TagSpec struct {
 }
 
 func GetTag(dest *TagSpec, tagID int64) wx.Action {
-	return wx.NewGetAction(urls.CorpAddrBookTagGet,
+	return wx.NewGetAction(urls.CorpTagGet,
 		wx.WithQuery("tagid", strconv.FormatInt(tagID, 10)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)
@@ -64,7 +64,7 @@ func GetTag(dest *TagSpec, tagID int64) wx.Action {
 }
 
 func GetTagList(dest *[]*Tag) wx.Action {
-	return wx.NewGetAction(urls.CorpAddrBookTagList,
+	return wx.NewGetAction(urls.CorpTagList,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal([]byte(gjson.GetBytes(resp, "taglist").Raw), dest)
 		}),

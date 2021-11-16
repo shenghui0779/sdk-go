@@ -1,4 +1,4 @@
-package addr_book
+package linkedcorp
 
 import (
 	"encoding/json"

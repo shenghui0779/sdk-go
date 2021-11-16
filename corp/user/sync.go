@@ -1,4 +1,4 @@
-package addr_book
+package user
 
 import (
 	"encoding/json"
@@ -34,7 +34,7 @@ type BatchSyncJob struct {
 }
 
 func BatchSyncUser(dest *BatchSyncJob, params *ParamsBatchSync) wx.Action {
-	return wx.NewPostAction(urls.CorpAddrBookBatchSyncUser,
+	return wx.NewPostAction(urls.CorpBatchSyncUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -47,7 +47,7 @@ func BatchSyncUser(dest *BatchSyncJob, params *ParamsBatchSync) wx.Action {
 }
 
 func BatchReplaceUser(dest *BatchSyncJob, params *ParamsBatchSync) wx.Action {
-	return wx.NewPostAction(urls.CorpAddrBookBatchReplaceUser,
+	return wx.NewPostAction(urls.CorpBatchReplaceUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -60,7 +60,7 @@ func BatchReplaceUser(dest *BatchSyncJob, params *ParamsBatchSync) wx.Action {
 }
 
 func BatchReplaceParty(dest *BatchSyncJob, params *ParamsBatchSync) wx.Action {
-	return wx.NewPostAction(urls.CorpAddrBookBatchReplaceParty,
+	return wx.NewPostAction(urls.CorpBatchReplaceParty,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -87,7 +87,7 @@ type SyncResult struct {
 }
 
 func BatchGetResult(dest *BatchSyncResult, jobID string) wx.Action {
-	return wx.NewGetAction(urls.CorpAddrBookBatchResult,
+	return wx.NewGetAction(urls.CorpBatchResult,
 		wx.WithQuery("jobid", jobID),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, dest)

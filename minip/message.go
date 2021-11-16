@@ -92,14 +92,17 @@ func SendSubscribeMsg(params *ParamsSubscribeMsg) wx.Action {
 	)
 }
 
+// KFText 客服消息文本
 type KFText struct {
 	Content string `json:"content"`
 }
 
+// KFMedia 客服消息媒体（图片等）
 type KFMedia struct {
 	MediaID string `json:"media_id"`
 }
 
+// KFLink 客服消息链接
 type KFLink struct {
 	Title       string `json:"title"`       // 消息标题
 	Description string `json:"description"` // 图文链接消息
@@ -107,6 +110,7 @@ type KFLink struct {
 	ThumbURL    string `json:"thumb_url"`   // 图文链接消息的图片链接，支持 JPG、PNG 格式，较好的效果为大图 640 yiigo.X 320，小图 80 yiigo.X 80
 }
 
+// KFMinipPage 客服小程序卡片
 type KFMinipPage struct {
 	Title        string `json:"title"`          // 消息标题
 	Pagepath     string `json:"pagepath"`       // 小程序的页面路径，跟app.json对齐，支持参数，比如pages/index/index?foo=bar

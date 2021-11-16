@@ -20,18 +20,21 @@ const (
 	MsgMPNews        MsgType = "mpnews"          // 图文消息
 	MsgMPNewsArticle MsgType = "mpnewsarticle"   // 图文消息
 	MsgMenu          MsgType = "msgmenu"         // 菜单消息
-	MsgCard          MsgType = "wxcard"          // 卡券
+	MsgCard          MsgType = "wxcard"          // 卡券消息
 	MsgMinipPage     MsgType = "miniprogrampage" // 小程序卡片
 )
 
+// Text 消息文本
 type Text struct {
 	Content string `json:"content"`
 }
 
+// Media 消息媒体（图片等）
 type Media struct {
 	MediaID string `json:"media_id"`
 }
 
+// Video 消息视频
 type Video struct {
 	MediaID      string `json:"media_id"`       // 视频消息（点击跳转到图文消息页）的媒体ID
 	ThumbMediaID string `json:"thumb_media_id"` // 缩略图的媒体ID
@@ -39,6 +42,7 @@ type Video struct {
 	Description  string `json:"description"`    // 视频消息的描述
 }
 
+// Music 消息音乐
 type Music struct {
 	Title        string `json:"title"`          // 音乐消息的标题
 	Description  string `json:"description"`    // 音乐消息的描述
@@ -47,6 +51,7 @@ type Music struct {
 	ThumbMediaID string `json:"thumb_media_id"` // 缩略图的媒体ID
 }
 
+// Article 消息图文
 type Article struct {
 	Title       string `json:"title"`       // 图文消息的标题
 	Description string `json:"description"` // 图文消息的描述
@@ -54,29 +59,35 @@ type Article struct {
 	PicURL      string `json:"picurl"`      // 图文消息的图片链接，支持JPG、PNG格式，较好的效果为大图640*320，小图80*80
 }
 
+// News 消息图文
 type News struct {
 	Articles []*Article `json:"articles"`
 }
 
+// MPNewsArticle 消息图文
 type MPNewsArticle struct {
 	ArticleID string `json:"article_id"`
 }
 
+// MenuOption 消息菜单选项
 type MenuOption struct {
 	ID      string `json:"id"`
 	Content string `json:"content"`
 }
 
+// Menu 消息菜单
 type Menu struct {
 	HeadContent string        `json:"head_content"`
 	TailContent string        `json:"tail_content"`
 	List        []*MenuOption `json:"list"`
 }
 
+// Card 消息卡券
 type Card struct {
 	CardID string `json:"card_id"`
 }
 
+// MinipPage 小程序卡片
 type MinipPage struct {
 	Title        string `json:"title"`          // 消息标题
 	AppID        string `json:"appid"`          // 小程序的appid，要求小程序的appid需要与公众号有关联关系
@@ -84,6 +95,7 @@ type MinipPage struct {
 	ThumbMediaID string `json:"thumb_media_id"` // 小程序卡片图片的媒体ID，小程序卡片图片建议大小为520*416
 }
 
+// MsgKF 消息客服
 type MsgKF struct {
 	KFAccount string `json:"kf_account"`
 }

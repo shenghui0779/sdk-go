@@ -2,12 +2,6 @@ package common
 
 type AttrType int
 
-const (
-	TextAttr  AttrType = 0
-	WebAttr   AttrType = 1
-	MinipAttr AttrType = 2
-)
-
 type ExternalProfile struct {
 	ExternalCorpName string  `json:"external_corp_name"`
 	WechatChannels   string  `json:"wechat_channels"`
@@ -19,7 +13,7 @@ type ExtAttr struct {
 }
 
 type Attr struct {
-	Type        AttrType   `json:"type"`
+	Type        int        `json:"type"`
 	Name        string     `json:"name"`
 	Text        *AttrText  `json:"text,omitempty"`
 	Web         *AttrWeb   `json:"web,omitempty"`
