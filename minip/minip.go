@@ -20,7 +20,7 @@ type Minip struct {
 	appsecret      string
 	token          string
 	encodingAESKey string
-	nonce          func(size uint) string
+	nonce          func() string
 	client         wx.Client
 }
 
@@ -29,8 +29,10 @@ func New(appid, appsecret string) *Minip {
 	return &Minip{
 		appid:     appid,
 		appsecret: appsecret,
-		nonce:     wx.Nonce,
-		client:    wx.NewClient(),
+		nonce: func() string {
+			return wx.Nonce(16)
+		},
+		client: wx.NewDefaultClient(),
 	}
 }
 
@@ -41,9 +43,14 @@ func (mp *Minip) SetServerConfig(token, encodingAESKey string) {
 	mp.encodingAESKey = encodingAESKey
 }
 
-// SetLogger set logger
-func (mp *Minip) SetLogger(l wx.Logger) {
-	mp.client.SetLogger(l)
+// SetClient set client
+func (mp *Minip) SetClient(client wx.Client) {
+	mp.client = client
+}
+
+// SetClientLogger set client logger
+func (mp *Minip) SetClientLogger(logger wx.Logger) {
+	mp.client.SetLogger(logger)
 }
 
 // AppID returns appid

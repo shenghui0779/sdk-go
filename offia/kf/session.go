@@ -95,10 +95,10 @@ type MsgRecord struct {
 }
 
 type ParamsMsgRecordList struct {
-	MsgID     string `json:"msgid"`
-	StartTime int64  `json:"starttime"`
-	EndTime   int64  `json:"endtime"`
-	Number    int    `json:"number"`
+	MsgID     int64 `json:"msgid"`
+	StartTime int64 `json:"starttime"`
+	EndTime   int64 `json:"endtime"`
+	Number    int   `json:"number"`
 }
 
 type ResultMsgRecordList struct {

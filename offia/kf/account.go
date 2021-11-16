@@ -7,7 +7,6 @@ import (
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/shenghui0779/yiigo"
 )
 
 // InviteStatus 客服邀请状态
@@ -103,13 +102,10 @@ type ParamsWorkerInvite struct {
 // 新添加的客服帐号是不能直接使用的，只有客服人员用微信号绑定了客服账号后，方可登录Web客服进行操作。
 // 发起一个绑定邀请到客服人员微信号，客服人员需要在微信客户端上用该微信号确认后帐号才可用。
 // 尚未绑定微信号的帐号可以进行绑定邀请操作，邀请未失效时不能对该帐号进行再次绑定微信号邀请。
-func InviteWorker(account, inviteWeixin string) wx.Action {
+func InviteWorker(params *ParamsWorkerInvite) wx.Action {
 	return wx.NewPostAction(urls.OffiaKFInvite,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"kf_account": account,
-				"invite_wx":  inviteWeixin,
-			})
+			return json.Marshal(params)
 		}),
 	)
 }

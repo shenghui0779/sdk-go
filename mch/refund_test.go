@@ -45,11 +45,11 @@ func TestRefundByTransactionID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
 	}
 
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), RefundByTransactionID("4008450740201411110005820873", &RefundData{
 		OutRefundNO: "1415701182",
@@ -109,11 +109,11 @@ func TestRefundByOutTradeNO(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
 	}
 
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), RefundByOutTradeNO("1415757673", &RefundData{
 		OutRefundNO: "1415701182",
@@ -172,7 +172,7 @@ func TestQueryRefundByRefundID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 
@@ -233,7 +233,7 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 
@@ -294,7 +294,7 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 
@@ -355,7 +355,7 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 

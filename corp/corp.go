@@ -24,7 +24,7 @@ func NewCorp(corpid string) *Corp {
 	return &Corp{
 		corpid: corpid,
 		nonce:  wx.Nonce,
-		client: wx.NewClient(),
+		client: wx.NewDefaultClient(),
 	}
 }
 
@@ -35,9 +35,14 @@ func (corp *Corp) SetServerConfig(token, encodingAESKey string) {
 	corp.encodingAESKey = encodingAESKey
 }
 
-// SetLogger set logger
-func (corp *Corp) SetLogger(l wx.Logger) {
-	corp.client.SetLogger(l)
+// SetClient set client
+func (corp *Corp) SetClient(client wx.Client) {
+	corp.client = client
+}
+
+// SetClientLogger set client logger
+func (corp *Corp) SetClientLogger(logger wx.Logger) {
+	corp.client.SetLogger(logger)
 }
 
 func (corp *Corp) CorpID() string {

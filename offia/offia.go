@@ -33,7 +33,7 @@ type Offia struct {
 	originid       string
 	token          string
 	encodingAESKey string
-	nonce          func(size uint) string
+	nonce          func() string
 	client         wx.Client
 }
 
@@ -42,8 +42,10 @@ func New(appid, appsecret string) *Offia {
 	return &Offia{
 		appid:     appid,
 		appsecret: appsecret,
-		nonce:     wx.Nonce,
-		client:    wx.NewClient(),
+		nonce: func() string {
+			return wx.Nonce(16)
+		},
+		client: wx.NewDefaultClient(),
 	}
 }
 
@@ -59,9 +61,14 @@ func (oa *Offia) SetServerConfig(token, encodingAESKey string) {
 	oa.encodingAESKey = encodingAESKey
 }
 
-// SetLogger set logger
-func (oa *Offia) SetLogger(l wx.Logger) {
-	oa.client.SetLogger(l)
+// SetClient set client
+func (oa *Offia) SetClient(client wx.Client) {
+	oa.client = client
+}
+
+// SetClientLogger set client logger
+func (oa *Offia) SetClientLogger(logger wx.Logger) {
+	oa.client.SetLogger(logger)
 }
 
 // AppID returns appid
@@ -75,27 +82,15 @@ func (oa *Offia) AppSecret() string {
 }
 
 // WebAuthURL 生成网页授权URL（请使用 URLEncode 对 redirectURL 进行处理）
-// [参考](https://developers.weixin.qq.com/doc/offiaccount/Offia_Web_Apps/Wechat_webpage_authorization.html)
-func (oa *Offia) WebAuthURL(scope AuthScope, redirectURL string, state ...string) string {
-	paramState := oa.nonce(16)
-
-	if len(state) != 0 {
-		paramState = state[0]
-	}
-
-	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", urls.Oauth2Authorize, oa.appid, redirectURL, scope, paramState)
+// [参考](https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html)
+func (oa *Offia) WebAuthURL(scope AuthScope, redirectURL, state string) string {
+	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", urls.Oauth2Authorize, oa.appid, redirectURL, scope, state)
 }
 
 // SubscribeMsgAuthURL 公众号一次性订阅消息授权URL（请使用 URLEncode 对 redirectURL 进行处理）
 // [参考](https://developers.weixin.qq.com/doc/offiaccount/Message_Management/One-time_subscription_info.html)
-func (oa *Offia) SubscribeMsgAuthURL(scene, templateID, redirectURL string, reserved ...string) string {
-	paramReserved := oa.nonce(16)
-
-	if len(reserved) != 0 {
-		paramReserved = reserved[0]
-	}
-
-	return fmt.Sprintf("%s?action=get_confirm&appid=%s&template_id=%s&redirect_url=%s&reserved=%s#wechat_redirect", urls.SubscribeMsgAuth, oa.appid, templateID, redirectURL, paramReserved)
+func (oa *Offia) SubscribeMsgAuthURL(scene, templateID, redirectURL, reserved string) string {
+	return fmt.Sprintf("%s?action=get_confirm&appid=%s&template_id=%s&redirect_url=%s&reserved=%s#wechat_redirect", urls.SubscribeMsgAuth, oa.appid, templateID, redirectURL, reserved)
 }
 
 // Code2AuthToken 获取网页授权AccessToken
@@ -242,18 +237,18 @@ func (oa *Offia) Reply(openid string, reply event.Reply) (*event.ReplyMessage, e
 	}
 
 	// 消息加密
-	cipherText, err := event.Encrypt(oa.appid, oa.encodingAESKey, oa.nonce(16), body)
+	cipherText, err := event.Encrypt(oa.appid, oa.encodingAESKey, oa.nonce(), body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return event.BuildReply(oa.token, oa.nonce(16), base64.StdEncoding.EncodeToString(cipherText)), nil
+	return event.BuildReply(oa.token, oa.nonce(), base64.StdEncoding.EncodeToString(cipherText)), nil
 }
 
 // JSSDKSign 生成 JS-SDK 签名
 func (oa *Offia) JSSDKSign(ticket, url string) *JSSDKSign {
-	noncestr := oa.nonce(16)
+	noncestr := oa.nonce()
 	now := time.Now().Unix()
 
 	h := sha1.New()

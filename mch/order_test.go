@@ -46,11 +46,11 @@ func TestUnifyOrder(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "1add1a30ac87aa2db72f57a2375d8fec"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), UnifyOrder(&OrderData{
 		OutTradeNO:     "1415659990",
@@ -115,11 +115,11 @@ func TestQueryOrderByTransactionID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "ec2316275641faa3aacf3cc599e8730f"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), QueryOrderByTransactionID("1008450740201411110005820873"))
 
@@ -186,11 +186,11 @@ func TestQueryOrderByOutTradeNO(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "ec2316275641faa3aacf3cc599e8730f"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), QueryOrderByOutTradeNO("1415757673"))
 
@@ -246,11 +246,11 @@ func TestCloseOrder(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "4ca93f17ddf3443ceabf72f26d64fe0e"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), CloseOrder("1415983244"))
 

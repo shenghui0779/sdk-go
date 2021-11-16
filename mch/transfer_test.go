@@ -44,11 +44,11 @@ func TestTransferToBalance(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), TransferToBalance(&TransferBalanceData{
 		PartnerTradeNO: "100000982014120919616",
@@ -105,11 +105,11 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), QueryTransferBalanceOrder("1000005901201407261446939628"))
 
@@ -167,7 +167,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 		return "50780e0cca98c8c8e814883e5caa672e"
 // 	}
 
-// 	mch.tlsClient = client
+// 	mch.tlscli = client
 
 // 	r, err := mch.Do(context.TODO(), TransferToBankCard(&TransferBankCardData{
 // 		PartnerTradeNO: "1212121221278",
@@ -222,11 +222,11 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), QueryTransferBankCardOrder("1212121221278"))
 
@@ -277,11 +277,11 @@ DQIDAQAB
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), RSAPublicKey())
 

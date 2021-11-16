@@ -44,11 +44,11 @@ func TestAPPEntrust(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), APPEntrust(&Contract{
 		PlanID:                 "12535",
@@ -83,11 +83,11 @@ func TestOAEntrust(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), OAEntrust(&Contract{
 		PlanID:                 "106",
@@ -112,11 +112,11 @@ func TestMPEntrust(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), MPEntrust(&Contract{
 		PlanID:                 "106",
@@ -152,11 +152,11 @@ func TestH5Entrust(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), H5Entrust(&Contract{
 		PlanID:                 "106",
@@ -219,11 +219,11 @@ func TestEntrustByOrder(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), EntrustByOrder(&ContractOrder{
 		OutTradeNO:             "123456",
@@ -294,11 +294,11 @@ func TestQueryContractByID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), QueryContractByID("201509160000028648"))
 
@@ -362,11 +362,11 @@ func TestQueryContractByCode(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), QueryContractByCode("123", "1023658866"))
 
@@ -426,11 +426,11 @@ func TestPappayApply(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), PappayApply(&PappayData{
 		OutTradeNO:     "217752501201407033233368018",
@@ -480,11 +480,11 @@ func TestDeleteContractByID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), DeleteContractByID("100005698", "原因"))
 
@@ -527,11 +527,11 @@ func TestDeleteContractByCode(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "IITRi8Iabbblz1Jc"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), DeleteContractByCode("12251", "1234", "原因"))
 
@@ -585,11 +585,11 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), QueryPappayByTransactionID("1008450740201411110005820873"))
 
@@ -656,11 +656,11 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	mch.nonce = func(size uint) string {
+	mch.nonce = func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 	mch.client = client
-	mch.tlsClient = client
+	mch.tlscli = client
 
 	r, err := mch.Do(context.TODO(), QueryPappayByOutTradeNO("1415757673"))
 

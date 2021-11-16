@@ -24,12 +24,12 @@ import (
 
 // Mch 微信支付
 type Mch struct {
-	appid     string
-	mchid     string
-	apikey    string
-	nonce     func(size uint) string
-	client    wx.Client
-	tlsClient wx.Client
+	appid  string
+	mchid  string
+	apikey string
+	nonce  func() string
+	client wx.Client
+	tlscli wx.Client
 }
 
 // New returns new wechat pay
@@ -47,19 +47,31 @@ func New(appid, mchid, apikey string, options ...wx.MchCertOption) (*Mch, error)
 	}
 
 	return &Mch{
-		appid:     appid,
-		mchid:     mchid,
-		apikey:    apikey,
-		nonce:     wx.Nonce,
-		client:    wx.NewClient(),
-		tlsClient: wx.NewClient(certs...),
+		appid:  appid,
+		mchid:  mchid,
+		apikey: apikey,
+		nonce: func() string {
+			return wx.Nonce(16)
+		},
+		client: wx.NewDefaultClient(),
+		tlscli: wx.NewDefaultClient(certs...),
 	}, nil
 }
 
-// SetLogger set logger
-func (mch *Mch) SetLogger(l wx.Logger) {
-	mch.client.SetLogger(l)
-	mch.tlsClient.SetLogger(l)
+// SetClient set client
+func (mch *Mch) SetClient(client wx.Client) {
+	mch.client = client
+}
+
+// SetTLSClient set tls client
+func (mch *Mch) SetTLSClient(client wx.Client) {
+	mch.tlscli = client
+}
+
+// SetClientLogger set client logger
+func (mch *Mch) SetClientLogger(logger wx.Logger) {
+	mch.client.SetLogger(logger)
+	mch.tlscli.SetLogger(logger)
 }
 
 // AppID returns appid
@@ -79,7 +91,7 @@ func (mch *Mch) ApiKey() string {
 
 // Do exec action
 func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPOption) (wx.WXML, error) {
-	m, err := action.WXML(mch.appid, mch.mchid, mch.nonce(16))
+	m, err := action.WXML(mch.appid, mch.mchid, mch.nonce())
 
 	if err != nil {
 		return nil, err
@@ -109,7 +121,7 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPO
 	var resp []byte
 
 	if action.TLS() {
-		resp, err = mch.tlsClient.PostXML(ctx, action.URL(), m, options...)
+		resp, err = mch.tlscli.PostXML(ctx, action.URL(), m, options...)
 	} else {
 		resp, err = mch.client.PostXML(ctx, action.URL(), m, options...)
 	}
@@ -144,7 +156,7 @@ func (mch *Mch) APPAPI(prepayID string) wx.WXML {
 		"partnerid": mch.mchid,
 		"prepayid":  prepayID,
 		"package":   "Sign=WXPay",
-		"noncestr":  mch.nonce(16),
+		"noncestr":  mch.nonce(),
 		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
@@ -157,7 +169,7 @@ func (mch *Mch) APPAPI(prepayID string) wx.WXML {
 func (mch *Mch) JSAPI(prepayID string) wx.WXML {
 	m := wx.WXML{
 		"appId":     mch.appid,
-		"nonceStr":  mch.nonce(16),
+		"nonceStr":  mch.nonce(),
 		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
 		"signType":  SignMD5,
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
@@ -172,7 +184,7 @@ func (mch *Mch) JSAPI(prepayID string) wx.WXML {
 func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 	m := wx.WXML{
 		"appId":     mch.appid,
-		"nonceStr":  mch.nonce(16),
+		"nonceStr":  mch.nonce(),
 		"package":   url.QueryEscape(pkg),
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
@@ -193,7 +205,7 @@ func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]
 		"mch_id":    mch.mchid,
 		"bill_date": billDate,
 		"bill_type": billType,
-		"nonce_str": mch.nonce(16),
+		"nonce_str": mch.nonce(),
 	}
 
 	m["sign"] = mch.SignWithMD5(m, true)
@@ -226,12 +238,12 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType stri
 		"mch_id":       mch.mchid,
 		"bill_date":    billDate,
 		"account_type": accountType,
-		"nonce_str":    mch.nonce(16),
+		"nonce_str":    mch.nonce(),
 	}
 
 	m["sign"] = mch.SignWithHMacSHA256(m, true)
 
-	resp, err := mch.tlsClient.PostXML(ctx, urls.MchDownloadFundFlow, m, yiigo.WithHTTPClose())
+	resp, err := mch.tlscli.PostXML(ctx, urls.MchDownloadFundFlow, m, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -261,7 +273,7 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string
 		"begin_time": beginTime,
 		"end_time":   endTime,
 		"offset":     strconv.Itoa(offset),
-		"nonce_str":  mch.nonce(16),
+		"nonce_str":  mch.nonce(),
 	}
 
 	if len(limit) != 0 {
@@ -270,7 +282,7 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string
 
 	m["sign"] = mch.SignWithHMacSHA256(m, true)
 
-	resp, err := mch.tlsClient.PostXML(ctx, urls.MchBatchQueryComment, m, yiigo.WithHTTPClose())
+	resp, err := mch.tlscli.PostXML(ctx, urls.MchBatchQueryComment, m, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err

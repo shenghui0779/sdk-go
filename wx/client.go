@@ -235,7 +235,15 @@ func (c *wxclient) SetLogger(l Logger) {
 }
 
 // NewClient returns a new wechat client
-func NewClient(certs ...tls.Certificate) Client {
+func NewClient(client *http.Client) Client {
+	return &wxclient{
+		client: yiigo.NewHTTPClient(client),
+		logger: NewDefaultLogger(),
+	}
+}
+
+// NewDefaultClient returns a new default wechat client
+func NewDefaultClient(certs ...tls.Certificate) Client {
 	tlscfg := &tls.Config{
 		InsecureSkipVerify: true,
 	}
@@ -262,8 +270,8 @@ func NewClient(certs ...tls.Certificate) Client {
 	}
 
 	return &wxclient{
-		logger: new(wxlogger),
 		client: yiigo.NewHTTPClient(client),
+		logger: NewDefaultLogger(),
 	}
 }
 
@@ -284,7 +292,7 @@ type LogData struct {
 type wxlogger struct{}
 
 func (l *wxlogger) Log(ctx context.Context, data *LogData) {
-	fields := make([]zap.Field, 0, 5)
+	fields := make([]zap.Field, 0, 7)
 
 	fields = append(fields,
 		zap.String("method", data.Method),
@@ -297,11 +305,16 @@ func (l *wxlogger) Log(ctx context.Context, data *LogData) {
 
 	if data.Error != nil {
 		fields = append(fields, zap.Error(data.Error))
-	}
 
-	if data.Error != nil {
 		yiigo.Logger().Error("[gochat] action do error", fields...)
+
+		return
 	}
 
 	yiigo.Logger().Info("[gochat] action do info", fields...)
+}
+
+// NewDefaultLogger returns default logger
+func NewDefaultLogger() Logger {
+	return new(wxlogger)
 }

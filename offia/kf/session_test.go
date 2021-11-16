@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/offia"
 	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,10 +18,15 @@ func TestCreateSession(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfsession/create?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","openid":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateSession("test1@test", "OPENID"))
+	params := &ParamsSessionCreate{
+		Account: "test1@test",
+		OpenID:  "OPENID",
+	}
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateSession(params))
 
 	assert.Nil(t, err)
 }
@@ -33,10 +39,15 @@ func TestCloseSession(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfsession/close?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","openid":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CloseSession("test1@test", "OPENID"))
+	params := &ParamsSessionClose{
+		Account: "test1@test",
+		OpenID:  "OPENID",
+	}
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CloseSession(params))
 
 	assert.Nil(t, err)
 }
@@ -52,12 +63,12 @@ func TestGetSession(t *testing.T) {
 		"kf_account": "test1@test"
 	}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
 	result := new(Session)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetSession(result, "OPENID"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetSession("OPENID", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &Session{
@@ -85,12 +96,12 @@ func TestGetSessionList(t *testing.T) {
 		]
 	}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
-	result := make([]*Session, 0)
+	result := new(ResultSessionList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetSessionList(&result, "ACCOUNT"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetSessionList("ACCOUNT", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, []*Session{
@@ -125,8 +136,8 @@ func TestGetWaitCase(t *testing.T) {
 		]
 	}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
 	result := new(WaitCase)
 
@@ -175,15 +186,21 @@ func TestGetMsgRecordList(t *testing.T) {
 		"msgid": 20165267
 	}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
-	result := new(MsgRecordList)
+	params := &ParamsMsgRecordList{
+		MsgID:     1,
+		StartTime: 987654321,
+		EndTime:   987654321,
+		Number:    10000,
+	}
+	result := new(ResultMsgRecordList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetMsgRecordList(result, 1, 987654321, 987654321, 10000))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetMsgRecordList(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &MsgRecordList{
+	assert.Equal(t, &ResultMsgRecordList{
 		MsgID:  20165267,
 		Number: 2,
 		RecordList: []*MsgRecord{

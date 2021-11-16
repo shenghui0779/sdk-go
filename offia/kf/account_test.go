@@ -39,11 +39,11 @@ func TestGetAccountList(t *testing.T) {
 	}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
-	result := make([]*Account, 0)
+	result := new(ResultAccountList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetAccountList(&result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetAccountList(result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, []*Account{
@@ -89,12 +89,12 @@ func TestGetOnlineList(t *testing.T) {
 		]
 	}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
-	result := make([]*Online, 0)
+	result := new(ResultOnlineList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetOnlineList(&result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetOnlineList(result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, []*Online{
@@ -121,10 +121,15 @@ func TestAddAccount(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/add?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","nickname":"客服1"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddAccount("test1@test", "客服1"))
+	params := &ParamsAccountAdd{
+		Account:  "test1@test",
+		Nickname: "客服1",
+	}
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddAccount(params))
 
 	assert.Nil(t, err)
 }
@@ -137,10 +142,15 @@ func TestUpdateAccount(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/update?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","nickname":"客服1"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UpdateAccount("test1@test", "客服1"))
+	params := &ParamsAccountUpdate{
+		Account:  "test1@test",
+		Nickname: "客服1",
+	}
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UpdateAccount(params))
 
 	assert.Nil(t, err)
 }
@@ -153,10 +163,15 @@ func TestInviteWorker(t *testing.T) {
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/inviteworker?access_token=ACCESS_TOKEN", []byte(`{"invite_wx":"test_kfwx","kf_account":"test1@test"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", InviteWorker("test1@test", "test_kfwx"))
+	params := &ParamsWorkerInvite{
+		Account:  "test1@test",
+		InviteWX: "test_kfwx",
+	}
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", InviteWorker(params))
 
 	assert.Nil(t, err)
 }
@@ -169,10 +184,15 @@ func TestUploadAvatar(t *testing.T) {
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/uploadheadimg?access_token=ACCESS_TOKEN&kf_account=ACCOUNT", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadAvatar("ACCOUNT", "../test/test.jpg"))
+	params := &ParamsAvatarUpload{
+		Account: "ACCOUNT",
+		Path:    "../test/test.jpg",
+	}
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadAvatar(params))
 
 	assert.Nil(t, err)
 }
@@ -185,8 +205,8 @@ func TestDeleteAccount(t *testing.T) {
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/del?access_token=ACCESS_TOKEN&kf_account=ACCOUNT").Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa := offia.New("APPID", "APPSECRET")
+	oa.SetClient(client)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteAccount("ACCOUNT"))
 

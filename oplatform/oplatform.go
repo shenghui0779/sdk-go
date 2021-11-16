@@ -37,7 +37,7 @@ func New(appid, appsecret string) *Oplatform {
 		appsecret:       appsecret,
 		nonce:           wx.Nonce,
 		officialAccount: &OfficialAccount{},
-		client:          wx.NewClient(),
+		client:          wx.NewDefaultClient(),
 	}
 }
 
