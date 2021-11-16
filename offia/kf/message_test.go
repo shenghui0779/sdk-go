@@ -16,7 +16,7 @@ func TestSendTextMsg(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"customservice":{"kf_account":"test1@kftest"},"msgtype":"text","text":{"content":"Hello World"},"touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"text","text":{"content":"Hello World"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -36,7 +36,7 @@ func TestSendImageMsg(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"customservice":{"kf_account":"test1@kftest"},"image":{"media_id":"MEDIA_ID"},"msgtype":"image","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"image","image":{"media_id":"MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -56,7 +56,7 @@ func TestSendVoiceMsg(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"customservice":{"kf_account":"test1@kftest"},"msgtype":"voice","touser":"OPENID","voice":{"media_id":"MEDIA_ID"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"voice","voice":{"media_id":"MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -76,7 +76,7 @@ func TestSendVideoMsg(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"customservice":{"kf_account":"test1@kftest"},"msgtype":"video","touser":"OPENID","video":{"media_id":"MEDIA_ID","thumb_media_id":"THUMB_MEDIA_ID","title":"TITLE","description":"DESCRIPTION"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"video","video":{"media_id":"MEDIA_ID","thumb_media_id":"THUMB_MEDIA_ID","title":"TITLE","description":"DESCRIPTION"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -99,7 +99,7 @@ func TestSendMusicMsg(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"customservice":{"kf_account":"test1@kftest"},"msgtype":"music","music":{"title":"MUSIC_TITLE","description":"MUSIC_DESCRIPTION","musicurl":"MUSIC_URL","hqmusicurl":"HQ_MUSIC_URL","thumb_media_id":"THUMB_MEDIA_ID"},"touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"music","music":{"title":"MUSIC_TITLE","description":"MUSIC_DESCRIPTION","musicurl":"MUSIC_URL","hqmusicurl":"HQ_MUSIC_URL","thumb_media_id":"THUMB_MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -123,21 +123,23 @@ func TestSendNewsMsg(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"customservice":{"kf_account":"test1@kftest"},"msgtype":"news","news":{"articles":[{"title":"Happy Day","description":"Is Really A Happy Day","url":"URL","picurl":"PIC_URL"}]},"touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"news","news":{"articles":[{"title":"Happy Day","description":"Is Really A Happy Day","url":"URL","picurl":"PIC_URL"}]},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)
 
-	articles := []*Article{
-		{
-			Title:       "Happy Day",
-			Description: "Is Really A Happy Day",
-			URL:         "URL",
-			PicURL:      "PIC_URL",
+	news := &News{
+		Articles: []*Article{
+			{
+				Title:       "Happy Day",
+				Description: "Is Really A Happy Day",
+				URL:         "URL",
+				PicURL:      "PIC_URL",
+			},
 		},
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendNewsMsg("OPENID", articles, "test1@kftest"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendNewsMsg("OPENID", news, "test1@kftest"))
 
 	assert.Nil(t, err)
 }
@@ -148,7 +150,7 @@ func TestSendMPNewsMsg(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"customservice":{"kf_account":"test1@kftest"},"mpnews":{"media_id":"MEDIA_ID"},"msgtype":"mpnews","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"mpnews","mpnews":{"media_id":"MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -168,7 +170,7 @@ func TestSendMenuMsg(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"customservice":{"kf_account":"test1@kftest"},"msgmenu":{"head_content":"您对本次服务是否满意呢? ","tail_content":"欢迎再次光临","list":[{"id":"101","content":"满意"},{"id":"102","content":"不满意"}]},"msgtype":"msgmenu","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"msgmenu","msgmenu":{"head_content":"您对本次服务是否满意呢? ","tail_content":"欢迎再次光临","list":[{"id":"101","content":"满意"},{"id":"102","content":"不满意"}]},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -199,7 +201,7 @@ func TestSendCardMsg(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"customservice":{"kf_account":"test1@kftest"},"msgtype":"wxcard","touser":"OPENID","wxcard":{"card_id":"123dsdajkasd231jhksad"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"wxcard","wxcard":{"card_id":"123dsdajkasd231jhksad"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -219,7 +221,7 @@ func TestSendMinipMsg(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"miniprogrampage":{"title":"title","appid":"appid","pagepath":"pagepath","thumb_media_id":"thumb_media_id"},"msgtype":"miniprogrampage","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"miniprogrampage","miniprogrampage":{"title":"title","appid":"appid","pagepath":"pagepath","thumb_media_id":"thumb_media_id"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -242,7 +244,7 @@ func TestSetTyping(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/typing?access_token=ACCESS_TOKEN", []byte(`{"command":"Typing","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/typing?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","command":"Typing"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)

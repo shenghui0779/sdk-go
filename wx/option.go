@@ -1,49 +1,5 @@
 package wx
 
-import (
-	"crypto/tls"
-	"encoding/pem"
-	"io/ioutil"
-	"path/filepath"
-
-	"golang.org/x/crypto/pkcs12"
-)
-
-func P12FileToCert(path, password string) (tls.Certificate, error) {
-	fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
-
-	certPath, err := filepath.Abs(filepath.Clean(path))
-
-	if err != nil {
-		return fail(err)
-	}
-
-	p12, err := ioutil.ReadFile(certPath)
-
-	if err != nil {
-		return fail(err)
-	}
-
-	return pkcs12ToPem(p12, password)
-}
-
-func pkcs12ToPem(p12 []byte, password string) (tls.Certificate, error) {
-	blocks, err := pkcs12.ToPEM(p12, password)
-
-	if err != nil {
-		return tls.Certificate{}, err
-	}
-
-	pemData := make([]byte, 0)
-
-	for _, b := range blocks {
-		pemData = append(pemData, pem.EncodeToMemory(b)...)
-	}
-
-	// then use PEM data for tls to construct tls certificate:
-	return tls.X509KeyPair(pemData, pemData)
-}
-
 // ActionOption configures how we set up the action
 type ActionOption func(a *action)
 

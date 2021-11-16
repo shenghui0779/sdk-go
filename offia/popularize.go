@@ -17,7 +17,7 @@ const (
 )
 
 type QRCodeScene struct {
-	SceneID  string `json:"scene_id,omitempty"`
+	SceneID  int    `json:"scene_id,omitempty"`
 	SceneStr string `json:"scene_str,omitempty"`
 }
 

@@ -16,7 +16,7 @@ func TestCreateQRCode(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=ACCESS_TOKEN", []byte(`{"action_info":{"scene":{"scene_id":123}},"action_name":"QR_SCENE","expire_seconds":60}`)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=ACCESS_TOKEN", []byte(`{"action_name":"QR_SCENE","action_info":{"scene":{"scene_id":123}},"expire_seconds":60}`)).Return([]byte(`{
 		"ticket": "gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm3sUw==",
 		"expire_seconds": 60,
 		"url": "http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI"
@@ -29,7 +29,7 @@ func TestCreateQRCode(t *testing.T) {
 		ActionName: QRScene,
 		ActionInfo: &QRCodeActionInfo{
 			Scene: &QRCodeScene{
-				SceneID: "123",
+				SceneID: 123,
 			},
 		},
 		ExpireSeconds: 60,

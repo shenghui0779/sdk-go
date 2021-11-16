@@ -54,6 +54,10 @@ type Article struct {
 	PicURL      string `json:"picurl"`      // 图文消息的图片链接，支持JPG、PNG格式，较好的效果为大图640*320，小图80*80
 }
 
+type News struct {
+	Articles []*Article `json:"articles"`
+}
+
 type MPNewsArticle struct {
 	ArticleID string `json:"article_id"`
 }
@@ -81,7 +85,7 @@ type MinipPage struct {
 }
 
 type MsgKF struct {
-	Account string `json:"kf_account"`
+	KFAccount string `json:"kf_account"`
 }
 
 // ParamsMsg 客服消息参数
@@ -93,7 +97,7 @@ type ParamsMsg struct {
 	Voice         *Media         `json:"voice,omitempty"`
 	Video         *Video         `json:"video,omitempty"`
 	Music         *Music         `json:"music,omitempty"`
-	News          []*Article     `json:"news,omitempty"`
+	News          *News          `json:"news,omitempty"`
 	MPNews        *Media         `json:"mpnews,omitempty"`
 	MPNewsArticle *MPNewsArticle `json:"mpnewsarticle,omitempty"`
 	Menu          *Menu          `json:"msgmenu,omitempty"`
@@ -112,7 +116,7 @@ func SendTextMsg(openID string, text *Text, kfAccount ...string) wx.Action {
 
 	if len(kfAccount) > 0 {
 		params.CustomService = &MsgKF{
-			Account: kfAccount[0],
+			KFAccount: kfAccount[0],
 		}
 	}
 
@@ -133,7 +137,7 @@ func SendImageMsg(openID string, image *Media, kfAccount ...string) wx.Action {
 
 	if len(kfAccount) > 0 {
 		params.CustomService = &MsgKF{
-			Account: kfAccount[0],
+			KFAccount: kfAccount[0],
 		}
 	}
 
@@ -154,7 +158,7 @@ func SendVoiceMsg(openID string, voice *Media, kfAccount ...string) wx.Action {
 
 	if len(kfAccount) > 0 {
 		params.CustomService = &MsgKF{
-			Account: kfAccount[0],
+			KFAccount: kfAccount[0],
 		}
 	}
 
@@ -175,7 +179,7 @@ func SendVideoMsg(openID string, video *Video, kfAccount ...string) wx.Action {
 
 	if len(kfAccount) > 0 {
 		params.CustomService = &MsgKF{
-			Account: kfAccount[0],
+			KFAccount: kfAccount[0],
 		}
 	}
 
@@ -196,7 +200,7 @@ func SendMusicMsg(openID string, music *Music, kfAccount ...string) wx.Action {
 
 	if len(kfAccount) > 0 {
 		params.CustomService = &MsgKF{
-			Account: kfAccount[0],
+			KFAccount: kfAccount[0],
 		}
 	}
 
@@ -208,7 +212,7 @@ func SendMusicMsg(openID string, music *Music, kfAccount ...string) wx.Action {
 }
 
 // SendNewsMsg 发送客服图文消息（点击跳转到外链；图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008）
-func SendNewsMsg(openID string, news []*Article, kfAccount ...string) wx.Action {
+func SendNewsMsg(openID string, news *News, kfAccount ...string) wx.Action {
 	params := &ParamsMsg{
 		ToUser:  openID,
 		MsgType: MsgNews,
@@ -217,7 +221,7 @@ func SendNewsMsg(openID string, news []*Article, kfAccount ...string) wx.Action 
 
 	if len(kfAccount) > 0 {
 		params.CustomService = &MsgKF{
-			Account: kfAccount[0],
+			KFAccount: kfAccount[0],
 		}
 	}
 
@@ -238,7 +242,7 @@ func SendMPNewsMsg(openID string, news *Media, kfAccount ...string) wx.Action {
 
 	if len(kfAccount) > 0 {
 		params.CustomService = &MsgKF{
-			Account: kfAccount[0],
+			KFAccount: kfAccount[0],
 		}
 	}
 
@@ -260,7 +264,7 @@ func SendMPNewsArticleMsg(openID string, article *MPNewsArticle, kfAccount ...st
 
 	if len(kfAccount) > 0 {
 		params.CustomService = &MsgKF{
-			Account: kfAccount[0],
+			KFAccount: kfAccount[0],
 		}
 	}
 
@@ -281,7 +285,7 @@ func SendMenuMsg(openID string, menu *Menu, kfAccount ...string) wx.Action {
 
 	if len(kfAccount) > 0 {
 		params.CustomService = &MsgKF{
-			Account: kfAccount[0],
+			KFAccount: kfAccount[0],
 		}
 	}
 
@@ -302,7 +306,7 @@ func SendCardMsg(openID string, card *Card, kfAccount ...string) wx.Action {
 
 	if len(kfAccount) > 0 {
 		params.CustomService = &MsgKF{
-			Account: kfAccount[0],
+			KFAccount: kfAccount[0],
 		}
 	}
 
@@ -323,7 +327,7 @@ func SendMinipMsg(openID string, minipPage *MinipPage, kfAccount ...string) wx.A
 
 	if len(kfAccount) > 0 {
 		params.CustomService = &MsgKF{
-			Account: kfAccount[0],
+			KFAccount: kfAccount[0],
 		}
 	}
 

@@ -32,7 +32,7 @@ type Account struct {
 }
 
 type ResultAccountList struct {
-	List []*Account `json:"kf_list"`
+	KFList []*Account `json:"kf_list"`
 }
 
 // GetAccountList 获取客服列表
@@ -53,7 +53,7 @@ type Online struct {
 }
 
 type ResultOnlineList struct {
-	OnlineList []*Online `json:"kf_online_list"`
+	KFOnlineList []*Online `json:"kf_online_list"`
 }
 
 // GetOnlineList 获取客服在线列表
@@ -94,8 +94,8 @@ func UpdateAccount(params *ParamsAccountUpdate) wx.Action {
 }
 
 type ParamsWorkerInvite struct {
-	Account  string `json:"account"`   // 完整客服帐号，格式为：帐号前缀@公众号微信号
-	InviteWX string `json:"invite_wx"` // 接收绑定邀请的客服微信号
+	KFAccount string `json:"kf_account"` // 完整客服帐号，格式为：帐号前缀@公众号微信号
+	InviteWX  string `json:"invite_wx"`  // 接收绑定邀请的客服微信号
 }
 
 // InviteWorker 邀请绑定客服帐号
@@ -111,8 +111,8 @@ func InviteWorker(params *ParamsWorkerInvite) wx.Action {
 }
 
 type ParamsAvatarUpload struct {
-	Account string // 完整客服帐号，格式为：帐号前缀@公众号微信号
-	Path    string // 文件大小为5M 以内
+	KFAccount string `json:"kf_account"` // 完整客服帐号，格式为：帐号前缀@公众号微信号
+	Path      string `json:"path"`       // 文件大小为5M 以内
 }
 
 // UploadAvatar 上传客服头像
@@ -120,7 +120,7 @@ func UploadAvatar(params *ParamsAvatarUpload) wx.Action {
 	_, filename := filepath.Split(params.Path)
 
 	return wx.NewUploadAction(urls.OffiaKFAvatarUpload,
-		wx.WithQuery("kf_account", params.Account),
+		wx.WithQuery("kf_account", params.KFAccount),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",
 			Filename:  filename,

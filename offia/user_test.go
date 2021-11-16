@@ -41,6 +41,7 @@ func TestGetUser(t *testing.T) {
 
 	params := &ParamsUserGet{
 		OpenID: "OPENID",
+		Lang:   "zh_CN",
 	}
 	result := new(UserInfo)
 
@@ -68,13 +69,13 @@ func TestGetUser(t *testing.T) {
 	}, result)
 }
 
-func TestBatchGetUserInfo(t *testing.T) {
+func TestBatchGetUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=ACCESS_TOKEN", []byte(`{"user_list":[{"lang":"zh_CN","openid":"otvxTs4dckWG7imySrJd6jSi0CWE"},{"lang":"zh_CN","openid":"otvxTs_JZ6SEiP0imdhpi50fuSZg"}]}`)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=ACCESS_TOKEN", []byte(`{"user_list":[{"openid":"otvxTs4dckWG7imySrJd6jSi0CWE","lang":"zh_CN"},{"openid":"otvxTs_JZ6SEiP0imdhpi50fuSZg","lang":"zh_CN"}]}`)).Return([]byte(`{
 		"user_info_list": [
 			{
 				"subscribe": 1,
@@ -100,7 +101,7 @@ func TestBatchGetUserInfo(t *testing.T) {
 				"openid": "otvxTs_JZ6SEiP0imdhpi50fuSZg"
 			}
 		]
-	 }`), nil)
+	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.client = client
@@ -109,9 +110,11 @@ func TestBatchGetUserInfo(t *testing.T) {
 		UserList: []*ParamsUserGet{
 			{
 				OpenID: "otvxTs4dckWG7imySrJd6jSi0CWE",
+				Lang:   "zh_CN",
 			},
 			{
 				OpenID: "otvxTs_JZ6SEiP0imdhpi50fuSZg",
+				Lang:   "zh_CN",
 			},
 		},
 	}
@@ -120,29 +123,31 @@ func TestBatchGetUserInfo(t *testing.T) {
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetUser(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []*UserInfo{
-		{
-			Subscribe:      1,
-			OpenID:         "otvxTs4dckWG7imySrJd6jSi0CWE",
-			NickName:       "iWithery",
-			Sex:            1,
-			Country:        "中国",
-			City:           "揭阳",
-			Province:       "广东",
-			Language:       "zh_CN",
-			HeadImgURL:     "http://thirdwx.qlogo.cn/mmopen/xbIQx1GRqdvyqkMMhEaGOX802l1CyqMJNgUzKP8MeAeHFicRDSnZH7FY4XB7p8XHXIf6uJA2SCunTPicGKezDC4saKISzRj3nz/0",
-			SubscribeTime:  1434093047,
-			UnionID:        "oR5GjjgEhCMJFyzaVZdrxZ2zRRF4",
-			Remark:         "",
-			GroupID:        0,
-			TagidList:      []int64{128, 2},
-			SubscribeScene: AddSceneQRCode,
-			QRScene:        98765,
-			QRSceneStr:     "",
-		},
-		{
-			Subscribe: 0,
-			OpenID:    "otvxTs_JZ6SEiP0imdhpi50fuSZg",
+	assert.Equal(t, &ResultUserBatchGet{
+		UserInfoList: []*UserInfo{
+			{
+				Subscribe:      1,
+				OpenID:         "otvxTs4dckWG7imySrJd6jSi0CWE",
+				NickName:       "iWithery",
+				Sex:            1,
+				Country:        "中国",
+				City:           "揭阳",
+				Province:       "广东",
+				Language:       "zh_CN",
+				HeadImgURL:     "http://thirdwx.qlogo.cn/mmopen/xbIQx1GRqdvyqkMMhEaGOX802l1CyqMJNgUzKP8MeAeHFicRDSnZH7FY4XB7p8XHXIf6uJA2SCunTPicGKezDC4saKISzRj3nz/0",
+				SubscribeTime:  1434093047,
+				UnionID:        "oR5GjjgEhCMJFyzaVZdrxZ2zRRF4",
+				Remark:         "",
+				GroupID:        0,
+				TagidList:      []int64{128, 2},
+				SubscribeScene: AddSceneQRCode,
+				QRScene:        98765,
+				QRSceneStr:     "",
+			},
+			{
+				Subscribe: 0,
+				OpenID:    "otvxTs_JZ6SEiP0imdhpi50fuSZg",
+			},
 		},
 	}, result)
 }

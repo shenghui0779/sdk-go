@@ -46,22 +46,24 @@ func TestGetAccountList(t *testing.T) {
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetAccountList(result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []*Account{
-		{
-			ID:         "1001",
-			Account:    "test1@test",
-			Nickname:   "ntest1",
-			HeadImgURL: "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
-			Weixin:     "kfwx1",
-		},
-		{
-			ID:               "1002",
-			Account:          "test2@test",
-			Nickname:         "ntest2",
-			HeadImgURL:       "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
-			InviteWeixin:     "kfwx2",
-			InviteExpireTime: 123456789,
-			InviteStatus:     InviteWaiting,
+	assert.Equal(t, &ResultAccountList{
+		KFList: []*Account{
+			{
+				ID:         "1001",
+				Account:    "test1@test",
+				Nickname:   "ntest1",
+				HeadImgURL: "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
+				Weixin:     "kfwx1",
+			},
+			{
+				ID:               "1002",
+				Account:          "test2@test",
+				Nickname:         "ntest2",
+				HeadImgURL:       "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
+				InviteWeixin:     "kfwx2",
+				InviteExpireTime: 123456789,
+				InviteStatus:     InviteWaiting,
+			},
 		},
 	}, result)
 }
@@ -97,18 +99,20 @@ func TestGetOnlineList(t *testing.T) {
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetOnlineList(result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, []*Online{
-		{
-			ID:           "1001",
-			Account:      "test1@test",
-			Status:       1,
-			AcceptedCase: 1,
-		},
-		{
-			ID:           "1002",
-			Account:      "test2@test",
-			Status:       1,
-			AcceptedCase: 2,
+	assert.Equal(t, &ResultOnlineList{
+		KFOnlineList: []*Online{
+			{
+				ID:           "1001",
+				Account:      "test1@test",
+				Status:       1,
+				AcceptedCase: 1,
+			},
+			{
+				ID:           "1002",
+				Account:      "test2@test",
+				Status:       1,
+				AcceptedCase: 2,
+			},
 		},
 	}, result)
 }
@@ -161,14 +165,14 @@ func TestInviteWorker(t *testing.T) {
 
 	client := wx.NewMockClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/inviteworker?access_token=ACCESS_TOKEN", []byte(`{"invite_wx":"test_kfwx","kf_account":"test1@test"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/inviteworker?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","invite_wx":"test_kfwx"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(client)
 
 	params := &ParamsWorkerInvite{
-		Account:  "test1@test",
-		InviteWX: "test_kfwx",
+		KFAccount: "test1@test",
+		InviteWX:  "test_kfwx",
 	}
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", InviteWorker(params))
@@ -188,8 +192,8 @@ func TestUploadAvatar(t *testing.T) {
 	oa.SetClient(client)
 
 	params := &ParamsAvatarUpload{
-		Account: "ACCOUNT",
-		Path:    "../test/test.jpg",
+		KFAccount: "ACCOUNT",
+		Path:      "../../test/test.jpg",
 	}
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadAvatar(params))

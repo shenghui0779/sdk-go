@@ -48,7 +48,7 @@ type UserInfo struct {
 }
 
 type ParamsUserGet struct {
-	OpenID string `json:"open_id"`
+	OpenID string `json:"openid"`
 	Lang   string `json:"lang,omitempty"`
 }
 
