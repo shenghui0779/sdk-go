@@ -1,4 +1,4 @@
-package external_contact
+package externalcontact
 
 import (
 	"encoding/json"

@@ -1,4 +1,4 @@
-package external_contact
+package externalcontact
 
 import (
 	"encoding/json"
@@ -39,7 +39,7 @@ type ExternalContact struct {
 	CorpName        string                  `json:"corp_name"`
 	CorpFullName    string                  `json:"corp_full_name"`
 	Type            ExternalType            `json:"type"`
-	Gender          common.Gender           `json:"gender"`
+	Gender          int                     `json:"gender"`
 	UnionID         string                  `json:"unionid"`
 	ExternalProfile *common.ExternalProfile `json:"external_profile"`
 }

@@ -1,1 +1,1 @@
-package external_contact
+package externalcontact
