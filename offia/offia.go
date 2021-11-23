@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/shenghui0779/yiigo"
@@ -45,7 +46,7 @@ func New(appid, appsecret string) *Offia {
 		nonce: func() string {
 			return wx.Nonce(16)
 		},
-		client: wx.NewDefaultClient(),
+		client: wx.DefaultClient(),
 	}
 }
 
@@ -62,8 +63,8 @@ func (oa *Offia) SetServerConfig(token, encodingAESKey string) {
 }
 
 // SetClient set client
-func (oa *Offia) SetClient(client wx.Client) {
-	oa.client = client
+func (oa *Offia) SetClient(c yiigo.HTTPClient) {
+	oa.client.SetHTTPClient(c)
 }
 
 // SetLogger set client logger
@@ -95,7 +96,7 @@ func (oa *Offia) SubscribeMsgAuthURL(scene, templateID, redirectURL, reserved st
 
 // Code2AuthToken 获取网页授权AccessToken
 func (oa *Offia) Code2AuthToken(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthToken, error) {
-	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", urls.OffiaSnsCode2Token, oa.appid, oa.appsecret, code), options...)
+	resp, err := oa.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", urls.OffiaSnsCode2Token, oa.appid, oa.appsecret, code), nil, options...)
 
 	if err != nil {
 		return nil, err
@@ -118,7 +119,7 @@ func (oa *Offia) Code2AuthToken(ctx context.Context, code string, options ...yii
 
 // RefreshAuthToken 刷新网页授权AccessToken
 func (oa *Offia) RefreshAuthToken(ctx context.Context, refreshToken string, options ...yiigo.HTTPOption) (*AuthToken, error) {
-	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", urls.OffiaSnsRefreshAccessToken, oa.appid, refreshToken), options...)
+	resp, err := oa.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", urls.OffiaSnsRefreshAccessToken, oa.appid, refreshToken), nil, options...)
 
 	if err != nil {
 		return nil, err
@@ -141,7 +142,7 @@ func (oa *Offia) RefreshAuthToken(ctx context.Context, refreshToken string, opti
 
 // AccessToken 获取普通AccessToken
 func (oa *Offia) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*AccessToken, error) {
-	resp, err := oa.client.Get(ctx, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", urls.OffiaCgiBinAccessToken, oa.appid, oa.appsecret), options...)
+	resp, err := oa.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", urls.OffiaCgiBinAccessToken, oa.appid, oa.appsecret), nil, options...)
 
 	if err != nil {
 		return nil, err
@@ -169,18 +170,7 @@ func (oa *Offia) Do(ctx context.Context, accessToken string, action wx.Action, o
 		err  error
 	)
 
-	switch action.Method() {
-	case wx.MethodGet:
-		resp, err = oa.client.Get(ctx, action.URL(accessToken), options...)
-	case wx.MethodPost:
-		body, berr := action.Body()
-
-		if berr != nil {
-			return berr
-		}
-
-		resp, err = oa.client.Post(ctx, action.URL(accessToken), body, options...)
-	case wx.MethodUpload:
+	if action.IsUpload() {
 		form, ferr := action.UploadForm()
 
 		if ferr != nil {
@@ -188,6 +178,14 @@ func (oa *Offia) Do(ctx context.Context, accessToken string, action wx.Action, o
 		}
 
 		resp, err = oa.client.Upload(ctx, action.URL(accessToken), form, options...)
+	} else {
+		body, berr := action.Body()
+
+		if berr != nil {
+			return berr
+		}
+
+		resp, err = oa.client.Do(ctx, action.Method(), action.URL(accessToken), body, options...)
 	}
 
 	if err != nil {
@@ -200,11 +198,7 @@ func (oa *Offia) Do(ctx context.Context, accessToken string, action wx.Action, o
 		return fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
-	if action.Decode() == nil {
-		return nil
-	}
-
-	return action.Decode()(resp)
+	return action.Decode(resp)
 }
 
 // VerifyEventSign 验证消息事件签名
