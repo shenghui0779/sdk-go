@@ -39,7 +39,7 @@ func Nonce(size uint) string {
 }
 
 // FormatMap2XML format map to xml
-func FormatMap2XML(m WXML) (string, error) {
+func FormatMap2XML(m WXML) ([]byte, error) {
 	var builder strings.Builder
 
 	builder.WriteString("<xml>")
@@ -48,7 +48,7 @@ func FormatMap2XML(m WXML) (string, error) {
 		builder.WriteString(fmt.Sprintf("<%s>", k))
 
 		if err := xml.EscapeText(&builder, []byte(v)); err != nil {
-			return "", err
+			return nil, err
 		}
 
 		builder.WriteString(fmt.Sprintf("</%s>", k))
@@ -56,7 +56,7 @@ func FormatMap2XML(m WXML) (string, error) {
 
 	builder.WriteString("</xml>")
 
-	return builder.String(), nil
+	return []byte(builder.String()), nil
 }
 
 // ParseXML2Map parse xml to map

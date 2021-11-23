@@ -40,8 +40,8 @@ func (corp *Corp) SetClient(client wx.Client) {
 	corp.client = client
 }
 
-// SetClientLogger set client logger
-func (corp *Corp) SetClientLogger(logger wx.Logger) {
+// SetLogger set client logger
+func (corp *Corp) SetLogger(logger wx.Logger) {
 	corp.client.SetLogger(logger)
 }
 

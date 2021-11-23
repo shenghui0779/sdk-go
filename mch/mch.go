@@ -9,6 +9,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"sort"
 	"strconv"
@@ -46,25 +47,25 @@ func New(appid, mchid, apikey, p12cert string) (*Mch, error) {
 		nonce: func() string {
 			return wx.Nonce(16)
 		},
-		client: wx.NewDefaultClient(),
-		tlscli: wx.NewDefaultClient(cert),
+		client: wx.DefaultClient(),
+		tlscli: wx.DefaultClient(cert),
 	}, nil
 }
 
 // SetClient set client
-func (mch *Mch) SetClient(client wx.Client) {
-	mch.client = client
+func (mch *Mch) SetClient(c yiigo.HTTPClient) {
+	mch.client.SetHTTPClient(c)
 }
 
 // SetTLSClient set tls client
-func (mch *Mch) SetTLSClient(client wx.Client) {
-	mch.tlscli = client
+func (mch *Mch) SetTLSClient(c yiigo.HTTPClient) {
+	mch.tlscli.SetHTTPClient(c)
 }
 
-// SetClientLogger set client logger
-func (mch *Mch) SetClientLogger(logger wx.Logger) {
-	mch.client.SetLogger(logger)
-	mch.tlscli.SetLogger(logger)
+// SetLogger set client logger
+func (mch *Mch) SetLogger(l wx.Logger) {
+	mch.client.SetLogger(l)
+	mch.tlscli.SetLogger(l)
 }
 
 // AppID returns appid
@@ -84,27 +85,27 @@ func (mch *Mch) ApiKey() string {
 
 // Do exec action
 func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPOption) (wx.WXML, error) {
-	m, err := action.WXML(mch.appid, mch.mchid, mch.nonce())
+	reqBody, err := action.WXML(mch.appid, mch.mchid, mch.nonce())
 
 	if err != nil {
 		return nil, err
 	}
 
 	// 签名
-	if v, ok := m["sign_type"]; ok && v == SignHMacSHA256 {
-		m["sign"] = mch.SignWithHMacSHA256(m, true)
+	if v, ok := reqBody["sign_type"]; ok && v == SignHMacSHA256 {
+		reqBody["sign"] = mch.SignWithHMacSHA256(reqBody, true)
 	} else {
-		m["sign"] = mch.SignWithMD5(m, true)
+		reqBody["sign"] = mch.SignWithMD5(reqBody, true)
 	}
 
-	if action.Method() == wx.MethodNone {
+	if len(action.Method()) == 0 {
 		if len(action.URL()) == 0 {
-			return m, nil
+			return reqBody, nil
 		}
 
 		query := url.Values{}
 
-		for k, v := range m {
+		for k, v := range reqBody {
 			query.Add(k, v)
 		}
 
@@ -113,10 +114,10 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPO
 
 	var resp []byte
 
-	if action.TLS() {
-		resp, err = mch.tlscli.PostXML(ctx, action.URL(), m, options...)
+	if action.IsTLS() {
+		resp, err = mch.tlscli.DoXML(ctx, action.Method(), action.URL(), reqBody, options...)
 	} else {
-		resp, err = mch.client.PostXML(ctx, action.URL(), m, options...)
+		resp, err = mch.client.DoXML(ctx, action.Method(), action.URL(), reqBody, options...)
 	}
 
 	if err != nil {
@@ -193,7 +194,7 @@ func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 // DownloadBill 下载交易账单
 // 账单日期格式：20140603
 func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]byte, error) {
-	m := wx.WXML{
+	reqBody := wx.WXML{
 		"appid":     mch.appid,
 		"mch_id":    mch.mchid,
 		"bill_date": billDate,
@@ -201,9 +202,9 @@ func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]
 		"nonce_str": mch.nonce(),
 	}
 
-	m["sign"] = mch.SignWithMD5(m, true)
+	reqBody["sign"] = mch.SignWithMD5(reqBody, true)
 
-	resp, err := mch.client.PostXML(ctx, urls.MchDownloadBill, m, yiigo.WithHTTPClose())
+	resp, err := mch.client.DoXML(ctx, http.MethodPost, urls.MchDownloadBill, reqBody, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -226,7 +227,7 @@ func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]
 // DownloadFundFlow 下载资金账单
 // 账单日期格式：20140603
 func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType string) ([]byte, error) {
-	m := wx.WXML{
+	reqBody := wx.WXML{
 		"appid":        mch.appid,
 		"mch_id":       mch.mchid,
 		"bill_date":    billDate,
@@ -234,9 +235,9 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType stri
 		"nonce_str":    mch.nonce(),
 	}
 
-	m["sign"] = mch.SignWithHMacSHA256(m, true)
+	reqBody["sign"] = mch.SignWithHMacSHA256(reqBody, true)
 
-	resp, err := mch.tlscli.PostXML(ctx, urls.MchDownloadFundFlow, m, yiigo.WithHTTPClose())
+	resp, err := mch.tlscli.DoXML(ctx, http.MethodPost, urls.MchDownloadFundFlow, reqBody, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -260,7 +261,7 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType stri
 // 时间格式：yyyyMMddHHmmss
 // 默认一次且最多拉取200条
 func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string, offset int, limit ...int) ([]byte, error) {
-	m := wx.WXML{
+	reqBody := wx.WXML{
 		"appid":      mch.appid,
 		"mch_id":     mch.mchid,
 		"begin_time": beginTime,
@@ -270,12 +271,12 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string
 	}
 
 	if len(limit) != 0 {
-		m["limit"] = strconv.Itoa(limit[0])
+		reqBody["limit"] = strconv.Itoa(limit[0])
 	}
 
-	m["sign"] = mch.SignWithHMacSHA256(m, true)
+	reqBody["sign"] = mch.SignWithHMacSHA256(reqBody, true)
 
-	resp, err := mch.tlscli.PostXML(ctx, urls.MchBatchQueryComment, m, yiigo.WithHTTPClose())
+	resp, err := mch.tlscli.DoXML(ctx, http.MethodPost, urls.MchBatchQueryComment, reqBody, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err

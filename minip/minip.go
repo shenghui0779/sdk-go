@@ -48,8 +48,8 @@ func (mp *Minip) SetClient(client wx.Client) {
 	mp.client = client
 }
 
-// SetClientLogger set client logger
-func (mp *Minip) SetClientLogger(logger wx.Logger) {
+// SetLogger set client logger
+func (mp *Minip) SetLogger(logger wx.Logger) {
 	mp.client.SetLogger(logger)
 }
 

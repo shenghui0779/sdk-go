@@ -66,8 +66,8 @@ func (oa *Offia) SetClient(client wx.Client) {
 	oa.client = client
 }
 
-// SetClientLogger set client logger
-func (oa *Offia) SetClientLogger(logger wx.Logger) {
+// SetLogger set client logger
+func (oa *Offia) SetLogger(logger wx.Logger) {
 	oa.client.SetLogger(logger)
 }
 

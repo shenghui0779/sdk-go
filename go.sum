@@ -295,6 +295,8 @@ github.com/shenghui0779/vitess_pool v1.0.1 h1:I7nxFpzVA1QSuJE9dL4MnKHc3CF5xKK/0M
 github.com/shenghui0779/vitess_pool v1.0.1/go.mod h1:vRwWHaeQvz/mrnNetj7v4R5WfAese3ZKZ1gyaFw3UHE=
 github.com/shenghui0779/yiigo v1.6.0 h1:y/v+c5JIEHMF8HLXf1DOYvamb8qRF2ynNp1FLduxCso=
 github.com/shenghui0779/yiigo v1.6.0/go.mod h1:ncoJDZhWQoGw5Pl3pZWojDN4XW6U4A/PUCS4TJUqtKE=
+github.com/shenghui0779/yiigo v1.6.1 h1:v9I4jD+OjXSCTmxc+oQ138HX5sckmXJAN4v8/0p2hCE=
+github.com/shenghui0779/yiigo v1.6.1/go.mod h1:ncoJDZhWQoGw5Pl3pZWojDN4XW6U4A/PUCS4TJUqtKE=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=

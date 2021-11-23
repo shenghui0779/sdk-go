@@ -1,7 +1,6 @@
 package wx
 
 import (
-	"bytes"
 	"context"
 	"crypto/tls"
 	"fmt"
@@ -9,7 +8,6 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/shenghui0779/yiigo"
@@ -18,19 +16,19 @@ import (
 
 // Client is the interface that do http request
 type Client interface {
-	// Get sends an HTTP get request
-	Get(ctx context.Context, reqURL string, options ...yiigo.HTTPOption) ([]byte, error)
+	// Post sends an HTTP post request
+	Do(ctx context.Context, method, reqURL string, body []byte, options ...yiigo.HTTPOption) ([]byte, error)
 
 	// Post sends an HTTP post request
-	Post(ctx context.Context, reqURL string, body []byte, options ...yiigo.HTTPOption) ([]byte, error)
-
-	// PostXML sends an HTTP post request with xml
-	PostXML(ctx context.Context, reqURL string, body WXML, options ...yiigo.HTTPOption) ([]byte, error)
+	DoXML(ctx context.Context, method, reqURL string, body WXML, options ...yiigo.HTTPOption) ([]byte, error)
 
 	// Upload sends an HTTP post request for uploading media
 	Upload(ctx context.Context, reqURL string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error)
 
-	// SetLogger set logger for client
+	// SetHTTPClient set http client
+	SetHTTPClient(c yiigo.HTTPClient)
+
+	// SetLogger set logger
 	SetLogger(l Logger)
 }
 
@@ -39,54 +37,10 @@ type wxclient struct {
 	logger Logger
 }
 
-func (c *wxclient) Get(ctx context.Context, reqURL string, options ...yiigo.HTTPOption) ([]byte, error) {
+func (c *wxclient) Do(ctx context.Context, method, reqURL string, body []byte, options ...yiigo.HTTPOption) ([]byte, error) {
 	logData := &LogData{
 		URL:    reqURL,
-		Method: http.MethodGet,
-	}
-
-	now := time.Now().Local()
-
-	defer func() {
-		logData.Duration = time.Since(now)
-		c.logger.Log(ctx, logData)
-	}()
-
-	resp, err := c.client.Do(ctx, http.MethodGet, reqURL, nil, options...)
-
-	if err != nil {
-		logData.Error = err
-
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-
-	logData.StatusCode = resp.StatusCode
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		io.Copy(ioutil.Discard, resp.Body)
-
-		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
-	}
-
-	b, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		logData.Error = err
-
-		return nil, err
-	}
-
-	logData.Response = b
-
-	return b, nil
-}
-
-func (c *wxclient) Post(ctx context.Context, reqURL string, body []byte, options ...yiigo.HTTPOption) ([]byte, error) {
-	logData := &LogData{
-		URL:    reqURL,
-		Method: http.MethodPost,
+		Method: method,
 		Body:   body,
 	}
 
@@ -97,9 +51,7 @@ func (c *wxclient) Post(ctx context.Context, reqURL string, body []byte, options
 		c.logger.Log(ctx, logData)
 	}()
 
-	options = append(options, yiigo.WithHTTPHeader("Content-Type", "application/json; charset=utf-8"))
-
-	resp, err := c.client.Do(ctx, http.MethodPost, reqURL, bytes.NewReader(body), options...)
+	resp, err := c.client.Do(ctx, method, reqURL, body, options...)
 
 	if err != nil {
 		logData.Error = err
@@ -130,10 +82,10 @@ func (c *wxclient) Post(ctx context.Context, reqURL string, body []byte, options
 	return b, nil
 }
 
-func (c *wxclient) PostXML(ctx context.Context, reqURL string, body WXML, options ...yiigo.HTTPOption) ([]byte, error) {
+func (c *wxclient) DoXML(ctx context.Context, method, reqURL string, body WXML, options ...yiigo.HTTPOption) ([]byte, error) {
 	logData := &LogData{
 		URL:    reqURL,
-		Method: http.MethodPost,
+		Method: method,
 	}
 
 	now := time.Now().Local()
@@ -143,7 +95,7 @@ func (c *wxclient) PostXML(ctx context.Context, reqURL string, body WXML, option
 		c.logger.Log(ctx, logData)
 	}()
 
-	xmlStr, err := FormatMap2XML(body)
+	reqBody, err := FormatMap2XML(body)
 
 	if err != nil {
 		logData.Error = err
@@ -151,11 +103,11 @@ func (c *wxclient) PostXML(ctx context.Context, reqURL string, body WXML, option
 		return nil, err
 	}
 
-	logData.Body = []byte(xmlStr)
+	logData.Body = reqBody
 
 	options = append(options, yiigo.WithHTTPHeader("Content-Type", "text/xml; charset=utf-8"))
 
-	resp, err := c.client.Do(ctx, http.MethodPost, reqURL, strings.NewReader(xmlStr), options...)
+	resp, err := c.client.Do(ctx, method, reqURL, reqBody, options...)
 
 	if err != nil {
 		logData.Error = err
@@ -230,20 +182,16 @@ func (c *wxclient) Upload(ctx context.Context, reqURL string, form yiigo.UploadF
 	return b, nil
 }
 
+func (c *wxclient) SetHTTPClient(client yiigo.HTTPClient) {
+	c.client = client
+}
+
 func (c *wxclient) SetLogger(l Logger) {
 	c.logger = l
 }
 
-// NewClient returns a new wechat client
-func NewClient(client *http.Client) Client {
-	return &wxclient{
-		client: yiigo.NewHTTPClient(client),
-		logger: NewDefaultLogger(),
-	}
-}
-
-// NewDefaultClient returns a new default wechat client
-func NewDefaultClient(certs ...tls.Certificate) Client {
+// DefaultClient returns a new default wechat client
+func DefaultClient(certs ...tls.Certificate) Client {
 	tlscfg := &tls.Config{
 		InsecureSkipVerify: true,
 	}
@@ -271,7 +219,7 @@ func NewDefaultClient(certs ...tls.Certificate) Client {
 
 	return &wxclient{
 		client: yiigo.NewHTTPClient(client),
-		logger: NewDefaultLogger(),
+		logger: DefaultLogger(),
 	}
 }
 
@@ -314,7 +262,7 @@ func (l *wxlogger) Log(ctx context.Context, data *LogData) {
 	yiigo.Logger().Info("[gochat] action do info", fields...)
 }
 
-// NewDefaultLogger returns default logger
-func NewDefaultLogger() Logger {
+// DefaultLogger returns default logger
+func DefaultLogger() Logger {
 	return new(wxlogger)
 }

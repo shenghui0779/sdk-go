@@ -1,5 +1,7 @@
 package wx
 
+import "github.com/shenghui0779/yiigo"
+
 // ActionOption configures how we set up the action
 type ActionOption func(a *action)
 
@@ -24,10 +26,11 @@ func WithWXML(f func(appid, mchid, nonce string) (WXML, error)) ActionOption {
 	}
 }
 
-// WithUploadField specifies the `upload field` to Action.
-func WithUploadField(field *UploadField) ActionOption {
+// WithUpload specifies the `uploadform` to Action.
+func WithUpload(f func() (yiigo.UploadForm, error)) ActionOption {
 	return func(a *action) {
-		a.uploadfield = field
+		a.upload = true
+		a.uploadform = f
 	}
 }
 
