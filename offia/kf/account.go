@@ -119,7 +119,7 @@ type ParamsAvatarUpload struct {
 func UploadAvatar(params *ParamsAvatarUpload) wx.Action {
 	_, filename := filepath.Split(params.Path)
 
-	return wx.NewUploadAction(urls.OffiaKFAvatarUpload,
+	return wx.NewPostAction(urls.OffiaKFAvatarUpload,
 		wx.WithQuery("kf_account", params.KFAccount),
 		wx.WithUploadField(&wx.UploadField{
 			FileField: "media",

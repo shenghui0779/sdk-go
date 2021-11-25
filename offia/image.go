@@ -7,6 +7,7 @@ import (
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/shenghui0779/yiigo"
 )
 
 // ImageSize 图片尺寸
@@ -47,19 +48,23 @@ type ResultAICrop struct {
 func AICrop(path string, result *ResultAICrop) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.OffiaAICrop,
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+	return wx.NewPostAction(urls.OffiaAICrop,
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -94,19 +99,23 @@ type ResultQRCodeScan struct {
 func ScanQRCode(path string, result *ResultQRCodeScan) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.OffiaScanQRCode,
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+	return wx.NewPostAction(urls.OffiaScanQRCode,
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -133,19 +142,23 @@ type ResultSuperreSolution struct {
 func SuperreSolution(path string, result *ResultSuperreSolution) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.OffiaSuperreSolution,
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+	return wx.NewPostAction(urls.OffiaSuperreSolution,
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

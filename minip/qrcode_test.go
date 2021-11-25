@@ -1,25 +1,34 @@
 package minip
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCreateQRCode(t *testing.T) {
+	body := []byte(`{"path":"page/index/index","width":430}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte("BUFFER"))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=ACCESS_TOKEN", []byte(`{"path":"page/index/index","width":430}`)).Return([]byte("BUFFER"), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
 	params := &ParamsQRCodeCreate{
 		Path:  "page/index/index",
@@ -27,22 +36,29 @@ func TestCreateQRCode(t *testing.T) {
 	}
 	qrcode := new(QRCode)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateQRCode(params, qrcode))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", CreateQRCode(params, qrcode))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "BUFFER", string(qrcode.Buffer))
 }
 
 func TestGetQRCode(t *testing.T) {
+	body := []byte(`{"path":"page/index/index","width":430}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte("BUFFER"))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/getwxacode?access_token=ACCESS_TOKEN", []byte(`{"path":"page/index/index","width":430}`)).Return([]byte("BUFFER"), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/getwxacode?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
 	params := &ParamsQRCodeGet{
 		Path:  "page/index/index",
@@ -50,29 +66,36 @@ func TestGetQRCode(t *testing.T) {
 	}
 	qrcode := new(QRCode)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetQRCode(params, qrcode))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetQRCode(params, qrcode))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "BUFFER", string(qrcode.Buffer))
 }
 
 func TestGetUnlimitQRCode(t *testing.T) {
+	body := []byte(`{"scene":"a=1"}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte("BUFFER"))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=ACCESS_TOKEN", []byte(`{"scene":"a=1"}`)).Return([]byte("BUFFER"), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
 	params := &ParamsQRCodeUnlimit{
 		Scene: "a=1",
 	}
 	qrcode := new(QRCode)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUnlimitQRCode(params, qrcode))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetUnlimitQRCode(params, qrcode))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "BUFFER", string(qrcode.Buffer))

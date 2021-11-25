@@ -1,30 +1,39 @@
 package minip
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestInvokeService(t *testing.T) {
+	body := []byte(`{"service":"wx79ac3de8be320b71","api":"OcrAllInOne","data":{"data_type":3,"img_url":"http://mmbiz.qpic.cn/mmbiz_jpg/7UFjuNbYxibu66xSqsQqKcuoGBZM77HIyibdiczeWibdMeA2XMt5oibWVQMgDibriazJSOibLqZxcO6DVVcZMxDKgeAtbQ/0","ocr_type":1},"client_msg_id":"id123"}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"data": "{\"idcard_res\":{\"type\":0,\"name\":{\"text\":\"abc\",\"pos\"…0312500}}},\"image_width\":480,\"image_height\":304}}"
+}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/servicemarket?access_token=ACCESS_TOKEN", []byte(`{"service":"wx79ac3de8be320b71","api":"OcrAllInOne","data":{"data_type":3,"img_url":"http://mmbiz.qpic.cn/mmbiz_jpg/7UFjuNbYxibu66xSqsQqKcuoGBZM77HIyibdiczeWibdMeA2XMt5oibWVQMgDibriazJSOibLqZxcO6DVVcZMxDKgeAtbQ/0","ocr_type":1},"client_msg_id":"id123"}`)).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"data": "{\"idcard_res\":{\"type\":0,\"name\":{\"text\":\"abc\",\"pos\"…0312500}}},\"image_width\":480,\"image_height\":304}}"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/servicemarket?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
 	params := &ParamsServiceInvoke{
 		Service: "wx79ac3de8be320b71",
@@ -39,7 +48,7 @@ func TestInvokeService(t *testing.T) {
 
 	result := new(ResultServiceInvoke)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", InvokeService(params, result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", InvokeService(params, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultServiceInvoke{
@@ -48,19 +57,26 @@ func TestInvokeService(t *testing.T) {
 }
 
 func TestSoterVerify(t *testing.T) {
+	body := []byte(`{"openid":"$openid","json_string":"$resultJSON","json_signature":"$resultJSONSignature"}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"is_ok": true
+}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/soter/verify_signature?access_token=ACCESS_TOKEN", []byte(`{"openid":"$openid","json_string":"$resultJSON","json_signature":"$resultJSONSignature"}`)).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"is_ok": true
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/soter/verify_signature?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
 	params := &ParamsSoterVerify{
 		OpenID:        "$openid",
@@ -70,7 +86,7 @@ func TestSoterVerify(t *testing.T) {
 
 	result := new(ResultSoterVerify)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SoterVerify(params, result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SoterVerify(params, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultSoterVerify{
@@ -79,19 +95,26 @@ func TestSoterVerify(t *testing.T) {
 }
 
 func TestGetUserRiskRank(t *testing.T) {
+	body := []byte(`{"appid":"APPID","openid":"OPENID","scene":1,"mobile_no":"12345678","client_ip":"******","email_address":"****@qq.com"}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"risk_rank": 0
+}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/getuserriskrank?access_token=ACCESS_TOKEN", []byte(`{"appid":"APPID","openid":"OPENID","scene":1,"mobile_no":"12345678","client_ip":"******","email_address":"****@qq.com"}`)).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"risk_rank": 0
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/getuserriskrank?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
 	params := &ParamsUserRisk{
 		AppID:        "APPID",
@@ -104,7 +127,7 @@ func TestGetUserRiskRank(t *testing.T) {
 
 	result := new(ResultUserRisk)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUserRiskRank(params, result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetUserRiskRank(params, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultUserRisk{

@@ -1,40 +1,47 @@
 package minip
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestUploadMedia(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"type": "image",
+	"media_id": "MEDIA_ID",
+	"created_at": 1606717010
+}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"type": "image",
-		"media_id": "MEDIA_ID",
-		"created_at": 1606717010
-	  }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
 	params := &ParamsMediaUpload{
 		MediaType: MediaImage,
-		Path:      "../test/test.jpg",
+		Path:      "../mock/test.jpg",
 	}
 	result := new(ResultMediaUpload)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(params, result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(params, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMediaUpload{
@@ -45,21 +52,26 @@ func TestUploadMedia(t *testing.T) {
 }
 
 func TestUploadMediaByURL(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"type": "image",
+	"media_id": "MEDIA_ID",
+	"created_at": 1606717010
+}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"type": "image",
-		"media_id": "MEDIA_ID",
-		"created_at": 1606717010
-	  }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
 	params := &ParamsMediaUploadByURL{
 		MediaType: MediaImage,
@@ -68,7 +80,7 @@ func TestUploadMediaByURL(t *testing.T) {
 	}
 	result := new(ResultMediaUpload)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMediaByURL(params, result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", UploadMediaByURL(params, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMediaUpload{
@@ -79,19 +91,24 @@ func TestUploadMediaByURL(t *testing.T) {
 }
 
 func TestGetMedia(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte("BUFFER"))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID").Return([]byte("BUFFER"), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
 	result := new(Media)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetMedia("MEDIA_ID", result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetMedia("MEDIA_ID", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "BUFFER", string(result.Buffer))

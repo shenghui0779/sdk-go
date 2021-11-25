@@ -37,7 +37,7 @@ func New(appid, appsecret string) *Oplatform {
 		appsecret:       appsecret,
 		nonce:           wx.Nonce,
 		officialAccount: &OfficialAccount{},
-		client:          wx.NewDefaultClient(),
+		client:          wx.DefaultClient(),
 	}
 }
 
@@ -112,18 +112,7 @@ func (o *Oplatform) Do(ctx context.Context, action wx.Action, options ...yiigo.H
 		err  error
 	)
 
-	switch action.Method() {
-	case wx.MethodGet:
-		resp, err = o.client.Get(ctx, action.URL(), options...)
-	case wx.MethodPost:
-		body, berr := action.Body()
-
-		if berr != nil {
-			return berr
-		}
-
-		resp, err = o.client.Post(ctx, action.URL(), body, options...)
-	case wx.MethodUpload:
+	if action.IsUpload() {
 		form, ferr := action.UploadForm()
 
 		if ferr != nil {
@@ -131,6 +120,14 @@ func (o *Oplatform) Do(ctx context.Context, action wx.Action, options ...yiigo.H
 		}
 
 		resp, err = o.client.Upload(ctx, action.URL(), form, options...)
+	} else {
+		body, berr := action.Body()
+
+		if berr != nil {
+			return berr
+		}
+
+		resp, err = o.client.Do(ctx, action.Method(), action.URL(), body, options...)
 	}
 
 	if err != nil {
@@ -143,11 +140,7 @@ func (o *Oplatform) Do(ctx context.Context, action wx.Action, options ...yiigo.H
 		return fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
-	if action.Decode() == nil {
-		return nil
-	}
-
-	return action.Decode()(resp)
+	return action.Decode(resp)
 }
 
 // Reply 消息回复

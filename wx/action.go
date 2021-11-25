@@ -94,30 +94,8 @@ func (a *action) UploadForm() (yiigo.UploadForm, error) {
 	return yiigo.NewUploadForm(), nil
 }
 
-// func (a *action) UploadForm() (yiigo.UploadForm, error) {
-// 	if a.uploadfield == nil {
-// 		return yiigo.NewUploadForm(), nil
-// 	}
-
-// 	body, err := a.Body()
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	fields := []yiigo.UploadField{
-// 		yiigo.WithFileField(a.uploadfield.FileField, a.uploadfield.Filename, body),
-// 	}
-
-// 	if len(a.uploadfield.MetaField) != 0 {
-// 		fields = append(fields, yiigo.WithFormField(a.uploadfield.MetaField, a.uploadfield.Metadata))
-// 	}
-
-// 	return yiigo.NewUploadForm(fields...), nil
-// }
-
 func (a *action) Decode(resp []byte) error {
-	if a.decode == nil {
+	if a.decode != nil {
 		return a.decode(resp)
 	}
 

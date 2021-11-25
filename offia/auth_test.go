@@ -1,25 +1,32 @@
 package offia
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCheckAuthToken(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/auth?access_token=ACCESS_TOKEN&openid=OPENID").Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CheckAuthToken("OPENID"))
 
@@ -27,10 +34,15 @@ func TestCheckAuthToken(t *testing.T) {
 }
 
 func TestGetAuthInfo(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&lang=zh_CN&openid=OPENID").Return([]byte(`{
 		"openid": "OPENID",
@@ -45,7 +57,7 @@ func TestGetAuthInfo(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	result := new(ResultAuthInfo)
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetAuthInfo("OPENID", result))
@@ -65,10 +77,15 @@ func TestGetAuthInfo(t *testing.T) {
 }
 
 func TestGetApiTicket(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi").Return([]byte(`{
 		"errcode": 0,
@@ -78,7 +95,7 @@ func TestGetApiTicket(t *testing.T) {
 	  }`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	result := new(ResultApiTicket)
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetApiTicket(JSAPITicket, result))

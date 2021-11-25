@@ -24,19 +24,23 @@ var (
 func ImageSecCheck(path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.MinipImageSecCheck,
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "media",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+	return wx.NewPostAction(urls.MinipImageSecCheck,
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("media", filename, body),
+			), nil
 		}),
 	)
 }

@@ -1,20 +1,27 @@
 package offia
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCreateQRCode(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=ACCESS_TOKEN", []byte(`{"action_name":"QR_SCENE","action_info":{"scene":{"scene_id":123}},"expire_seconds":60}`)).Return([]byte(`{
 		"ticket": "gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm3sUw==",
@@ -23,7 +30,7 @@ func TestCreateQRCode(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	params := &ParamsQRCodeCreate{
 		ActionName: QRScene,
@@ -47,10 +54,15 @@ func TestCreateQRCode(t *testing.T) {
 }
 
 func TestShortURL(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/shorturl?access_token=ACCESS_TOKEN", []byte(`{"action":"long2short","long_url":"http://wap.koudaitong.com/v2/showcase/goods?alias=128wi9shh&spm=h56083&redirect_count=1"}`)).Return([]byte(`{
 		"errcode": 0,
@@ -59,7 +71,7 @@ func TestShortURL(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	result := new(ResultShortURL)
 

@@ -1,21 +1,29 @@
 package kf
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/offia"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetAccountList(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/customservice/getkflist?access_token=ACCESS_TOKEN").Return([]byte(`{
 		"kf_list" : [
@@ -69,10 +77,15 @@ func TestGetAccountList(t *testing.T) {
 }
 
 func TestGetOnlineList(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/customservice/getonlinekflist?access_token=ACCESS_TOKEN").Return([]byte(`{
 		"kf_online_list": [
@@ -118,10 +131,15 @@ func TestGetOnlineList(t *testing.T) {
 }
 
 func TestAddAccount(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/add?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","nickname":"客服1"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -139,10 +157,15 @@ func TestAddAccount(t *testing.T) {
 }
 
 func TestUpdateAccount(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/update?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","nickname":"客服1"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -160,10 +183,15 @@ func TestUpdateAccount(t *testing.T) {
 }
 
 func TestInviteWorker(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/inviteworker?access_token=ACCESS_TOKEN", []byte(`{"kf_account":"test1@test","invite_wx":"test_kfwx"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -181,10 +209,15 @@ func TestInviteWorker(t *testing.T) {
 }
 
 func TestUploadAvatar(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/uploadheadimg?access_token=ACCESS_TOKEN&kf_account=ACCOUNT", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -193,7 +226,7 @@ func TestUploadAvatar(t *testing.T) {
 
 	params := &ParamsAvatarUpload{
 		KFAccount: "ACCOUNT",
-		Path:      "../../test/test.jpg",
+		Path:      "../../mock/test.jpg",
 	}
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadAvatar(params))
@@ -202,10 +235,15 @@ func TestUploadAvatar(t *testing.T) {
 }
 
 func TestDeleteAccount(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/del?access_token=ACCESS_TOKEN&kf_account=ACCOUNT").Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 

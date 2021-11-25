@@ -1,20 +1,27 @@
 package offia
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestGetUser(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&lang=zh_CN&openid=OPENID").Return([]byte(`{
 		"subscribe": 1,
@@ -37,7 +44,7 @@ func TestGetUser(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	params := &ParamsUserGet{
 		OpenID: "OPENID",
@@ -70,10 +77,15 @@ func TestGetUser(t *testing.T) {
 }
 
 func TestBatchGetUser(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=ACCESS_TOKEN", []byte(`{"user_list":[{"openid":"otvxTs4dckWG7imySrJd6jSi0CWE","lang":"zh_CN"},{"openid":"otvxTs_JZ6SEiP0imdhpi50fuSZg","lang":"zh_CN"}]}`)).Return([]byte(`{
 		"user_info_list": [
@@ -104,7 +116,7 @@ func TestBatchGetUser(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	params := &ParamsUserBatchGet{
 		UserList: []*ParamsUserGet{
@@ -153,10 +165,15 @@ func TestBatchGetUser(t *testing.T) {
 }
 
 func TestGetUserList(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/get?access_token=ACCESS_TOKEN&next_openid=NEXT_OPENID").Return([]byte(`{
 		"total": 2,
@@ -168,7 +185,7 @@ func TestGetUserList(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	result := new(ResultUserList)
 
@@ -186,10 +203,15 @@ func TestGetUserList(t *testing.T) {
 }
 
 func TestGetBlackList(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/getblacklist?access_token=ACCESS_TOKEN", []byte(`{"begin_openid":"OPENID1"}`)).Return([]byte(`{
 		"total": 3,
@@ -205,7 +227,7 @@ func TestGetBlackList(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	result := new(ResultBlackList)
 
@@ -223,15 +245,20 @@ func TestGetBlackList(t *testing.T) {
 }
 
 func TestBlackUsers(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/batchblacklist?access_token=ACCESS_TOKEN", []byte(`{"openid_list":["OPENID1","OPENID2"]}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BlackUsers("OPENID1", "OPENID2"))
 
@@ -239,15 +266,20 @@ func TestBlackUsers(t *testing.T) {
 }
 
 func TestUnBlackUsers(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/tags/members/batchunblacklist?access_token=ACCESS_TOKEN", []byte(`{"openid_list":["OPENID1","OPENID2"]}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UnBlackUsers("OPENID1", "OPENID2"))
 
@@ -255,15 +287,20 @@ func TestUnBlackUsers(t *testing.T) {
 }
 
 func TestSetUserRemark(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=ACCESS_TOKEN", []byte(`{"openid":"oDF3iY9ffA-hqb2vVvbr7qxf6A0Q","remark":"pangzi"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetUserRemark("oDF3iY9ffA-hqb2vVvbr7qxf6A0Q", "pangzi"))
 

@@ -8,11 +8,13 @@ package oplatform
 
 import (
 	"encoding/json"
-	"github.com/shenghui0779/gochat/urls"
-	"github.com/shenghui0779/gochat/wx"
-	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"path/filepath"
+
+	"github.com/shenghui0779/gochat/urls"
+	"github.com/shenghui0779/gochat/wx"
+	"github.com/shenghui0779/yiigo"
+	"github.com/tidwall/gjson"
 )
 
 //素材操作
@@ -48,21 +50,25 @@ type MaterialAddResult struct {
 func MaterialAddNewsImage(dest *MediaUploadImg, path string) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.OaAddMaterial,
+	return wx.NewPostAction(urls.OaAddMaterial,
 		wx.WithQuery("type", string(dest.Type)),
 		wx.WithQuery("access_token", string(dest.AccessToken)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "media",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("media", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			dest.MaterialAddResult = &MaterialAddResult{
@@ -79,21 +85,25 @@ func MaterialAddNewsImage(dest *MediaUploadImg, path string) wx.Action {
 // UploadMedia 上传临时素材
 func UploadMedia(dest *MediaUpload, path string) wx.Action {
 	_, filename := filepath.Split(path)
-	return wx.NewUploadAction(urls.OaMediaUpload,
+	return wx.NewPostAction(urls.OaMediaUpload,
 		wx.WithQuery("type", string(dest.Type)),
 		wx.WithQuery("access_token", string(dest.AccessToken)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "media",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("media", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			dest.MaterialAddResult = &MaterialAddResult{}

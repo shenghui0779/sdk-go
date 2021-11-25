@@ -1,20 +1,28 @@
 package kf
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/offia"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSendTextMsg(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"text","text":{"content":"Hello World"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -31,10 +39,15 @@ func TestSendTextMsg(t *testing.T) {
 }
 
 func TestSendImageMsg(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"image","image":{"media_id":"MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -51,10 +64,15 @@ func TestSendImageMsg(t *testing.T) {
 }
 
 func TestSendVoiceMsg(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"voice","voice":{"media_id":"MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -71,10 +89,15 @@ func TestSendVoiceMsg(t *testing.T) {
 }
 
 func TestSendVideoMsg(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"video","video":{"media_id":"MEDIA_ID","thumb_media_id":"THUMB_MEDIA_ID","title":"TITLE","description":"DESCRIPTION"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -94,10 +117,15 @@ func TestSendVideoMsg(t *testing.T) {
 }
 
 func TestSendMusicMsg(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"music","music":{"title":"MUSIC_TITLE","description":"MUSIC_DESCRIPTION","musicurl":"MUSIC_URL","hqmusicurl":"HQ_MUSIC_URL","thumb_media_id":"THUMB_MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -118,10 +146,15 @@ func TestSendMusicMsg(t *testing.T) {
 }
 
 func TestSendNewsMsg(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"news","news":{"articles":[{"title":"Happy Day","description":"Is Really A Happy Day","url":"URL","picurl":"PIC_URL"}]},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -145,10 +178,15 @@ func TestSendNewsMsg(t *testing.T) {
 }
 
 func TestSendMPNewsMsg(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"mpnews","mpnews":{"media_id":"MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -165,10 +203,15 @@ func TestSendMPNewsMsg(t *testing.T) {
 }
 
 func TestSendMenuMsg(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"msgmenu","msgmenu":{"head_content":"您对本次服务是否满意呢? ","tail_content":"欢迎再次光临","list":[{"id":"101","content":"满意"},{"id":"102","content":"不满意"}]},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -196,10 +239,15 @@ func TestSendMenuMsg(t *testing.T) {
 }
 
 func TestSendCardMsg(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"wxcard","wxcard":{"card_id":"123dsdajkasd231jhksad"},"customservice":{"kf_account":"test1@kftest"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -216,10 +264,15 @@ func TestSendCardMsg(t *testing.T) {
 }
 
 func TestSendMinipMsg(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","msgtype":"miniprogrampage","miniprogrampage":{"title":"title","appid":"appid","pagepath":"pagepath","thumb_media_id":"thumb_media_id"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 
@@ -239,10 +292,15 @@ func TestSendMinipMsg(t *testing.T) {
 }
 
 func TestSetTyping(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/typing?access_token=ACCESS_TOKEN", []byte(`{"touser":"OPENID","command":"Typing"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
 

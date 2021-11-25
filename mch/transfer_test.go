@@ -1,22 +1,21 @@
 package mch
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestTransferToBalance(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := wx.NewMockClient(ctrl)
-
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", wx.WXML{
+	body, err := wx.FormatMap2XML(wx.WXML{
 		"mch_appid":        "wx2421b1c4370ec43b",
 		"mchid":            "10000100",
 		"partner_trade_no": "100000982014120919616",
@@ -29,7 +28,13 @@ func TestTransferToBalance(t *testing.T) {
 		"nonce_str":        "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS",
 		"sign_type":        "MD5",
 		"sign":             "97CD9C3C88B189B60C230677CE0FC3BB",
-	}).Return([]byte(`<xml>
+	})
+
+	assert.Nil(t, err)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<mch_appid>wx2421b1c4370ec43b</mch_appid>
 	<mchid>10000100</mchid>
@@ -38,9 +43,17 @@ func TestTransferToBalance(t *testing.T) {
 	<partner_trade_no>10013574201505191526582441</partner_trade_no>
 	<payment_no>1000018301201505190181489473</payment_no>
 	<payment_time>2015-05-19 15:26:59</payment_time>
-</xml>`), nil)
+</xml>`))),
+	}
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", body).Return(resp, nil)
+
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -48,7 +61,7 @@ func TestTransferToBalance(t *testing.T) {
 		return "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 
-	mch.tlscli = client
+	mch.SetTLSClient(client)
 
 	r, err := mch.Do(context.TODO(), TransferToBalance(&TransferBalanceData{
 		PartnerTradeNO: "100000982014120919616",
@@ -74,19 +87,20 @@ func TestTransferToBalance(t *testing.T) {
 }
 
 func TestQueryTransferBalanceOrder(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := wx.NewMockClient(ctrl)
-
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo", wx.WXML{
+	body, err := wx.FormatMap2XML(wx.WXML{
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
 		"partner_trade_no": "1000005901201407261446939628",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
 		"sign_type":        "MD5",
 		"sign":             "DF0024F9502E233115C0198912B4EB5D",
-	}).Return([]byte(`<xml>
+	})
+
+	assert.Nil(t, err)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<appid>wx2421b1c4370ec43b</appid>
 	<mch_id>10000100</mch_id>
@@ -99,9 +113,17 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 	<transfer_name>测试</transfer_name>
 	<transfer_time>2015-04-21 20:00:00</transfer_time>
 	<desc>福利测试</desc>
-</xml>`), nil)
+</xml>`))),
+	}
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo", body).Return(resp, nil)
+
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -109,7 +131,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.tlscli = client
+	mch.SetTLSClient(client)
 
 	r, err := mch.Do(context.TODO(), QueryTransferBalanceOrder("1000005901201407261446939628"))
 
@@ -135,9 +157,9 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 	ctrl := gomock.NewController(t)
 // 	defer ctrl.Finish()
 
-// 	client := wx.NewMockClient(ctrl)
+// 	client := mock.NewMockHTTPClient(ctrl)
 
-// 	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank", wx.WXML{
+// 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank", wx.WXML{
 // 		"mch_id":           "10000100",
 // 		"partner_trade_no": "1212121221278",
 // 		"amount":           "500",
@@ -167,7 +189,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 		return "50780e0cca98c8c8e814883e5caa672e"
 // 	}
 
-// 	mch.tlscli = client
+// 	mch.SetTLSClient(client)
 
 // 	r, err := mch.Do(context.TODO(), TransferToBankCard(&TransferBankCardData{
 // 		PartnerTradeNO: "1212121221278",
@@ -192,18 +214,19 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // }
 
 func TestQueryTransferBankCardOrder(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := wx.NewMockClient(ctrl)
-
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank", wx.WXML{
+	body, err := wx.FormatMap2XML(wx.WXML{
 		"mch_id":           "10000100",
 		"partner_trade_no": "1212121221278",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
 		"sign_type":        "MD5",
 		"sign":             "F5F586AE6B1BDB6756D2B1AD0A01BADA",
-	}).Return([]byte(`<xml>
+	})
+
+	assert.Nil(t, err)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<mch_id>10000100</mch_id>
 	<result_code>SUCCESS</result_code>
@@ -216,9 +239,17 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 	<cmms_amt>0</cmms_amt>
 	<create_time>2017-03-09 15:04:04</create_time>
 	<reason>福利测试</reason>
-</xml>`), nil)
+</xml>`))),
+	}
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank", body).Return(resp, nil)
+
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -226,7 +257,7 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.tlscli = client
+	mch.SetTLSClient(client)
 
 	r, err := mch.Do(context.TODO(), QueryTransferBankCardOrder("1212121221278"))
 
@@ -248,17 +279,18 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 }
 
 func TestRSAPublicKey(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := wx.NewMockClient(ctrl)
-
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://fraud.mch.weixin.qq.com/risk/getpublickey", wx.WXML{
+	body, err := wx.FormatMap2XML(wx.WXML{
 		"mch_id":    "10000100",
 		"nonce_str": "50780e0cca98c8c8e814883e5caa672e",
 		"sign_type": "MD5",
 		"sign":      "CA227C435D88EE017A9457B657FCA515",
-	}).Return([]byte(`<xml>
+	})
+
+	assert.Nil(t, err)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<mch_id>10000100</mch_id>
 	<result_code>SUCCESS</result_code>
@@ -271,9 +303,17 @@ wvGYLBSAn+oNw/uSAu6B3c6dh+pslgORCzrIRs68GWsARGZkI/lmOJWEgzQ9KC7b
 yHVqEnDDaWQFyQpq30JdP6YTXR/xlKyo8f1DingoSDXAhKMGRKaT4oIFkE6OA3jt
 DQIDAQAB
 -----END PUBLIC KEY-----</pub_key>
-</xml>`), nil)
+</xml>`))),
+	}
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../test/p12test.p12")
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://fraud.mch.weixin.qq.com/risk/getpublickey", body).Return(resp, nil)
+
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
 
 	assert.Nil(t, err)
 
@@ -281,7 +321,7 @@ DQIDAQAB
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.tlscli = client
+	mch.SetTLSClient(client)
 
 	r, err := mch.Do(context.TODO(), RSAPublicKey())
 

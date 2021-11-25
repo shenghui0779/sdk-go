@@ -59,6 +59,35 @@ func FormatMap2XML(m WXML) ([]byte, error) {
 	return []byte(builder.String()), nil
 }
 
+// FormatMap2XML format map to xml with sorted keys for test
+// func FormatMap2XML(m WXML) ([]byte, error) {
+// 	ks := make([]string, 0, len(m))
+
+// 	for k := range m {
+// 		ks = append(ks, k)
+// 	}
+
+// 	sort.Strings(ks)
+
+// 	var builder strings.Builder
+
+// 	builder.WriteString("<xml>")
+
+// 	for _, k := range ks {
+// 		builder.WriteString(fmt.Sprintf("<%s>", k))
+
+// 		if err := xml.EscapeText(&builder, []byte(m[k])); err != nil {
+// 			return nil, err
+// 		}
+
+// 		builder.WriteString(fmt.Sprintf("</%s>", k))
+// 	}
+
+// 	builder.WriteString("</xml>")
+
+// 	return []byte(builder.String()), nil
+// }
+
 // ParseXML2Map parse xml to map
 func ParseXML2Map(b []byte) (WXML, error) {
 	m := make(WXML)

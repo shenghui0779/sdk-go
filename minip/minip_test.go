@@ -1,12 +1,16 @@
 package minip
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
 )
 
@@ -18,21 +22,26 @@ func TestAccount(t *testing.T) {
 }
 
 func TestCode2Session(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"openid": "OPENID",
+	"session_key": "SESSION_KEY",
+	"unionid": "UNIONID",
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=APPSECRET&js_code=JSCODE&grant_type=authorization_code").Return([]byte(`{
-		"openid": "OPENID",
-		"session_key": "SESSION_KEY",
-		"unionid": "UNIONID",
-		"errcode": 0,
-		"errmsg": "ok"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=APPSECRET&js_code=JSCODE&grant_type=authorization_code", nil).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.client = client
+	mp.SetClient(client)
 
 	authSession, err := mp.Code2Session(context.TODO(), "JSCODE")
 
@@ -45,20 +54,25 @@ func TestCode2Session(t *testing.T) {
 }
 
 func TestAccessToken(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"access_token": "ACCESS_TOKEN",
+	"expires_in": 7200,
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/token?appid=APPID&secret=APPSECRET&grant_type=client_credential").Return([]byte(`{
-		"access_token": "ACCESS_TOKEN",
-		"expires_in": 7200,
-		"errcode": 0,
-		"errmsg": "ok"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/token?appid=APPID&secret=APPSECRET&grant_type=client_credential", nil).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.client = client
+	mp.SetClient(client)
 
 	accessToken, err := mp.AccessToken(context.TODO())
 
