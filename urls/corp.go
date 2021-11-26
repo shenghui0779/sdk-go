@@ -1,49 +1,57 @@
 package urls
 
+// oauth
+const QRCodeAuthorize = "https://open.work.weixin.qq.com/wwopen/sso/qrConnect"
+
 const (
 	CorpCgiBinAccessToken  = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
 	CorpCgiBinAPIDomainIP  = "https://qyapi.weixin.qq.com/cgi-bin/get_api_domain_ip"
 	CorpCgiBinUserInfo     = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo"
 	CorpCgiBinUserAuthSucc = "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc"
+	CorpCginBinCallbackIP  = "https://qyapi.weixin.qq.com/cgi-bin/getcallbackip"
 )
 
-// addr_book
+// user
 const (
-	CorpAddrBookUserCreate        = "https://qyapi.weixin.qq.com/cgi-bin/user/create"
-	CorpAddrBookUserGet           = "https://qyapi.weixin.qq.com/cgi-bin/user/get"
-	CorpAddrBookUserUpdate        = "https://qyapi.weixin.qq.com/cgi-bin/user/update"
-	CorpAddrBookUserDelete        = "https://qyapi.weixin.qq.com/cgi-bin/user/delete"
-	CorpAddrBookUserBatchDelete   = "https://qyapi.weixin.qq.com/cgi-bin/user/batchdelete"
-	CorpAddrBookUserSimpleList    = "https://qyapi.weixin.qq.com/cgi-bin/user/simplelist"
-	CorpAddrBookUserList          = "https://qyapi.weixin.qq.com/cgi-bin/user/list"
-	CorpAddrBookConvert2OpenID    = "https://qyapi.weixin.qq.com/cgi-bin/user/convert_to_openid"
-	CorpAddrBookConvert2UserID    = "https://qyapi.weixin.qq.com/cgi-bin/user/convert_to_userid"
-	CorpAddrBookBatchInvite       = "https://qyapi.weixin.qq.com/cgi-bin/batch/invite"
-	CorpAddrBookJoinQRCode        = "https://qyapi.weixin.qq.com/cgi-bin/corp/get_join_qrcode"
-	CorpAddrBookActiveStat        = "https://qyapi.weixin.qq.com/cgi-bin/user/get_active_stat"
-	CorpAddrBookDepartmentCreate  = "https://qyapi.weixin.qq.com/cgi-bin/department/create"
-	CorpAddrBookDepartmentUpdate  = "https://qyapi.weixin.qq.com/cgi-bin/department/update"
-	CorpAddrBookDepartmentDelete  = "https://qyapi.weixin.qq.com/cgi-bin/department/delete"
-	CorpAddrBookDepartmentList    = "https://qyapi.weixin.qq.com/cgi-bin/department/list"
-	CorpAddrBookTagCreate         = "https://qyapi.weixin.qq.com/cgi-bin/tag/create"
-	CorpAddrBookTagUpdate         = "https://qyapi.weixin.qq.com/cgi-bin/tag/update"
-	CorpAddrBookTagDelete         = "https://qyapi.weixin.qq.com/cgi-bin/tag/delete"
-	CorpAddrBookTagGet            = "https://qyapi.weixin.qq.com/cgi-bin/tag/get"
-	CorpAddrBookTagList           = "https://qyapi.weixin.qq.com/cgi-bin/tag/list"
-	CorpAddrBookTagUserAdd        = "https://qyapi.weixin.qq.com/cgi-bin/tag/addtagusers"
-	CorpAddrBookTagUserDel        = "https://qyapi.weixin.qq.com/cgi-bin/tag/deltagusers"
-	CorpAddrBookBatchSyncUser     = "https://qyapi.weixin.qq.com/cgi-bin/batch/syncuser"
-	CorpAddrBookBatchReplaceUser  = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceuser"
-	CorpAddrBookBatchReplaceParty = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceparty"
-	CorpAddrBookBatchResult       = "https://qyapi.weixin.qq.com/cgi-bin/batch/getresult"
-	CorpLinkedCorpPermList        = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/agent/get_perm_list"
-	CorpLinkedCorpUserGet         = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/get"
-	CorpLinkedCorpUserSimpleList  = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/simplelist"
-	CorpLinkedCorpUserList        = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/list"
-	CorpLinkedCorpDepartmentList  = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/department/list"
+	CorpUserCreate        = "https://qyapi.weixin.qq.com/cgi-bin/user/create"
+	CorpUserGet           = "https://qyapi.weixin.qq.com/cgi-bin/user/get"
+	CorpUserUpdate        = "https://qyapi.weixin.qq.com/cgi-bin/user/update"
+	CorpUserDelete        = "https://qyapi.weixin.qq.com/cgi-bin/user/delete"
+	CorpUserBatchDelete   = "https://qyapi.weixin.qq.com/cgi-bin/user/batchdelete"
+	CorpUserSimpleList    = "https://qyapi.weixin.qq.com/cgi-bin/user/simplelist"
+	CorpUserList          = "https://qyapi.weixin.qq.com/cgi-bin/user/list"
+	CorpConvertToOpenID   = "https://qyapi.weixin.qq.com/cgi-bin/user/convert_to_openid"
+	CorpConvertToUserID   = "https://qyapi.weixin.qq.com/cgi-bin/user/convert_to_userid"
+	CorpBatchInvite       = "https://qyapi.weixin.qq.com/cgi-bin/batch/invite"
+	CorpJoinQRCode        = "https://qyapi.weixin.qq.com/cgi-bin/corp/get_join_qrcode"
+	CorpUserActiveStat    = "https://qyapi.weixin.qq.com/cgi-bin/user/get_active_stat"
+	CorpDepartmentCreate  = "https://qyapi.weixin.qq.com/cgi-bin/department/create"
+	CorpDepartmentUpdate  = "https://qyapi.weixin.qq.com/cgi-bin/department/update"
+	CorpDepartmentDelete  = "https://qyapi.weixin.qq.com/cgi-bin/department/delete"
+	CorpDepartmentList    = "https://qyapi.weixin.qq.com/cgi-bin/department/list"
+	CorpTagCreate         = "https://qyapi.weixin.qq.com/cgi-bin/tag/create"
+	CorpTagUpdate         = "https://qyapi.weixin.qq.com/cgi-bin/tag/update"
+	CorpTagDelete         = "https://qyapi.weixin.qq.com/cgi-bin/tag/delete"
+	CorpTagGet            = "https://qyapi.weixin.qq.com/cgi-bin/tag/get"
+	CorpTagList           = "https://qyapi.weixin.qq.com/cgi-bin/tag/list"
+	CorpTagUserAdd        = "https://qyapi.weixin.qq.com/cgi-bin/tag/addtagusers"
+	CorpTagUserDel        = "https://qyapi.weixin.qq.com/cgi-bin/tag/deltagusers"
+	CorpBatchSyncUser     = "https://qyapi.weixin.qq.com/cgi-bin/batch/syncuser"
+	CorpBatchReplaceUser  = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceuser"
+	CorpBatchReplaceParty = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceparty"
+	CorpBatchResult       = "https://qyapi.weixin.qq.com/cgi-bin/batch/getresult"
 )
 
-// external_contact
+// linkedcorp
+const (
+	CorpLinkedcorpPermList       = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/agent/get_perm_list"
+	CorpLinkedcorpUserGet        = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/get"
+	CorpLinkedcorpUserSimpleList = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/simplelist"
+	CorpLinkedcorpUserList       = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/user/list"
+	CorpLinkedcorpDepartmentList = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/department/list"
+)
+
+// externalcontact
 const (
 	CorpExternalContactFollowUserList = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_follow_user_list"
 	CorpExternalContactWayAdd         = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_contact_way"
@@ -83,4 +91,206 @@ const (
 	CorpSetWorkbenchTemplate = "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_template"
 	CorpGetWorkbenchTemplate = "https://qyapi.weixin.qq.com/cgi-bin/agent/get_workbench_template"
 	CorpSetWorkbenchData     = "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_data"
+)
+
+// message
+const (
+	CorpMessageSend                = "https://qyapi.weixin.qq.com/cgi-bin/message/send"
+	CorpMessageUpdateTemplateCard  = "https://qyapi.weixin.qq.com/cgi-bin/message/update_template_card"
+	CorpMessageRecall              = "https://qyapi.weixin.qq.com/cgi-bin/message/recall"
+	CorpAppchatCreate              = "https://qyapi.weixin.qq.com/cgi-bin/appchat/create"
+	CorpAppchatUpdate              = "https://qyapi.weixin.qq.com/cgi-bin/appchat/update"
+	CorpAppchatGet                 = "https://qyapi.weixin.qq.com/cgi-bin/appchat/get"
+	CorpAppchatSend                = "https://qyapi.weixin.qq.com/cgi-bin/appchat/send"
+	CorpLinkedcorpMessageSend      = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send"
+	CorpExternalContactMessageSend = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send"
+	CorpMessageStaticsGet          = "https://qyapi.weixin.qq.com/cgi-bin/message/get_statistics"
+)
+
+// media
+const (
+	CorpMediaUpload    = "https://qyapi.weixin.qq.com/cgi-bin/media/upload"
+	CorpMediaUploadimg = "https://qyapi.weixin.qq.com/cgi-bin/media/uploadimg"
+	CorpMediaGet       = "https://qyapi.weixin.qq.com/cgi-bin/media/get"
+	CorpMediaGetJSSDK  = "https://qyapi.weixin.qq.com/cgi-bin/media/get/jssdk"
+)
+
+// OA
+const (
+	CorpOAGetCorpCheckinOption      = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcorpcheckinoption"
+	CorpOAGetCheckinOption          = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckinoption"
+	CorpOAGetCheckinData            = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata"
+	CorpOAGetCheckinDayData         = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckin_daydata"
+	CorpOAGetCheckinMonthData       = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckin_monthdata"
+	CorpOAGetCheckinScheduleList    = "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckinschedulist"
+	CorpOASetCheckinScheduleList    = "https://qyapi.weixin.qq.com/cgi-bin/checkin/setcheckinschedulist"
+	CorpOAAddCheckinUserFace        = "https://qyapi.weixin.qq.com/cgi-bin/checkin/addcheckinuserface"
+	CorpOAGetTemplateDetail         = "https://qyapi.weixin.qq.com/cgi-bin/oa/gettemplatedetail"
+	CorpOAApplyEvent                = "https://qyapi.weixin.qq.com/cgi-bin/oa/applyevent"
+	CorpOAGetApprovalInfo           = "https://qyapi.weixin.qq.com/cgi-bin/oa/getapprovalinfo"
+	CorpOAGetApprovalDetail         = "https://qyapi.weixin.qq.com/cgi-bin/oa/getapprovaldetail"
+	CorpOAGetVacationCorpConf       = "https://qyapi.weixin.qq.com/cgi-bin/oa/vacation/getcorpconf"
+	CorpOAGetUserVacationQuota      = "https://qyapi.weixin.qq.com/cgi-bin/oa/vacation/getuservacationquota"
+	CorpOASetUserVacationQuota      = "https://qyapi.weixin.qq.com/cgi-bin/oa/vacation/setoneuserquota"
+	CorpOAGetJournalRecordList      = "https://qyapi.weixin.qq.com/cgi-bin/oa/journal/get_record_list"
+	CorpOAGetJournalRecordDetail    = "https://qyapi.weixin.qq.com/cgi-bin/oa/journal/get_record_detail"
+	CorpOAGetJournalStatList        = "https://qyapi.weixin.qq.com/cgi-bin/oa/journal/get_stat_list"
+	CorpOAOpenApprovalDataGet       = "https://qyapi.weixin.qq.com/cgi-bin/corp/getopenapprovaldata"
+	CorpOAMeetingRoomAdd            = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/add"
+	CorpOAMeetingRoomList           = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/list"
+	CorpOAMeetingRoomEdit           = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/edit"
+	CorpOAMeetingRoomDel            = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/del"
+	CorpOAGetMeetingRoomBookingInfo = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/get_booking_info"
+	CorpOAMeetingRoomBook           = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/book"
+	CorpOAMeetingRoomCancelBook     = "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/cancel_book"
+	CorpOACallPstncc                = "https://qyapi.weixin.qq.com/cgi-bin/pstncc/call"
+	CorpOAGetPstnccStates           = "https://qyapi.weixin.qq.com/cgi-bin/pstncc/getstates"
+)
+
+// tools
+const (
+	CorpToolsCalendarAdd              = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/add"
+	CorpToolsCalendarUpdate           = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/update"
+	CorpToolsCalendarGet              = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/get"
+	CorpToolsCalendarDel              = "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/del"
+	CorpToolsScheduleAdd              = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/add"
+	CorpToolsScheduleUpdate           = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/update"
+	CorpToolsScheduleGet              = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/get"
+	CorpToolsScheduleDel              = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/del"
+	CorpToolsScheduleGetByCalendar    = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/get_by_calendar"
+	CorpToolsMeetingCreate            = "https://qyapi.weixin.qq.com/cgi-bin/meeting/create"
+	CorpToolsMeetingUpdate            = "https://qyapi.weixin.qq.com/cgi-bin/meeting/update"
+	CorpToolsMeetingCancel            = "https://qyapi.weixin.qq.com/cgi-bin/meeting/cancel"
+	CorpToolsMeetingGetUserMeetingID  = "https://qyapi.weixin.qq.com/cgi-bin/meeting/get_user_meetingid"
+	CorpToolsMeetingGetInfo           = "https://qyapi.weixin.qq.com/cgi-bin/meeting/get_info"
+	CorpToolsLivingCreate             = "https://qyapi.weixin.qq.com/cgi-bin/living/create"
+	CorpToolsLivingModify             = "https://qyapi.weixin.qq.com/cgi-bin/living/modify"
+	CorpToolsLivingCancel             = "https://qyapi.weixin.qq.com/cgi-bin/living/cancel"
+	CorpToolsLivingDeleteReplayData   = "https://qyapi.weixin.qq.com/cgi-bin/living/delete_replay_data"
+	CorpToolsLivingGetCode            = "https://qyapi.weixin.qq.com/cgi-bin/living/get_living_code"
+	CorpToolsLivingGetUserAllLivingID = "https://qyapi.weixin.qq.com/cgi-bin/living/get_user_all_livingid"
+	CorpToolsLivingGetInfo            = "https://qyapi.weixin.qq.com/cgi-bin/living/get_living_info"
+	CorpToolsLivingGetWatchStat       = "https://qyapi.weixin.qq.com/cgi-bin/living/get_watch_stat"
+	CorpToolsLivingGetShareInfo       = "https://qyapi.weixin.qq.com/cgi-bin/living/get_living_share_info"
+	CorpToolsWedriveSpaceCreate       = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_create"
+	CorpToolsWedriveSpaceRename       = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_rename"
+	CorpToolsWedriveSpaceDismiss      = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_dismiss"
+	CorpToolsWedriveSpaceInfo         = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_info"
+	CorpToolsWedriveSpaceAclAdd       = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_acl_add"
+	CorpToolsWedriveSpaceAclDel       = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_acl_del"
+	CorpToolsWedriveSpaceSetting      = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_setting"
+	CorpToolsWedriveSpaceShare        = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_share"
+	CorpToolsWedriveFileList          = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_list"
+	CorpToolsWedriveFileUpload        = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_upload"
+	CorpToolsWedriveFileDownload      = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_download"
+	CorpToolsWedriveFileCreate        = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_create"
+	CorpToolsWedriveFileRename        = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_rename"
+	CorpToolsWedriveFileMove          = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_move"
+	CorpToolsWedriveFileDelete        = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_delete"
+	CorpToolsWedriveFileInfo          = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_info"
+	CorpToolsWedriveFileAclAdd        = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_acl_add"
+	CorpToolsWedriveFileAclDel        = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_acl_del"
+	CorpToolsWedriveFileSetting       = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_setting"
+	CorpToolsWedriveFileShare         = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_share"
+	CorpToolsDialGetRecord            = "https://qyapi.weixin.qq.com/cgi-bin/dial/get_dial_record"
+)
+
+// payment
+const (
+	CorpPaymentMerchantAdd    = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/addmerchant"
+	CorpPaymentMerchantGet    = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/getmerchant"
+	CorpPaymentMerchantDel    = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/delmerchant"
+	CorpPaymentMchUseScopeSet = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/set_mch_use_scope"
+	CorpPaymentBillListGet    = "https://qyapi.weixin.qq.com/cgi-bin/externalpay/get_bill_list"
+)
+
+// cropgroup
+const (
+	CorpGroupListAppShareInfo     = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/list_app_share_info"
+	CorpGroupGetToken             = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/gettoken"
+	CorpGroupMinipTransferSession = "https://qyapi.weixin.qq.com/cgi-bin/miniprogram/transfer_session"
+)
+
+// msgaudit
+const (
+	CorpMsgAuditGetPermitUserList = "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/get_permit_user_list"
+	CorpMsgAuditCheckSingleAgree  = "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/check_single_agree"
+	CorpMsgAuditCheckRoomAgree    = "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/check_room_agree"
+	CorpMsgAuditGroupChatGet      = "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/groupchat/get"
+)
+
+// invoice
+const (
+	CorpInvoiceGetInfo                    = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/getinvoiceinfo"
+	CorpInvoiceBatchGetInfo               = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/getinvoiceinfobatch"
+	CorpInvoiceUpdateReimburseStatus      = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updateinvoicestatus"
+	CorpInvoiceBatchUpdateReimburseStatus = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updatestatusbatch"
+)
+
+// school
+const (
+	CorpSchoolGetSubscribeQRCode     = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_subscribe_qr_code"
+	CorpSchoolSetSubscribeMode       = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/set_subscribe_mode"
+	CorpSchoolGetSubscribeMode       = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_subscribe_mode"
+	CorpSchoolMessageSend            = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send"
+	CorpSchoolStudentCreate          = "https://qyapi.weixin.qq.com/cgi-bin/school/user/create_student"
+	CorpSchoolStudentBatchCreate     = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_create_student"
+	CorpSchoolStudentDelete          = "https://qyapi.weixin.qq.com/cgi-bin/school/user/delete_student"
+	CorpSchoolStudentBatchDelete     = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_delete_student"
+	CorpSchoolStudentUpdate          = "https://qyapi.weixin.qq.com/cgi-bin/school/user/update_student"
+	CorpSchoolStudentBatchUpdate     = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_update_student"
+	CorpSchoolParentCreate           = "https://qyapi.weixin.qq.com/cgi-bin/school/user/create_parent"
+	CorpSchoolParentBatchCreate      = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_create_parent"
+	CorpSchoolParentDelete           = "https://qyapi.weixin.qq.com/cgi-bin/school/user/delete_parent"
+	CorpSchoolParentBatchDelete      = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_delete_parent"
+	CorpSchoolParentUpdate           = "https://qyapi.weixin.qq.com/cgi-bin/school/user/update_parent"
+	CorpSchoolParentBatchUpdate      = "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_update_parent"
+	CorpSchoolUserGet                = "https://qyapi.weixin.qq.com/cgi-bin/school/user/get"
+	CorpSchoolUserList               = "https://qyapi.weixin.qq.com/cgi-bin/school/user/list"
+	CorpSchoolSetArchSyncMode        = "https://qyapi.weixin.qq.com/cgi-bin/school/set_arch_sync_mode"
+	CorpSchoolParentList             = "https://qyapi.weixin.qq.com/cgi-bin/school/user/list_parent"
+	CorpSchoolDepartmentCreate       = "https://qyapi.weixin.qq.com/cgi-bin/school/department/create"
+	CorpSchoolDepartmentUpdate       = "https://qyapi.weixin.qq.com/cgi-bin/school/department/update"
+	CorpSchoolDepartmentDelete       = "https://qyapi.weixin.qq.com/cgi-bin/school/department/delete"
+	CorpSchoolDepartmentList         = "https://qyapi.weixin.qq.com/cgi-bin/school/department/list"
+	CorpSchoolSetUpgradeInfo         = "https://qyapi.weixin.qq.com/cgi-bin/school/set_upgrade_info"
+	CorpSchoolGetHealthReportStat    = "https://qyapi.weixin.qq.com/cgi-bin/health/get_health_report_stat"
+	CorpSchoolGetHealthReportJobIDs  = "https://qyapi.weixin.qq.com/cgi-bin/health/get_report_jobids"
+	CorpSchoolGetHealthReportJobInfo = "https://qyapi.weixin.qq.com/cgi-bin/health/get_report_job_info"
+	CorpSchoolGetHealthReportAnswer  = "https://qyapi.weixin.qq.com/cgi-bin/health/get_report_answer"
+	CorpSchoolGetTeacherHealthInfo   = "https://qyapi.weixin.qq.com/cgi-bin/school/user/get_teacher_customize_health_info"
+	CorpSchoolGetStudentHealthInfo   = "https://qyapi.weixin.qq.com/cgi-bin/school/user/get_student_customize_health_info"
+	CorpSchoolGetHealthQRCode        = "https://qyapi.weixin.qq.com/cgi-bin/school/user/get_health_qrcode"
+	CorpSchoolGetUserAllLivingID     = "https://qyapi.weixin.qq.com/cgi-bin/living/get_user_all_livingid"
+	CorpSchoolGetLivingInfo          = "https://qyapi.weixin.qq.com/cgi-bin/school/living/get_living_info"
+	CorpSchoolGetLivingWatchStat     = "https://qyapi.weixin.qq.com/cgi-bin/school/living/get_watch_stat"
+	CorpSchoolGetLivingUnwatchStat   = "https://qyapi.weixin.qq.com/cgi-bin/school/living/get_unwatch_stat"
+	CorpSchoolDeleteLivingReplayData = "https://qyapi.weixin.qq.com/cgi-bin/living/delete_replay_data"
+	CorpSchoolGetPaymentResult       = "https://qyapi.weixin.qq.com/cgi-bin/school/get_payment_result"
+	CorpSchoolGetTrade               = "https://qyapi.weixin.qq.com/cgi-bin/school/get_trade"
+)
+
+// report
+const (
+	CorpReportGridAdd                   = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/add"
+	CorpReportGridUpdate                = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/update"
+	CorpReportGridDelete                = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/delete"
+	CorpReportGridList                  = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/list"
+	CorpReportGetUserGridInfo           = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/get_user_grid_info"
+	CorpReportGridCataAdd               = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/add_cata"
+	CorpReportGridCataUpdate            = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/update_cata"
+	CorpReportGridCataDelete            = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/delete_cata"
+	CorpReportGridCataList              = "https://qyapi.weixin.qq.com/cgi-bin/report/grid/list_cata"
+	CorpReportGetPatrolGridInfo         = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_grid_info"
+	CorpReportGetPatrolCorpStatus       = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_corp_status"
+	CorpReportGetPatrolUserStatus       = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_user_status"
+	CorpReportPatrolCategoryStatistic   = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/category_statistic"
+	CorpReportGetPatrolOrderList        = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_order_list"
+	CorpReportGetPatrolOrderInfo        = "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_order_info"
+	CorpReportGetResidentGridInfo       = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_grid_info"
+	CorpReportGetResidentCorpStatus     = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_corp_status"
+	CorpReportGetResidentUserStatus     = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_user_status"
+	CorpReportResidentCategoryStatistic = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/category_statistic"
+	CorpReportGetResidentOrderList      = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_order_list"
+	CorpReportGetResidentOrderInfo      = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_order_info"
 )

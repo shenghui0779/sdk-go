@@ -3,12 +3,18 @@ package wx
 import (
 	"bytes"
 	"crypto/rand"
+	"crypto/tls"
 	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"encoding/xml"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"path/filepath"
 	"strings"
+
+	"golang.org/x/crypto/pkcs12"
 )
 
 // WXML deal with xml for wechat
@@ -33,7 +39,7 @@ func Nonce(size uint) string {
 }
 
 // FormatMap2XML format map to xml
-func FormatMap2XML(m WXML) (string, error) {
+func FormatMap2XML(m WXML) ([]byte, error) {
 	var builder strings.Builder
 
 	builder.WriteString("<xml>")
@@ -42,7 +48,7 @@ func FormatMap2XML(m WXML) (string, error) {
 		builder.WriteString(fmt.Sprintf("<%s>", k))
 
 		if err := xml.EscapeText(&builder, []byte(v)); err != nil {
-			return "", err
+			return nil, err
 		}
 
 		builder.WriteString(fmt.Sprintf("</%s>", k))
@@ -50,8 +56,37 @@ func FormatMap2XML(m WXML) (string, error) {
 
 	builder.WriteString("</xml>")
 
-	return builder.String(), nil
+	return []byte(builder.String()), nil
 }
+
+// FormatMap2XML format map to xml with sorted keys for test
+// func FormatMap2XML(m WXML) ([]byte, error) {
+// 	ks := make([]string, 0, len(m))
+
+// 	for k := range m {
+// 		ks = append(ks, k)
+// 	}
+
+// 	sort.Strings(ks)
+
+// 	var builder strings.Builder
+
+// 	builder.WriteString("<xml>")
+
+// 	for _, k := range ks {
+// 		builder.WriteString(fmt.Sprintf("<%s>", k))
+
+// 		if err := xml.EscapeText(&builder, []byte(m[k])); err != nil {
+// 			return nil, err
+// 		}
+
+// 		builder.WriteString(fmt.Sprintf("</%s>", k))
+// 	}
+
+// 	builder.WriteString("</xml>")
+
+// 	return []byte(builder.String()), nil
+// }
 
 // ParseXML2Map parse xml to map
 func ParseXML2Map(b []byte) (WXML, error) {
@@ -152,4 +187,40 @@ func MarshalWithNoEscapeHTML(v interface{}) ([]byte, error) {
 	}
 
 	return b, nil
+}
+
+// P12FileToCert 通过p12(pfx)证书文件生成Pem证书
+func P12FileToCert(path, password string) (tls.Certificate, error) {
+	fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
+
+	certPath, err := filepath.Abs(filepath.Clean(path))
+
+	if err != nil {
+		return fail(err)
+	}
+
+	p12, err := ioutil.ReadFile(certPath)
+
+	if err != nil {
+		return fail(err)
+	}
+
+	return P12BlockToCert(p12, password)
+}
+
+// P12BlockToCert 通过p12(pfx)证书内容生成Pem证书
+func P12BlockToCert(pfxData []byte, password string) (tls.Certificate, error) {
+	blocks, err := pkcs12.ToPEM(pfxData, password)
+
+	if err != nil {
+		return tls.Certificate{}, err
+	}
+
+	pemData := make([]byte, 0)
+
+	for _, b := range blocks {
+		pemData = append(pemData, pem.EncodeToMemory(b)...)
+	}
+
+	return tls.X509KeyPair(pemData, pemData)
 }

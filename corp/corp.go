@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
@@ -24,7 +25,7 @@ func NewCorp(corpid string) *Corp {
 	return &Corp{
 		corpid: corpid,
 		nonce:  wx.Nonce,
-		client: wx.NewClient(wx.WithInsecureSkipVerify()),
+		client: wx.DefaultClient(),
 	}
 }
 
@@ -33,6 +34,16 @@ func NewCorp(corpid string) *Corp {
 func (corp *Corp) SetServerConfig(token, encodingAESKey string) {
 	corp.token = token
 	corp.encodingAESKey = encodingAESKey
+}
+
+// SetClient set client
+func (corp *Corp) SetClient(c yiigo.HTTPClient) {
+	corp.client.SetHTTPClient(c)
+}
+
+// SetLogger set client logger
+func (corp *Corp) SetLogger(l wx.Logger) {
+	corp.client.SetLogger(l)
 }
 
 func (corp *Corp) CorpID() string {
@@ -64,7 +75,7 @@ func (corp *Corp) QRCodeAuthURL(agentID string, redirectURL string, state ...str
 }
 
 func (corp *Corp) AccessToken(ctx context.Context, secret string, options ...yiigo.HTTPOption) (*AccessToken, error) {
-	resp, err := corp.client.Get(ctx, fmt.Sprintf("%s?corpid=%s&corpsecret=%s", urls.CorpCgiBinAccessToken, corp.corpid, secret), options...)
+	resp, err := corp.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?corpid=%s&corpsecret=%s", urls.CorpCgiBinAccessToken, corp.corpid, secret), nil, options...)
 
 	if err != nil {
 		return nil, err
@@ -92,18 +103,7 @@ func (corp *Corp) Do(ctx context.Context, accessToken string, action wx.Action, 
 		err  error
 	)
 
-	switch action.Method() {
-	case wx.MethodGet:
-		resp, err = corp.client.Get(ctx, action.URL(accessToken), options...)
-	case wx.MethodPost:
-		body, berr := action.Body()
-
-		if berr != nil {
-			return berr
-		}
-
-		resp, err = corp.client.Post(ctx, action.URL(accessToken), body, options...)
-	case wx.MethodUpload:
+	if action.IsUpload() {
 		form, ferr := action.UploadForm()
 
 		if ferr != nil {
@@ -111,6 +111,18 @@ func (corp *Corp) Do(ctx context.Context, accessToken string, action wx.Action, 
 		}
 
 		resp, err = corp.client.Upload(ctx, action.URL(accessToken), form, options...)
+	} else {
+		body, berr := action.Body()
+
+		if berr != nil {
+			return berr
+		}
+
+		resp, err = corp.client.Do(ctx, action.Method(), action.URL(accessToken), body, options...)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	if err != nil {
@@ -123,9 +135,5 @@ func (corp *Corp) Do(ctx context.Context, accessToken string, action wx.Action, 
 		return fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
-	if action.Decode() == nil {
-		return nil
-	}
-
-	return action.Decode()(resp)
+	return action.Decode(resp)
 }

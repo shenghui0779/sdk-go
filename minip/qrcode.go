@@ -1,176 +1,93 @@
 package minip
 
 import (
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type qrcodeSettings struct {
-	page      string
-	width     int
-	autoColor bool
-	lineColor map[string]int
-	isHyaline bool
-}
+type EnvVersion string
 
-// QRCodeOption configures how we set up the wxa_qrcode
-type QRCodeOption func(s *qrcodeSettings)
-
-// WithQRCodePage specifies the `page` to qrcode.
-func WithQRCodePage(page string) QRCodeOption {
-	return func(settings *qrcodeSettings) {
-		settings.page = page
-	}
-}
-
-// WithQRCodeWidth specifies the `width` to qrcode.
-func WithQRCodeWidth(width int) QRCodeOption {
-	return func(settings *qrcodeSettings) {
-		settings.width = width
-	}
-}
-
-// WithQRCodeAutoColor specifies the `auto_color` to qrcode.
-func WithQRCodeAutoColor() QRCodeOption {
-	return func(settings *qrcodeSettings) {
-		settings.autoColor = true
-	}
-}
-
-// WithQRCodeLineColor specifies the `line_color` to qrcode.
-func WithQRCodeLineColor(r, g, b int) QRCodeOption {
-	return func(settings *qrcodeSettings) {
-		settings.lineColor = map[string]int{
-			"r": r,
-			"g": g,
-			"b": b,
-		}
-	}
-}
-
-// WithQRCodeIsHyaline specifies the `is_hyaline` to qrcode.
-func WithQRCodeIsHyaline() QRCodeOption {
-	return func(settings *qrcodeSettings) {
-		settings.isHyaline = true
-	}
-}
+const (
+	EnvRelease EnvVersion = "release"
+	EnvTrial   EnvVersion = "trial"
+	EnvDevelop EnvVersion = "develop"
+)
 
 // QRCode 小程序二维码
 type QRCode struct {
 	Buffer []byte
 }
 
+type ParamsQRCodeCreate struct {
+	Path  string `json:"path"`            // 扫码进入的小程序页面路径，最大长度 128 字节，不能为空；对于小游戏，可以只传入 query 部分，来实现传参效果，如：传入 "?foo=bar"，即可在 wx.getLaunchOptionsSync 接口中的 query 参数获取到 {foo:"bar"}。
+	Width int    `json:"width,omitempty"` // 二维码的宽度，单位 px。最小 280px，最大 1280px
+}
+
 // CreateQRCode 创建小程序二维码（数量有限）
-func CreateQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action {
+func CreateQRCode(params *ParamsQRCodeCreate, qrcode *QRCode) wx.Action {
 	return wx.NewPostAction(urls.MinipQRCodeCreate,
 		wx.WithBody(func() ([]byte, error) {
-			settings := new(qrcodeSettings)
-
-			if len(options) != 0 {
-				for _, f := range options {
-					f(settings)
-				}
-			}
-
-			params := yiigo.X{"path": path}
-
-			if settings.width != 0 {
-				params["width"] = settings.width
-			}
-
 			return wx.MarshalWithNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			dest.Buffer = make([]byte, len(resp))
-			copy(dest.Buffer, resp)
+			qrcode.Buffer = make([]byte, len(resp))
+			copy(qrcode.Buffer, resp)
 
 			return nil
 		}),
 	)
+}
+
+// RGB rgb color
+type RGB struct {
+	R int `json:"r"`
+	G int `json:"g"`
+	B int `json:"b"`
+}
+
+type ParamsQRCodeGet struct {
+	Path      string `json:"path"`                 // 扫码进入的小程序页面路径，最大长度 128 字节，不能为空；对于小游戏，可以只传入 query 部分，来实现传参效果，如：传入 "?foo=bar"，即可在 wx.getLaunchOptionsSync 接口中的 query 参数获取到 {foo:"bar"}。
+	Width     int    `json:"width,omitempty"`      // 二维码的宽度，单位 px。最小 280px，最大 1280px
+	AutoColor bool   `json:"auto_color,omitempty"` // 自动配置线条颜色，如果颜色依然是黑色，则说明不建议配置主色调
+	LineColor *RGB   `json:"line_color,omitempty"` // auto_color 为 false 时生效，使用 rgb 设置颜色，十进制表示，默认：{"r":0,"g":0,"b":0}
+	IsHyaline bool   `json:"is_hyaline,omitempty"` // 是否需要透明底色，为 true 时，生成透明底色的小程序码
 }
 
 // GetQRCode 获取小程序二维码（数量有限）
-func GetQRCode(dest *QRCode, path string, options ...QRCodeOption) wx.Action {
+func GetQRCode(params *ParamsQRCodeGet, qrcode *QRCode) wx.Action {
 	return wx.NewPostAction(urls.MinipQRCodeGet,
 		wx.WithBody(func() ([]byte, error) {
-			settings := new(qrcodeSettings)
-
-			if len(options) != 0 {
-				for _, f := range options {
-					f(settings)
-				}
-			}
-
-			params := yiigo.X{"path": path}
-
-			if settings.width != 0 {
-				params["width"] = settings.width
-			}
-
-			if settings.autoColor {
-				params["auto_color"] = true
-			}
-
-			if len(settings.lineColor) != 0 {
-				params["line_color"] = settings.lineColor
-			}
-
-			if settings.isHyaline {
-				params["is_hyaline"] = true
-			}
-
 			return wx.MarshalWithNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			dest.Buffer = make([]byte, len(resp))
-			copy(dest.Buffer, resp)
+			qrcode.Buffer = make([]byte, len(resp))
+			copy(qrcode.Buffer, resp)
 
 			return nil
 		}),
 	)
 }
 
+type ParamsQRCodeUnlimit struct {
+	Scene      string     `json:"scene"`                 // 最大32个可见字符，只支持数字，大小写英文以及部分特殊字符：!#$&'()*+,/:;=?@-._~，其它字符请自行编码为合法字符（因不支持%，中文无法使用 urlencode 处理，请使用其他编码方式）
+	Page       string     `json:"page,omitempty"`        // 页面 page，例如 pages/index/index，根路径前不要填加 /，不能携带参数（参数请放在scene字段里），如果不填写这个字段，默认跳主页面
+	CheckPath  *bool      `json:"check_path,omitempty"`  // 检查page 是否存在，为 true 时 page 必须是已经发布的小程序存在的页面（否则报错）；为 false 时允许小程序未发布或者 page 不存在， 但page 有数量上限（60000个）请勿滥用
+	EnvVersion EnvVersion `json:"env_version,omitempty"` // 要打开的小程序版本。正式版为 "release"，体验版为 "trial"，开发版为 "develop"
+	Width      int        `json:"width,omitempty"`       // 二维码的宽度，单位 px。最小 280px，最大 1280px
+	AutoColor  bool       `json:"auto_color,omitempty"`  // 自动配置线条颜色，如果颜色依然是黑色，则说明不建议配置主色调
+	LineColor  *RGB       `json:"line_color,omitempty"`  // auto_color 为 false 时生效，使用 rgb 设置颜色，十进制表示，默认：{"r":0,"g":0,"b":0}
+	IsHyaline  bool       `json:"is_hyaline,omitempty"`  // 是否需要透明底色，为 true 时，生成透明底色的小程序码
+}
+
 // GetUnlimitQRCode 获取小程序二维码（数量不限）
-func GetUnlimitQRCode(dest *QRCode, scene string, options ...QRCodeOption) wx.Action {
+func GetUnlimitQRCode(params *ParamsQRCodeUnlimit, qrcode *QRCode) wx.Action {
 	return wx.NewPostAction(urls.MinipQRCodeGetUnlimit,
 		wx.WithBody(func() ([]byte, error) {
-			settings := new(qrcodeSettings)
-
-			if len(options) != 0 {
-				for _, f := range options {
-					f(settings)
-				}
-			}
-
-			params := yiigo.X{"scene": scene}
-
-			if settings.page != "" {
-				params["page"] = settings.page
-			}
-
-			if settings.width != 0 {
-				params["width"] = settings.width
-			}
-
-			if settings.autoColor {
-				params["auto_color"] = true
-			}
-
-			if len(settings.lineColor) != 0 {
-				params["line_color"] = settings.lineColor
-			}
-
-			if settings.isHyaline {
-				params["is_hyaline"] = true
-			}
-
 			return wx.MarshalWithNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			dest.Buffer = make([]byte, len(resp))
-			copy(dest.Buffer, resp)
+			qrcode.Buffer = make([]byte, len(resp))
+			copy(qrcode.Buffer, resp)
 
 			return nil
 		}),

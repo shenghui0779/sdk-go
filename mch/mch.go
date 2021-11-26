@@ -5,22 +5,18 @@ import (
 	"crypto/hmac"
 	"crypto/md5"
 	"crypto/sha256"
-	"crypto/tls"
 	"encoding/base64"
 	"encoding/hex"
-	"encoding/pem"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"net/http"
 	"net/url"
-	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/shenghui0779/yiigo"
-	"golang.org/x/crypto/pkcs12"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -28,48 +24,48 @@ import (
 
 // Mch 微信支付
 type Mch struct {
-	appid     string
-	mchid     string
-	apikey    string
-	nonce     func(size uint) string
-	client    wx.Client
-	tlsClient wx.Client
+	appid  string
+	mchid  string
+	apikey string
+	nonce  func() string
+	client wx.Client
+	tlscli wx.Client
 }
 
 // New returns new wechat pay
-func New(appid, mchid, apikey string) *Mch {
-	c := wx.NewClient(wx.WithInsecureSkipVerify())
+func New(appid, mchid, apikey, p12cert string) (*Mch, error) {
+	cert, err := wx.P12FileToCert(p12cert, mchid)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &Mch{
-		appid:     appid,
-		mchid:     mchid,
-		apikey:    apikey,
-		nonce:     wx.Nonce,
-		client:    c,
-		tlsClient: c,
-	}
+		appid:  appid,
+		mchid:  mchid,
+		apikey: apikey,
+		nonce: func() string {
+			return wx.Nonce(16)
+		},
+		client: wx.DefaultClient(),
+		tlscli: wx.DefaultClient(cert),
+	}, nil
 }
 
-// LoadCertificate 加载证书
-func (mch *Mch) LoadCertificate(options ...CertOption) error {
-	certs := make([]tls.Certificate, 0, len(options))
+// SetClient set client
+func (mch *Mch) SetClient(c yiigo.HTTPClient) {
+	mch.client.SetHTTPClient(c)
+}
 
-	for _, f := range options {
-		cert, err := f(mch)
+// SetTLSClient set tls client
+func (mch *Mch) SetTLSClient(c yiigo.HTTPClient) {
+	mch.tlscli.SetHTTPClient(c)
+}
 
-		if err != nil {
-			return err
-		}
-
-		certs = append(certs, cert)
-	}
-
-	mch.tlsClient = wx.NewClient(
-		wx.WithTLSCertificates(certs...),
-		wx.WithInsecureSkipVerify(),
-	)
-
-	return nil
+// SetLogger set client logger
+func (mch *Mch) SetLogger(l wx.Logger) {
+	mch.client.SetLogger(l)
+	mch.tlscli.SetLogger(l)
 }
 
 // AppID returns appid
@@ -89,7 +85,7 @@ func (mch *Mch) ApiKey() string {
 
 // Do exec action
 func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPOption) (wx.WXML, error) {
-	m, err := action.WXML(mch.appid, mch.mchid, mch.nonce(16))
+	m, err := action.WXML(mch.appid, mch.mchid, mch.nonce())
 
 	if err != nil {
 		return nil, err
@@ -102,7 +98,7 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPO
 		m["sign"] = mch.SignWithMD5(m, true)
 	}
 
-	if action.Method() == wx.MethodNone {
+	if len(action.Method()) == 0 {
 		if len(action.URL()) == 0 {
 			return m, nil
 		}
@@ -116,12 +112,18 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPO
 		return wx.WXML{"entrust_url": fmt.Sprintf("%s?%s", action.URL(), query.Encode())}, nil
 	}
 
+	body, err := wx.FormatMap2XML(m)
+
+	if err != nil {
+		return nil, err
+	}
+
 	var resp []byte
 
-	if action.TLS() {
-		resp, err = mch.tlsClient.PostXML(ctx, action.URL(), m, options...)
+	if action.IsTLS() {
+		resp, err = mch.tlscli.Do(ctx, action.Method(), action.URL(), body, options...)
 	} else {
-		resp, err = mch.client.PostXML(ctx, action.URL(), m, options...)
+		resp, err = mch.client.Do(ctx, action.Method(), action.URL(), body, options...)
 	}
 
 	if err != nil {
@@ -154,7 +156,7 @@ func (mch *Mch) APPAPI(prepayID string) wx.WXML {
 		"partnerid": mch.mchid,
 		"prepayid":  prepayID,
 		"package":   "Sign=WXPay",
-		"noncestr":  mch.nonce(16),
+		"noncestr":  mch.nonce(),
 		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
@@ -167,7 +169,7 @@ func (mch *Mch) APPAPI(prepayID string) wx.WXML {
 func (mch *Mch) JSAPI(prepayID string) wx.WXML {
 	m := wx.WXML{
 		"appId":     mch.appid,
-		"nonceStr":  mch.nonce(16),
+		"nonceStr":  mch.nonce(),
 		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
 		"signType":  SignMD5,
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
@@ -182,7 +184,7 @@ func (mch *Mch) JSAPI(prepayID string) wx.WXML {
 func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 	m := wx.WXML{
 		"appId":     mch.appid,
-		"nonceStr":  mch.nonce(16),
+		"nonceStr":  mch.nonce(),
 		"package":   url.QueryEscape(pkg),
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
@@ -203,12 +205,18 @@ func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]
 		"mch_id":    mch.mchid,
 		"bill_date": billDate,
 		"bill_type": billType,
-		"nonce_str": mch.nonce(16),
+		"nonce_str": mch.nonce(),
 	}
 
 	m["sign"] = mch.SignWithMD5(m, true)
 
-	resp, err := mch.client.PostXML(ctx, urls.MchDownloadBill, m, yiigo.WithHTTPClose())
+	body, err := wx.FormatMap2XML(m)
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := mch.client.Do(ctx, http.MethodPost, urls.MchDownloadBill, body, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -236,12 +244,18 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType stri
 		"mch_id":       mch.mchid,
 		"bill_date":    billDate,
 		"account_type": accountType,
-		"nonce_str":    mch.nonce(16),
+		"nonce_str":    mch.nonce(),
 	}
 
 	m["sign"] = mch.SignWithHMacSHA256(m, true)
 
-	resp, err := mch.tlsClient.PostXML(ctx, urls.MchDownloadFundFlow, m, yiigo.WithHTTPClose())
+	body, err := wx.FormatMap2XML(m)
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := mch.tlscli.Do(ctx, http.MethodPost, urls.MchDownloadFundFlow, body, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -271,7 +285,7 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string
 		"begin_time": beginTime,
 		"end_time":   endTime,
 		"offset":     strconv.Itoa(offset),
-		"nonce_str":  mch.nonce(16),
+		"nonce_str":  mch.nonce(),
 	}
 
 	if len(limit) != 0 {
@@ -280,7 +294,13 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string
 
 	m["sign"] = mch.SignWithHMacSHA256(m, true)
 
-	resp, err := mch.tlsClient.PostXML(ctx, urls.MchBatchQueryComment, m, yiigo.WithHTTPClose())
+	body, err := wx.FormatMap2XML(m)
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := mch.tlscli.Do(ctx, http.MethodPost, urls.MchBatchQueryComment, body, yiigo.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -381,23 +401,6 @@ func (mch *Mch) DecryptWithAES256ECB(encrypt string) (wx.WXML, error) {
 	return wx.ParseXML2Map(plainText)
 }
 
-func (mch *Mch) pkcs12ToPem(p12 []byte) (tls.Certificate, error) {
-	blocks, err := pkcs12.ToPEM(p12, mch.mchid)
-
-	if err != nil {
-		return tls.Certificate{}, err
-	}
-
-	pemData := make([]byte, 0)
-
-	for _, b := range blocks {
-		pemData = append(pemData, pem.EncodeToMemory(b)...)
-	}
-
-	// then use PEM data for tls to construct tls certificate:
-	return tls.X509KeyPair(pemData, pemData)
-}
-
 // Sign 生成签名
 func (mch *Mch) buildSignStr(m wx.WXML) string {
 	l := len(m)
@@ -424,56 +427,4 @@ func (mch *Mch) buildSignStr(m wx.WXML) string {
 	kvs = append(kvs, fmt.Sprintf("key=%s", mch.apikey))
 
 	return strings.Join(kvs, "&")
-}
-
-// CertOption 证书选项
-type CertOption func(mch *Mch) (tls.Certificate, error)
-
-// WithCertP12File 通过p12(pfx)证书文件加载证书
-func WithCertP12File(path string) CertOption {
-	return func(mch *Mch) (tls.Certificate, error) {
-		fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
-
-		certPath, err := filepath.Abs(filepath.Clean(path))
-
-		if err != nil {
-			return fail(err)
-		}
-
-		p12, err := ioutil.ReadFile(certPath)
-
-		if err != nil {
-			return fail(err)
-		}
-
-		return mch.pkcs12ToPem(p12)
-	}
-}
-
-// WithCertPEMBlock 通过pem证书文本内容加载证书
-func WithCertPEMBlock(certBlock, keyBlock []byte) CertOption {
-	return func(mch *Mch) (tls.Certificate, error) {
-		return tls.X509KeyPair(certBlock, keyBlock)
-	}
-}
-
-// WithCertPEMFile 通过pem证书文件加载证书
-func WithCertPEMFile(certFile, keyFile string) CertOption {
-	return func(mch *Mch) (tls.Certificate, error) {
-		fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
-
-		certPath, err := filepath.Abs(filepath.Clean(certFile))
-
-		if err != nil {
-			return fail(err)
-		}
-
-		keyPath, err := filepath.Abs(filepath.Clean(keyFile))
-
-		if err != nil {
-			return fail(err)
-		}
-
-		return tls.LoadX509KeyPair(certPath, keyPath)
-	}
 }

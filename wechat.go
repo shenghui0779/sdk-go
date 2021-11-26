@@ -1,15 +1,16 @@
 package gochat
 
 import (
+	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mch"
-	"github.com/shenghui0779/gochat/oplatform"
 	"github.com/shenghui0779/gochat/minip"
 	"github.com/shenghui0779/gochat/offia"
+	"github.com/shenghui0779/gochat/oplatform"
 )
 
 // NewMch 微信商户
-func NewMch(appid, mchid, apikey string) *mch.Mch {
-	return mch.New(appid, mchid, apikey)
+func NewMch(appid, mchid, apikey, p12cert string) (*mch.Mch, error) {
+	return mch.New(appid, mchid, apikey, p12cert)
 }
 
 // NewOffia 微信公众号
@@ -23,6 +24,11 @@ func NewMinip(appid, appsecret string) *minip.Minip {
 }
 
 // NewOplatform 微信开放平台
-func NewOplatform(appid , appsecret string) *oplatform.Oplatform  {
+func NewOplatform(appid, appsecret string) *oplatform.Oplatform {
 	return oplatform.New(appid, appsecret)
+}
+
+// NewCorp 企业微信
+func NewCorp(corpid string) *corp.Corp {
+	return corp.NewCorp(corpid)
 }

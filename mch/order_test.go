@@ -1,22 +1,21 @@
 package mch
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestUnifyOrder(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := wx.NewMockClient(ctrl)
-
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/unifiedorder", wx.WXML{
+	body, err := wx.FormatMap2XML(wx.WXML{
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
 		"nonce_str":        "1add1a30ac87aa2db72f57a2375d8fec",
@@ -30,7 +29,13 @@ func TestUnifyOrder(t *testing.T) {
 		"attach":           "支付测试",
 		"sign_type":        "MD5",
 		"sign":             "7C07373FE5EAEDB936F3E454875C9462",
-	}).Return([]byte(`<xml>
+	})
+
+	assert.Nil(t, err)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -40,15 +45,25 @@ func TestUnifyOrder(t *testing.T) {
 	<result_code>SUCCESS</result_code>
 	<prepay_id>wx201411101639507cbf6ffd8b0779950874</prepay_id>
 	<trade_type>APP</trade_type>
-</xml>`), nil)
+</xml>`))),
+	}
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-	mch.nonce = func(size uint) string {
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/unifiedorder", body).Return(resp, nil)
+
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
+
+	assert.Nil(t, err)
+
+	mch.nonce = func() string {
 		return "1add1a30ac87aa2db72f57a2375d8fec"
 	}
-	mch.client = client
-	mch.tlsClient = client
+	mch.SetClient(client)
+	mch.SetTLSClient(client)
 
 	r, err := mch.Do(context.TODO(), UnifyOrder(&OrderData{
 		OutTradeNO:     "1415659990",
@@ -75,19 +90,20 @@ func TestUnifyOrder(t *testing.T) {
 }
 
 func TestQueryOrderByTransactionID(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := wx.NewMockClient(ctrl)
-
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/orderquery", wx.WXML{
+	body, err := wx.FormatMap2XML(wx.WXML{
 		"appid":          "wx2421b1c4370ec43b",
 		"mch_id":         "10000100",
 		"transaction_id": "1008450740201411110005820873",
 		"nonce_str":      "ec2316275641faa3aacf3cc599e8730f",
 		"sign_type":      "MD5",
 		"sign":           "CA9B10C422366B6647827F0E6C18A4D8",
-	}).Return([]byte(`<xml>
+	})
+
+	assert.Nil(t, err)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -107,15 +123,25 @@ func TestQueryOrderByTransactionID(t *testing.T) {
 	<attach>订单额外描述</attach>
 	<time_end>20141111170043</time_end>
 	<trade_state>SUCCESS</trade_state>
-</xml>`), nil)
+</xml>`))),
+	}
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-	mch.nonce = func(size uint) string {
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/orderquery", body).Return(resp, nil)
+
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
+
+	assert.Nil(t, err)
+
+	mch.nonce = func() string {
 		return "ec2316275641faa3aacf3cc599e8730f"
 	}
-	mch.client = client
-	mch.tlsClient = client
+	mch.SetClient(client)
+	mch.SetTLSClient(client)
 
 	r, err := mch.Do(context.TODO(), QueryOrderByTransactionID("1008450740201411110005820873"))
 
@@ -144,19 +170,20 @@ func TestQueryOrderByTransactionID(t *testing.T) {
 }
 
 func TestQueryOrderByOutTradeNO(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := wx.NewMockClient(ctrl)
-
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/orderquery", wx.WXML{
+	body, err := wx.FormatMap2XML(wx.WXML{
 		"appid":        "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"out_trade_no": "1415757673",
 		"nonce_str":    "ec2316275641faa3aacf3cc599e8730f",
 		"sign_type":    "MD5",
 		"sign":         "5F222EA3F23200DD4E86C4C42E96698D",
-	}).Return([]byte(`<xml>
+	})
+
+	assert.Nil(t, err)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -176,15 +203,25 @@ func TestQueryOrderByOutTradeNO(t *testing.T) {
 	<attach>订单额外描述</attach>
 	<time_end>20141111170043</time_end>
 	<trade_state>SUCCESS</trade_state>
-</xml>`), nil)
+</xml>`))),
+	}
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-	mch.nonce = func(size uint) string {
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/orderquery", body).Return(resp, nil)
+
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
+
+	assert.Nil(t, err)
+
+	mch.nonce = func() string {
 		return "ec2316275641faa3aacf3cc599e8730f"
 	}
-	mch.client = client
-	mch.tlsClient = client
+	mch.SetClient(client)
+	mch.SetTLSClient(client)
 
 	r, err := mch.Do(context.TODO(), QueryOrderByOutTradeNO("1415757673"))
 
@@ -213,19 +250,20 @@ func TestQueryOrderByOutTradeNO(t *testing.T) {
 }
 
 func TestCloseOrder(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := wx.NewMockClient(ctrl)
-
-	client.EXPECT().PostXML(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/pay/closeorder", wx.WXML{
+	body, err := wx.FormatMap2XML(wx.WXML{
 		"appid":        "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"out_trade_no": "1415983244",
 		"nonce_str":    "4ca93f17ddf3443ceabf72f26d64fe0e",
 		"sign_type":    "MD5",
 		"sign":         "72D4DE9625257C606558F1027331C516",
-	}).Return([]byte(`<xml>
+	})
+
+	assert.Nil(t, err)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -234,15 +272,25 @@ func TestCloseOrder(t *testing.T) {
 	<sign>808C1D11E84411F8DF1DF1ADC960B491</sign>
 	<result_code>SUCCESS</result_code>
 	<result_msg>OK</result_msg>
-</xml>`), nil)
+</xml>`))),
+	}
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-	mch.nonce = func(size uint) string {
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/closeorder", body).Return(resp, nil)
+
+	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
+
+	assert.Nil(t, err)
+
+	mch.nonce = func() string {
 		return "4ca93f17ddf3443ceabf72f26d64fe0e"
 	}
-	mch.client = client
-	mch.tlsClient = client
+	mch.SetClient(client)
+	mch.SetTLSClient(client)
 
 	r, err := mch.Do(context.TODO(), CloseOrder("1415983244"))
 

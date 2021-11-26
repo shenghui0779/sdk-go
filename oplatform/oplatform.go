@@ -11,6 +11,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -18,33 +19,31 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type Oplatform  struct {
-	appid          string
-	appsecret      string
-	token          string
-	encodingAESKey string
+type Oplatform struct {
+	appid                 string
+	appsecret             string
+	token                 string
+	encodingAESKey        string
 	componentVerifyTicket string //
-	nonce          func(size uint) string
-	client         wx.Client
-	officialAccount *OfficialAccount
+	nonce                 func(size uint) string
+	client                wx.Client
+	officialAccount       *OfficialAccount
 }
-
 
 // New returns new wechat mini program
 func New(appid, appsecret string) *Oplatform {
 	return &Oplatform{
-		appid:     appid,
-		appsecret: appsecret,
-		nonce:     wx.Nonce,
+		appid:           appid,
+		appsecret:       appsecret,
+		nonce:           wx.Nonce,
 		officialAccount: &OfficialAccount{},
-		client:    wx.NewClient(wx.WithInsecureSkipVerify()),
+		client:          wx.DefaultClient(),
 	}
 }
 
-
 // SetServerConfig 设置服务器配置
-//https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/component_verify_ticket.html
-func (o *Oplatform) SetServerConfig(token, encodingAESKey ,componentVerifyTicket  string) {
+// https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/component_verify_ticket.html
+func (o *Oplatform) SetServerConfig(token, encodingAESKey, componentVerifyTicket string) {
 	o.token = token
 	o.encodingAESKey = encodingAESKey
 	o.componentVerifyTicket = componentVerifyTicket
@@ -67,25 +66,24 @@ func (o *Oplatform) AppSecret() string {
 }
 
 // ComponentVerifyTicket returns app componentVerifyTicket
-func (o *Oplatform)  ComponentVerifyTicket () string {
+func (o *Oplatform) ComponentVerifyTicket() string {
 	return o.componentVerifyTicket
 }
 
-func (o *Oplatform)  OfficialAccountAppId () string {
+func (o *Oplatform) OfficialAccountAppId() string {
 	return o.officialAccount.appId
 }
 
-func (o *Oplatform)  OfficialAccountRefreshToken () string {
+func (o *Oplatform) OfficialAccountRefreshToken() string {
 	return o.officialAccount.refreshToken
 }
 
-func (o *Oplatform)  OfficialAccessToken () string {
+func (o *Oplatform) OfficialAccessToken() string {
 	return o.officialAccount.accessToken
 }
 
-
 // DecryptEventMessage 事件消息解密
-func (o *Oplatform) DecryptEventMessage(appId string,encrypt string) (wx.WXML, error) {
+func (o *Oplatform) DecryptEventMessage(appId string, encrypt string) (wx.WXML, error) {
 	b, err := event.Decrypt(appId, o.encodingAESKey, encrypt)
 
 	if err != nil {
@@ -108,24 +106,13 @@ func (o *Oplatform) SafeBindComponent(preAuthCode string, redirectUri string, au
 }
 
 // Do exec action
-func (o *Oplatform) Do(ctx context.Context,  action wx.Action, options ...yiigo.HTTPOption) error {
+func (o *Oplatform) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPOption) error {
 	var (
 		resp []byte
 		err  error
 	)
 
-	switch action.Method() {
-	case wx.MethodGet:
-		resp, err = o.client.Get(ctx, action.URL(), options...)
-	case wx.MethodPost:
-		body, berr := action.Body()
-
-		if berr != nil {
-			return berr
-		}
-
-		resp, err = o.client.Post(ctx, action.URL(), body, options...)
-	case wx.MethodUpload:
+	if action.IsUpload() {
 		form, ferr := action.UploadForm()
 
 		if ferr != nil {
@@ -133,6 +120,14 @@ func (o *Oplatform) Do(ctx context.Context,  action wx.Action, options ...yiigo.
 		}
 
 		resp, err = o.client.Upload(ctx, action.URL(), form, options...)
+	} else {
+		body, berr := action.Body()
+
+		if berr != nil {
+			return berr
+		}
+
+		resp, err = o.client.Do(ctx, action.Method(), action.URL(), body, options...)
 	}
 
 	if err != nil {
@@ -145,15 +140,11 @@ func (o *Oplatform) Do(ctx context.Context,  action wx.Action, options ...yiigo.
 		return fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
-	if action.Decode() == nil {
-		return nil
-	}
-
-	return action.Decode()(resp)
+	return action.Decode(resp)
 }
 
 // Reply 消息回复
-func (o *Oplatform) Reply(openid string, form string,reply event.Reply) (*event.ReplyMessage, error) {
+func (o *Oplatform) Reply(openid string, form string, reply event.Reply) (*event.ReplyMessage, error) {
 	body, err := reply.Bytes(form, openid)
 
 	if err != nil {
@@ -169,4 +160,3 @@ func (o *Oplatform) Reply(openid string, form string,reply event.Reply) (*event.
 
 	return event.BuildReply(o.token, o.nonce(16), base64.StdEncoding.EncodeToString(cipherText)), nil
 }
-

@@ -9,11 +9,11 @@ const (
 
 // msg
 const (
-	MinipUniformMessageSend   = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send"
-	MinipSubscribeMessageSend = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send"
-	MinipTemplateMessageSend  = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"
-	MinipKFMessageSend        = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
-	MinipSetTyping            = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
+	MinipUniformMsgSend   = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send"
+	MinipSubscribeMsgSend = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send"
+	MinipTemplateMsgSend  = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"
+	MinipKFMsgSend        = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
+	MinipKFTypingSend     = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 )
 
 // qrcode
@@ -57,7 +57,7 @@ const (
 	MinipOCRDriverLicense   = "https://api.weixin.qq.com/cv/ocr/drivinglicense"
 	MinipOCRVehicleLicense  = "https://api.weixin.qq.com/cv/ocr/driving"
 	MinipOCRBusinessLicense = "https://api.weixin.qq.com/cv/ocr/bizlicense"
-	MinipOCRPrintedText     = "https://api.weixin.qq.com/cv/ocr/comm"
+	MinipOCRComm            = "https://api.weixin.qq.com/cv/ocr/comm"
 )
 
 // other

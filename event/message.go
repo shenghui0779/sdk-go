@@ -13,35 +13,42 @@ type MsgType string
 
 // 微信支持的消息类型
 const (
-	MsgText          MsgType = "text"          // 文本消息
-	MsgImage         MsgType = "image"         // 图片消息
-	MsgVoice         MsgType = "voice"         // 语音消息
-	MsgVideo         MsgType = "video"         // 视频消息
-	MsgShortVideo    MsgType = "shortvideo"    // 小视频消息
-	MsgLocation      MsgType = "location"      // 地理位置消息
-	MsgLink          MsgType = "link"          // 链接消息
-	MsgMusic         MsgType = "music"         // 音乐消息
-	MsgNews          MsgType = "news"          // 图文消息
-	MsgWXCard        MsgType = "wxcard"        // 卡券，客服消息时使用
-	MsgFile          MsgType = "file"          // 文件消息
-	MsgMinip         MsgType = "miniprogram"   // 小程序消息
-	MsgMenu          MsgType = "menu"          // 菜单消息
-	MsgBussinessCard MsgType = "business_card" // 企业名片消息
-	MsgEvent         MsgType = "event"         // 事件推送
+	MsgText                 MsgType = "text"                   // 文本消息
+	MsgImage                MsgType = "image"                  // 图片消息
+	MsgVoice                MsgType = "voice"                  // 语音消息
+	MsgVideo                MsgType = "video"                  // 视频消息
+	MsgShortVideo           MsgType = "shortvideo"             // 小视频消息
+	MsgLocation             MsgType = "location"               // 地理位置消息
+	MsgLink                 MsgType = "link"                   // 链接消息
+	MsgMusic                MsgType = "music"                  // 音乐消息
+	MsgNews                 MsgType = "news"                   // 图文消息
+	MsgWXCard               MsgType = "wxcard"                 // 卡券，客服消息时使用
+	MsgFile                 MsgType = "file"                   // 文件消息
+	MsgMinip                MsgType = "miniprogram"            // 小程序消息
+	MsgMinipPage            MsgType = "miniprogrampage"        // 小程序卡片消息
+	MsgUserEnterTempSession MsgType = "user_enter_tempsession" // 进入会话事件
+	MsgMenu                 MsgType = "menu"                   // 菜单消息
+	MsgBussinessCard        MsgType = "business_card"          // 企业名片消息
+	MsgTextCard             MsgType = "textcard"               // 文本卡片消息
+	MsgMPNews               MsgType = "mpnews"                 // 图文消息，跟普通的图文消息一致，唯一的差异是图文内容存储在企业微信
+	MsgMarkdown             MsgType = "markdown"               // markdown消息
+	MsgMinipNotice          MsgType = "miniprogram_notice"     // 小程序通知消息
+	MsgTemplateCard         MsgType = "template_card"          // 模板卡片消息
+	MsgEvent                MsgType = "event"                  // 事件推送
 )
 
 // EventType 事件类型
 type EventType string
 
-// 微信支持的事件类型
+// 微信支持的事件类型（统一小写匹配）
 const (
-	EventSubscribe                  EventType = "subscribe"                    // 订阅
-	EventUnSubscribe                EventType = "unsubscribe"                  // 取消订阅
-	EventScan                       EventType = "SCAN"                         // 扫码
-	EventLocation                   EventType = "LOCATION"                     // 上报地理位置
-	EventClick                      EventType = "CLICK"                        // 点击自定义菜单
-	EventView                       EventType = "VIEW"                         // 点击菜单跳转链接
-	EventTemplateSendJobFinish      EventType = "TEMPLATESENDJOBFINISH"        // 模板消息发送完成
+	EventSubscribe                  EventType = "subscribe"                    // 关注
+	EventUnsubscribe                EventType = "unsubscribe"                  // 取消关注
+	EventScan                       EventType = "scan"                         // 扫码
+	EventLocation                   EventType = "location"                     // 上报地理位置
+	EventClick                      EventType = "click"                        // 点击自定义菜单
+	EventView                       EventType = "view"                         // 点击菜单跳转链接
+	EventTemplateSendJobFinish      EventType = "templatesendjobfinish"        // 模板消息发送完成
 	EventQualificationVerifySuccess EventType = "qualification_verify_success" // 资质认证成功
 	EventQualificationVerifyFail    EventType = "qualification_verify_fail"    // 资质认证失败
 	EventNamingVerifySuccess        EventType = "naming_verify_success"        // 名称认证成功
@@ -68,6 +75,67 @@ const (
 	EventServicerStatusChange       EventType = "servicer_status_change"       // 客服人员接待状态变更
 	EventSessionStatusChange        EventType = "session_status_change"        // 会话状态变更
 	EventSwitchWorkbenchMode        EventType = "switch_workbench_mode"        // 切换工作台自定义模式
+	EventEnterAgent                 EventType = "enter_agent"                  // 进入应用
+	EventBatchJobResult             EventType = "batch_job_result"             // 异步任务完成事件推送
+	EventChangeContact              EventType = "change_contact"               // 通讯录变更
+	EventScanCodePush               EventType = "scancode_push"                // 扫码推事件
+	EventScanCodeWaitMsg            EventType = "scancode_waitmsg"             // 扫码推事件且弹出“消息接收中”提示框
+	EventPicSysPhoto                EventType = "pic_sysphoto "                // 弹出系统拍照发图
+	EventPicPhotoOrAlbum            EventType = "pic_photo_or_album"           // 弹出拍照或者相册发图
+	EventPicWeixin                  EventType = "pic_weixin"                   // 弹出微信相册发图器
+	EventLocationSelect             EventType = "location_select"              // 弹出地理位置选择器
+	EventOpenApprovalChange         EventType = "open_approval_change"         // 审批状态通知
+	EventSysApprovalChange          EventType = "sys_approval_change"          // 审批申请状态变化回调
+	EventShareAgentChange           EventType = "share_agent_change"           // 共享应用
+	EventTemplateCard               EventType = "template_card_event"          // 模板卡片事件推送
+	EventModifyCalendar             EventType = "modify_calendar"              // 修改日历
+	EventDeleteCalendar             EventType = "delete_calendar"              // 删除日历
+	EventAddSchedule                EventType = "add_schedule"                 // 添加日程
+	EventModifySchedule             EventType = "modify_schedule"              // 修改日程
+	EventDeleteSchedule             EventType = "delete_schedule"              // 删除日程
+	EventLivingStatusChange         EventType = "living_status_change"         // 直播状态变更
+	EventExternalContact            EventType = "change_external_contact"      // 客户同意进行聊天内容存档
+	EventMsgAuditNotify             EventType = "msgaudit_notify"              // 企业会话存档通知
+	EventChangeSchoolContact        EventType = "change_school_contact"        // 变更学校通讯录
+)
+
+// JobType 任务类型
+type JobType string
+
+// 微信支持的任务类型
+const (
+	JobSyncUser     JobType = "sync_user"     // 增量更新成员
+	JobReplaceUser  JobType = "replace_user"  // 全量覆盖成员
+	JobInviteUser   JobType = "invite_user"   // 邀请成员关注
+	JobReplaceParty JobType = "replace_party" // 全量覆盖部门
+)
+
+// CorpCardType 企业微信模板卡片消息类型
+type CorpCardType string
+
+const (
+	CardTextNotice          CorpCardType = "text_notice"          // 文本通知型
+	CardNewsNotice          CorpCardType = "news_notice"          // 图文展示型
+	CardButtonInteraction   CorpCardType = "button_interaction"   // 按钮交互型
+	CardVoteInteraction     CorpCardType = "vote_interaction"     // 投票选择型
+	CardMultipleInteraction CorpCardType = "multiple_interaction" // 多项选择型
+)
+
+// ChangeType 变更类型
+type ChangeType string
+
+const (
+	ChangeCreateStudent    ChangeType = "create_student"    // 创建学生
+	ChangeUpdateStudent    ChangeType = "update_student"    // 更新学生
+	ChangeDeleteStudent    ChangeType = "delete_student"    // 删除学生
+	ChangeCreateParent     ChangeType = "create_parent"     // 创建家长
+	ChangeUpdateParent     ChangeType = "update_parent"     // 更新家长
+	ChangeDeleteParent     ChangeType = "delete_parent"     // 删除家长
+	ChangeSubscribe        ChangeType = "subscribe"         // 家长关注
+	ChangeUnsubscribe      ChangeType = "unsubscribe"       // 家长取消关注
+	ChangeCreateDepartment ChangeType = "create_department" // 创建部门
+	ChangeUpdateDepartment ChangeType = "update_department" // 更新部门
+	ChangeDeleteDepartment ChangeType = "delete_department" // 删除部门
 )
 
 // EventMessage 微信公众平台事件推送加密消息（兼容/安全模式）

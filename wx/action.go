@@ -2,28 +2,19 @@ package wx
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/shenghui0779/yiigo"
 )
 
-// ActionMethod http request method
-type ActionMethod string
-
-const (
-	MethodGet    ActionMethod = "GET"
-	MethodPost   ActionMethod = "POST"
-	MethodUpload ActionMethod = "UPLOAD"
-	MethodNone   ActionMethod = "NONE"
-)
-
-// Action is the interface that handle wechat a
+// Action is the interface that handle wechat api
 type Action interface {
+	// Method returns action method
+	Method() string
+
 	// URL returns request url
 	URL(accessToken ...string) string
-
-	// Method returns action method
-	Method() ActionMethod
 
 	// WXML returns body for xml request
 	WXML(appid, mchid, nonce string) (WXML, error)
@@ -35,10 +26,13 @@ type Action interface {
 	UploadForm() (yiigo.UploadForm, error)
 
 	// Decode decodes response
-	Decode() func(resp []byte) error
+	Decode(resp []byte) error
+
+	// IsUpload specifies the request does upload
+	IsUpload() bool
 
 	// TLS specifies the request with certificate
-	TLS() bool
+	IsTLS() bool
 }
 
 type UploadField struct {
@@ -49,17 +43,18 @@ type UploadField struct {
 }
 
 type action struct {
-	method      ActionMethod
-	reqURL      string
-	query       url.Values
-	wxml        func(appid, mchid, nonce string) (WXML, error)
-	body        func() ([]byte, error)
-	uploadfield *UploadField
-	decode      func(resp []byte) error
-	tls         bool
+	method     string
+	reqURL     string
+	query      url.Values
+	wxml       func(appid, mchid, nonce string) (WXML, error)
+	body       func() ([]byte, error)
+	uploadform func() (yiigo.UploadForm, error)
+	decode     func(resp []byte) error
+	upload     bool
+	tls        bool
 }
 
-func (a *action) Method() ActionMethod {
+func (a *action) Method() string {
 	return a.method
 }
 
@@ -76,98 +71,47 @@ func (a *action) URL(accessToken ...string) string {
 }
 
 func (a *action) WXML(appid, mchid, nonce string) (WXML, error) {
-	if a.wxml == nil {
-		return WXML{}, nil
+	if a.wxml != nil {
+		return a.wxml(appid, mchid, nonce)
 	}
 
-	return a.wxml(appid, mchid, nonce)
+	return WXML{}, nil
 }
 
 func (a *action) Body() ([]byte, error) {
-	if a.body == nil {
-		return nil, nil
+	if a.body != nil {
+		return a.body()
 	}
 
-	return a.body()
+	return nil, nil
 }
 
 func (a *action) UploadForm() (yiigo.UploadForm, error) {
-	if a.uploadfield == nil {
-		return yiigo.NewUploadForm(), nil
+	if a.uploadform != nil {
+		return a.uploadform()
 	}
 
-	body, err := a.Body()
-
-	if err != nil {
-		return nil, err
-	}
-
-	fields := []yiigo.UploadField{
-		yiigo.WithFileField(a.uploadfield.FileField, a.uploadfield.Filename, body),
-	}
-
-	if len(a.uploadfield.MetaField) != 0 {
-		fields = append(fields, yiigo.WithFormField(a.uploadfield.MetaField, a.uploadfield.Metadata))
-	}
-
-	return yiigo.NewUploadForm(fields...), nil
+	return yiigo.NewUploadForm(), nil
 }
 
-func (a *action) Decode() func(resp []byte) error {
-	return a.decode
+func (a *action) Decode(resp []byte) error {
+	if a.decode != nil {
+		return a.decode(resp)
+	}
+
+	return nil
 }
 
-func (a *action) TLS() bool {
+func (a *action) IsUpload() bool {
+	return a.upload
+}
+
+func (a *action) IsTLS() bool {
 	return a.tls
 }
 
-// ActionOption configures how we set up the action
-type ActionOption func(a *action)
-
-// WithQuery specifies the `query` to Action.
-func WithQuery(key, value string) ActionOption {
-	return func(a *action) {
-		a.query.Set(key, value)
-	}
-}
-
-// WithBody specifies the `body` to Action.
-func WithBody(f func() ([]byte, error)) ActionOption {
-	return func(a *action) {
-		a.body = f
-	}
-}
-
-// WithWXML specifies the `wxml` to Action.
-func WithWXML(f func(appid, mchid, nonce string) (WXML, error)) ActionOption {
-	return func(a *action) {
-		a.wxml = f
-	}
-}
-
-// WithUploadField specifies the `upload field` to Action.
-func WithUploadField(field *UploadField) ActionOption {
-	return func(a *action) {
-		a.uploadfield = field
-	}
-}
-
-// WithDecode specifies the `decode` to Action.
-func WithDecode(f func(resp []byte) error) ActionOption {
-	return func(a *action) {
-		a.decode = f
-	}
-}
-
-// WithTLS specifies the `tls` to Action.
-func WithTLS() ActionOption {
-	return func(a *action) {
-		a.tls = true
-	}
-}
-
 // NewAction returns a new action
-func NewAction(method ActionMethod, reqURL string, options ...ActionOption) Action {
+func NewAction(method string, reqURL string, options ...ActionOption) Action {
 	a := &action{
 		method: method,
 		reqURL: reqURL,
@@ -183,15 +127,10 @@ func NewAction(method ActionMethod, reqURL string, options ...ActionOption) Acti
 
 // NewGetAction returns a new action with GET method
 func NewGetAction(reqURL string, options ...ActionOption) Action {
-	return NewAction(MethodGet, reqURL, options...)
+	return NewAction(http.MethodGet, reqURL, options...)
 }
 
 // NewPostAction returns a new action with POST method
 func NewPostAction(reqURL string, options ...ActionOption) Action {
-	return NewAction(MethodPost, reqURL, options...)
-}
-
-// NewUploadAction returns a new action with UPLOAD method
-func NewUploadAction(reqURL string, options ...ActionOption) Action {
-	return NewAction(MethodUpload, reqURL, options...)
+	return NewAction(http.MethodPost, reqURL, options...)
 }

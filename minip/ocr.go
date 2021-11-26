@@ -5,10 +5,9 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/tidwall/gjson"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/shenghui0779/yiigo"
 )
 
 // OCRMode 识别模式
@@ -25,8 +24,8 @@ type OCRPosition struct {
 	Pos ImagePosition `json:"pos"`
 }
 
-// IDCardFront 身份证前面
-type IDCardFront struct {
+// ResultIDCardFrontOCR 身份证前面识别结果
+type ResultIDCardFrontOCR struct {
 	Name        string `json:"name"`
 	ID          string `json:"id"`
 	Addr        string `json:"addr"`
@@ -35,178 +34,182 @@ type IDCardFront struct {
 }
 
 // OCRIDCardFront 身份证前面识别
-func OCRIDCardFront(dest *IDCardFront, mode OCRMode, path string) wx.Action {
+func OCRIDCardFront(mode OCRMode, path string, result *ResultIDCardFrontOCR) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.MinipOCRIDCard,
+	return wx.NewPostAction(urls.MinipOCRIDCard,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
 // OCRIDCardFrontByURL 身份证前面识别
-func OCRIDCardFrontByURL(dest *IDCardFront, mode OCRMode, imgURL string) wx.Action {
+func OCRIDCardFrontByURL(mode OCRMode, imgURL string, result *ResultIDCardFrontOCR) wx.Action {
 	return wx.NewPostAction(urls.MinipOCRIDCard,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// IDCardBack 身份证背面
-type IDCardBack struct {
+// ResultIDCardBackOCR 身份证背面识别结果
+type ResultIDCardBackOCR struct {
 	ValidDate string `json:"valid_date"`
 }
 
 // OCRIDCardBack 身份证背面识别
-func OCRIDCardBack(dest *IDCardBack, mode OCRMode, path string) wx.Action {
+func OCRIDCardBack(mode OCRMode, path string, result *ResultIDCardBackOCR) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.MinipOCRIDCard,
+	return wx.NewPostAction(urls.MinipOCRIDCard,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
 // OCRIDCardBackByURL 身份证背面识别
-func OCRIDCardBackByURL(dest *IDCardBack, mode OCRMode, imgURL string) wx.Action {
+func OCRIDCardBackByURL(mode OCRMode, imgURL string, result *ResultIDCardBackOCR) wx.Action {
 	return wx.NewPostAction(urls.MinipOCRIDCard,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
-			dest.ValidDate = gjson.GetBytes(resp, "valid_date").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// BankCard 银行卡
-type BankCard struct {
-	ID string `json:"id"`
+// ResultBankCardOCR 银行卡识别结果
+type ResultBankCardOCR struct {
+	Number string `json:"number"`
 }
 
 // OCRBankCard 银行卡识别
-func OCRBankCard(dest *BankCard, mode OCRMode, path string) wx.Action {
+func OCRBankCard(mode OCRMode, path string, result *ResultBankCardOCR) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.MinipOCRBankCard,
+	return wx.NewPostAction(urls.MinipOCRBankCard,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			dest.ID = gjson.GetBytes(resp, "number").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
 // OCRBankCardByURL 银行卡识别
-func OCRBankCardByURL(dest *BankCard, mode OCRMode, imgURL string) wx.Action {
+func OCRBankCardByURL(mode OCRMode, imgURL string, result *ResultBankCardOCR) wx.Action {
 	return wx.NewPostAction(urls.MinipOCRBankCard,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
-			dest.ID = gjson.GetBytes(resp, "number").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// PlateNumber 车牌号
-type PlateNumber struct {
-	ID string `json:"id"`
+// ResultPlateNumberOCR 车牌号识别结果
+type ResultPlateNumberOCR struct {
+	Number string `json:"number"`
 }
 
 // OCRPlateNumber 车牌号识别
-func OCRPlateNumber(dest *PlateNumber, mode OCRMode, path string) wx.Action {
+func OCRPlateNumber(mode OCRMode, path string, result *ResultPlateNumberOCR) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.MinipOCRPlateNumber,
+	return wx.NewPostAction(urls.MinipOCRPlateNumber,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			dest.ID = gjson.GetBytes(resp, "number").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
 // OCRPlateNumberByURL 车牌号识别
-func OCRPlateNumberByURL(dest *PlateNumber, mode OCRMode, imgURL string) wx.Action {
+func OCRPlateNumberByURL(mode OCRMode, imgURL string, result *ResultPlateNumberOCR) wx.Action {
 	return wx.NewPostAction(urls.MinipOCRPlateNumber,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
-			dest.ID = gjson.GetBytes(resp, "number").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// DriverLicense 驾照
-type DriverLicense struct {
+// ResultDriverLicenseOCR 驾照识别结果
+type ResultDriverLicenseOCR struct {
 	IDNum        string `json:"id_num"`        // 证号
 	Name         string `json:"name"`          // 姓名
 	Sex          string `json:"sex"`           // 性别
@@ -221,43 +224,47 @@ type DriverLicense struct {
 }
 
 // OCRDriverLicense 驾照识别
-func OCRDriverLicense(dest *DriverLicense, mode OCRMode, path string) wx.Action {
+func OCRDriverLicense(mode OCRMode, path string, result *ResultDriverLicenseOCR) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.MinipOCRDriverLicense,
+	return wx.NewPostAction(urls.MinipOCRDriverLicense,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
 // OCRDriverLicenseByURL 驾照识别
-func OCRDriverLicenseByURL(dest *DriverLicense, mode OCRMode, imgURL string) wx.Action {
+func OCRDriverLicenseByURL(mode OCRMode, imgURL string, result *ResultDriverLicenseOCR) wx.Action {
 	return wx.NewPostAction(urls.MinipOCRDriverLicense,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// VehicleLicense 行驶证
-type VehicleLicense struct {
+// ResultVehicleLicenseOCR 行驶证识别结果
+type ResultVehicleLicenseOCR struct {
 	VehicleType       string      `json:"vhicle_type"`         // 车辆类型
 	Owner             string      `json:"owner"`               // 所有人
 	Addr              string      `json:"addr"`                // 住址
@@ -279,43 +286,47 @@ type VehicleLicense struct {
 }
 
 // OCRVehicleLicense 行驶证识别
-func OCRVehicleLicense(dest *VehicleLicense, mode OCRMode, path string) wx.Action {
+func OCRVehicleLicense(mode OCRMode, path string, result *ResultVehicleLicenseOCR) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.MinipOCRVehicleLicense,
+	return wx.NewPostAction(urls.MinipOCRVehicleLicense,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
 // OCRVehicleLicenseByURL 行驶证识别
-func OCRVehicleLicenseByURL(dest *VehicleLicense, mode OCRMode, imgURL string) wx.Action {
+func OCRVehicleLicenseByURL(mode OCRMode, imgURL string, result *ResultVehicleLicenseOCR) wx.Action {
 	return wx.NewPostAction(urls.MinipOCRVehicleLicense,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// BusinessLicense 营业执照
-type BusinessLicense struct {
+// ResultBusinessLicenseOCR 营业执照
+type ResultBusinessLicenseOCR struct {
 	RegNum              string      `json:"reg_num"`              // 注册号
 	Serial              string      `json:"serial"`               // 编号
 	LegalRepresentative string      `json:"legal_representative"` // 法定代表人姓名
@@ -333,85 +344,93 @@ type BusinessLicense struct {
 }
 
 // OCRBusinessLicense 营业执照识别
-func OCRBusinessLicense(dest *BusinessLicense, mode OCRMode, path string) wx.Action {
+func OCRBusinessLicense(mode OCRMode, path string, result *ResultBusinessLicenseOCR) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.MinipOCRBusinessLicense,
+	return wx.NewPostAction(urls.MinipOCRBusinessLicense,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
 // OCRBusinessLicenseByURL 营业执照识别
-func OCRBusinessLicenseByURL(dest *BusinessLicense, mode OCRMode, imgURL string) wx.Action {
+func OCRBusinessLicenseByURL(mode OCRMode, imgURL string, result *ResultBusinessLicenseOCR) wx.Action {
 	return wx.NewPostAction(urls.MinipOCRBusinessLicense,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// PrintedText 通用印刷体
-type PrintedText struct {
-	Items   []*PrintedTextItem `json:"items"`
-	ImgSize ImageSize          `json:"img_size"`
-}
-
-// PrintedTextItem 通用印刷体内容项
-type PrintedTextItem struct {
+// CommOCRItem 通用印刷体内容项
+type CommOCRItem struct {
 	Text string        `json:"text"`
 	Pos  ImagePosition `json:"pos"`
 }
 
-// OCRPrintedText 通用印刷体识别
-func OCRPrintedText(dest *PrintedText, mode OCRMode, path string) wx.Action {
+// ResultCommOCR 通用印刷体识别结果
+type ResultCommOCR struct {
+	Items   []*CommOCRItem `json:"items"`
+	ImgSize ImageSize      `json:"img_size"`
+}
+
+// OCRComm 通用印刷体识别
+func OCRComm(mode OCRMode, path string, result *ResultCommOCR) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.MinipOCRPrintedText,
+	return wx.NewPostAction(urls.MinipOCRComm,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// OCRPrintedTextByURL 通用印刷体识别
-func OCRPrintedTextByURL(dest *PrintedText, mode OCRMode, imgURL string) wx.Action {
-	return wx.NewPostAction(urls.MinipOCRPrintedText,
+// OCRCommByURL 通用印刷体识别
+func OCRCommByURL(mode OCRMode, imgURL string, result *ResultCommOCR) wx.Action {
+	return wx.NewPostAction(urls.MinipOCRComm,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

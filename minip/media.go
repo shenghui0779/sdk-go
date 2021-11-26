@@ -18,48 +18,59 @@ type MediaType string
 // 微信支持的素材类型
 const MediaImage MediaType = "image" // 图片
 
-// MediaUploadResult  临时素材上传信息
-type MediaUploadResult struct {
-	Type      string `json:"type"`
-	MediaID   string `json:"media_id"`
-	CreatedAt int64  `json:"created_at"`
+// ResultMediaUpload  临时素材上传结果
+type ResultMediaUpload struct {
+	Type      MediaType `json:"type"`
+	MediaID   string    `json:"media_id"`
+	CreatedAt int64     `json:"created_at"`
+}
+
+type ParamsMediaUpload struct {
+	MediaType MediaType `json:"media_type"`
+	Path      string    `json:"path"`
 }
 
 // UploadMedia 上传临时素材到微信服务器
-func UploadMedia(dest *MediaUploadResult, mediaType MediaType, path string) wx.Action {
-	_, filename := filepath.Split(path)
+func UploadMedia(params *ParamsMediaUpload, result *ResultMediaUpload) wx.Action {
+	_, filename := filepath.Split(params.Path)
 
-	return wx.NewUploadAction(urls.MinipMediaUpload,
-		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "media",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+	return wx.NewPostAction(urls.MinipMediaUpload,
+		wx.WithQuery("type", string(params.MediaType)),
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
+			path, err := filepath.Abs(filepath.Clean(params.Path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("media", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
+type ParamsMediaUploadByURL struct {
+	MediaType MediaType
+	Filename  string
+	URL       string
+}
+
 // UploadMediaByURL 上传临时素材到微信服务器
-func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, resourceURL string) wx.Action {
-	return wx.NewUploadAction(urls.MinipMediaUpload,
-		wx.WithQuery("type", string(mediaType)),
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "media",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
-			resp, err := yiigo.HTTPGet(context.TODO(), resourceURL)
+func UploadMediaByURL(params *ParamsMediaUploadByURL, result *ResultMediaUpload) wx.Action {
+	return wx.NewPostAction(urls.MinipMediaUpload,
+		wx.WithQuery("type", string(params.MediaType)),
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
+			resp, err := yiigo.HTTPGet(context.TODO(), params.URL)
 
 			if err != nil {
 				return nil, err
@@ -67,10 +78,18 @@ func UploadMediaByURL(dest *MediaUploadResult, mediaType MediaType, filename, re
 
 			defer resp.Body.Close()
 
-			return ioutil.ReadAll(resp.Body)
+			body, err := ioutil.ReadAll(resp.Body)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("media", params.Filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
@@ -81,13 +100,13 @@ type Media struct {
 }
 
 // GetMedia 获取客服消息内的临时素材
-func GetMedia(dest *Media, mediaID string) wx.Action {
+func GetMedia(mediaID string, media *Media) wx.Action {
 	return wx.NewGetAction(urls.MinipMediaGet,
 		wx.WithQuery("media_id", mediaID),
 		wx.WithDecode(func(resp []byte) error {
-			dest.Buffer = make([]byte, len(resp))
+			media.Buffer = make([]byte, len(resp))
 
-			copy(dest.Buffer, resp)
+			copy(media.Buffer, resp)
 
 			return nil
 		}),

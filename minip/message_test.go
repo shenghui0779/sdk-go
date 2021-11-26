@@ -1,248 +1,240 @@
 package minip
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestSendUniformMessage(t *testing.T) {
+	body := []byte(`{"touser":"OPENID","mp_template_msg":{"appid":"APPID","template_id":"TEMPLATE_ID","url":"http://weixin.qq.com/download","miniprogram":{"appid":"xiaochengxuappid12345","pagepath":"index?foo=bar"},"data":{"first":{"value":"恭喜你购买成功！","color":"#173177"},"keyword1":{"value":"巧克力","color":"#173177"},"keyword2":{"value":"39.8元","color":"#173177"},"keyword3":{"value":"2014年9月22日","color":"#173177"},"remark":{"value":"欢迎再次购买！","color":"#173177"}}}}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token=ACCESS_TOKEN", []byte(`{"mp_template_msg":{"appid":"APPID","data":{"first":{"color":"#173177","value":"恭喜你购买成功！"},"keyword1":{"color":"#173177","value":"巧克力"},"keyword2":{"color":"#173177","value":"39.8元"},"keyword3":{"color":"#173177","value":"2014年9月22日"},"remark":{"color":"#173177","value":"欢迎再次购买！"}},"miniprogram":{"appid":"xiaochengxuappid12345","pagepath":"index?foo=bar"},"template_id":"TEMPLATE_ID","url":"http://weixin.qq.com/download"},"touser":"OPENID","weapp_template_msg":{"data":{"keyword1":{"value":"339208499"},"keyword2":{"value":"2015年01月05日 12:30"},"keyword3":{"value":"腾讯微信总部"},"keyword4":{"value":"广州市海珠区新港中路397号"}},"emphasis_keyword":"keyword1.DATA","form_id":"FORMID","page":"page/page/index","template_id":"TEMPLATE_ID"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
-	msg := &UniformMessage{
-		MPTemplateMessage: &TemplateMessage{
+	params := &ParamsUniformMsg{
+		ToUser: "OPENID",
+		MPTemplateMsg: &TemplateMsg{
+			AppID:      "APPID",
 			TemplateID: "TEMPLATE_ID",
-			Page:       "page/page/index",
-			FormID:     "FORMID",
-			Data: MessageBody{
-				"keyword1": {
-					"value": "339208499",
-				},
-				"keyword2": {
-					"value": "2015年01月05日 12:30",
-				},
-				"keyword3": {
-					"value": "腾讯微信总部",
-				},
-				"keyword4": {
-					"value": "广州市海珠区新港中路397号",
-				},
-			},
-			EmphasisKeyword: "keyword1.DATA",
-		},
-		OATemplateMessage: &OATemplateMessage{
-			AppID:       "APPID",
-			TemplateID:  "TEMPLATE_ID",
-			RedirectURL: "http://weixin.qq.com/download",
-			MiniProgram: &MessageMinip{
+			URL:        "http://weixin.qq.com/download",
+			Minip: &MsgMinip{
 				AppID:    "xiaochengxuappid12345",
 				Pagepath: "index?foo=bar",
 			},
-			Data: MessageBody{
+			Data: MsgTemplData{
 				"first": {
-					"value": "恭喜你购买成功！",
-					"color": "#173177",
+					Value: "恭喜你购买成功！",
+					Color: "#173177",
 				},
 				"keyword1": {
-					"value": "巧克力",
-					"color": "#173177",
+					Value: "巧克力",
+					Color: "#173177",
 				},
 				"keyword2": {
-					"value": "39.8元",
-					"color": "#173177",
+					Value: "39.8元",
+					Color: "#173177",
 				},
 				"keyword3": {
-					"value": "2014年9月22日",
-					"color": "#173177",
+					Value: "2014年9月22日",
+					Color: "#173177",
 				},
 				"remark": {
-					"value": "欢迎再次购买！",
-					"color": "#173177",
+					Value: "欢迎再次购买！",
+					Color: "#173177",
 				},
 			},
 		},
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendUniformMessage("OPENID", msg))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendUniformMsg(params))
 
 	assert.Nil(t, err)
 }
 
 func TestSendSubscribeMessage(t *testing.T) {
+	body := []byte(`{"touser":"OPENID","template_id":"TEMPLATE_ID","page":"index","miniprogram_state":"developer","lang":"zh_CN","data":{"date01":{"value":"2015年01月05日"},"number01":{"value":"339208499"},"site01":{"value":"TIT创意园"},"site02":{"value":"广州市新港中路397号"}}}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=ACCESS_TOKEN", []byte(`{"data":{"date01":{"value":"2015年01月05日"},"number01":{"value":"339208499"},"site01":{"value":"TIT创意园"},"site02":{"value":"广州市新港中路397号"}},"lang":"zh_CN","miniprogram_state":"developer","page":"index","template_id":"TEMPLATE_ID","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
-	msg := &SubscribeMessage{
+	params := &ParamsSubscribeMsg{
+		ToUser:     "OPENID",
 		TemplateID: "TEMPLATE_ID",
 		Page:       "index",
-		Data: MessageBody{
-			"number01": {
-				"value": "339208499",
-			},
+		MinipState: MinipDeveloper,
+		Lang:       "zh_CN",
+		Data: MsgTemplData{
 			"date01": {
-				"value": "2015年01月05日",
+				Value: "2015年01月05日",
+			},
+			"number01": {
+				Value: "339208499",
 			},
 			"site01": {
-				"value": "TIT创意园",
+				Value: "TIT创意园",
 			},
 			"site02": {
-				"value": "广州市新港中路397号",
+				Value: "广州市新港中路397号",
 			},
 		},
-		MinipState: "developer",
-		Lang:       "zh_CN",
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMessage("OPENID", msg))
-
-	assert.Nil(t, err)
-}
-
-func TestSendTemplateMessage(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := wx.NewMockClient(ctrl)
-
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=ACCESS_TOKEN", []byte(`{"data":{"keyword1":{"value":"339208499"},"keyword2":{"value":"2015年01月05日 12:30"},"keyword3":{"value":"腾讯微信总部"},"keyword4":{"value":"广州市海珠区新港中路397号"}},"emphasis_keyword":"keyword1.DATA","form_id":"FORMID","page":"index","template_id":"TEMPLATE_ID","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
-
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
-
-	msg := &TemplateMessage{
-		TemplateID: "TEMPLATE_ID",
-		Page:       "index",
-		FormID:     "FORMID",
-		Data: MessageBody{
-			"keyword1": {
-				"value": "339208499",
-			},
-			"keyword2": {
-				"value": "2015年01月05日 12:30",
-			},
-			"keyword3": {
-				"value": "腾讯微信总部",
-			},
-			"keyword4": {
-				"value": "广州市海珠区新港中路397号",
-			},
-		},
-		EmphasisKeyword: "keyword1.DATA",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendTemplateMessage("OPENID", msg))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMsg(params))
 
 	assert.Nil(t, err)
 }
 
 func TestSendKFTextMessage(t *testing.T) {
+	body := []byte(`{"touser":"OPENID","msgtype":"text","text":{"content":"Hello World"}}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"msgtype":"text","text":{"content":"Hello World"},"touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFTextMessage("OPENID", "Hello World"))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFTextMsg("OPENID", &KFText{Content: "Hello World"}))
 
 	assert.Nil(t, err)
 }
 
 func TestSendKFImageMessage(t *testing.T) {
+	body := []byte(`{"touser":"OPENID","msgtype":"image","image":{"media_id":"MEDIA_ID"}}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"image":{"media_id":"MEDIA_ID"},"msgtype":"image","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFImageMessage("OPENID", "MEDIA_ID"))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFImageMsg("OPENID", &KFMedia{MediaID: "MEDIA_ID"}))
 
 	assert.Nil(t, err)
 }
 
 func TestSendKFLinkMessage(t *testing.T) {
+	body := []byte(`{"touser":"OPENID","msgtype":"link","link":{"title":"Happy Day","description":"Is Really A Happy Day","url":"URL","thumb_url":"THUMB_URL"}}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"link":{"title":"Happy Day","description":"Is Really A Happy Day","url":"URL","thumb_url":"THUMB_URL"},"msgtype":"link","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
-	msg := &KFLinkMessage{
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFLinkMsg("OPENID", &KFLink{
 		Title:       "Happy Day",
 		Description: "Is Really A Happy Day",
-		RedirectURL: "URL",
+		URL:         "URL",
 		ThumbURL:    "THUMB_URL",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFLinkMessage("OPENID", msg))
+	}))
 
 	assert.Nil(t, err)
 }
 
 func TestSendKFMinipMessage(t *testing.T) {
+	body := []byte(`{"touser":"OPENID","msgtype":"miniprogrampage","miniprogrampage":{"title":"title","pagepath":"pagepath","thumb_media_id":"thumb_media_id"}}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", []byte(`{"miniprogrampage":{"title":"title","pagepath":"pagepath","thumb_media_id":"thumb_media_id"},"msgtype":"miniprogrampage","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
-	msg := &KFMinipMessage{
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFMinipMsg("OPENID", &KFMinipPage{
 		Title:        "title",
 		Pagepath:     "pagepath",
 		ThumbMediaID: "thumb_media_id",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendKFMinipMessage("OPENID", msg))
+	}))
 
 	assert.Nil(t, err)
 }
 
 func TestSetTyping(t *testing.T) {
+	body := []byte(`{"touser":"OPENID","command":"Typing"}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/message/custom/typing?access_token=ACCESS_TOKEN", []byte(`{"command":"Typing","touser":"OPENID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/typing?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetTyping("OPENID", Typing))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFTyping("OPENID", Typing))
 
 	assert.Nil(t, err)
 }

@@ -5,10 +5,9 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/tidwall/gjson"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
+	"github.com/shenghui0779/yiigo"
 )
 
 // ImageSize 图片尺寸
@@ -39,42 +38,46 @@ type CropPosition struct {
 	CropBottom int `json:"crop_bottom"`
 }
 
-// AICropResult 图片裁切结果
-type AICropResult struct {
+// ResultAICrop 图片裁切结果
+type ResultAICrop struct {
 	Results []*CropPosition `json:"results"`
 	ImgSize ImageSize       `json:"img_size"`
 }
 
 // AICrop 图片智能裁切
-func AICrop(dest *AICropResult, path string) wx.Action {
+func AICrop(path string, result *ResultAICrop) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.OffiaAICrop,
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+	return wx.NewPostAction(urls.OffiaAICrop,
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
 // AICropByURL 图片智能裁切
-func AICropByURL(dest *AICropResult, imgURL string) wx.Action {
+func AICropByURL(imgURL string, result *ResultAICrop) wx.Action {
 	return wx.NewPostAction(urls.OffiaAICrop,
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
@@ -86,85 +89,89 @@ type QRCodeScanData struct {
 	Pos      ImagePosition `json:"pos"`
 }
 
-// QRCodeScanResult 二维码扫描结果
-type QRCodeScanResult struct {
+// ResultQRCodeScan 二维码扫描结果
+type ResultQRCodeScan struct {
 	CodeResults []*QRCodeScanData `json:"code_results"`
 	ImgSize     ImageSize         `json:"img_size"`
 }
 
 // ScanQRCode 条码/二维码识别
-func ScanQRCode(dest *QRCodeScanResult, path string) wx.Action {
+func ScanQRCode(path string, result *ResultQRCodeScan) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.OffiaScanQRCode,
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+	return wx.NewPostAction(urls.OffiaScanQRCode,
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
 // ScanQRCodeByURL 条码/二维码识别
-func ScanQRCodeByURL(dest *QRCodeScanResult, imgURL string) wx.Action {
+func ScanQRCodeByURL(imgURL string, result *ResultQRCodeScan) wx.Action {
 	return wx.NewPostAction(urls.OffiaScanQRCode,
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-// SuperreSolutionResult 图片高清化结果
-type SuperreSolutionResult struct {
+// ResultSuperreSolution 图片高清化结果
+type ResultSuperreSolution struct {
 	MediaID string `json:"media_id"`
 }
 
 // SuperreSolution 图片高清化
-func SuperreSolution(dest *SuperreSolutionResult, path string) wx.Action {
+func SuperreSolution(path string, result *ResultSuperreSolution) wx.Action {
 	_, filename := filepath.Split(path)
 
-	return wx.NewUploadAction(urls.OffiaSuperreSolution,
-		wx.WithUploadField(&wx.UploadField{
-			FileField: "img",
-			Filename:  filename,
-		}),
-		wx.WithBody(func() ([]byte, error) {
+	return wx.NewPostAction(urls.OffiaSuperreSolution,
+		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(path))
 
 			if err != nil {
 				return nil, err
 			}
 
-			return ioutil.ReadFile(path)
+			body, err := ioutil.ReadFile(path)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return yiigo.NewUploadForm(
+				yiigo.WithFileField("img", filename, body),
+			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
 // SuperreSolutionByURL 图片高清化
-func SuperreSolutionByURL(dest *SuperreSolutionResult, imgURL string) wx.Action {
+func SuperreSolutionByURL(imgURL string, result *ResultSuperreSolution) wx.Action {
 	return wx.NewPostAction(urls.OffiaSuperreSolution,
 		wx.WithQuery("img_url", imgURL),
 		wx.WithDecode(func(resp []byte) error {
-			dest.MediaID = gjson.GetBytes(resp, "media_id").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

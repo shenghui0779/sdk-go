@@ -1,67 +1,94 @@
 package minip
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestImageSecCheck(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/img_sec_check?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/img_sec_check?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ImageSecCheck("../test/test.jpg"))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", ImageSecCheck("../mock/test.jpg"))
 
 	assert.Nil(t, err)
 }
 
 func TestMediaCheckAsync(t *testing.T) {
+	body := []byte(`{"media_type":2,"media_url":"https://developers.weixin.qq.com/miniprogram/assets/images/head_global_z_@all.png"}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"trace_id": "967e945cd8a3e458f3c74dcb886068e9"
+}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/media_check_async?access_token=ACCESS_TOKEN", []byte(`{"media_type":2,"media_url":"https://developers.weixin.qq.com/miniprogram/assets/images/head_global_z_@all.png"}`)).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"trace_id": "967e945cd8a3e458f3c74dcb886068e9"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/media_check_async?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
-	dest := new(MediaSecAsyncResult)
+	params := &ParamsMediaCheckAsync{
+		MediaType: SecMediaImage,
+		MediaURL:  "https://developers.weixin.qq.com/miniprogram/assets/images/head_global_z_@all.png",
+	}
+	result := new(ResultMediaCheckAsync)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", MediaSecCheckAsync(dest, SecMediaImage, "https://developers.weixin.qq.com/miniprogram/assets/images/head_global_z_@all.png"))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", MediaCheckAsync(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "967e945cd8a3e458f3c74dcb886068e9", dest.TraceID)
+	assert.Equal(t, &ResultMediaCheckAsync{
+		TraceID: "967e945cd8a3e458f3c74dcb886068e9",
+	}, result)
 }
 
 func TestMsgSecCheck(t *testing.T) {
+	body := []byte(`{"content":"hello world!"}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/msg_sec_check?access_token=ACCESS_TOKEN", []byte(`{"content":"hello world!"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/msg_sec_check?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(client)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", MsgSecCheck("hello world!"))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", MsgSecCheck("hello world!"))
 
 	assert.Nil(t, err)
 }

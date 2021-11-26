@@ -2,13 +2,14 @@ package agent
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
 type ResultAgentGet struct {
-	AgentID            string          `json:"agentid"`
+	AgentID            int64           `json:"agentid"`
 	Name               string          `json:"name"`
 	SquareLogoURL      string          `json:"square_logo_url"`
 	Description        string          `json:"description"`
@@ -38,9 +39,9 @@ type AllowTags struct {
 	TagID []int64 `json:"tagid"`
 }
 
-func AgentGet(agentID string, result *ResultAgentGet) wx.Action {
+func AgentGet(agentID int64, result *ResultAgentGet) wx.Action {
 	return wx.NewGetAction(urls.CorpAgentGet,
-		wx.WithQuery("agent_id", agentID),
+		wx.WithQuery("agent_id", strconv.FormatInt(agentID, 10)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
@@ -52,7 +53,7 @@ type ResultAgentList struct {
 }
 
 type AgentListItem struct {
-	AgentID       string `json:"agentid"`
+	AgentID       int64  `json:"agentid"`
 	Name          string `json:"name"`
 	SquareLogoURL string `json:"square_logo_url"`
 }
@@ -66,7 +67,7 @@ func AgentList(result *ResultAgentList) wx.Action {
 }
 
 type ParamsAgentSet struct {
-	AgentID            string `json:"agentid"`
+	AgentID            int64  `json:"agentid"`
 	Name               string `json:"name"`
 	LogoMediaID        string `json:"logo_mediaid"`
 	Description        string `json:"description"`

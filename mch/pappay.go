@@ -96,7 +96,7 @@ func APPEntrust(c *Contract) wx.Action {
 
 // OAEntrust 公众号纯签约
 func OAEntrust(c *Contract) wx.Action {
-	return wx.NewAction(wx.MethodNone, urls.MchPappayOAEntrust,
+	return wx.NewAction("", urls.MchPappayOAEntrust,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":                    appid,
@@ -122,7 +122,7 @@ func OAEntrust(c *Contract) wx.Action {
 
 // MPEntrust 小程序纯签约，返回小程序所需的 extraData 数据
 func MPEntrust(c *Contract) wx.Action {
-	return wx.NewAction(wx.MethodNone, "",
+	return wx.NewAction("", "",
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			extraData := wx.WXML{
 				"appid":                    appid,
@@ -147,7 +147,7 @@ func MPEntrust(c *Contract) wx.Action {
 
 // H5Entrust H5纯签约
 func H5Entrust(c *Contract) wx.Action {
-	return wx.NewAction(wx.MethodNone, urls.MchPappayH5Entrust,
+	return wx.NewAction("", urls.MchPappayH5Entrust,
 		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":                    appid,

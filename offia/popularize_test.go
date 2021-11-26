@@ -1,74 +1,68 @@
 package offia
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
-func TestCreateTempQRCode(t *testing.T) {
+func TestCreateQRCode(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=ACCESS_TOKEN", []byte(`{"action_info":{"scene":{"scene_id":123}},"action_name":"QR_SCENE","expire_seconds":60}`)).Return([]byte(`{
+	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=ACCESS_TOKEN", []byte(`{"action_name":"QR_SCENE","action_info":{"scene":{"scene_id":123}},"expire_seconds":60}`)).Return([]byte(`{
 		"ticket": "gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm3sUw==",
 		"expire_seconds": 60,
 		"url": "http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI"
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
-	dest := new(QRCode)
+	params := &ParamsQRCodeCreate{
+		ActionName: QRScene,
+		ActionInfo: &QRCodeActionInfo{
+			Scene: &QRCodeScene{
+				SceneID: 123,
+			},
+		},
+		ExpireSeconds: 60,
+	}
+	result := new(ResultQRCodeCreate)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateTempQRCode(dest, 123, 60))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateQRCode(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &QRCode{
+	assert.Equal(t, &ResultQRCodeCreate{
 		Ticket:        "gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm3sUw==",
 		ExpireSeconds: 60,
 		URL:           "http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI",
-	}, dest)
+	}, result)
 }
 
-func TestCreatePermQRCode(t *testing.T) {
+func TestShortURL(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
-
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=ACCESS_TOKEN", []byte(`{"action_info":{"scene":{"scene_id":123}},"action_name":"QR_LIMIT_SCENE"}`)).Return([]byte(`{
-		"ticket": "gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm3sUw==",
-		"expire_seconds": 60,
-		"url": "http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI"
-	}`), nil)
-
-	oa := New("APPID", "APPSECRET")
-	oa.client = client
-
-	dest := new(QRCode)
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreatePermQRCode(dest, 123))
-
-	assert.Nil(t, err)
-	assert.Equal(t, &QRCode{
-		Ticket:        "gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm3sUw==",
-		ExpireSeconds: 60,
-		URL:           "http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI",
-	}, dest)
-}
-
-func TestLong2ShortURL(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/shorturl?access_token=ACCESS_TOKEN", []byte(`{"action":"long2short","long_url":"http://wap.koudaitong.com/v2/showcase/goods?alias=128wi9shh&spm=h56083&redirect_count=1"}`)).Return([]byte(`{
 		"errcode": 0,
@@ -77,12 +71,14 @@ func TestLong2ShortURL(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
-	dest := new(ShortURL)
+	result := new(ResultShortURL)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", Long2ShortURL(dest, "http://wap.koudaitong.com/v2/showcase/goods?alias=128wi9shh&spm=h56083&redirect_count=1"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ShortURL("http://wap.koudaitong.com/v2/showcase/goods?alias=128wi9shh&spm=h56083&redirect_count=1", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, "http://w.url.cn/s/AvCo6Ih", dest.URL)
+	assert.Equal(t, &ResultShortURL{
+		ShortURL: "http://w.url.cn/s/AvCo6Ih",
+	}, result)
 }

@@ -1,21 +1,28 @@
 package offia
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAICrop(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
 		"errcode": 0,
@@ -41,14 +48,14 @@ func TestAICrop(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
-	dest := new(AICropResult)
+	result := new(ResultAICrop)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICrop(dest, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICrop("../mock/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &AICropResult{
+	assert.Equal(t, &ResultAICrop{
 		Results: []*CropPosition{
 			{
 				CropLeft:   112,
@@ -67,14 +74,19 @@ func TestAICrop(t *testing.T) {
 			W: 966,
 			H: 728,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestAICropByURL(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return([]byte(`{
 		"errcode": 0,
@@ -100,14 +112,14 @@ func TestAICropByURL(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
-	dest := new(AICropResult)
+	result := new(ResultAICrop)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICropByURL(dest, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AICropByURL("ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &AICropResult{
+	assert.Equal(t, &ResultAICrop{
 		Results: []*CropPosition{
 			{
 				CropLeft:   112,
@@ -126,14 +138,19 @@ func TestAICropByURL(t *testing.T) {
 			W: 966,
 			H: 728,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestScanQRCode(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
 		"errcode": 0,
@@ -199,14 +216,14 @@ func TestScanQRCode(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
-	dest := new(QRCodeScanResult)
+	result := new(ResultQRCodeScan)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCode(dest, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCode("../mock/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &QRCodeScanResult{
+	assert.Equal(t, &ResultQRCodeScan{
 		CodeResults: []*QRCodeScanData{
 			{
 				TypeName: "QR_CODE",
@@ -301,14 +318,19 @@ func TestScanQRCode(t *testing.T) {
 			W: 1000,
 			H: 900,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestScanQRCodeByURL(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return([]byte(`{
 		"errcode": 0,
@@ -374,14 +396,14 @@ func TestScanQRCodeByURL(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
-	dest := new(QRCodeScanResult)
+	result := new(ResultQRCodeScan)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCodeByURL(dest, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ScanQRCodeByURL("ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &QRCodeScanResult{
+	assert.Equal(t, &ResultQRCodeScan{
 		CodeResults: []*QRCodeScanData{
 			{
 				TypeName: "QR_CODE",
@@ -476,14 +498,19 @@ func TestScanQRCodeByURL(t *testing.T) {
 			W: 1000,
 			H: 900,
 		},
-	}, dest)
+	}, result)
 }
 
 func TestSuperreSolution(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
 		"errcode": 0,
@@ -492,23 +519,28 @@ func TestSuperreSolution(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
-	dest := new(SuperreSolutionResult)
+	result := new(ResultSuperreSolution)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolution(dest, "../test/test.jpg"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolution("../mock/test.jpg", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &SuperreSolutionResult{
+	assert.Equal(t, &ResultSuperreSolution{
 		MediaID: "6WXsIXkG7lXuDLspD9xfm5dsvHzb0EFl0li6ySxi92ap8Vl3zZoD9DpOyNudeJGB",
-	}, dest)
+	}, result)
 }
 
 func TestSuperreSolutionByURL(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader()),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	client := wx.NewMockClient(ctrl)
+	client := mock.NewMockHTTPClient(ctrl)
 
 	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return([]byte(`{
 		"errcode": 0,
@@ -517,14 +549,14 @@ func TestSuperreSolutionByURL(t *testing.T) {
 	}`), nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.client = client
+	oa.SetClient(client)
 
-	dest := new(SuperreSolutionResult)
+	result := new(ResultSuperreSolution)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolutionByURL(dest, "ENCODE_URL"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SuperreSolutionByURL("ENCODE_URL", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &SuperreSolutionResult{
+	assert.Equal(t, &ResultSuperreSolution{
 		MediaID: "6WXsIXkG7lXuDLspD9xfm5dsvHzb0EFl0li6ySxi92ap8Vl3zZoD9DpOyNudeJGB",
-	}, dest)
+	}, result)
 }

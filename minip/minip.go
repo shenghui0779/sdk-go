@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
@@ -20,7 +21,7 @@ type Minip struct {
 	appsecret      string
 	token          string
 	encodingAESKey string
-	nonce          func(size uint) string
+	nonce          func() string
 	client         wx.Client
 }
 
@@ -29,8 +30,10 @@ func New(appid, appsecret string) *Minip {
 	return &Minip{
 		appid:     appid,
 		appsecret: appsecret,
-		nonce:     wx.Nonce,
-		client:    wx.NewClient(wx.WithInsecureSkipVerify()),
+		nonce: func() string {
+			return wx.Nonce(16)
+		},
+		client: wx.DefaultClient(),
 	}
 }
 
@@ -39,6 +42,16 @@ func New(appid, appsecret string) *Minip {
 func (mp *Minip) SetServerConfig(token, encodingAESKey string) {
 	mp.token = token
 	mp.encodingAESKey = encodingAESKey
+}
+
+// SetClient set client
+func (mp *Minip) SetClient(c yiigo.HTTPClient) {
+	mp.client.SetHTTPClient(c)
+}
+
+// SetLogger set client logger
+func (mp *Minip) SetLogger(l wx.Logger) {
+	mp.client.SetLogger(l)
 }
 
 // AppID returns appid
@@ -53,7 +66,7 @@ func (mp *Minip) AppSecret() string {
 
 // Code2Session 获取小程序授权的session_key
 func (mp *Minip) Code2Session(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthSession, error) {
-	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", urls.MinipCode2Session, mp.appid, mp.appsecret, code), options...)
+	resp, err := mp.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", urls.MinipCode2Session, mp.appid, mp.appsecret, code), nil, options...)
 
 	if err != nil {
 		return nil, err
@@ -76,7 +89,7 @@ func (mp *Minip) Code2Session(ctx context.Context, code string, options ...yiigo
 
 // AccessToken 获取小程序的access_token
 func (mp *Minip) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*AccessToken, error) {
-	resp, err := mp.client.Get(ctx, fmt.Sprintf("%s?appid=%s&secret=%s&grant_type=client_credential", urls.MinipAccessToken, mp.appid, mp.appsecret), options...)
+	resp, err := mp.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?appid=%s&secret=%s&grant_type=client_credential", urls.MinipAccessToken, mp.appid, mp.appsecret), nil, options...)
 
 	if err != nil {
 		return nil, err
@@ -98,7 +111,7 @@ func (mp *Minip) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (
 }
 
 // DecryptAuthInfo 解密授权信息
-func (mp *Minip) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData string) error {
+func (mp *Minip) DecryptAuthInfo(sessionKey, iv, encryptedData string, result AuthInfo) error {
 	key, err := base64.StdEncoding.DecodeString(sessionKey)
 
 	if err != nil {
@@ -125,12 +138,12 @@ func (mp *Minip) DecryptAuthInfo(dest AuthInfo, sessionKey, iv, encryptedData st
 		return err
 	}
 
-	if err := json.Unmarshal(b, dest); err != nil {
+	if err := json.Unmarshal(b, result); err != nil {
 		return err
 	}
 
-	if dest.AppID() != mp.appid {
-		return fmt.Errorf("appid mismatch, want: %s, got: %s", mp.appid, dest.AppID())
+	if result.AppID() != mp.appid {
+		return fmt.Errorf("appid mismatch, want: %s, got: %s", mp.appid, result.AppID())
 	}
 
 	return nil
@@ -143,18 +156,7 @@ func (mp *Minip) Do(ctx context.Context, accessToken string, action wx.Action, o
 		err  error
 	)
 
-	switch action.Method() {
-	case wx.MethodGet:
-		resp, err = mp.client.Get(ctx, action.URL(accessToken), options...)
-	case wx.MethodPost:
-		body, berr := action.Body()
-
-		if berr != nil {
-			return err
-		}
-
-		resp, err = mp.client.Post(ctx, action.URL(accessToken), body, options...)
-	case wx.MethodUpload:
+	if action.IsUpload() {
 		form, ferr := action.UploadForm()
 
 		if ferr != nil {
@@ -163,6 +165,14 @@ func (mp *Minip) Do(ctx context.Context, accessToken string, action wx.Action, o
 		}
 
 		resp, err = mp.client.Upload(ctx, action.URL(accessToken), form, options...)
+	} else {
+		body, berr := action.Body()
+
+		if berr != nil {
+			return err
+		}
+
+		resp, err = mp.client.Do(ctx, action.Method(), action.URL(accessToken), body, options...)
 	}
 
 	if err != nil {
@@ -175,11 +185,7 @@ func (mp *Minip) Do(ctx context.Context, accessToken string, action wx.Action, o
 		return fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
-	if action.Decode() == nil {
-		return nil
-	}
-
-	return action.Decode()(resp)
+	return action.Decode(resp)
 }
 
 // VerifyEventSign 验证事件消息签名
