@@ -31,6 +31,7 @@ type Client interface {
 type wxclient struct {
 	client yiigo.HTTPClient
 	logger Logger
+	debug  bool
 }
 
 func (c *wxclient) Do(ctx context.Context, method, reqURL string, body []byte, options ...yiigo.HTTPOption) ([]byte, error) {

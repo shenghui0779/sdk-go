@@ -16,7 +16,16 @@ import (
 func TestOCRIDCardFront(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"type": "Front",
+	"name": "张三",
+	"id": "123456789012345678",
+	"addr": "广东省广州市",
+	"gender": "男",
+	"nationality": "汉"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -24,16 +33,7 @@ func TestOCRIDCardFront(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"type": "Front",
-		"name": "张三",
-		"id": "123456789012345678",
-		"addr": "广东省广州市",
-		"gender": "男",
-		"nationality": "汉"
-	  }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -55,7 +55,16 @@ func TestOCRIDCardFront(t *testing.T) {
 func TestOCRIDCardFrontByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"type": "Front",
+	"name": "张三",
+	"id": "123456789012345678",
+	"addr": "广东省广州市",
+	"gender": "男",
+	"nationality": "汉"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -63,16 +72,7 @@ func TestOCRIDCardFrontByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"type": "Front",
-		"name": "张三",
-		"id": "123456789012345678",
-		"addr": "广东省广州市",
-		"gender": "男",
-		"nationality": "汉"
-	  }`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -94,7 +94,12 @@ func TestOCRIDCardFrontByURL(t *testing.T) {
 func TestOCRIDCardBack(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"type": "Back",
+	"valid_date": "20070105-20270105"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -102,12 +107,7 @@ func TestOCRIDCardBack(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"type": "Back",
-		"valid_date": "20070105-20270105"
-	}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -125,7 +125,12 @@ func TestOCRIDCardBack(t *testing.T) {
 func TestOCRIDCardBackByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"type": "Back",
+	"valid_date": "20070105-20270105"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -133,12 +138,7 @@ func TestOCRIDCardBackByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"type": "Back",
-		"valid_date": "20070105-20270105"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cv/ocr/idcard?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -156,7 +156,11 @@ func TestOCRIDCardBackByURL(t *testing.T) {
 func TestOCRBankCard(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"number": "622213XXXXXXXXX"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -164,11 +168,7 @@ func TestOCRBankCard(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/bankcard?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"number": "622213XXXXXXXXX"
-	}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/bankcard?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -186,7 +186,11 @@ func TestOCRBankCard(t *testing.T) {
 func TestOCRBankCardByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"number": "622213XXXXXXXXX"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -194,11 +198,7 @@ func TestOCRBankCardByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/bankcard?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"number": "622213XXXXXXXXX"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cv/ocr/bankcard?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -216,7 +216,11 @@ func TestOCRBankCardByURL(t *testing.T) {
 func TestOCRPlateNumber(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"number": "苏A123456"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -224,11 +228,7 @@ func TestOCRPlateNumber(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/platenum?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"number": "苏A123456"
-	}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/platenum?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -246,7 +246,11 @@ func TestOCRPlateNumber(t *testing.T) {
 func TestOCRPlateNumberByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"number": "苏A123456"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -254,11 +258,7 @@ func TestOCRPlateNumberByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/platenum?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"number": "苏A123456"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cv/ocr/platenum?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -276,7 +276,21 @@ func TestOCRPlateNumberByURL(t *testing.T) {
 func TestOCRDriverLicense(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"id_num": "660601xxxxxxxx1234",
+	"name": "张三",
+	"sex": "男",
+	"nationality": "中国",
+	"address": "广东省东莞市xxxxx号",
+	"birth_date": "1990-12-21",
+	"issue_date": "2012-12-21",
+	"car_class": "C1",
+	"valid_from": "2018-07-06",
+	"valid_to": "2020-07-01",
+	"official_seal": "xx市公安局公安交通管理局"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -284,21 +298,7 @@ func TestOCRDriverLicense(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/drivinglicense?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"id_num": "660601xxxxxxxx1234",
-		"name": "张三",
-		"sex": "男",
-		"nationality": "中国",
-		"address": "广东省东莞市xxxxx号",
-		"birth_date": "1990-12-21",
-		"issue_date": "2012-12-21",
-		"car_class": "C1",
-		"valid_from": "2018-07-06",
-		"valid_to": "2020-07-01",
-		"official_seal": "xx市公安局公安交通管理局"
-	   }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/drivinglicense?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -326,7 +326,21 @@ func TestOCRDriverLicense(t *testing.T) {
 func TestOCRDriverLicenseByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"id_num": "660601xxxxxxxx1234",
+	"name": "张三",
+	"sex": "男",
+	"nationality": "中国",
+	"address": "广东省东莞市xxxxx号",
+	"birth_date": "1990-12-21",
+	"issue_date": "2012-12-21",
+	"car_class": "C1",
+	"valid_from": "2018-07-06",
+	"valid_to": "2020-07-01",
+	"official_seal": "xx市公安局公安交通管理局"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -334,21 +348,7 @@ func TestOCRDriverLicenseByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/drivinglicense?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"id_num": "660601xxxxxxxx1234",
-		"name": "张三",
-		"sex": "男",
-		"nationality": "中国",
-		"address": "广东省东莞市xxxxx号",
-		"birth_date": "1990-12-21",
-		"issue_date": "2012-12-21",
-		"car_class": "C1",
-		"valid_from": "2018-07-06",
-		"valid_to": "2020-07-01",
-		"official_seal": "xx市公安局公安交通管理局"
-	   }`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cv/ocr/drivinglicense?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -376,7 +376,24 @@ func TestOCRDriverLicenseByURL(t *testing.T) {
 func TestOCRVehicleLicense(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"vhicle_type": "小型普通客⻋",
+	"owner": "东莞市xxxxx机械厂",
+	"addr": "广东省东莞市xxxxx号",
+	"use_character": "非营运",
+	"model": "江淮牌HFCxxxxxxx",
+	"vin": "LJ166xxxxxxxx51",
+	"engine_num": "J3xxxxx3",
+	"register_date": "2018-07-06",
+	"issue_date": "2018-07-01",
+	"plate_num": "粤xxxxx",
+	"plate_num_b": "粤xxxxx",
+	"record": "441xxxxxx3",
+	"passengers_num": "7人",
+	"total_quality": "2700kg",
+	"prepare_quality": "1995kg",
+	"overall_size": "4582x1795x1458mm"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -384,24 +401,7 @@ func TestOCRVehicleLicense(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/driving?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"vhicle_type": "小型普通客⻋",
-		"owner": "东莞市xxxxx机械厂",
-		"addr": "广东省东莞市xxxxx号",
-		"use_character": "非营运",
-		"model": "江淮牌HFCxxxxxxx",
-		"vin": "LJ166xxxxxxxx51",
-		"engine_num": "J3xxxxx3",
-		"register_date": "2018-07-06",
-		"issue_date": "2018-07-01",
-		"plate_num": "粤xxxxx",
-		"plate_num_b": "粤xxxxx",
-		"record": "441xxxxxx3",
-		"passengers_num": "7人",
-		"total_quality": "2700kg",
-		"prepare_quality": "1995kg",
-		"overall_size": "4582x1795x1458mm"
-	}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/driving?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -434,7 +434,24 @@ func TestOCRVehicleLicense(t *testing.T) {
 func TestOCRVehicleLicenseByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"vhicle_type": "小型普通客⻋",
+	"owner": "东莞市xxxxx机械厂",
+	"addr": "广东省东莞市xxxxx号",
+	"use_character": "非营运",
+	"model": "江淮牌HFCxxxxxxx",
+	"vin": "LJ166xxxxxxxx51",
+	"engine_num": "J3xxxxx3",
+	"register_date": "2018-07-06",
+	"issue_date": "2018-07-01",
+	"plate_num": "粤xxxxx",
+	"plate_num_b": "粤xxxxx",
+	"record": "441xxxxxx3",
+	"passengers_num": "7人",
+	"total_quality": "2700kg",
+	"prepare_quality": "1995kg",
+	"overall_size": "4582x1795x1458mm"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -442,24 +459,7 @@ func TestOCRVehicleLicenseByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/driving?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
-		"vhicle_type": "小型普通客⻋",
-		"owner": "东莞市xxxxx机械厂",
-		"addr": "广东省东莞市xxxxx号",
-		"use_character": "非营运",
-		"model": "江淮牌HFCxxxxxxx",
-		"vin": "LJ166xxxxxxxx51",
-		"engine_num": "J3xxxxx3",
-		"register_date": "2018-07-06",
-		"issue_date": "2018-07-01",
-		"plate_num": "粤xxxxx",
-		"plate_num_b": "粤xxxxx",
-		"record": "441xxxxxx3",
-		"passengers_num": "7人",
-		"total_quality": "2700kg",
-		"prepare_quality": "1995kg",
-		"overall_size": "4582x1795x1458mm"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cv/ocr/driving?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -492,7 +492,46 @@ func TestOCRVehicleLicenseByURL(t *testing.T) {
 func TestOCRBusinessLicense(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"reg_num": "123123",
+	"serial": "123123",
+	"legal_representative": "张三",
+	"enterprise_name": "XX饮食店",
+	"type_of_organization": "个人经营",
+	"address": "XX市XX区XX路XX号",
+	"type_of_enterprise": "xxx",
+	"business_scope": "中型餐馆(不含凉菜、不含裱花蛋糕，不含生食海产品)。",
+	"registered_capital": "200万",
+	"paid_in_capital": "200万",
+	"valid_period": "2019年1月1日",
+	"registered_date": "2018年1月1日",
+	"cert_position": {
+		"pos": {
+			"left_top": {
+				"x": 155,
+				"y": 191
+			},
+			"right_top": {
+				"x": 725,
+				"y": 157
+			},
+			"right_bottom": {
+				"x": 743,
+				"y": 512
+			},
+			"left_bottom": {
+				"x": 164,
+				"y": 525
+			}
+		}
+	},
+	"img_size": {
+		"w": 966,
+		"h": 728
+	}
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -500,46 +539,7 @@ func TestOCRBusinessLicense(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/bizlicense?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"reg_num": "123123",
-		"serial": "123123",
-		"legal_representative": "张三",
-		"enterprise_name": "XX饮食店",
-		"type_of_organization": "个人经营",
-		"address": "XX市XX区XX路XX号",
-		"type_of_enterprise": "xxx",
-		"business_scope": "中型餐馆(不含凉菜、不含裱花蛋糕，不含生食海产品)。",
-		"registered_capital": "200万",
-		"paid_in_capital": "200万",
-		"valid_period": "2019年1月1日",
-		"registered_date": "2018年1月1日",
-		"cert_position": {
-			"pos": {
-				"left_top": {
-					"x": 155,
-					"y": 191
-				},
-				"right_top": {
-					"x": 725,
-					"y": 157
-				},
-				"right_bottom": {
-					"x": 743,
-					"y": 512
-				},
-				"left_bottom": {
-					"x": 164,
-					"y": 525
-				}
-			}
-		},
-		"img_size": {
-			"w": 966,
-			"h": 728
-		}
-	}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/bizlicense?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -592,7 +592,46 @@ func TestOCRBusinessLicense(t *testing.T) {
 func TestOCRBusinessLicenseByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"reg_num": "123123",
+	"serial": "123123",
+	"legal_representative": "张三",
+	"enterprise_name": "XX饮食店",
+	"type_of_organization": "个人经营",
+	"address": "XX市XX区XX路XX号",
+	"type_of_enterprise": "xxx",
+	"business_scope": "中型餐馆(不含凉菜、不含裱花蛋糕，不含生食海产品)。",
+	"registered_capital": "200万",
+	"paid_in_capital": "200万",
+	"valid_period": "2019年1月1日",
+	"registered_date": "2018年1月1日",
+	"cert_position": {
+		"pos": {
+			"left_top": {
+				"x": 155,
+				"y": 191
+			},
+			"right_top": {
+				"x": 725,
+				"y": 157
+			},
+			"right_bottom": {
+				"x": 743,
+				"y": 512
+			},
+			"left_bottom": {
+				"x": 164,
+				"y": 525
+			}
+		}
+	},
+	"img_size": {
+		"w": 966,
+		"h": 728
+	}
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -600,46 +639,7 @@ func TestOCRBusinessLicenseByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/bizlicense?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"reg_num": "123123",
-		"serial": "123123",
-		"legal_representative": "张三",
-		"enterprise_name": "XX饮食店",
-		"type_of_organization": "个人经营",
-		"address": "XX市XX区XX路XX号",
-		"type_of_enterprise": "xxx",
-		"business_scope": "中型餐馆(不含凉菜、不含裱花蛋糕，不含生食海产品)。",
-		"registered_capital": "200万",
-		"paid_in_capital": "200万",
-		"valid_period": "2019年1月1日",
-		"registered_date": "2018年1月1日",
-		"cert_position": {
-			"pos": {
-				"left_top": {
-					"x": 155,
-					"y": 191
-				},
-				"right_top": {
-					"x": 725,
-					"y": 157
-				},
-				"right_bottom": {
-					"x": 743,
-					"y": 512
-				},
-				"left_bottom": {
-					"x": 164,
-					"y": 525
-				}
-			}
-		},
-		"img_size": {
-			"w": 966,
-			"h": 728
-		}
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cv/ocr/bizlicense?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -689,10 +689,61 @@ func TestOCRBusinessLicenseByURL(t *testing.T) {
 	}, result)
 }
 
-func TestOCRPrintedText(t *testing.T) {
+func TestOCRComm(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"items": [
+		{
+			"text": "腾讯",
+			"pos": {
+				"left_top": {
+					"x": 575,
+					"y": 519
+				},
+				"right_top": {
+					"x": 744,
+					"y": 519
+				},
+				"right_bottom": {
+					"x": 744,
+					"y": 532
+				},
+				"left_bottom": {
+					"x": 573,
+					"y": 532
+				}
+			}
+		},
+		{
+			"text": "微信团队",
+			"pos": {
+				"left_top": {
+					"x": 670,
+					"y": 516
+				},
+				"right_top": {
+					"x": 762,
+					"y": 517
+				},
+				"right_bottom": {
+					"x": 762,
+					"y": 532
+				},
+				"left_bottom": {
+					"x": 670,
+					"y": 531
+				}
+			}
+		}
+	],
+	"img_size": {
+		"w": 1280,
+		"h": 720
+	}
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -700,65 +751,14 @@ func TestOCRPrintedText(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/comm?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"items": [
-			{
-				"text": "腾讯",
-				"pos": {
-					"left_top": {
-						"x": 575,
-						"y": 519
-					},
-					"right_top": {
-						"x": 744,
-						"y": 519
-					},
-					"right_bottom": {
-						"x": 744,
-						"y": 532
-					},
-					"left_bottom": {
-						"x": 573,
-						"y": 532
-					}
-				}
-			},
-			{
-				"text": "微信团队",
-				"pos": {
-					"left_top": {
-						"x": 670,
-						"y": 516
-					},
-					"right_top": {
-						"x": 762,
-						"y": 517
-					},
-					"right_bottom": {
-						"x": 762,
-						"y": 532
-					},
-					"left_bottom": {
-						"x": 670,
-						"y": 531
-					}
-				}
-			}
-		],
-		"img_size": {
-			"w": 1280,
-			"h": 720
-		}
-	}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/comm?access_token=ACCESS_TOKEN&type=photo", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
 
 	result := new(ResultCommOCR)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRPrintedText(OCRPhoto, "../mock/test.jpg", result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", OCRComm(OCRPhoto, "../mock/test.jpg", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCommOCR{
@@ -813,10 +813,61 @@ func TestOCRPrintedText(t *testing.T) {
 	}, result)
 }
 
-func TestOCRPrintedTextByURL(t *testing.T) {
+func TestOCRCommByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"items": [
+		{
+			"text": "腾讯",
+			"pos": {
+				"left_top": {
+					"x": 575,
+					"y": 519
+				},
+				"right_top": {
+					"x": 744,
+					"y": 519
+				},
+				"right_bottom": {
+					"x": 744,
+					"y": 532
+				},
+				"left_bottom": {
+					"x": 573,
+					"y": 532
+				}
+			}
+		},
+		{
+			"text": "微信团队",
+			"pos": {
+				"left_top": {
+					"x": 670,
+					"y": 516
+				},
+				"right_top": {
+					"x": 762,
+					"y": 517
+				},
+				"right_bottom": {
+					"x": 762,
+					"y": 532
+				},
+				"left_bottom": {
+					"x": 670,
+					"y": 531
+				}
+			}
+		}
+	],
+	"img_size": {
+		"w": 1280,
+		"h": 720
+	}
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -824,58 +875,7 @@ func TestOCRPrintedTextByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/ocr/comm?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"items": [
-			{
-				"text": "腾讯",
-				"pos": {
-					"left_top": {
-						"x": 575,
-						"y": 519
-					},
-					"right_top": {
-						"x": 744,
-						"y": 519
-					},
-					"right_bottom": {
-						"x": 744,
-						"y": 532
-					},
-					"left_bottom": {
-						"x": 573,
-						"y": 532
-					}
-				}
-			},
-			{
-				"text": "微信团队",
-				"pos": {
-					"left_top": {
-						"x": 670,
-						"y": 516
-					},
-					"right_top": {
-						"x": 762,
-						"y": 517
-					},
-					"right_bottom": {
-						"x": 762,
-						"y": 532
-					},
-					"left_bottom": {
-						"x": 670,
-						"y": 531
-					}
-				}
-			}
-		],
-		"img_size": {
-			"w": 1280,
-			"h": 720
-		}
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cv/ocr/comm?access_token=ACCESS_TOKEN&img_url=ENCODE_URL&type=photo", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)

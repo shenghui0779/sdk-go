@@ -16,7 +16,13 @@ import (
 func TestUploadMedia(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"type": "image",
+	"media_id": "MEDIA_ID",
+	"created_at": 1606717010
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -24,13 +30,7 @@ func TestUploadMedia(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"type": "image",
-		"media_id": "MEDIA_ID",
-		"created_at": 1606717010
-	  }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -54,7 +54,13 @@ func TestUploadMedia(t *testing.T) {
 func TestUploadMediaByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"type": "image",
+	"media_id": "MEDIA_ID",
+	"created_at": 1606717010
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -62,13 +68,7 @@ func TestUploadMediaByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"type": "image",
-		"media_id": "MEDIA_ID",
-		"created_at": 1606717010
-	  }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -93,7 +93,12 @@ func TestUploadMediaByURL(t *testing.T) {
 func TestAddMaterial(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"media_id": "MEDIA_ID",
+	"url": "URL"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -101,12 +106,7 @@ func TestAddMaterial(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"media_id": "MEDIA_ID",
-		"url": "URL"
-	  }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -129,7 +129,12 @@ func TestAddMaterial(t *testing.T) {
 func TestAddMaterialByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"media_id": "MEDIA_ID",
+	"url": "URL"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -137,12 +142,7 @@ func TestAddMaterialByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"media_id": "MEDIA_ID",
-		"url": "URL"
-	  }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -164,9 +164,11 @@ func TestAddMaterialByURL(t *testing.T) {
 }
 
 func TestDeleteMaterial(t *testing.T) {
+	body := []byte(`{"media_id":"MEDIA_ID"}`)
+
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -174,7 +176,7 @@ func TestDeleteMaterial(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/del_material?access_token=ACCESS_TOKEN", []byte(`{"media_id":"MEDIA_ID"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/material/del_material?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -187,7 +189,11 @@ func TestDeleteMaterial(t *testing.T) {
 func TestUploadImage(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"url": "URL"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -195,11 +201,7 @@ func TestUploadImage(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"url": "URL"
-	  }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -217,7 +219,11 @@ func TestUploadImage(t *testing.T) {
 func TestUploadImageByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"url": "URL"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -225,11 +231,7 @@ func TestUploadImageByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"url": "URL"
-	  }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -251,7 +253,12 @@ func TestUploadImageByURL(t *testing.T) {
 func TestUploadVideo(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"media_id": "MEDIA_ID",
+	"url": "URL"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -259,12 +266,7 @@ func TestUploadVideo(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=video", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"media_id": "MEDIA_ID",
-		"url": "URL"
-	  }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=video", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -288,7 +290,12 @@ func TestUploadVideo(t *testing.T) {
 func TestUploadVideoByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"media_id": "MEDIA_ID",
+	"url": "URL"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -296,12 +303,7 @@ func TestUploadVideoByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=video", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"media_id": "MEDIA_ID",
-		"url": "URL"
-	  }`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=ACCESS_TOKEN&type=video", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -324,9 +326,15 @@ func TestUploadVideoByURL(t *testing.T) {
 }
 
 func TestAddNews(t *testing.T) {
+	body := []byte(`{"articles":[{"title":"TITLE","thumb_media_id":"THUMB_MEDIA_ID","author":"AUTHOR","digest":"DIGEST","show_cover_pic":1,"content":"CONTENT","content_source_url":"CONTENT_SOURCE_URL","need_open_comment":1,"only_fans_can_comment":1}]}`)
+
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"media_id": "MEDIA_ID"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -334,11 +342,7 @@ func TestAddNews(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=ACCESS_TOKEN", []byte(`{"articles":[{"title":"TITLE","thumb_media_id":"THUMB_MEDIA_ID","author":"AUTHOR","digest":"DIGEST","show_cover_pic":1,"content":"CONTENT","content_source_url":"CONTENT_SOURCE_URL","need_open_comment":1,"only_fans_can_comment":1}]}`)).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"media_id": "MEDIA_ID"
-	  }`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)

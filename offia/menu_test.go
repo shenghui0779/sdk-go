@@ -13,9 +13,11 @@ import (
 )
 
 func TestCreateMenu(t *testing.T) {
+	body := []byte(`{"button":[{"type":"click","name":"今日歌曲","key":"V1001_TODAY_MUSIC"},{"name":"菜单","sub_button":[{"type":"view","name":"搜索","url":"http://www.soso.com/"},{"type":"miniprogram","name":"wxa","url":"http://mp.weixin.qq.com","appid":"wx286b93c14bbf93aa","pagepath":"pages/lunar/index"},{"type":"click","name":"赞一下我们","key":"V1001_GOOD"}]}]}`)
+
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -23,7 +25,7 @@ func TestCreateMenu(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN", []byte(`{"button":[{"type":"click","name":"今日歌曲","key":"V1001_TODAY_MUSIC"},{"name":"菜单","sub_button":[{"type":"view","name":"搜索","url":"http://www.soso.com/"},{"type":"miniprogram","name":"wxa","url":"http://mp.weixin.qq.com","appid":"wx286b93c14bbf93aa","pagepath":"pages/lunar/index"},{"type":"click","name":"赞一下我们","key":"V1001_GOOD"}]}]}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -45,9 +47,11 @@ func TestCreateMenu(t *testing.T) {
 }
 
 func TestCreateConditionalMenu(t *testing.T) {
+	body := []byte(`{"button":[{"type":"click","name":"今日歌曲","key":"V1001_TODAY_MUSIC"},{"name":"菜单","sub_button":[{"type":"view","name":"搜索","url":"http://www.soso.com/"},{"type":"miniprogram","name":"wxa","url":"http://mp.weixin.qq.com","appid":"wx286b93c14bbf93aa","pagepath":"pages/lunar/index"},{"type":"click","name":"赞一下我们","key":"V1001_GOOD"}]}],"matchrule":{"tag_id":"2","client_platform_type":"2"}}`)
+
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -55,7 +59,7 @@ func TestCreateConditionalMenu(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token=ACCESS_TOKEN", []byte(`{"button":[{"type":"click","name":"今日歌曲","key":"V1001_TODAY_MUSIC"},{"name":"菜单","sub_button":[{"type":"view","name":"搜索","url":"http://www.soso.com/"},{"type":"miniprogram","name":"wxa","url":"http://mp.weixin.qq.com","appid":"wx286b93c14bbf93aa","pagepath":"pages/lunar/index"},{"type":"click","name":"赞一下我们","key":"V1001_GOOD"}]}],"matchrule":{"tag_id":"2","client_platform_type":"2"}}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -81,9 +85,20 @@ func TestCreateConditionalMenu(t *testing.T) {
 }
 
 func TestTryMatchMenu(t *testing.T) {
+	body := []byte(`{"user_id":"weixin"}`)
+
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"button": [
+		{
+			"type": "view",
+			"name": "tx",
+			"url": "http://www.qq.com/",
+			"sub_button": []
+		}
+	]
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -91,16 +106,7 @@ func TestTryMatchMenu(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/trymatch?access_token=ACCESS_TOKEN", []byte(`{"user_id":"weixin"}`)).Return([]byte(`{
-		"button": [
-			{
-				"type": "view",
-				"name": "tx",
-				"url": "http://www.qq.com/",
-				"sub_button": []
-			}
-		]
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/menu/trymatch?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -125,7 +131,59 @@ func TestTryMatchMenu(t *testing.T) {
 func TestGetMenu(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"menu": {
+		"button": [
+			{
+				"type": "click",
+				"name": "今日歌曲",
+				"key": "V1001_TODAY_MUSIC",
+				"sub_button": []
+			}
+		],
+		"menuid": 208396938
+	},
+	"conditionalmenu": [
+		{
+			"button": [
+				{
+					"type": "click",
+					"name": "今日歌曲",
+					"key": "V1001_TODAY_MUSIC",
+					"sub_button": []
+				},
+				{
+					"name": "菜单",
+					"sub_button": [
+						{
+							"type": "view",
+							"name": "搜索",
+							"url": "http://www.soso.com/",
+							"sub_button": []
+						},
+						{
+							"type": "view",
+							"name": "视频",
+							"url": "http://v.qq.com/",
+							"sub_button": []
+						},
+						{
+							"type": "click",
+							"name": "赞一下我们",
+							"key": "V1001_GOOD",
+							"sub_button": []
+						}
+					]
+				}
+			],
+			"matchrule": {
+				"tag_id": "2",
+				"client_platform_type": "2"
+			},
+			"menuid": 208396993
+		}
+	]
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -133,59 +191,7 @@ func TestGetMenu(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=ACCESS_TOKEN").Return([]byte(`{
-		"menu": {
-			"button": [
-				{
-					"type": "click",
-					"name": "今日歌曲",
-					"key": "V1001_TODAY_MUSIC",
-					"sub_button": []
-				}
-			],
-			"menuid": 208396938
-		},
-		"conditionalmenu": [
-			{
-				"button": [
-					{
-						"type": "click",
-						"name": "今日歌曲",
-						"key": "V1001_TODAY_MUSIC",
-						"sub_button": []
-					},
-					{
-						"name": "菜单",
-						"sub_button": [
-							{
-								"type": "view",
-								"name": "搜索",
-								"url": "http://www.soso.com/",
-								"sub_button": []
-							},
-							{
-								"type": "view",
-								"name": "视频",
-								"url": "http://v.qq.com/",
-								"sub_button": []
-							},
-							{
-								"type": "click",
-								"name": "赞一下我们",
-								"key": "V1001_GOOD",
-								"sub_button": []
-							}
-						]
-					}
-				],
-				"matchrule": {
-					"tag_id": "2",
-					"client_platform_type": "2"
-				},
-				"menuid": 208396993
-			}
-		]
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -257,7 +263,7 @@ func TestGetMenu(t *testing.T) {
 func TestDeleteMenu(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -265,7 +271,7 @@ func TestDeleteMenu(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=ACCESS_TOKEN").Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -276,9 +282,11 @@ func TestDeleteMenu(t *testing.T) {
 }
 
 func TestDeleteConditionalMenu(t *testing.T) {
+	body := []byte(`{"menuid":"208379533"}`)
+
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -286,7 +294,7 @@ func TestDeleteConditionalMenu(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/menu/delconditional?access_token=ACCESS_TOKEN", []byte(`{"menuid":"208379533"}`)).Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/menu/delconditional?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)

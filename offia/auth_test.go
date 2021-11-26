@@ -15,7 +15,7 @@ import (
 func TestCheckAuthToken(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -23,7 +23,7 @@ func TestCheckAuthToken(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/auth?access_token=ACCESS_TOKEN&openid=OPENID").Return([]byte(`{"errcode":0,"errmsg":"ok"}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/sns/auth?access_token=ACCESS_TOKEN&openid=OPENID", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -36,7 +36,17 @@ func TestCheckAuthToken(t *testing.T) {
 func TestGetAuthInfo(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"openid": "OPENID",
+	"nickname": "NICKNAME",
+	"sex": 1,
+	"province": "PROVINCE",
+	"city": "CITY",
+	"country": "COUNTRY",
+	"headimgurl": "https://thirdwx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46",
+	"privilege": ["PRIVILEGE1", "PRIVILEGE2"],
+	"unionid": "o6_bmasdasdsad6_2sgVt7hMZOPfL"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -44,17 +54,7 @@ func TestGetAuthInfo(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&lang=zh_CN&openid=OPENID").Return([]byte(`{
-		"openid": "OPENID",
-		"nickname": "NICKNAME",
-		"sex": 1,
-		"province": "PROVINCE",
-		"city": "CITY",
-		"country": "COUNTRY",
-		"headimgurl": "https://thirdwx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46",
-		"privilege": ["PRIVILEGE1", "PRIVILEGE2"],
-		"unionid": "o6_bmasdasdsad6_2sgVt7hMZOPfL"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&lang=zh_CN&openid=OPENID", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
@@ -79,7 +79,12 @@ func TestGetAuthInfo(t *testing.T) {
 func TestGetApiTicket(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"ticket": "bxLdikRXVbTPdHSM05e5u5sUoXNKd8-41ZO3MhKoyN5OfkWITDGgnr2fwJ0m9E8NYzWKVZvdVtaUgWvsdshFKA",
+	"expires_in": 7200
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -87,12 +92,7 @@ func TestGetApiTicket(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi").Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"ticket": "bxLdikRXVbTPdHSM05e5u5sUoXNKd8-41ZO3MhKoyN5OfkWITDGgnr2fwJ0m9E8NYzWKVZvdVtaUgWvsdshFKA",
-		"expires_in": 7200
-	  }`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(client)
