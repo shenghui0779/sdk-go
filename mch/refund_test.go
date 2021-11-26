@@ -62,7 +62,7 @@ func TestRefundByTransactionID(t *testing.T) {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
 	}
 
-	mch.SetTLSClient(client)
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), RefundByTransactionID("4008450740201411110005820873", &RefundData{
 		OutRefundNO: "1415701182",
@@ -135,7 +135,7 @@ func TestRefundByOutTradeNO(t *testing.T) {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
 	}
 
-	mch.SetTLSClient(client)
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), RefundByOutTradeNO("1415757673", &RefundData{
 		OutRefundNO: "1415701182",
@@ -207,7 +207,7 @@ func TestQueryRefundByRefundID(t *testing.T) {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 
-	mch.SetClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryRefundByRefundID("2008450740201411110000174436"))
 
@@ -277,7 +277,7 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 
-	mch.SetClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryRefundByOutRefundNO("1415701182"))
 
@@ -347,7 +347,7 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 
-	mch.SetClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryRefundByTransactionID("1008450740201411110005820873"))
 
@@ -417,7 +417,7 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}
 
-	mch.SetClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryRefundByOutTradeNO("1415757673"))
 

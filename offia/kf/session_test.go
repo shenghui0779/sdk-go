@@ -10,6 +10,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/offia"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,7 +30,7 @@ func TestCreateSession(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/customservice/kfsession/create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsSessionCreate{
 		Account: "test1@test",
@@ -57,7 +58,7 @@ func TestCloseSession(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/customservice/kfsession/close?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsSessionClose{
 		Account: "test1@test",
@@ -86,7 +87,7 @@ func TestGetSession(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/customservice/kfsession/getsession?access_token=ACCESS_TOKEN&openid=OPENID", nil).Return(resp, nil)
 
 	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(Session)
 
@@ -124,7 +125,7 @@ func TestGetSessionList(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/customservice/kfsession/getsessionlist?access_token=ACCESS_TOKEN&kf_account=ACCOUNT", nil).Return(resp, nil)
 
 	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultSessionList)
 
@@ -169,7 +170,7 @@ func TestGetWaitCase(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/customservice/kfsession/getwaitcase?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
 	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(WaitCase)
 
@@ -226,7 +227,7 @@ func TestGetMsgRecordList(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/customservice/msgrecord/getmsglist?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsMsgRecordList{
 		MsgID:     1,

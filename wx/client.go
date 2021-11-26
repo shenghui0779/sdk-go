@@ -21,11 +21,8 @@ type Client interface {
 	// Upload sends an HTTP post request for uploading media
 	Upload(ctx context.Context, reqURL string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error)
 
-	// SetHTTPClient set http client
-	SetHTTPClient(c yiigo.HTTPClient)
-
-	// SetLogger set logger
-	SetLogger(l Logger)
+	// Set sets options for client
+	Set(options ...ClientOption)
 }
 
 type wxclient struct {
@@ -45,7 +42,10 @@ func (c *wxclient) Do(ctx context.Context, method, reqURL string, body []byte, o
 
 	defer func() {
 		logData.Duration = time.Since(now)
-		c.logger.Log(ctx, logData)
+
+		if c.debug {
+			c.logger.Log(ctx, logData)
+		}
 	}()
 
 	resp, err := c.client.Do(ctx, method, reqURL, body, options...)
@@ -89,7 +89,10 @@ func (c *wxclient) Upload(ctx context.Context, reqURL string, form yiigo.UploadF
 
 	defer func() {
 		logData.Duration = time.Since(now)
-		c.logger.Log(ctx, logData)
+
+		if c.debug {
+			c.logger.Log(ctx, logData)
+		}
 	}()
 
 	resp, err := c.client.Upload(ctx, reqURL, form, options...)
@@ -123,12 +126,10 @@ func (c *wxclient) Upload(ctx context.Context, reqURL string, form yiigo.UploadF
 	return b, nil
 }
 
-func (c *wxclient) SetHTTPClient(client yiigo.HTTPClient) {
-	c.client = client
-}
-
-func (c *wxclient) SetLogger(l Logger) {
-	c.logger = l
+func (c *wxclient) Set(options ...ClientOption) {
+	for _, f := range options {
+		f(c)
+	}
 }
 
 // DefaultClient returns a new default wechat client

@@ -62,14 +62,9 @@ func (oa *Offia) SetServerConfig(token, encodingAESKey string) {
 	oa.encodingAESKey = encodingAESKey
 }
 
-// SetClient set client
-func (oa *Offia) SetClient(c yiigo.HTTPClient) {
-	oa.client.SetHTTPClient(c)
-}
-
-// SetLogger set client logger
-func (oa *Offia) SetLogger(logger wx.Logger) {
-	oa.client.SetLogger(logger)
+// SetClient sets options for wechat client
+func (oa *Offia) SetClient(options ...wx.ClientOption) {
+	oa.client.Set(options...)
 }
 
 // AppID returns appid

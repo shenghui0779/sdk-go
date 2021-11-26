@@ -64,7 +64,7 @@ func TestSendNormalRedpack(t *testing.T) {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.SetTLSClient(client)
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), SendNormalRedpack(&RedpackData{
 		MchBillNO:   "0010010404201411170000046545",
@@ -142,7 +142,7 @@ func TestSendGroupRedpack(t *testing.T) {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.SetTLSClient(client)
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), SendGroupRedpack(&RedpackData{
 		MchBillNO:   "0010010404201411170000046545",
@@ -219,7 +219,7 @@ func TestSendMinipRedpack(t *testing.T) {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.SetTLSClient(client)
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), SendMinipRedpack(&RedpackData{
 		MchBillNO:   "2334580734271081478888000026",
@@ -291,7 +291,7 @@ func TestQueryRedpackByBillNO(t *testing.T) {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.SetTLSClient(client)
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryRedpackByBillNO("9010080799701411170000046603"))
 

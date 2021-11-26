@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,7 +29,7 @@ func TestCreateQRCode(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsQRCodeCreate{
 		Path:  "page/index/index",
@@ -58,7 +59,7 @@ func TestGetQRCode(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/getwxacode?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsQRCodeGet{
 		Path:  "page/index/index",
@@ -88,7 +89,7 @@ func TestGetUnlimitQRCode(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsQRCodeUnlimit{
 		Scene: "a=1",

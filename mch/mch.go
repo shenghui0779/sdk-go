@@ -33,8 +33,9 @@ type Mch struct {
 }
 
 // New returns new wechat pay
-func New(appid, mchid, apikey, p12cert string) (*Mch, error) {
-	cert, err := wx.P12FileToCert(p12cert, mchid)
+// [证书参考](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=4_3)
+func New(appid, mchid, apikey, pfx string) (*Mch, error) {
+	cert, err := wx.P12FileToCert(pfx, mchid)
 
 	if err != nil {
 		return nil, err
@@ -52,20 +53,14 @@ func New(appid, mchid, apikey, p12cert string) (*Mch, error) {
 	}, nil
 }
 
-// SetClient set client
-func (mch *Mch) SetClient(c yiigo.HTTPClient) {
-	mch.client.SetHTTPClient(c)
+// SetClient sets options for wechat client
+func (mch *Mch) SetClient(options ...wx.ClientOption) {
+	mch.client.Set(options...)
 }
 
-// SetTLSClient set tls client
-func (mch *Mch) SetTLSClient(c yiigo.HTTPClient) {
-	mch.tlscli.SetHTTPClient(c)
-}
-
-// SetLogger set client logger
-func (mch *Mch) SetLogger(l wx.Logger) {
-	mch.client.SetLogger(l)
-	mch.tlscli.SetLogger(l)
+// SetTLSClient sets options for wechat tls client
+func (mch *Mch) SetTLSClient(options ...wx.ClientOption) {
+	mch.tlscli.Set(options...)
 }
 
 // AppID returns appid

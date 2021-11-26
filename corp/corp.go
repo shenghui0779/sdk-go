@@ -36,14 +36,9 @@ func (corp *Corp) SetServerConfig(token, encodingAESKey string) {
 	corp.encodingAESKey = encodingAESKey
 }
 
-// SetClient set client
-func (corp *Corp) SetClient(c yiigo.HTTPClient) {
-	corp.client.SetHTTPClient(c)
-}
-
-// SetLogger set client logger
-func (corp *Corp) SetLogger(l wx.Logger) {
-	corp.client.SetLogger(l)
+// SetClient sets options for wechat client
+func (corp *Corp) SetClient(options ...wx.ClientOption) {
+	corp.client.Set(options...)
 }
 
 func (corp *Corp) CorpID() string {

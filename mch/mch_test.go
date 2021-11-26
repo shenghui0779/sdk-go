@@ -127,8 +127,8 @@ func TestDownloadBill(t *testing.T) {
 	mch.nonce = func() string {
 		return "21df7dc9cd8616b56919f20d9f679233"
 	}
-	mch.SetClient(client)
-	mch.SetTLSClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	b, err := mch.DownloadBill(context.TODO(), "20141110", BillTypeAll)
 
@@ -175,8 +175,8 @@ func TestDownloadFundFlow(t *testing.T) {
 	mch.nonce = func() string {
 		return "21df7dc9cd8616b56919f20d9f679233"
 	}
-	mch.SetClient(client)
-	mch.SetTLSClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	b, err := mch.DownloadFundFlow(context.TODO(), "20141110", AccountTypeBasic)
 
@@ -226,8 +226,8 @@ func TestBatchQueryComment(t *testing.T) {
 	mch.nonce = func() string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
-	mch.SetClient(client)
-	mch.SetTLSClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	b, err := mch.BatchQueryComment(context.TODO(), "20170724000000", "20170725000000", 0, 100)
 

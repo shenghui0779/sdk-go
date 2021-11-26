@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,7 +30,7 @@ func TestApplyPlugin(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", ApplyPlugin("aaaa", "hello"))
 
@@ -68,7 +69,7 @@ func TestGetPluginDevApplyList(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultPluginDevApplyList)
 
@@ -121,7 +122,7 @@ func TestGetPluginList(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultPluginList)
 
@@ -156,7 +157,7 @@ func TestSetDevPluginApplyStatus(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsDevPluginApplyStatus{
 		Action: PluginDevAgree,
@@ -184,7 +185,7 @@ func TestUnbindPlugin(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", UnbindPlugin("APPID"))
 

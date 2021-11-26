@@ -61,7 +61,7 @@ func TestTransferToBalance(t *testing.T) {
 		return "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 
-	mch.SetTLSClient(client)
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), TransferToBalance(&TransferBalanceData{
 		PartnerTradeNO: "100000982014120919616",
@@ -131,7 +131,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.SetTLSClient(client)
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryTransferBalanceOrder("1000005901201407261446939628"))
 
@@ -189,7 +189,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 		return "50780e0cca98c8c8e814883e5caa672e"
 // 	}
 
-// 	mch.SetTLSClient(client)
+// 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 // 	r, err := mch.Do(context.TODO(), TransferToBankCard(&TransferBankCardData{
 // 		PartnerTradeNO: "1212121221278",
@@ -257,7 +257,7 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.SetTLSClient(client)
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryTransferBankCardOrder("1212121221278"))
 
@@ -321,7 +321,7 @@ DQIDAQAB
 		return "50780e0cca98c8c8e814883e5caa672e"
 	}
 
-	mch.SetTLSClient(client)
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), RSAPublicKey())
 
