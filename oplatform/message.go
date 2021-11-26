@@ -9,7 +9,7 @@ import (
 
 // SendKFTextMessage 发送客服文本消息（支持插入跳小程序的文字链）
 func SendKFTextMessage(openID, accessToken, text string, kfAccount ...string) wx.Action {
-	return wx.NewPostAction(urls.OffiaKFMessageSend,
+	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithQuery("access_token", accessToken),
 		wx.WithBody(func() ([]byte, error) {
 			data := yiigo.X{
