@@ -189,31 +189,26 @@ func MarshalWithNoEscapeHTML(v interface{}) ([]byte, error) {
 	return b, nil
 }
 
-// P12FileToCert 通过p12(pfx)证书文件生成Pem证书
-func P12FileToCert(path, password string) (tls.Certificate, error) {
+// LoadP12Cert 通过p12(pfx)证书文件生成Pem证书
+func LoadP12Cert(pfxfile, mchid string) (tls.Certificate, error) {
 	fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
 
-	certPath, err := filepath.Abs(filepath.Clean(path))
+	certPath, err := filepath.Abs(filepath.Clean(pfxfile))
 
 	if err != nil {
 		return fail(err)
 	}
 
-	p12, err := ioutil.ReadFile(certPath)
+	pfxdata, err := ioutil.ReadFile(certPath)
 
 	if err != nil {
 		return fail(err)
 	}
 
-	return P12BlockToCert(p12, password)
-}
-
-// P12BlockToCert 通过p12(pfx)证书内容生成Pem证书
-func P12BlockToCert(pfxData []byte, password string) (tls.Certificate, error) {
-	blocks, err := pkcs12.ToPEM(pfxData, password)
+	blocks, err := pkcs12.ToPEM(pfxdata, mchid)
 
 	if err != nil {
-		return tls.Certificate{}, err
+		return fail(err)
 	}
 
 	pemData := make([]byte, 0)

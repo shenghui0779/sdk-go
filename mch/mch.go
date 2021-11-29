@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/md5"
 	"crypto/sha256"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
@@ -34,13 +35,7 @@ type Mch struct {
 
 // New returns new wechat pay
 // [证书参考](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=4_3)
-func New(appid, mchid, apikey, pfx string) (*Mch, error) {
-	cert, err := wx.P12FileToCert(pfx, mchid)
-
-	if err != nil {
-		return nil, err
-	}
-
+func New(appid, mchid, apikey string, certs ...tls.Certificate) *Mch {
 	return &Mch{
 		appid:  appid,
 		mchid:  mchid,
@@ -49,8 +44,8 @@ func New(appid, mchid, apikey, pfx string) (*Mch, error) {
 			return wx.Nonce(16)
 		},
 		client: wx.DefaultClient(),
-		tlscli: wx.DefaultClient(cert),
-	}, nil
+		tlscli: wx.DefaultClient(certs...),
+	}
 }
 
 // SetClient sets options for wechat client
