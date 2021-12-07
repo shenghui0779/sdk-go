@@ -27,11 +27,11 @@ func AccountAdd(params *ParamsAccountAdd, result *ResultAccountAdd) wx.Action {
 	)
 }
 
-type ParamsAccountDel struct {
+type ParamsAccountDelete struct {
 	OpenKFID string `json:"open_kfid"`
 }
 
-func AccountDel(params *ParamsAccountDel) wx.Action {
+func AccountDelete(params *ParamsAccountDelete) wx.Action {
 	return wx.NewPostAction(urls.CorpKFAccountDel,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCheckAuthToken(t *testing.T) {
+func TestCheckOAuthToken(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
@@ -29,12 +29,12 @@ func TestCheckAuthToken(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CheckAuthToken("OPENID"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CheckOAuthToken("OPENID"))
 
 	assert.Nil(t, err)
 }
 
-func TestGetAuthInfo(t *testing.T) {
+func TestGetOAuthUser(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -60,15 +60,15 @@ func TestGetAuthInfo(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultAuthInfo)
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetAuthInfo("OPENID", result))
+	result := new(ResultOAuthUser)
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetOAuthUser("OPENID", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultAuthInfo{
+	assert.Equal(t, &ResultOAuthUser{
 		OpenID:     "OPENID",
 		UnionID:    "o6_bmasdasdsad6_2sgVt7hMZOPfL",
 		Nickname:   "NICKNAME",
-		Sex:        SexMale,
+		Sex:        1,
 		Province:   "PROVINCE",
 		City:       "CITY",
 		Country:    "COUNTRY",

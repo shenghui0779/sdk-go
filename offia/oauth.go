@@ -7,17 +7,8 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-// Sex 性别
-type Sex int
-
-const (
-	SexUnknown Sex = 0 // 未知
-	SexMale    Sex = 1 // 男性
-	SexFemale  Sex = 2 // 女性
-)
-
-// AuthToken 公众号网页授权Token
-type AuthToken struct {
+// OAuthToken 公众号网页授权Token
+type OAuthToken struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 	ExpiresIn    int64  `json:"expires_in"`
@@ -31,19 +22,19 @@ type AccessToken struct {
 	ExpiresIn int64  `json:"expires_in"`
 }
 
-// CheckAuthToken 检验授权凭证（access_token）是否有效
-func CheckAuthToken(openid string) wx.Action {
+// CheckOAuthToken 检验授权凭证（access_token）是否有效
+func CheckOAuthToken(openid string) wx.Action {
 	return wx.NewGetAction(urls.OffiaSnsCheckAccessToken,
 		wx.WithQuery("openid", openid),
 	)
 }
 
-// ResultAuthInfo 授权用户信息
-type ResultAuthInfo struct {
+// ResultOAuthUser 授权用户信息
+type ResultOAuthUser struct {
 	OpenID     string   `json:"openid"`
 	UnionID    string   `json:"unionid"`
 	Nickname   string   `json:"nickname"`
-	Sex        Sex      `json:"sex"`
+	Sex        int      `json:"sex"`
 	Province   string   `json:"province"`
 	City       string   `json:"city"`
 	Country    string   `json:"country"`
@@ -51,8 +42,8 @@ type ResultAuthInfo struct {
 	Privilege  []string `json:"privilege"`
 }
 
-// GetAuthInfo 获取授权用户信息（注意：使用网页授权的access_token）
-func GetAuthInfo(openid string, result *ResultAuthInfo) wx.Action {
+// GetOAuthUser 获取授权用户信息（注意：使用网页授权的access_token）
+func GetOAuthUser(openid string, result *ResultOAuthUser) wx.Action {
 	return wx.NewGetAction(urls.OffiaSnsUserInfo,
 		wx.WithQuery("openid", openid),
 		wx.WithQuery("lang", "zh_CN"),

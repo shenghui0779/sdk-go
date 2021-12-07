@@ -32,5 +32,5 @@ func NewOplatform(appid, appsecret string) *oplatform.Oplatform {
 
 // NewCorp 企业微信
 func NewCorp(corpid string) *corp.Corp {
-	return corp.NewCorp(corpid)
+	return corp.New(corpid)
 }

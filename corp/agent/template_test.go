@@ -1,0 +1,87 @@
+package agent
+
+import (
+	"bytes"
+	"context"
+	"io"
+	"net/http"
+	"testing"
+
+	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/gochat/corp"
+	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestSetWorkbenchTemplate(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+
+	oa := corp.New("CORPID")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+
+	assert.Nil(t, err)
+}
+
+func TestGetWorkbenchTemplate(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+
+	oa := corp.New("CORPID")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+
+	assert.Nil(t, err)
+}
+
+func TestSetWorkbenchData(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+
+	oa := corp.New("CORPID")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+
+	assert.Nil(t, err)
+}

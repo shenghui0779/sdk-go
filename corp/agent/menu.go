@@ -23,11 +23,6 @@ const (
 	ButtonViewMinip       ButtonType = "view_miniprogram"   // 成员点击按钮后，企业微信客户端将会打开开发者在按钮中配置的小程序
 )
 
-// Menu 普通菜单
-type Menu struct {
-	Button []*Button `json:"button"`
-}
-
 // Button 菜单按钮
 type Button struct {
 	Type      ButtonType `json:"type,omitempty"`       // 菜单的响应动作类型，view表示网页类型，click表示点击类型，miniprogram表示小程序类型
@@ -39,8 +34,12 @@ type Button struct {
 	SubButton []*Button  `json:"sub_button,omitempty"` // 二级菜单数组，个数应为1~5个
 }
 
+type ParamsMenuCreate struct {
+	Button []*Button `json:"button"`
+}
+
 // CreateMenu 创建菜单
-func MenuCreate(params *Menu) wx.Action {
+func CreateMenu(params *ParamsMenuCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpMenuCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -48,8 +47,12 @@ func MenuCreate(params *Menu) wx.Action {
 	)
 }
 
-// MenuGet 获取菜单
-func MenuGet(result *Menu) wx.Action {
+type ResultMenuGet struct {
+	Button []*Button `json:"button"`
+}
+
+// GetMenu 获取菜单
+func GetMenu(result *ResultMenuGet) wx.Action {
 	return wx.NewGetAction(urls.CorpMenuGet,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -57,8 +60,8 @@ func MenuGet(result *Menu) wx.Action {
 	)
 }
 
-// MenuDelete 删除菜单
-func MenuDelete(agentID string) wx.Action {
+// DeleteMenu 删除菜单
+func DeleteMenu(agentID string) wx.Action {
 	return wx.NewGetAction(urls.CorpMenuDelete)
 }
 
