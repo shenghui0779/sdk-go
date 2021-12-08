@@ -32,7 +32,7 @@ type ParamsAccountDelete struct {
 }
 
 func AccountDelete(params *ParamsAccountDelete) wx.Action {
-	return wx.NewPostAction(urls.CorpKFAccountDel,
+	return wx.NewPostAction(urls.CorpKFAccountDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

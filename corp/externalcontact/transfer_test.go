@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestListCustomer(t *testing.T) {
+func TestTransferCustomer(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -38,7 +38,7 @@ func TestListCustomer(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetCustomer(t *testing.T) {
+func TestGetTransferResult(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -62,7 +62,7 @@ func TestGetCustomer(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestBatchGetCustomerByUser(t *testing.T) {
+func TestListUnassigned(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -86,7 +86,7 @@ func TestBatchGetCustomerByUser(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestRemarkCustomer(t *testing.T) {
+func TestTransferGroupChat(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

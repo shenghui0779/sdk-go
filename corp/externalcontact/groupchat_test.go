@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestListCustomer(t *testing.T) {
+func TestListGroupChat(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -38,7 +38,7 @@ func TestListCustomer(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetCustomer(t *testing.T) {
+func TestGetGroupChat(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -62,31 +62,7 @@ func TestGetCustomer(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestBatchGetCustomerByUser(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
-}`))),
-	}
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := mock.NewMockHTTPClient(ctrl)
-
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
-
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
-
-	assert.Nil(t, err)
-}
-
-func TestRemarkCustomer(t *testing.T) {
+func TestOpenGIDToChatID(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

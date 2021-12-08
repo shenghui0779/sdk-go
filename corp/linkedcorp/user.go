@@ -7,21 +7,47 @@ import (
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
-	"github.com/shenghui0779/gochat/corp/common"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
 type UserInfo struct {
-	UserID     string          `json:"userid"`
-	Name       string          `json:"name"`
-	Department []string        `json:"department"`
-	Mobile     string          `json:"mobile"`
-	Telephone  string          `json:"telephone"`
-	EMail      string          `json:"email"`
-	Position   string          `json:"position"`
-	CorpID     string          `json:"corpid"`
-	ExtAttr    *common.ExtAttr `json:"extattr"`
+	UserID     string   `json:"userid"`
+	Name       string   `json:"name"`
+	Department []string `json:"department"`
+	Mobile     string   `json:"mobile"`
+	Telephone  string   `json:"telephone"`
+	EMail      string   `json:"email"`
+	Position   string   `json:"position"`
+	CorpID     string   `json:"corpid"`
+	ExtAttr    *ExtAttr `json:"extattr"`
+}
+
+type ExtAttr struct {
+	Attrs []*Attr `json:"attrs"`
+}
+
+type Attr struct {
+	Type        int        `json:"type"`
+	Name        string     `json:"name"`
+	Text        *AttrText  `json:"text,omitempty"`
+	Web         *AttrWeb   `json:"web,omitempty"`
+	Miniprogram *AttrMinip `json:"miniprogram,omitempty"`
+}
+
+type AttrText struct {
+	Value string `json:"value"`
+}
+
+type AttrWeb struct {
+	Title string `json:"title"`
+	URL   string `json:"url"`
+}
+
+type AttrMinip struct {
+	Title    string `json:"title"`
+	AppID    string `json:"appid"`
+	Pagepath string `json:"pagepath"`
 }
 
 func GetUser(dest *UserInfo, corpID, userID string) wx.Action {

@@ -49,7 +49,7 @@ type ServicerDelItem struct {
 }
 
 func ServicerDel(params *ParamsServicerDel, result *ResultServicerDel) wx.Action {
-	return wx.NewPostAction(urls.CorpKFServicerDel,
+	return wx.NewPostAction(urls.CorpKFServicerDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

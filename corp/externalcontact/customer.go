@@ -168,34 +168,3 @@ func RemarkCustomer(params *ParamsCustomerRemark) wx.Action {
 		}),
 	)
 }
-
-type ParamsCustomerStrategyList struct {
-	Cursor string `json:"cursor"`
-	Limit  int    `json:"limit"`
-}
-
-type ResultCustomerStrategyList struct {
-	Strategy   []*CustomerStrategyListData `json:"strategy"`
-	NextCursor string                      `json:"next_cursor"`
-}
-
-type CustomerStrategyListData struct {
-	StrategyID int64 `json:"strategy_id"`
-}
-
-func ListCustomerStrategy(params *ParamsCustomerStrategyList, result *ResultCustomerStrategyList) wx.Action {
-	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyList,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
-		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
-		}),
-	)
-}
-
-type CustomerStrategy struct {
-}
-
-type CustomerStrategyPrivilege struct {
-}

@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestListCorpTag(t *testing.T) {
+func TestListCustomerStrategy(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -38,7 +38,7 @@ func TestListCorpTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestAddCorpTag(t *testing.T) {
+func TestGetCustomerStrategy(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -62,7 +62,7 @@ func TestAddCorpTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestEditCorpTag(t *testing.T) {
+func TestGetCustomerStrategyRange(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -86,7 +86,7 @@ func TestEditCorpTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestDeleteCorpTag(t *testing.T) {
+func TestCreateCustomerStrategy(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -110,7 +110,7 @@ func TestDeleteCorpTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestListStrategyTag(t *testing.T) {
+func TestEditCustomerStrategy(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -134,7 +134,7 @@ func TestListStrategyTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestAddStrategyTag(t *testing.T) {
+func TestDeleteCustomerStrategy(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -158,7 +158,7 @@ func TestAddStrategyTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestEditStrategyTag(t *testing.T) {
+func TestListMomentStrategy(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -182,7 +182,7 @@ func TestEditStrategyTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestDeleteStrategyTag(t *testing.T) {
+func TestGetMomentStrategy(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -206,7 +206,79 @@ func TestDeleteStrategyTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestMarkTag(t *testing.T) {
+func TestGetMomentStrategyRange(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+
+	oa := corp.New("CORPID")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+
+	assert.Nil(t, err)
+}
+
+func TestCreateMomentStrategy(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+
+	oa := corp.New("CORPID")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+
+	assert.Nil(t, err)
+}
+
+func TestEditMomentStrategy(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+
+	oa := corp.New("CORPID")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+
+	assert.Nil(t, err)
+}
+
+func TestDeleteMomentStrategy(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

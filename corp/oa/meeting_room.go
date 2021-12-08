@@ -90,12 +90,12 @@ func EditMeetingRoom(params *ParamsMeetingRoomEdit) wx.Action {
 	)
 }
 
-type ParamsMeetingRoomDel struct {
+type ParamsMeetingRoomDelete struct {
 	MeetingRoomID int64 `json:"meetingroom_id"`
 }
 
-func DelMeetingRoom(params *ParamsMeetingRoomDel) wx.Action {
-	return wx.NewPostAction(urls.CorpOAMeetingRoomDel,
+func DeleteMeetingRoom(params *ParamsMeetingRoomDelete) wx.Action {
+	return wx.NewPostAction(urls.CorpOAMeetingRoomDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
