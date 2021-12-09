@@ -14,62 +14,52 @@ const (
 	ChatGroup  ChatType = "group"
 )
 
-type GroupMsgType string
-
-const (
-	GroupMsgImage GroupMsgType = "image"
-	GroupMsgLink  GroupMsgType = "link"
-	GroupMsgMinip GroupMsgType = "miniprogram"
-	GroupMsgVideo GroupMsgType = "video"
-	GroupMsgFile  GroupMsgType = "file"
-)
-
-type GroupText struct {
+type MsgText struct {
 	Content string `json:"content,omitempty"`
 }
 
-type GroupImage struct {
+type MsgImage struct {
 	MediaID string `json:"media_id,omitempty"`
 	PicURL  string `json:"pic_url,omitempty"`
 }
 
-type GroupLink struct {
+type MsgLink struct {
 	Title  string `json:"title"`
 	PicURL string `json:"picurl,omitempty"`
 	Desc   string `json:"desc,omitempty"`
 	URL    string `json:"url"`
 }
 
-type GroupMinip struct {
+type MsgMinip struct {
 	Title      string `json:"title"`
 	PicMediaID string `json:"pic_media_id"`
 	AppID      string `json:"appid"`
 	Page       string `json:"page"`
 }
 
-type GroupVideo struct {
+type MsgVideo struct {
 	MediaID string `json:"media_id"`
 }
 
-type GroupFile struct {
+type MsgFile struct {
 	MediaID string `json:"media_id"`
 }
 
-type GroupAttachment struct {
-	MsgType GroupMsgType `json:"msg_type"`
-	Image   *GroupImage  `json:"image,omitempty"`
-	Link    *GroupLink   `json:"link,omitempty"`
-	Minip   *GroupMinip  `json:"miniprogram,omitempty"`
-	Video   *GroupVideo  `json:"video,omitempty"`
-	File    *GroupFile   `json:"file,omitempty"`
+type MsgAttachment struct {
+	MsgType AttachmentType `json:"msg_type"`
+	Image   *MsgImage      `json:"image,omitempty"`
+	Link    *MsgLink       `json:"link,omitempty"`
+	Minip   *MsgMinip      `json:"miniprogram,omitempty"`
+	Video   *MsgVideo      `json:"video,omitempty"`
+	File    *MsgFile       `json:"file,omitempty"`
 }
 
 type ParamsMsgTemplateAdd struct {
-	ChatType       ChatType           `json:"chat_type,omitempty"`
-	ExternalUserID []string           `json:"external_userid,omitempty"`
-	Sender         string             `json:"sender,omitempty"`
-	Text           *GroupText         `json:"text,omitempty"`
-	Attachments    []*GroupAttachment `json:"attachments,omitempty"`
+	ChatType       ChatType         `json:"chat_type,omitempty"`
+	ExternalUserID []string         `json:"external_userid,omitempty"`
+	Sender         string           `json:"sender,omitempty"`
+	Text           *MsgText         `json:"text,omitempty"`
+	Attachments    []*MsgAttachment `json:"attachments,omitempty"`
 }
 
 type ResultMsgTemplateAdd struct {
@@ -89,12 +79,12 @@ func AddMsgTemplate(params *ParamsMsgTemplateAdd, result *ResultMsgTemplateAdd) 
 }
 
 type GroupMsg struct {
-	MsgID       string             `json:"msg_id"`
-	Creator     string             `json:"creator"`
-	CreateTime  int64              `json:"create_time"`
-	CreateType  int                `json:"create_type"`
-	Text        *GroupText         `json:"text,omitempty"`
-	Attachments []*GroupAttachment `json:"attachments,omitempty"`
+	MsgID       string           `json:"msg_id"`
+	Creator     string           `json:"creator"`
+	CreateTime  int64            `json:"create_time"`
+	CreateType  int              `json:"create_type"`
+	Text        *MsgText         `json:"text,omitempty"`
+	Attachments []*MsgAttachment `json:"attachments,omitempty"`
 }
 
 type ParamsGroupMsgList struct {
@@ -183,9 +173,9 @@ func GetGroupMsgSendResult(params *ParamsGroupMsgSendResultGet, result *ResultGr
 }
 
 type ParamsWelcomeMsgSend struct {
-	WelcomeCode string             `json:"welcome_code"`
-	Text        *GroupText         `json:"text,omitempty"`
-	Attachments []*GroupAttachment `json:"attachments,omitempty"`
+	WelcomeCode string           `json:"welcome_code"`
+	Text        *MsgText         `json:"text,omitempty"`
+	Attachments []*MsgAttachment `json:"attachments,omitempty"`
 }
 
 func SendWelcomeMsg(params *ParamsWelcomeMsgSend) wx.Action {
@@ -197,14 +187,14 @@ func SendWelcomeMsg(params *ParamsWelcomeMsgSend) wx.Action {
 }
 
 type ParamsGroupWelcomeTemplateAdd struct {
-	Text    *GroupText  `json:"text,omitempty"`
-	Image   *GroupImage `json:"image,omitempty"`
-	Link    *GroupLink  `json:"link,omitempty"`
-	Minip   *GroupMinip `json:"miniprogram,omitempty"`
-	File    *GroupFile  `json:"file,omitempty"`
-	Video   *GroupVideo `json:"video,omitempty"`
-	AgentID int64       `json:"agent_id,omitempty"`
-	Notify  int         `json:"notify,omitempty"`
+	Text    *MsgText  `json:"text,omitempty"`
+	Image   *MsgImage `json:"image,omitempty"`
+	Link    *MsgLink  `json:"link,omitempty"`
+	Minip   *MsgMinip `json:"miniprogram,omitempty"`
+	File    *MsgFile  `json:"file,omitempty"`
+	Video   *MsgVideo `json:"video,omitempty"`
+	AgentID int64     `json:"agent_id,omitempty"`
+	Notify  int       `json:"notify,omitempty"`
 }
 
 type ResultGroupWelcomeTemplateAdd struct {
@@ -223,14 +213,14 @@ func AddGroupWelcomeTemplate(params *ParamsGroupWelcomeTemplateAdd, result *Resu
 }
 
 type ParamsGroupWelcomeTemplateEdit struct {
-	TemplateID string      `json:"template_id"`
-	Text       *GroupText  `json:"text,omitempty"`
-	Image      *GroupImage `json:"image,omitempty"`
-	Link       *GroupLink  `json:"link,omitempty"`
-	Minip      *GroupMinip `json:"miniprogram,omitempty"`
-	File       *GroupFile  `json:"file,omitempty"`
-	Video      *GroupVideo `json:"video,omitempty"`
-	AgentID    int64       `json:"agent_id,omitempty"`
+	TemplateID string    `json:"template_id"`
+	Text       *MsgText  `json:"text,omitempty"`
+	Image      *MsgImage `json:"image,omitempty"`
+	Link       *MsgLink  `json:"link,omitempty"`
+	Minip      *MsgMinip `json:"miniprogram,omitempty"`
+	File       *MsgFile  `json:"file,omitempty"`
+	Video      *MsgVideo `json:"video,omitempty"`
+	AgentID    int64     `json:"agent_id,omitempty"`
 }
 
 func EditGroupWelcomeTemplate(params *ParamsGroupWelcomeTemplateEdit) wx.Action {
@@ -246,12 +236,12 @@ type ParamsGroupWelcomeTemplateGet struct {
 }
 
 type ResultGroupWelcomeTemplateGet struct {
-	Text  *GroupText  `json:"text"`
-	Image *GroupImage `json:"image"`
-	Link  *GroupLink  `json:"link"`
-	Minip *GroupMinip `json:"miniprogram"`
-	File  *GroupFile  `json:"file"`
-	Video *GroupVideo `json:"video"`
+	Text  *MsgText  `json:"text"`
+	Image *MsgImage `json:"image"`
+	Link  *MsgLink  `json:"link"`
+	Minip *MsgMinip `json:"miniprogram"`
+	File  *MsgFile  `json:"file"`
+	Video *MsgVideo `json:"video"`
 }
 
 func GetGroupWelcomeTemplate(params *ParamsGroupWelcomeTemplateGet, result *ResultGroupWelcomeTemplateGet) wx.Action {
