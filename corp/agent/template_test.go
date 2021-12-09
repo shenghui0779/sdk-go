@@ -15,6 +15,7 @@ import (
 )
 
 func TestSetWorkbenchTemplate(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -39,6 +40,7 @@ func TestSetWorkbenchTemplate(t *testing.T) {
 }
 
 func TestGetWorkbenchTemplate(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -63,6 +65,7 @@ func TestGetWorkbenchTemplate(t *testing.T) {
 }
 
 func TestSetWorkbenchData(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

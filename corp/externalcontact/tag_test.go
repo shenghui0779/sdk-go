@@ -15,6 +15,7 @@ import (
 )
 
 func TestListCorpTag(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -39,6 +40,7 @@ func TestListCorpTag(t *testing.T) {
 }
 
 func TestAddCorpTag(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -63,6 +65,7 @@ func TestAddCorpTag(t *testing.T) {
 }
 
 func TestEditCorpTag(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -87,6 +90,7 @@ func TestEditCorpTag(t *testing.T) {
 }
 
 func TestDeleteCorpTag(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -111,6 +115,7 @@ func TestDeleteCorpTag(t *testing.T) {
 }
 
 func TestListStrategyTag(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -135,6 +140,7 @@ func TestListStrategyTag(t *testing.T) {
 }
 
 func TestAddStrategyTag(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -159,6 +165,7 @@ func TestAddStrategyTag(t *testing.T) {
 }
 
 func TestEditStrategyTag(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -183,6 +190,7 @@ func TestEditStrategyTag(t *testing.T) {
 }
 
 func TestDeleteStrategyTag(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -207,6 +215,7 @@ func TestDeleteStrategyTag(t *testing.T) {
 }
 
 func TestMarkTag(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

@@ -15,6 +15,7 @@ import (
 )
 
 func TestCreateMenu(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -39,6 +40,7 @@ func TestCreateMenu(t *testing.T) {
 }
 
 func TestGetMenu(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -63,6 +65,7 @@ func TestGetMenu(t *testing.T) {
 }
 
 func TestDeleteMenu(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

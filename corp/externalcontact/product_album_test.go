@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTransferCustomer(t *testing.T) {
+func TestAddProductAlbum(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -39,7 +39,7 @@ func TestTransferCustomer(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetTransferResult(t *testing.T) {
+func TestUpdateProductAlbum(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -64,7 +64,7 @@ func TestGetTransferResult(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestListUnassigned(t *testing.T) {
+func TestGetProductAlbum(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -89,7 +89,32 @@ func TestListUnassigned(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestTransferGroupChat(t *testing.T) {
+func TestListProductAlbum(t *testing.T) {
+	body := []byte(``)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+
+	assert.Nil(t, err)
+}
+
+func TestDeleteProductAlbum(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,

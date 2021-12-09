@@ -15,6 +15,7 @@ import (
 )
 
 func TestGetUserBehaviorData(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -39,6 +40,7 @@ func TestGetUserBehaviorData(t *testing.T) {
 }
 
 func TestGetGroupChatStatistic(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -63,6 +65,7 @@ func TestGetGroupChatStatistic(t *testing.T) {
 }
 
 func TestGetGroupChatStatisticByDay(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

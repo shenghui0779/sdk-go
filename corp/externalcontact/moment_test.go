@@ -15,6 +15,7 @@ import (
 )
 
 func TestAddMomentTask(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -39,6 +40,7 @@ func TestAddMomentTask(t *testing.T) {
 }
 
 func TestGetMomentTaskResult(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -63,6 +65,7 @@ func TestGetMomentTaskResult(t *testing.T) {
 }
 
 func TestListMoment(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -87,6 +90,7 @@ func TestListMoment(t *testing.T) {
 }
 
 func TestGetMomentTask(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -111,6 +115,7 @@ func TestGetMomentTask(t *testing.T) {
 }
 
 func TestListMomentCustomer(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -135,6 +140,7 @@ func TestListMomentCustomer(t *testing.T) {
 }
 
 func TestGetMomentSendResult(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -159,6 +165,7 @@ func TestGetMomentSendResult(t *testing.T) {
 }
 
 func TestGetMomentComments(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

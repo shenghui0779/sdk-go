@@ -15,6 +15,7 @@ import (
 )
 
 func TestListCustomerStrategy(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -39,6 +40,7 @@ func TestListCustomerStrategy(t *testing.T) {
 }
 
 func TestGetCustomerStrategy(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -63,6 +65,7 @@ func TestGetCustomerStrategy(t *testing.T) {
 }
 
 func TestGetCustomerStrategyRange(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -87,6 +90,7 @@ func TestGetCustomerStrategyRange(t *testing.T) {
 }
 
 func TestCreateCustomerStrategy(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -111,6 +115,7 @@ func TestCreateCustomerStrategy(t *testing.T) {
 }
 
 func TestEditCustomerStrategy(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -135,6 +140,7 @@ func TestEditCustomerStrategy(t *testing.T) {
 }
 
 func TestDeleteCustomerStrategy(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -159,6 +165,7 @@ func TestDeleteCustomerStrategy(t *testing.T) {
 }
 
 func TestListMomentStrategy(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -183,6 +190,7 @@ func TestListMomentStrategy(t *testing.T) {
 }
 
 func TestGetMomentStrategy(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -207,6 +215,7 @@ func TestGetMomentStrategy(t *testing.T) {
 }
 
 func TestGetMomentStrategyRange(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -231,6 +240,7 @@ func TestGetMomentStrategyRange(t *testing.T) {
 }
 
 func TestCreateMomentStrategy(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -255,6 +265,7 @@ func TestCreateMomentStrategy(t *testing.T) {
 }
 
 func TestEditMomentStrategy(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -279,6 +290,7 @@ func TestEditMomentStrategy(t *testing.T) {
 }
 
 func TestDeleteMomentStrategy(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

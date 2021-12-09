@@ -15,6 +15,7 @@ import (
 )
 
 func TestListFollowUser(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -39,6 +40,7 @@ func TestListFollowUser(t *testing.T) {
 }
 
 func TestAddContactWay(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -63,6 +65,7 @@ func TestAddContactWay(t *testing.T) {
 }
 
 func TestUpdateContactWay(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -87,6 +90,7 @@ func TestUpdateContactWay(t *testing.T) {
 }
 
 func TestGetContactWay(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -111,6 +115,7 @@ func TestGetContactWay(t *testing.T) {
 }
 
 func TestListContactWay(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -135,6 +140,7 @@ func TestListContactWay(t *testing.T) {
 }
 
 func TestDeleteContactWay(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -159,6 +165,7 @@ func TestDeleteContactWay(t *testing.T) {
 }
 
 func TestCloseTempChat(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

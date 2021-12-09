@@ -15,6 +15,7 @@ import (
 )
 
 func TestAddMsgTemplate(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -39,6 +40,7 @@ func TestAddMsgTemplate(t *testing.T) {
 }
 
 func TestListGroupMsg(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -63,6 +65,7 @@ func TestListGroupMsg(t *testing.T) {
 }
 
 func TestGetGroupMsgTask(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -87,6 +90,7 @@ func TestGetGroupMsgTask(t *testing.T) {
 }
 
 func TestGetGroupMsgSendResult(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -111,6 +115,7 @@ func TestGetGroupMsgSendResult(t *testing.T) {
 }
 
 func TestSendWelcomeMsg(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -135,6 +140,7 @@ func TestSendWelcomeMsg(t *testing.T) {
 }
 
 func TestAddGroupWelcomeTemplate(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -159,6 +165,7 @@ func TestAddGroupWelcomeTemplate(t *testing.T) {
 }
 
 func TestEditGroupWelcomeTemplate(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -183,6 +190,7 @@ func TestEditGroupWelcomeTemplate(t *testing.T) {
 }
 
 func TestGetGroupWelcomeTemplate(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -207,6 +215,7 @@ func TestGetGroupWelcomeTemplate(t *testing.T) {
 }
 
 func TestDeleteGroupWelcomeTemplate(t *testing.T) {
+	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
