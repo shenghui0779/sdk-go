@@ -7,14 +7,6 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type MomentMsgType string
-
-const (
-	MomentMsgImage MomentMsgType = "image"
-	MomentMsgVideo MomentMsgType = "video"
-	MomentMsgLink  MomentMsgType = "link"
-)
-
 type MomentText struct {
 	Content string `json:"content,omitempty"`
 }
@@ -55,10 +47,10 @@ type MomentVisibleRange struct {
 }
 
 type MomentAttachment struct {
-	MsgType MomentMsgType `json:"msg_type"`
-	Image   *MomentImage  `json:"image,omitempty"`
-	Video   *MomentVideo  `json:"video,omitempty"`
-	Link    *MomentLink   `json:"link,omitempty"`
+	MsgType AttachmentType `json:"msg_type"`
+	Image   *MomentImage   `json:"image,omitempty"`
+	Video   *MomentVideo   `json:"video,omitempty"`
+	Link    *MomentLink    `json:"link,omitempty"`
 }
 
 type ParamsMomentTaskAdd struct {
