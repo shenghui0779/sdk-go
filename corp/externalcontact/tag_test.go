@@ -30,10 +30,10 @@ func TestListCorpTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -54,10 +54,10 @@ func TestAddCorpTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -78,10 +78,10 @@ func TestEditCorpTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -102,10 +102,10 @@ func TestDeleteCorpTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -126,10 +126,10 @@ func TestListStrategyTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -150,10 +150,10 @@ func TestAddStrategyTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -174,10 +174,10 @@ func TestEditStrategyTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -198,10 +198,10 @@ func TestDeleteStrategyTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -222,10 +222,10 @@ func TestMarkTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }

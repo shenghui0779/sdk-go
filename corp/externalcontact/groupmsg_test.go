@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAddMomentTask(t *testing.T) {
+func TestAddMsgTemplate(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -38,7 +38,7 @@ func TestAddMomentTask(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetMomentTaskResult(t *testing.T) {
+func TestListGroupMsg(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -62,7 +62,7 @@ func TestGetMomentTaskResult(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestListMoment(t *testing.T) {
+func TestGetGroupMsgTask(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -86,7 +86,7 @@ func TestListMoment(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetMomentTask(t *testing.T) {
+func TestGetGroupMsgSendResult(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -110,7 +110,7 @@ func TestGetMomentTask(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestListMomentCustomer(t *testing.T) {
+func TestSendWelcomeMsg(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -134,7 +134,7 @@ func TestListMomentCustomer(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetMomentSendResult(t *testing.T) {
+func TestAddGroupWelcomeTemplate(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -158,7 +158,55 @@ func TestGetMomentSendResult(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetMomentComments(t *testing.T) {
+func TestEditGroupWelcomeTemplate(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+
+	assert.Nil(t, err)
+}
+
+func TestGetGroupWelcomeTemplate(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+
+	assert.Nil(t, err)
+}
+
+func TestDeleteGroupWelcomeTemplate(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

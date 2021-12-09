@@ -31,11 +31,11 @@ func TestGetOAuthUser(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=ACCESS_TOKEN&code=CODE", nil).Return(resp, nil)
 
-	oa := New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultOAuthUser)
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetOAuthUser("CODE", result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetOAuthUser("CODE", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultOAuthUser{
@@ -60,10 +60,10 @@ func TestUserAuthSucc(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UserAuthSucc("USERID"))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UserAuthSucc("USERID"))
 
 	assert.Nil(t, err)
 }

@@ -7,15 +7,15 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type ParamsOwnerFilter struct {
+type GroupChatOwnerFilter struct {
 	UserIDList []string `json:"userid_list"`
 }
 
 type ParamsGroupChatList struct {
-	StatusFilter int                `json:"status_filter,omitempty"`
-	OwnerFilter  *ParamsOwnerFilter `json:"owner_filter,omitempty"`
-	Cursor       string             `json:"cursor,omitempty"`
-	Limit        int                `json:"limit"`
+	StatusFilter int                   `json:"status_filter,omitempty"`
+	OwnerFilter  *GroupChatOwnerFilter `json:"owner_filter,omitempty"`
+	Cursor       string                `json:"cursor,omitempty"`
+	Limit        int                   `json:"limit"`
 }
 
 type GroupChatListData struct {

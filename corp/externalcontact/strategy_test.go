@@ -30,10 +30,10 @@ func TestListCustomerStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -54,10 +54,10 @@ func TestGetCustomerStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -78,10 +78,10 @@ func TestGetCustomerStrategyRange(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -102,10 +102,10 @@ func TestCreateCustomerStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -126,10 +126,10 @@ func TestEditCustomerStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -150,10 +150,10 @@ func TestDeleteCustomerStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -174,10 +174,10 @@ func TestListMomentStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -198,10 +198,10 @@ func TestGetMomentStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -222,10 +222,10 @@ func TestGetMomentStrategyRange(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -246,10 +246,10 @@ func TestCreateMomentStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -270,10 +270,10 @@ func TestEditMomentStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }
@@ -294,10 +294,10 @@ func TestDeleteMomentStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	oa := corp.New("CORPID")
-	oa.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
 
 	assert.Nil(t, err)
 }

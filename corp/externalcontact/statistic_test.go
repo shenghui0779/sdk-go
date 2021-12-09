@@ -1,4 +1,4 @@
-package agent
+package externalcontact
 
 import (
 	"bytes"
@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetAgent(t *testing.T) {
+func TestGetUserBehaviorData(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -38,7 +38,7 @@ func TestGetAgent(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestListAgent(t *testing.T) {
+func TestGetGroupChatStatistic(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -62,7 +62,7 @@ func TestListAgent(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestSetAgent(t *testing.T) {
+func TestGetGroupChatStatisticByDay(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
