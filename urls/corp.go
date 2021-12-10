@@ -172,7 +172,7 @@ const (
 // media
 const (
 	CorpMediaUpload    = "https://qyapi.weixin.qq.com/cgi-bin/media/upload"
-	CorpMediaUploadimg = "https://qyapi.weixin.qq.com/cgi-bin/media/uploadimg"
+	CorpMediaUploadImg = "https://qyapi.weixin.qq.com/cgi-bin/media/uploadimg"
 	CorpMediaGet       = "https://qyapi.weixin.qq.com/cgi-bin/media/get"
 	CorpMediaGetJSSDK  = "https://qyapi.weixin.qq.com/cgi-bin/media/get/jssdk"
 )
