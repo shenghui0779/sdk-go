@@ -47,10 +47,10 @@ type MomentVisibleRange struct {
 }
 
 type MomentAttachment struct {
-	MsgType AttachmentType `json:"msg_type"`
-	Image   *MomentImage   `json:"image,omitempty"`
-	Video   *MomentVideo   `json:"video,omitempty"`
-	Link    *MomentLink    `json:"link,omitempty"`
+	MsgType MediaType    `json:"msg_type"`
+	Image   *MomentImage `json:"image,omitempty"`
+	Video   *MomentVideo `json:"video,omitempty"`
+	Link    *MomentLink  `json:"link,omitempty"`
 }
 
 type ParamsMomentTaskAdd struct {

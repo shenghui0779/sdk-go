@@ -46,12 +46,12 @@ type MsgFile struct {
 }
 
 type MsgAttachment struct {
-	MsgType AttachmentType `json:"msg_type"`
-	Image   *MsgImage      `json:"image,omitempty"`
-	Link    *MsgLink       `json:"link,omitempty"`
-	Minip   *MsgMinip      `json:"miniprogram,omitempty"`
-	Video   *MsgVideo      `json:"video,omitempty"`
-	File    *MsgFile       `json:"file,omitempty"`
+	MsgType MediaType `json:"msg_type"`
+	Image   *MsgImage `json:"image,omitempty"`
+	Link    *MsgLink  `json:"link,omitempty"`
+	Minip   *MsgMinip `json:"miniprogram,omitempty"`
+	Video   *MsgVideo `json:"video,omitempty"`
+	File    *MsgFile  `json:"file,omitempty"`
 }
 
 type ParamsMsgTemplateAdd struct {

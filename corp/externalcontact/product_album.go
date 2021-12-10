@@ -12,7 +12,7 @@ type ProductAlbumImage struct {
 }
 
 type ProductAlbumAttachment struct {
-	Type  AttachmentType     `json:"type"` // 附件类型，目前仅支持image
+	Type  MediaType          `json:"type"` // 附件类型，目前仅支持image
 	Image *ProductAlbumImage `json:"image"`
 }
 
