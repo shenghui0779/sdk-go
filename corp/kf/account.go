@@ -16,7 +16,7 @@ type ResultAccountAdd struct {
 	OpenKFID string `json:"open_kfid"`
 }
 
-func AccountAdd(params *ParamsAccountAdd, result *ResultAccountAdd) wx.Action {
+func AddAccount(params *ParamsAccountAdd, result *ResultAccountAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpKFAccountAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -31,7 +31,7 @@ type ParamsAccountDelete struct {
 	OpenKFID string `json:"open_kfid"`
 }
 
-func AccountDelete(params *ParamsAccountDelete) wx.Action {
+func DeleteAccount(params *ParamsAccountDelete) wx.Action {
 	return wx.NewPostAction(urls.CorpKFAccountDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -45,7 +45,7 @@ type ParamsAccountUpdate struct {
 	MediaID  string `json:"media_id"`
 }
 
-func AccountUpdate(params *ParamsAccountUpdate) wx.Action {
+func UpdateAccount(params *ParamsAccountUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpKFAccountUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -54,16 +54,16 @@ func AccountUpdate(params *ParamsAccountUpdate) wx.Action {
 }
 
 type ResultAccountList struct {
-	AccountList []*AccountListItem `json:"account_list"`
+	AccountList []*AccountListData `json:"account_list"`
 }
 
-type AccountListItem struct {
+type AccountListData struct {
 	OpenKFID string `json:"open_kfid"`
 	Name     string `json:"name"`
 	Avatar   string `json:"avatar"`
 }
 
-func AccountList(result *ResultAccountList) wx.Action {
+func ListAccount(result *ResultAccountList) wx.Action {
 	return wx.NewGetAction(urls.CorpKFAccountList,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

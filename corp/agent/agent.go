@@ -49,10 +49,10 @@ func GetAgent(agentID int64, result *ResultAgentGet) wx.Action {
 }
 
 type ResultAgentList struct {
-	AgentList []*AgentListItem `json:"agentlist"`
+	AgentList []*AgentListData `json:"agentlist"`
 }
 
-type AgentListItem struct {
+type AgentListData struct {
 	AgentID       int64  `json:"agentid"`
 	Name          string `json:"name"`
 	SquareLogoURL string `json:"square_logo_url"`

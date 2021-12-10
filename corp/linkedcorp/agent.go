@@ -7,15 +7,15 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type LinkedcorpPermList struct {
+type ResultLinkedcorpPermList struct {
 	UserIDs       []string `json:"userids"`
 	DepartmentIDs []string `json:"department_ids"`
 }
 
-func GetLinkedcorpPermList(dest *LinkedcorpPermList) wx.Action {
+func ListLinkedcorpPerm(result *ResultLinkedcorpPermList) wx.Action {
 	return wx.NewPostAction(urls.CorpLinkedcorpPermList,
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

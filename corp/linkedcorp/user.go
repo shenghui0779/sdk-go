@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/shenghui0779/yiigo"
-	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -50,55 +49,89 @@ type AttrMinip struct {
 	Pagepath string `json:"pagepath"`
 }
 
-func GetUser(dest *UserInfo, corpID, userID string) wx.Action {
+type ParamsUserGet struct {
+	CorpID string `json:"corp_id"`
+	UserID string `json:"user_id"`
+}
+
+type ResultUserGet struct {
+	UserInfo *UserInfo `json:"user_info"`
+}
+
+func GetUser(params *ParamsUserGet, result *ResultUserGet) wx.Action {
 	return wx.NewPostAction(urls.CorpLinkedcorpUserGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(yiigo.X{
-				"userid": fmt.Sprintf("%s/%s", corpID, userID),
+				"userid": fmt.Sprintf("%s/%s", params.CorpID, params.UserID),
 			})
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "user_info").Raw), dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-func GetUserSimpleList(dest *[]*UserInfo, linkedID, departmentID string, fetchChild bool) wx.Action {
-	child := 0
+type ParamsUserSimpleList struct {
+	LinkedID     string `json:"linked_id"`
+	DepartmentID string `json:"department_id"`
+	FetchChild   bool   `json:"fetch_child"`
+}
 
-	if fetchChild {
-		child = 1
+type UserSimpleListData struct {
+	UserID    string   `json:"userid"`
+	Name      string   `json:"name"`
+	Deparment []string `json:"deparment"`
+	CorpID    string   `json:"corpid"`
+}
+
+type ResultUserSimpleList struct {
+	UserList []*UserSimpleListData `json:"userlist"`
+}
+
+func ListUserSimple(params *ParamsUserSimpleList, result *ResultUserSimpleList) wx.Action {
+	body := yiigo.X{
+		"department_id": fmt.Sprintf("%s/%s", params.LinkedID, params.DepartmentID),
+	}
+
+	if params.FetchChild {
+		body["fetch_child"] = 1
 	}
 
 	return wx.NewPostAction(urls.CorpLinkedcorpUserSimpleList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"department_id": fmt.Sprintf("%s/%s", linkedID, departmentID),
-				"fetch_child":   child,
-			})
+			return json.Marshal(body)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "userlist").Raw), dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-func GetUserList(dest *[]*UserInfo, linkedID, departmentID string, fetchChild bool) wx.Action {
-	child := 0
+type ParamsUserList struct {
+	LinkedID     string `json:"linked_id"`
+	DepartmentID string `json:"department_id"`
+	FetchChild   bool   `json:"fetch_child"`
+}
 
-	if fetchChild {
-		child = 1
+type ResultUserList struct {
+	UserList []*UserInfo `json:"userlist"`
+}
+
+func ListUser(params *ParamsUserList, result *ResultUserList) wx.Action {
+	body := yiigo.X{
+		"department_id": fmt.Sprintf("%s/%s", params.LinkedID, params.DepartmentID),
+	}
+
+	if params.FetchChild {
+		body["fetch_child"] = 1
 	}
 
 	return wx.NewPostAction(urls.CorpLinkedcorpUserList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"department_id": fmt.Sprintf("%s/%s", linkedID, departmentID),
-				"fetch_child":   child,
-			})
+			return json.Marshal(body)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "userlist").Raw), dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

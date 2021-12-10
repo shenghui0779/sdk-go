@@ -114,10 +114,10 @@ type ParamsSyncMsg struct {
 type ResultSyncMsg struct {
 	NextCursor string         `json:"next_cursor"`
 	HasMore    int            `json:"has_more"`
-	MsgList    []*MsgListItem `json:"msg_list"`
+	MsgList    []*MsgListData `json:"msg_list"`
 }
 
-type MsgListItem struct {
+type MsgListData struct {
 	MsgID          string               `json:"msgid"`
 	OpenKFID       string               `json:"open_kfid"`
 	ExternalUserID string               `json:"external_userid"`
