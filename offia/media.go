@@ -139,6 +139,57 @@ func AddMaterial(params *ParamsMaterialAdd, result *ResultMaterialAdd) wx.Action
 		}),
 	)
 }
+type UpdateArticles struct {
+	MediaID  string   `json:"media_id"`
+	Index    string   `json:"index"`
+	Articles Articles `json:"articles"`
+}
+
+type Articles struct {
+	Title            string `json:"title"`
+	ThumbMediaID     string `json:"thumb_media_id"`
+	Author           string `json:"author"`
+	Digest           string `json:"digest"`
+	ShowCoverPic     int    `json:"show_cover_pic"`
+	Content          string `json:"content"`
+	ContentSourceURL string `json:"content_source_url"`
+}
+
+// UpdateNews 编辑图文素材
+func UpdateNews(articles *UpdateArticles) wx.Action {
+	return wx.NewPostAction(urls.OffiaNewUpdate,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(&articles)
+		}),
+	)
+}
+
+//GetArticle 永久图文素材
+type GetArticle struct {
+	NewsItem []*NewsItem `json:"news_item"`
+}
+type NewsItem struct {
+	Title            string `json:"title"`
+	ThumbMediaID     string `json:"thumb_media_id"`
+	ShowCoverPic     int    `json:"show_cover_pic"`
+	Author           string `json:"author"`
+	Digest           string `json:"digest"`
+	Content          string `json:"content"`
+	URL              string `json:"url"`
+	ContentSourceURL string `json:"content_source_url"`
+}
+
+// GetNews 获取图文素材信息
+func GetNews(dest *GetArticle, mediaId string) wx.Action {
+	return wx.NewPostAction(urls.OffiaMaterialGet,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(yiigo.X{"media_id": mediaId})
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, &dest)
+		}),
+	)
+}
 
 type ParamsMaterialAddByURL struct {
 	MediaType MediaType `json:"media_type"`

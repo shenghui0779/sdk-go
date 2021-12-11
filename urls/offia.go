@@ -65,9 +65,11 @@ const (
 	OffiaMediaUpload     = "https://api.weixin.qq.com/cgi-bin/media/upload"
 	OffiaMediaGet        = "https://api.weixin.qq.com/cgi-bin/media/get"
 	OffiaNewsAdd         = "https://api.weixin.qq.com/cgi-bin/material/add_news"
+	OffiaNewUpdate     = "https://api.weixin.qq.com/cgi-bin/material/update_news"
 	OffiaNewsImageUpload = "https://api.weixin.qq.com/cgi-bin/media/uploadimg"
 	OffiaMaterialAdd     = "https://api.weixin.qq.com/cgi-bin/material/add_material"
 	OffiaMaterialDelete  = "https://api.weixin.qq.com/cgi-bin/material/del_material"
+	OffiaMaterialGet     = "https://api.weixin.qq.com/cgi-bin/material/get_material"
 )
 
 // image

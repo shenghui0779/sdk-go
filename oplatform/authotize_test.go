@@ -8,8 +8,8 @@ package oplatform
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"github.com/tidwall/gjson"
 	"testing"
 )
 
@@ -26,30 +26,88 @@ func TestGetPreAuthCode(t *testing.T) {
 
 func TestGetApiComponentToken(t *testing.T) {
 	var  j = `{
-  "authorization_info": {
-    "authorizer_appid": "wxf8b4f85f3a794e77",
-    "authorizer_access_token": "QXjUqNqfYVH0yBE1iI_7vuN_9gQbpjfK7hYwJ3P7xOa88a89-Aga5x1NMYJyB8G2yKt1KCl0nPC3W9GJzw0Zzq_dBxc8pxIGUNi_bFes0qM",
-    "expires_in": 7200,
-    "authorizer_refresh_token": "dTo-YCXPL4llX-u1W1pPpnp8Hgm4wpJtlR6iV0doKdY",
-    "func_info": [
-      {
-        "funcscope_category": {
-          "id": 1
-        }
-      },
-      {
-        "funcscope_category": {
-          "id": 2
-        }
-      },
-      {
-        "funcscope_category": {
-          "id": 3
-        }
-      }
-    ]
-  }
+    "authorization_info": {
+        "authorizer_appid": "wx77182eed6aa0cf1b",
+        "authorizer_access_token": "48_U-CvBSMQ8uFNso9tyC0pm9ZHwIKRyIvbdqFBF1mlxeIPhPcCuNiKiU77oslC92HlhyNCzsa7C0iMIKppfsy0EwTzSqpJJTxzD4UMz0UC_vTZwtzeGZb-I8aMaTf0swjGcpjbclMoGa1NB8VRHSLdAFDVGZ",
+        "expires_in": 7200,
+        "authorizer_refresh_token": "refreshtoken@@@RwkbT6QlFef-sj3qamJPEq5fpqz7FYaTdzJ9dGaPNOs",
+        "func_info": [
+            {
+                "funcscope_category": {
+                    "id": 1
+                },
+                "confirm_info": {
+                    "need_confirm": 1,
+                    "already_confirm": 0,
+                    "can_confirm": 1
+                }
+            },
+            {
+                "funcscope_category": {
+                    "id": 3
+                }
+            },
+            {
+                "funcscope_category": {
+                    "id": 4
+                }
+            },
+            {
+                "funcscope_category": {
+                    "id": 2
+                }
+            },
+            {
+                "funcscope_category": {
+                    "id": 7
+                }
+            },
+            {
+                "funcscope_category": {
+                    "id": 9
+                }
+            },
+            {
+                "funcscope_category": {
+                    "id": 11
+                },
+                "confirm_info": {
+                    "need_confirm": 1,
+                    "already_confirm": 0,
+                    "can_confirm": 1
+                }
+            },
+            {
+                "funcscope_category": {
+                    "id": 24
+                },
+                "confirm_info": {
+                    "need_confirm": 0,
+                    "already_confirm": 0,
+                    "can_confirm": 0
+                }
+            },
+            {
+                "funcscope_category": {
+                    "id": 33
+                },
+                "confirm_info": {
+                    "need_confirm": 0,
+                    "already_confirm": 0,
+                    "can_confirm": 0
+                }
+            }
+        ]
+    }
 }`
-  jsonStr := gjson.GetBytes([]byte(j),"authorization_info.authorizer_appid")
-  fmt.Println(jsonStr)
+	eStruct := &ComponentApiQueryAuth{
+		ComponentAccessToken:  "",
+		ComponentAppid:        "",
+		AuthorizationCode:     "",
+		AuthorizationInfo:     &AuthorizationInfo{},
+	}
+	err := json.Unmarshal([]byte(j), &eStruct)
+	fmt.Print(err)
+	fmt.Print(eStruct.AuthorizationInfo.FuncInfo)
+
 }

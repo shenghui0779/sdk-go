@@ -43,10 +43,16 @@ type SafeBindComponent struct {
 // 使用授权码获取授权信息
 // https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/authorization_info.html#%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80
 type ComponentApiQueryAuth struct {
-	ComponentAccessToken string             `json:"component_access_token"`
-	ComponentAppid       string             `json:"component_appid"`
-	AuthorizationCode    string             `json:"authorization_code"`
-	AuthorizationInfo    *AuthorizationInfo `json:"authorization_info"`
+	ComponentAccessToken  string                   `json:"component_access_token"`
+	ComponentAppid        string                   `json:"component_appid"`
+	AuthorizationCode     string                   `json:"authorization_code"`
+	AuthorizationInfo     *AuthorizationInfo       `json:"authorization_info"`
+}
+
+type FuncInfo struct {
+	FuncscopeCategory struct {
+		Id int64 `json:"id"`
+	} `json:"funcscope_category"`
 }
 
 // TODO 授权之后的用户 信息 取消 func_info 暂时没时间补充
@@ -55,6 +61,18 @@ type AuthorizationInfo struct {
 	AuthorizerAccessToken  string `json:"authorizer_access_token"`
 	ExpiresIn              int64  `json:"expires_in"`
 	AuthorizerRefreshToken string `json:"authorizer_refresh_token"`
+	FuncInfo []*FuncInfo `json:"func_info"`
+}
+
+type AuthorizationFuncInfo struct {
+	FuncscopeCategory struct {
+		ID int `json:"id"`
+	} `json:"funcscope_category"`
+	ConfirmInfo struct {
+		NeedConfirm    int `json:"need_confirm"`
+		AlreadyConfirm int `json:"already_confirm"`
+		CanConfirm     int `json:"can_confirm"`
+	} `json:"confirm_info,omitempty"`
 }
 
 // 获取授权方的帐号基本信息
@@ -135,17 +153,14 @@ func GetPreAuthCode(data *PreAuthCode) wx.Action {
 // 授权码获取授权信息
 func GetComponentApiQueryAuth(data *ComponentApiQueryAuth) wx.Action {
 	return wx.NewPostAction(urls.ComponentApiQueryAuthUrl,
-		wx.WithQuery("component_access_token",data.ComponentAccessToken),
+		wx.WithQuery("component_access_token", data.ComponentAccessToken),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(data)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			data.AuthorizationInfo = &AuthorizationInfo{}
-			data.AuthorizationInfo.AuthorizerAppid = gjson.GetBytes(resp, "authorization_info.authorizer_appid").String()
-			data.AuthorizationInfo.AuthorizerAccessToken = gjson.GetBytes(resp, "authorization_info.authorizer_access_token").String()
-			data.AuthorizationInfo.ExpiresIn = gjson.GetBytes(resp, "authorization_info.authorizer_access_token").Int()
-			data.AuthorizationInfo.AuthorizerRefreshToken = gjson.GetBytes(resp, "authorization_info.authorizer_refresh_token").String()
-			return nil
+			err := json.Unmarshal(resp, &data)
+			return err
 		}),
 	)
 }
