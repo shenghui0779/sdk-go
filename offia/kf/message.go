@@ -3,25 +3,9 @@ package kf
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
-)
-
-// MsgType 客服消息类型
-type MsgType string
-
-const (
-	MsgText          MsgType = "text"            // 文本消息
-	MsgImage         MsgType = "image"           // 图片消息
-	MsgVoice         MsgType = "voice"           // 语音消息
-	MsgVideo         MsgType = "video"           // 视频消息
-	MsgMusic         MsgType = "music"           // 音乐消息
-	MsgNews          MsgType = "news"            // 图文消息
-	MsgMPNews        MsgType = "mpnews"          // 图文消息
-	MsgMPNewsArticle MsgType = "mpnewsarticle"   // 图文消息
-	MsgMenu          MsgType = "msgmenu"         // 菜单消息
-	MsgCard          MsgType = "wxcard"          // 卡券消息
-	MsgMinipPage     MsgType = "miniprogrampage" // 小程序卡片
 )
 
 // Text 消息文本
@@ -100,10 +84,10 @@ type MsgKF struct {
 	KFAccount string `json:"kf_account"`
 }
 
-// ParamsMsg 客服消息参数
-type ParamsMsg struct {
+// ParamsMsgSend 客服消息参数
+type ParamsMsgSend struct {
 	ToUser        string         `json:"touser"`
-	MsgType       MsgType        `json:"msgtype"`
+	MsgType       event.MsgType  `json:"msgtype"`
 	Text          *Text          `json:"text,omitempty"`
 	Image         *Media         `json:"image,omitempty"`
 	Voice         *Media         `json:"voice,omitempty"`
@@ -120,9 +104,9 @@ type ParamsMsg struct {
 
 // SendTextMsg 发送客服文本消息（支持插入跳小程序的文字链）
 func SendTextMsg(openID string, text *Text, kfAccount ...string) wx.Action {
-	params := &ParamsMsg{
+	params := &ParamsMsgSend{
 		ToUser:  openID,
-		MsgType: MsgText,
+		MsgType: event.MsgText,
 		Text:    text,
 	}
 
@@ -141,9 +125,9 @@ func SendTextMsg(openID string, text *Text, kfAccount ...string) wx.Action {
 
 // SendImageMsg 发送客服图片消息（媒体ID，通过素材接口上传获得）
 func SendImageMsg(openID string, image *Media, kfAccount ...string) wx.Action {
-	params := &ParamsMsg{
+	params := &ParamsMsgSend{
 		ToUser:  openID,
-		MsgType: MsgImage,
+		MsgType: event.MsgImage,
 		Image:   image,
 	}
 
@@ -162,9 +146,9 @@ func SendImageMsg(openID string, image *Media, kfAccount ...string) wx.Action {
 
 // SendVoiceMsg 发送客服语音消息（媒体ID，通过素材接口上传获得）
 func SendVoiceMsg(openID string, voice *Media, kfAccount ...string) wx.Action {
-	params := &ParamsMsg{
+	params := &ParamsMsgSend{
 		ToUser:  openID,
-		MsgType: MsgVoice,
+		MsgType: event.MsgVoice,
 		Voice:   voice,
 	}
 
@@ -183,9 +167,9 @@ func SendVoiceMsg(openID string, voice *Media, kfAccount ...string) wx.Action {
 
 // SendVideoMsg 发送客服视频消息（媒体ID，通过素材接口上传获得）
 func SendVideoMsg(openID string, video *Video, kfAccount ...string) wx.Action {
-	params := &ParamsMsg{
+	params := &ParamsMsgSend{
 		ToUser:  openID,
-		MsgType: MsgVideo,
+		MsgType: event.MsgVideo,
 		Video:   video,
 	}
 
@@ -204,9 +188,9 @@ func SendVideoMsg(openID string, video *Video, kfAccount ...string) wx.Action {
 
 // SendMusicMsg 发送客服音乐消息
 func SendMusicMsg(openID string, music *Music, kfAccount ...string) wx.Action {
-	params := &ParamsMsg{
+	params := &ParamsMsgSend{
 		ToUser:  openID,
-		MsgType: MsgMusic,
+		MsgType: event.MsgMusic,
 		Music:   music,
 	}
 
@@ -225,9 +209,9 @@ func SendMusicMsg(openID string, music *Music, kfAccount ...string) wx.Action {
 
 // SendNewsMsg 发送客服图文消息（点击跳转到外链；图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008）
 func SendNewsMsg(openID string, news *News, kfAccount ...string) wx.Action {
-	params := &ParamsMsg{
+	params := &ParamsMsgSend{
 		ToUser:  openID,
-		MsgType: MsgNews,
+		MsgType: event.MsgNews,
 		News:    news,
 	}
 
@@ -246,9 +230,9 @@ func SendNewsMsg(openID string, news *News, kfAccount ...string) wx.Action {
 
 // SendMPNewsMsg 发送图文消息（点击跳转到图文消息页面；图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008）
 func SendMPNewsMsg(openID string, news *Media, kfAccount ...string) wx.Action {
-	params := &ParamsMsg{
+	params := &ParamsMsgSend{
 		ToUser:  openID,
-		MsgType: MsgMPNews,
+		MsgType: event.MsgMPNews,
 		MPNews:  news,
 	}
 
@@ -268,9 +252,9 @@ func SendMPNewsMsg(openID string, news *Media, kfAccount ...string) wx.Action {
 // SendMPNewsArticleMsg 发送图文消息（点击跳转到图文消息页面）使用通过 “发布” 系列接口得到的 article_id
 // 注意: 草稿接口灰度完成后，将不再支持此前客服接口中带 media_id 的 mpnews 类型的图文消息
 func SendMPNewsArticleMsg(openID string, article *MPNewsArticle, kfAccount ...string) wx.Action {
-	params := &ParamsMsg{
+	params := &ParamsMsgSend{
 		ToUser:        openID,
-		MsgType:       MsgMPNewsArticle,
+		MsgType:       event.MsgMPNewsArticle,
 		MPNewsArticle: article,
 	}
 
@@ -289,9 +273,9 @@ func SendMPNewsArticleMsg(openID string, article *MPNewsArticle, kfAccount ...st
 
 // SendMenuMsg 发送客服菜单消息
 func SendMenuMsg(openID string, menu *Menu, kfAccount ...string) wx.Action {
-	params := &ParamsMsg{
+	params := &ParamsMsgSend{
 		ToUser:  openID,
-		MsgType: MsgMenu,
+		MsgType: event.MsgMenu,
 		Menu:    menu,
 	}
 
@@ -310,9 +294,9 @@ func SendMenuMsg(openID string, menu *Menu, kfAccount ...string) wx.Action {
 
 // SendCardMsg 发送客服卡券消息（特别注意：客服消息接口投放卡券仅支持非自定义Code码和导入code模式的卡券的卡券）
 func SendCardMsg(openID string, card *Card, kfAccount ...string) wx.Action {
-	params := &ParamsMsg{
+	params := &ParamsMsgSend{
 		ToUser:  openID,
-		MsgType: MsgCard,
+		MsgType: event.MsgCard,
 		Card:    card,
 	}
 
@@ -331,9 +315,9 @@ func SendCardMsg(openID string, card *Card, kfAccount ...string) wx.Action {
 
 // SendMinipMsg 发送客服小程序卡片消息
 func SendMinipMsg(openID string, minipPage *MinipPage, kfAccount ...string) wx.Action {
-	params := &ParamsMsg{
+	params := &ParamsMsgSend{
 		ToUser:    openID,
-		MsgType:   MsgMinipPage,
+		MsgType:   event.MsgMinipPage,
 		MinipPage: minipPage,
 	}
 

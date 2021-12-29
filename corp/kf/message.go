@@ -32,35 +32,35 @@ type MinipMenu struct {
 	Content  string `json:"content"`
 }
 
-type TextMessage struct {
+type Text struct {
 	Content string `json:"content"`
 	MenuID  string `json:"menu_id,omitempty"`
 }
 
-type ImageMessage struct {
+type Image struct {
 	MediaID string `json:"media_id"`
 }
 
-type VoiceMessage struct {
+type Voice struct {
 	MediaID string `json:"media_id"`
 }
 
-type VideoMessage struct {
+type Video struct {
 	MediaID string `json:"media_id"`
 }
 
-type FileMessage struct {
+type File struct {
 	MediaID string `json:"media_id"`
 }
 
-type LocationMessage struct {
+type Location struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 	Name      string  `json:"name"`
 	Address   string  `json:"address"`
 }
 
-type LinkMessage struct {
+type Link struct {
 	Title        string `json:"title"`
 	Desc         string `json:"desc"`
 	URL          string `json:"url"`
@@ -68,18 +68,18 @@ type LinkMessage struct {
 	ThumbMediaID string `json:"thumb_media_id,omitempty"`
 }
 
-type BusinessCardMessage struct {
+type BusinessCard struct {
 	UserID string `json:"userid"`
 }
 
-type MinipMessage struct {
+type Minip struct {
 	Title        string `json:"title"`
 	AppID        string `json:"appid"`
 	PagePath     string `json:"pagepath"`
 	ThumbMediaID string `json:"thumb_media_id"`
 }
 
-type MenuMessage struct {
+type Menu struct {
 	HeadContent string      `json:"head_content"`
 	TailContent string      `json:"tail_content"`
 	List        []*MenuItem `json:"list"`
@@ -92,7 +92,7 @@ type MenuItem struct {
 	Minip *MinipMenu `json:"miniprogram,omitempty"`
 }
 
-type EventMessage struct {
+type Event struct {
 	EventType         event.EventType `json:"event_type"`
 	OpenKFID          string          `json:"open_kfid,omitempty"`
 	ExternalUserID    string          `json:"external_userid,omitempty"`
@@ -105,40 +105,40 @@ type EventMessage struct {
 	NewServicerUserID string          `json:"new_servicer_userid,omitempty"`
 }
 
-type ParamsSyncMsg struct {
+type ParamsMsgSync struct {
 	Cursor string `json:"cursor"`
 	Token  string `json:"token"`
 	Limit  int    `json:"limit"`
 }
 
-type ResultSyncMsg struct {
+type ResultMsgSync struct {
 	NextCursor string         `json:"next_cursor"`
 	HasMore    int            `json:"has_more"`
 	MsgList    []*MsgListData `json:"msg_list"`
 }
 
 type MsgListData struct {
-	MsgID          string               `json:"msgid"`
-	OpenKFID       string               `json:"open_kfid"`
-	ExternalUserID string               `json:"external_userid"`
-	SendTime       int64                `json:"send_time"`
-	Origin         int                  `json:"origin"`
-	ServicerUserID string               `json:"servicer_userid"`
-	MsgType        event.MsgType        `json:"msg_type"`
-	Text           *TextMessage         `json:"text"`
-	Image          *ImageMessage        `json:"image"`
-	Voice          *VoiceMessage        `json:"voice"`
-	Video          *VideoMessage        `json:"video"`
-	File           *FileMessage         `json:"file"`
-	Location       *LocationMessage     `json:"location"`
-	Link           *LinkMessage         `json:"link"`
-	BussinessCard  *BusinessCardMessage `json:"bussiness_card"`
-	Minip          *MinipMessage        `json:"miniprogram"`
-	Menu           *MenuMessage         `json:"menu"`
-	Event          *EventMessage        `json:"event"`
+	MsgID          string        `json:"msgid"`
+	OpenKFID       string        `json:"open_kfid"`
+	ExternalUserID string        `json:"external_userid"`
+	SendTime       int64         `json:"send_time"`
+	Origin         int           `json:"origin"`
+	ServicerUserID string        `json:"servicer_userid"`
+	MsgType        event.MsgType `json:"msg_type"`
+	Text           *Text         `json:"text"`
+	Image          *Image        `json:"image"`
+	Voice          *Voice        `json:"voice"`
+	Video          *Video        `json:"video"`
+	File           *File         `json:"file"`
+	Location       *Location     `json:"location"`
+	Link           *Link         `json:"link"`
+	BussinessCard  *BusinessCard `json:"bussiness_card"`
+	Minip          *Minip        `json:"miniprogram"`
+	Menu           *Menu         `json:"msgmenu"`
+	Event          *Event        `json:"event"`
 }
 
-func SyncMsg(params *ParamsSyncMsg, result *ResultSyncMsg) wx.Action {
+func SyncMsg(params *ParamsMsgSync, result *ResultMsgSync) wx.Action {
 	return wx.NewPostAction(urls.CorpKFSyncMsg,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -149,27 +149,187 @@ func SyncMsg(params *ParamsSyncMsg, result *ResultSyncMsg) wx.Action {
 	)
 }
 
-type ParamsSendMsg struct {
-	ToUser   string           `json:"touser"`
-	OpenKFID string           `json:"open_kfid"`
-	MsgID    string           `json:"msgid,omitempty"`
-	MsgType  event.MsgType    `json:"msgtype"`
-	Text     *TextMessage     `json:"text,omitempty"`
-	Image    *ImageMessage    `json:"image,omitempty"`
-	Voice    *VoiceMessage    `json:"voice,omitempty"`
-	Video    *VideoMessage    `json:"video,omitempty"`
-	File     *FileMessage     `json:"file,omitempty"`
-	Link     *LinkMessage     `json:"link,omitempty"`
-	Minip    *MinipMessage    `json:"miniprogram,omitempty"`
-	Menu     *MenuMessage     `json:"menu,omitempty"`
-	Location *LocationMessage `json:"location,omitempty"`
+type ParamsMsgSend struct {
+	ToUser   string        `json:"touser"`
+	OpenKFID string        `json:"open_kfid"`
+	MsgID    string        `json:"msgid,omitempty"`
+	MsgType  event.MsgType `json:"msgtype"`
+	Text     *Text         `json:"text,omitempty"`
+	Image    *Image        `json:"image,omitempty"`
+	Voice    *Voice        `json:"voice,omitempty"`
+	Video    *Video        `json:"video,omitempty"`
+	File     *File         `json:"file,omitempty"`
+	Link     *Link         `json:"link,omitempty"`
+	Minip    *Minip        `json:"miniprogram,omitempty"`
+	Menu     *Menu         `json:"msgmenu,omitempty"`
+	Location *Location     `json:"location,omitempty"`
 }
 
-type ResultSendMsg struct {
+type ResultMsgSend struct {
 	MsgID string `json:"msgid"`
 }
 
-func SendMsg(params *ParamsSendMsg, result ResultSendMsg) wx.Action {
+func SendTextMsg(toUser, openKFID, msgID string, text *Text, result *ResultMsgSend) wx.Action {
+	params := &ParamsMsgSend{
+		ToUser:   toUser,
+		OpenKFID: openKFID,
+		MsgID:    msgID,
+		MsgType:  event.MsgText,
+		Text:     text,
+	}
+
+	return wx.NewPostAction(urls.CorpKFSendMsg,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+func SendImageMsg(toUser, openKFID, msgID string, image *Image, result *ResultMsgSend) wx.Action {
+	params := &ParamsMsgSend{
+		ToUser:   toUser,
+		OpenKFID: openKFID,
+		MsgID:    msgID,
+		MsgType:  event.MsgImage,
+		Image:    image,
+	}
+
+	return wx.NewPostAction(urls.CorpKFSendMsg,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+func SendVoiceMsg(toUser, openKFID, msgID string, voice *Voice, result *ResultMsgSend) wx.Action {
+	params := &ParamsMsgSend{
+		ToUser:   toUser,
+		OpenKFID: openKFID,
+		MsgID:    msgID,
+		MsgType:  event.MsgText,
+		Voice:    voice,
+	}
+
+	return wx.NewPostAction(urls.CorpKFSendMsg,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+func SendVideoMsg(toUser, openKFID, msgID string, video *Video, result *ResultMsgSend) wx.Action {
+	params := &ParamsMsgSend{
+		ToUser:   toUser,
+		OpenKFID: openKFID,
+		MsgID:    msgID,
+		MsgType:  event.MsgText,
+		Video:    video,
+	}
+
+	return wx.NewPostAction(urls.CorpKFSendMsg,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+func SendFileMsg(toUser, openKFID, msgID string, file *File, result *ResultMsgSend) wx.Action {
+	params := &ParamsMsgSend{
+		ToUser:   toUser,
+		OpenKFID: openKFID,
+		MsgID:    msgID,
+		MsgType:  event.MsgText,
+		File:     file,
+	}
+
+	return wx.NewPostAction(urls.CorpKFSendMsg,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+func SendLinkMsg(toUser, openKFID, msgID string, link *Link, result *ResultMsgSend) wx.Action {
+	params := &ParamsMsgSend{
+		ToUser:   toUser,
+		OpenKFID: openKFID,
+		MsgID:    msgID,
+		MsgType:  event.MsgText,
+		Link:     link,
+	}
+
+	return wx.NewPostAction(urls.CorpKFSendMsg,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+func SendMinipMsg(toUser, openKFID, msgID string, minip *Minip, result *ResultMsgSend) wx.Action {
+	params := &ParamsMsgSend{
+		ToUser:   toUser,
+		OpenKFID: openKFID,
+		MsgID:    msgID,
+		MsgType:  event.MsgText,
+		Minip:    minip,
+	}
+
+	return wx.NewPostAction(urls.CorpKFSendMsg,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+func SendMenuMsg(toUser, openKFID, msgID string, menu *Menu, result *ResultMsgSend) wx.Action {
+	params := &ParamsMsgSend{
+		ToUser:   toUser,
+		OpenKFID: openKFID,
+		MsgID:    msgID,
+		MsgType:  event.MsgMsgMenu,
+		Menu:     menu,
+	}
+
+	return wx.NewPostAction(urls.CorpKFSendMsg,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+func SendLocationMsg(toUser, openKFID, msgID string, location *Location, result *ResultMsgSend) wx.Action {
+	params := &ParamsMsgSend{
+		ToUser:   toUser,
+		OpenKFID: openKFID,
+		MsgID:    msgID,
+		MsgType:  event.MsgLocation,
+		Location: location,
+	}
+
 	return wx.NewPostAction(urls.CorpKFSendMsg,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
