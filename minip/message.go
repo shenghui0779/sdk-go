@@ -141,6 +141,13 @@ func SendKFTextMsg(openid string, text *KFText) wx.Action {
 	)
 }
 
+// SendKFTextMessage 发送客服文本消息（支持插入跳小程序的文字链）
+func SendKFTextMessage(openid string, text string) wx.Action {
+	return SendKFTextMsg(openid, &KFText{
+		Content: text,
+	})
+}
+
 // SendKFImageMsg 发送客服图片消息（媒体ID，通过素材接口上传获得）
 func SendKFImageMsg(openid string, imgage *KFMedia) wx.Action {
 	params := &ParamsKFMsg{
@@ -154,6 +161,13 @@ func SendKFImageMsg(openid string, imgage *KFMedia) wx.Action {
 			return json.Marshal(params)
 		}),
 	)
+}
+
+// SendKFImageMessage 发送客服图片消息（媒体ID，通过素材接口上传获得）
+func SendKFImageMessage(openid string, mediaId string) wx.Action {
+	return SendKFImageMsg(openid, &KFMedia{
+		MediaID: mediaId,
+	})
 }
 
 // SendKFLinkMsg 发送客服图文链接消息
@@ -171,6 +185,11 @@ func SendKFLinkMsg(openid string, link *KFLink) wx.Action {
 	)
 }
 
+// SendKFLinkMessage 发送客服图文链接消息
+func SendKFLinkMessage(openid string, link *KFLink) wx.Action {
+	return SendKFLinkMsg(openid, link)
+}
+
 // SendKFMinipMsg 发送客服小程序卡片消息
 func SendKFMinipMsg(openid string, minipPage *KFMinipPage) wx.Action {
 	params := &ParamsKFMsg{
@@ -184,6 +203,11 @@ func SendKFMinipMsg(openid string, minipPage *KFMinipPage) wx.Action {
 			return json.Marshal(params)
 		}),
 	)
+}
+
+// SendKFMinipMessage 发送客服小程序卡片消息
+func SendKFMinipMessage(openid string, minipPage *KFMinipPage) wx.Action {
+	return SendKFMinipMsg(openid, minipPage)
 }
 
 type ParamsKFTyping struct {
