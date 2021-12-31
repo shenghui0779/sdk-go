@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,7 +29,7 @@ func TestSendUniformMessage(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsUniformMsg{
 		ToUser: "OPENID",
@@ -86,7 +87,7 @@ func TestSendSubscribeMessage(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsSubscribeMsg{
 		ToUser:     "OPENID",
@@ -131,7 +132,7 @@ func TestSendKFTextMessage(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFTextMsg("OPENID", &KFText{Content: "Hello World"}))
 
@@ -154,7 +155,7 @@ func TestSendKFImageMessage(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFImageMsg("OPENID", &KFMedia{MediaID: "MEDIA_ID"}))
 
@@ -177,7 +178,7 @@ func TestSendKFLinkMessage(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFLinkMsg("OPENID", &KFLink{
 		Title:       "Happy Day",
@@ -205,7 +206,7 @@ func TestSendKFMinipMessage(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFMinipMsg("OPENID", &KFMinipPage{
 		Title:        "title",
@@ -232,7 +233,7 @@ func TestSetTyping(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/typing?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFTyping("OPENID", Typing))
 

@@ -44,14 +44,9 @@ func (mp *Minip) SetServerConfig(token, encodingAESKey string) {
 	mp.encodingAESKey = encodingAESKey
 }
 
-// SetClient set client
-func (mp *Minip) SetClient(c yiigo.HTTPClient) {
-	mp.client.SetHTTPClient(c)
-}
-
-// SetLogger set client logger
-func (mp *Minip) SetLogger(l wx.Logger) {
-	mp.client.SetLogger(l)
+// SetClient sets options for wechat client
+func (mp *Minip) SetClient(options ...wx.ClientOption) {
+	mp.client.Set(options...)
 }
 
 // AppID returns appid

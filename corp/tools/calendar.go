@@ -92,12 +92,12 @@ func GetCalendar(params *ParamsCalendarGet, result *ResultCalendarGet) wx.Action
 	)
 }
 
-type ParamsCalendarDel struct {
+type ParamsCalendarDelete struct {
 	CalID string `json:"cal_id"`
 }
 
-func DelCalendar(params *ParamsCalendarDel) wx.Action {
-	return wx.NewPostAction(urls.CorpToolsCalendarDel,
+func DeleteCalendar(params *ParamsCalendarDelete) wx.Action {
+	return wx.NewPostAction(urls.CorpToolsCalendarDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

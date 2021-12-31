@@ -55,15 +55,13 @@ func TestUnifyOrder(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/unifiedorder", body).Return(resp, nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "1add1a30ac87aa2db72f57a2375d8fec"
 	}
-	mch.SetClient(client)
-	mch.SetTLSClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), UnifyOrder(&OrderData{
 		OutTradeNO:     "1415659990",
@@ -133,15 +131,13 @@ func TestQueryOrderByTransactionID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/orderquery", body).Return(resp, nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "ec2316275641faa3aacf3cc599e8730f"
 	}
-	mch.SetClient(client)
-	mch.SetTLSClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryOrderByTransactionID("1008450740201411110005820873"))
 
@@ -213,15 +209,13 @@ func TestQueryOrderByOutTradeNO(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/orderquery", body).Return(resp, nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "ec2316275641faa3aacf3cc599e8730f"
 	}
-	mch.SetClient(client)
-	mch.SetTLSClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryOrderByOutTradeNO("1415757673"))
 
@@ -282,15 +276,13 @@ func TestCloseOrder(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/closeorder", body).Return(resp, nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "4ca93f17ddf3443ceabf72f26d64fe0e"
 	}
-	mch.SetClient(client)
-	mch.SetTLSClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), CloseOrder("1415983244"))
 

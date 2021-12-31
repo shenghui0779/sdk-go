@@ -62,14 +62,9 @@ func (oa *Offia) SetServerConfig(token, encodingAESKey string) {
 	oa.encodingAESKey = encodingAESKey
 }
 
-// SetClient set client
-func (oa *Offia) SetClient(c yiigo.HTTPClient) {
-	oa.client.SetHTTPClient(c)
-}
-
-// SetLogger set client logger
-func (oa *Offia) SetLogger(logger wx.Logger) {
-	oa.client.SetLogger(logger)
+// SetClient sets options for wechat client
+func (oa *Offia) SetClient(options ...wx.ClientOption) {
+	oa.client.Set(options...)
 }
 
 // AppID returns appid
@@ -82,9 +77,9 @@ func (oa *Offia) AppSecret() string {
 	return oa.appsecret
 }
 
-// WebAuthURL 生成网页授权URL（请使用 URLEncode 对 redirectURL 进行处理）
+// OAuth2URL 生成网页授权URL（请使用 URLEncode 对 redirectURL 进行处理）
 // [参考](https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html)
-func (oa *Offia) WebAuthURL(scope AuthScope, redirectURL, state string) string {
+func (oa *Offia) OAuth2URL(scope AuthScope, redirectURL, state string) string {
 	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", urls.Oauth2Authorize, oa.appid, redirectURL, scope, state)
 }
 
@@ -95,7 +90,7 @@ func (oa *Offia) SubscribeMsgAuthURL(scene, templateID, redirectURL, reserved st
 }
 
 // Code2AuthToken 获取网页授权AccessToken
-func (oa *Offia) Code2AuthToken(ctx context.Context, code string, options ...yiigo.HTTPOption) (*AuthToken, error) {
+func (oa *Offia) Code2OAuthToken(ctx context.Context, code string, options ...yiigo.HTTPOption) (*OAuthToken, error) {
 	resp, err := oa.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", urls.OffiaSnsCode2Token, oa.appid, oa.appsecret, code), nil, options...)
 
 	if err != nil {
@@ -108,7 +103,7 @@ func (oa *Offia) Code2AuthToken(ctx context.Context, code string, options ...yii
 		return nil, fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
-	token := new(AuthToken)
+	token := new(OAuthToken)
 
 	if err = json.Unmarshal(resp, token); err != nil {
 		return nil, err
@@ -118,7 +113,7 @@ func (oa *Offia) Code2AuthToken(ctx context.Context, code string, options ...yii
 }
 
 // RefreshAuthToken 刷新网页授权AccessToken
-func (oa *Offia) RefreshAuthToken(ctx context.Context, refreshToken string, options ...yiigo.HTTPOption) (*AuthToken, error) {
+func (oa *Offia) RefreshOAuthToken(ctx context.Context, refreshToken string, options ...yiigo.HTTPOption) (*OAuthToken, error) {
 	resp, err := oa.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", urls.OffiaSnsRefreshAccessToken, oa.appid, refreshToken), nil, options...)
 
 	if err != nil {
@@ -131,7 +126,7 @@ func (oa *Offia) RefreshAuthToken(ctx context.Context, refreshToken string, opti
 		return nil, fmt.Errorf("%d|%s", code, r.Get("errmsg").String())
 	}
 
-	token := new(AuthToken)
+	token := new(OAuthToken)
 
 	if err = json.Unmarshal(resp, token); err != nil {
 		return nil, err

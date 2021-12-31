@@ -22,7 +22,7 @@ type ServicerAddItem struct {
 	ErrMsg  string `json:"errmsg"`
 }
 
-func ServicerAdd(params *ParamsServicerAdd, result *ResultServicerAdd) wx.Action {
+func AddServicer(params *ParamsServicerAdd, result *ResultServicerAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpKFServicerAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -33,23 +33,23 @@ func ServicerAdd(params *ParamsServicerAdd, result *ResultServicerAdd) wx.Action
 	)
 }
 
-type ParamsServicerDel struct {
+type ParamsServicerDelete struct {
 	OpenKFID   string   `json:"open_kfid"`
 	UserIDList []string `json:"userid_list"`
 }
 
-type ResultServicerDel struct {
-	ResultList []*ServicerDelItem `json:"result_list"`
-}
-
-type ServicerDelItem struct {
+type ErrServicerDelete struct {
 	UserID  string `json:"userid"`
 	ErrCode string `json:"errcode"`
 	ErrMsg  string `json:"errmsg"`
 }
 
-func ServicerDel(params *ParamsServicerDel, result *ResultServicerDel) wx.Action {
-	return wx.NewPostAction(urls.CorpKFServicerDel,
+type ResultServicerDelete struct {
+	ResultList []*ErrServicerDelete `json:"result_list"`
+}
+
+func DeleteServicer(params *ParamsServicerDelete, result *ResultServicerDelete) wx.Action {
+	return wx.NewPostAction(urls.CorpKFServicerDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -63,16 +63,16 @@ type ParamsServicerList struct {
 	OpenKFID string `json:"open_kfid"`
 }
 
-type ResultServicerList struct {
-	ServicerList []*ServicerListItem `json:"servicer_list"`
-}
-
-type ServicerListItem struct {
+type ServicerListData struct {
 	UserID string `json:"userid"`
 	Status int    `json:"status"`
 }
 
-func ServicerList(params *ParamsServicerList, result *ResultServicerList) wx.Action {
+type ResultServicerList struct {
+	ServicerList []*ServicerListData `json:"servicer_list"`
+}
+
+func ListServicer(params *ParamsServicerList, result *ResultServicerList) wx.Action {
 	return wx.NewGetAction(urls.CorpKFServicerList,
 		wx.WithQuery("open_kfid", params.OpenKFID),
 		wx.WithDecode(func(resp []byte) error {

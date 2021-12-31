@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,7 +17,28 @@ import (
 func TestAICrop(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"results": [
+		{
+			"crop_left": 112,
+			"crop_top": 0,
+			"crop_right": 839,
+			"crop_bottom": 727
+		},
+		{
+			"crop_left": 0,
+			"crop_top": 205,
+			"crop_right": 965,
+			"crop_bottom": 615
+		}
+	],
+	"img_size": {
+		"w": 966,
+		"h": 728
+	}
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -24,31 +46,10 @@ func TestAICrop(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"results": [
-			{
-				"crop_left": 112,
-				"crop_top": 0,
-				"crop_right": 839,
-				"crop_bottom": 727
-			},
-			{
-				"crop_left": 0,
-				"crop_top": 205,
-				"crop_right": 965,
-				"crop_bottom": 615
-			}
-		],
-		"img_size": {
-			"w": 966,
-			"h": 728
-		}
-	}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultAICrop)
 
@@ -80,7 +81,28 @@ func TestAICrop(t *testing.T) {
 func TestAICropByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"results": [
+		{
+			"crop_left": 112,
+			"crop_top": 0,
+			"crop_right": 839,
+			"crop_bottom": 727
+		},
+		{
+			"crop_left": 0,
+			"crop_top": 205,
+			"crop_right": 965,
+			"crop_bottom": 615
+		}
+	],
+	"img_size": {
+		"w": 966,
+		"h": 728
+	}
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -88,31 +110,10 @@ func TestAICropByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"results": [
-			{
-				"crop_left": 112,
-				"crop_top": 0,
-				"crop_right": 839,
-				"crop_bottom": 727
-			},
-			{
-				"crop_left": 0,
-				"crop_top": 205,
-				"crop_right": 965,
-				"crop_bottom": 615
-			}
-		],
-		"img_size": {
-			"w": 966,
-			"h": 728
-		}
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cv/img/aicrop?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultAICrop)
 
@@ -144,7 +145,68 @@ func TestAICropByURL(t *testing.T) {
 func TestScanQRCode(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"code_results": [
+		{
+			"type_name": "QR_CODE",
+			"data": "http://www.qq.com",
+			"pos": {
+				"left_top": {
+					"x": 585,
+					"y": 378
+				},
+				"right_top": {
+					"x": 828,
+					"y": 378
+				},
+				"right_bottom": {
+					"x": 828,
+					"y": 618
+				},
+				"left_bottom": {
+					"x": 585,
+					"y": 618
+				}
+			}
+		},
+		{
+			"type_name": "QR_CODE",
+			"data": "https://mp.weixin.qq.com",
+			"pos": {
+				"left_top": {
+					"x": 185,
+					"y": 142
+				},
+				"right_top": {
+					"x": 396,
+					"y": 142
+				},
+				"right_bottom": {
+					"x": 396,
+					"y": 353
+				},
+				"left_bottom": {
+					"x": 185,
+					"y": 353
+				}
+			}
+		},
+		{
+			"type_name": "EAN_13",
+			"data": "5906789678957"
+		},
+		{
+			"type_name": "CODE_128",
+			"data": "50090500019191"
+		}
+	],
+	"img_size": {
+		"w": 1000,
+		"h": 900
+	}
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -152,71 +214,10 @@ func TestScanQRCode(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"code_results": [
-			{
-				"type_name": "QR_CODE",
-				"data": "http://www.qq.com",
-				"pos": {
-					"left_top": {
-						"x": 585,
-						"y": 378
-					},
-					"right_top": {
-						"x": 828,
-						"y": 378
-					},
-					"right_bottom": {
-						"x": 828,
-						"y": 618
-					},
-					"left_bottom": {
-						"x": 585,
-						"y": 618
-					}
-				}
-			},
-			{
-				"type_name": "QR_CODE",
-				"data": "https://mp.weixin.qq.com",
-				"pos": {
-					"left_top": {
-						"x": 185,
-						"y": 142
-					},
-					"right_top": {
-						"x": 396,
-						"y": 142
-					},
-					"right_bottom": {
-						"x": 396,
-						"y": 353
-					},
-					"left_bottom": {
-						"x": 185,
-						"y": 353
-					}
-				}
-			},
-			{
-				"type_name": "EAN_13",
-				"data": "5906789678957"
-			},
-			{
-				"type_name": "CODE_128",
-				"data": "50090500019191"
-			}
-		],
-		"img_size": {
-			"w": 1000,
-			"h": 900
-		}
-	}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultQRCodeScan)
 
@@ -324,7 +325,68 @@ func TestScanQRCode(t *testing.T) {
 func TestScanQRCodeByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"code_results": [
+		{
+			"type_name": "QR_CODE",
+			"data": "http://www.qq.com",
+			"pos": {
+				"left_top": {
+					"x": 585,
+					"y": 378
+				},
+				"right_top": {
+					"x": 828,
+					"y": 378
+				},
+				"right_bottom": {
+					"x": 828,
+					"y": 618
+				},
+				"left_bottom": {
+					"x": 585,
+					"y": 618
+				}
+			}
+		},
+		{
+			"type_name": "QR_CODE",
+			"data": "https://mp.weixin.qq.com",
+			"pos": {
+				"left_top": {
+					"x": 185,
+					"y": 142
+				},
+				"right_top": {
+					"x": 396,
+					"y": 142
+				},
+				"right_bottom": {
+					"x": 396,
+					"y": 353
+				},
+				"left_bottom": {
+					"x": 185,
+					"y": 353
+				}
+			}
+		},
+		{
+			"type_name": "EAN_13",
+			"data": "5906789678957"
+		},
+		{
+			"type_name": "CODE_128",
+			"data": "50090500019191"
+		}
+	],
+	"img_size": {
+		"w": 1000,
+		"h": 900
+	}
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -332,71 +394,10 @@ func TestScanQRCodeByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"code_results": [
-			{
-				"type_name": "QR_CODE",
-				"data": "http://www.qq.com",
-				"pos": {
-					"left_top": {
-						"x": 585,
-						"y": 378
-					},
-					"right_top": {
-						"x": 828,
-						"y": 378
-					},
-					"right_bottom": {
-						"x": 828,
-						"y": 618
-					},
-					"left_bottom": {
-						"x": 585,
-						"y": 618
-					}
-				}
-			},
-			{
-				"type_name": "QR_CODE",
-				"data": "https://mp.weixin.qq.com",
-				"pos": {
-					"left_top": {
-						"x": 185,
-						"y": 142
-					},
-					"right_top": {
-						"x": 396,
-						"y": 142
-					},
-					"right_bottom": {
-						"x": 396,
-						"y": 353
-					},
-					"left_bottom": {
-						"x": 185,
-						"y": 353
-					}
-				}
-			},
-			{
-				"type_name": "EAN_13",
-				"data": "5906789678957"
-			},
-			{
-				"type_name": "CODE_128",
-				"data": "50090500019191"
-			}
-		],
-		"img_size": {
-			"w": 1000,
-			"h": 900
-		}
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cv/img/qrcode?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultQRCodeScan)
 
@@ -504,7 +505,11 @@ func TestScanQRCodeByURL(t *testing.T) {
 func TestSuperreSolution(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"media_id": "6WXsIXkG7lXuDLspD9xfm5dsvHzb0EFl0li6ySxi92ap8Vl3zZoD9DpOyNudeJGB"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -512,14 +517,10 @@ func TestSuperreSolution(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"media_id": "6WXsIXkG7lXuDLspD9xfm5dsvHzb0EFl0li6ySxi92ap8Vl3zZoD9DpOyNudeJGB"
-	}`), nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultSuperreSolution)
 
@@ -534,7 +535,11 @@ func TestSuperreSolution(t *testing.T) {
 func TestSuperreSolutionByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"media_id": "6WXsIXkG7lXuDLspD9xfm5dsvHzb0EFl0li6ySxi92ap8Vl3zZoD9DpOyNudeJGB"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -542,14 +547,10 @@ func TestSuperreSolutionByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Post(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return([]byte(`{
-		"errcode": 0,
-		"errmsg": "ok",
-		"media_id": "6WXsIXkG7lXuDLspD9xfm5dsvHzb0EFl0li6ySxi92ap8Vl3zZoD9DpOyNudeJGB"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cv/img/superresolution?access_token=ACCESS_TOKEN&img_url=ENCODE_URL", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultSuperreSolution)
 

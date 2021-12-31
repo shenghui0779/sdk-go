@@ -21,17 +21,23 @@ func TestAccount(t *testing.T) {
 	assert.Equal(t, "192006250b4c09247ec02edce69f6a2d", oa.AppSecret())
 }
 
-func TestAuthURL(t *testing.T) {
+func TestOAuth2URL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 
-	assert.Equal(t, "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=RedirectURL&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect", oa.WebAuthURL(ScopeSnsapiBase, "RedirectURL", "STATE"))
-	assert.Equal(t, "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=RedirectURL&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect", oa.WebAuthURL(ScopeSnsapiUser, "RedirectURL", "STATE"))
+	assert.Equal(t, "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=RedirectURL&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect", oa.OAuth2URL(ScopeSnsapiBase, "RedirectURL", "STATE"))
+	assert.Equal(t, "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=RedirectURL&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect", oa.OAuth2URL(ScopeSnsapiUser, "RedirectURL", "STATE"))
 }
 
-func TestCode2AuthToken(t *testing.T) {
+func TestCode2OAuthToken(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"access_token": "ACCESS_TOKEN",
+	"expires_in": 7200,
+	"refresh_token": "REFRESH_TOKEN",
+	"openid": "OPENID",
+	"scope": "SCOPE"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -39,21 +45,15 @@ func TestCode2AuthToken(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=APPSECRET&code=CODE&grant_type=authorization_code").Return([]byte(`{
-		"access_token": "ACCESS_TOKEN",
-		"expires_in": 7200,
-		"refresh_token": "REFRESH_TOKEN",
-		"openid": "OPENID",
-		"scope": "SCOPE"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=APPSECRET&code=CODE&grant_type=authorization_code", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
-	authToken, err := oa.Code2AuthToken(context.TODO(), "CODE")
+	authToken, err := oa.Code2OAuthToken(context.TODO(), "CODE")
 
 	assert.Nil(t, err)
-	assert.Equal(t, &AuthToken{
+	assert.Equal(t, &OAuthToken{
 		AccessToken:  "ACCESS_TOKEN",
 		RefreshToken: "REFRESH_TOKEN",
 		ExpiresIn:    7200,
@@ -62,10 +62,16 @@ func TestCode2AuthToken(t *testing.T) {
 	}, authToken)
 }
 
-func TestRefreshAuthToken(t *testing.T) {
+func TestRefreshOAuthToken(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"access_token": "ACCESS_TOKEN",
+	"expires_in": 7200,
+	"refresh_token": "REFRESH_TOKEN",
+	"openid": "OPENID",
+	"scope": "SCOPE"
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -73,21 +79,15 @@ func TestRefreshAuthToken(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=APPID&grant_type=refresh_token&refresh_token=REFRESH_TOKEN").Return([]byte(`{
-		"access_token": "ACCESS_TOKEN",
-		"expires_in": 7200,
-		"refresh_token": "REFRESH_TOKEN",
-		"openid": "OPENID",
-		"scope": "SCOPE"
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=APPID&grant_type=refresh_token&refresh_token=REFRESH_TOKEN", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
-	authToken, err := oa.RefreshAuthToken(context.TODO(), "REFRESH_TOKEN")
+	authToken, err := oa.RefreshOAuthToken(context.TODO(), "REFRESH_TOKEN")
 
 	assert.Nil(t, err)
-	assert.Equal(t, &AuthToken{
+	assert.Equal(t, &OAuthToken{
 		AccessToken:  "ACCESS_TOKEN",
 		RefreshToken: "REFRESH_TOKEN",
 		ExpiresIn:    7200,
@@ -99,7 +99,10 @@ func TestRefreshAuthToken(t *testing.T) {
 func TestAccessToken(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader()),
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"access_token": "39_VzXkFDAJsEVTWbXUZDU3NqHtP6mzcAA7RJvcy1o9e-7fdJ-UuxPYLdBFMiGhpdoeKqVWMGqBe8ldUrMasRv1z_T8RmHKDiybC29wZ_vexHlyQ5YDGb33rff1mBNpOLM9f5nv7oag8UYBSc79ASMcAAADVP",
+	"expires_in": 7200
+}`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -107,13 +110,10 @@ func TestAccessToken(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Get(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET").Return([]byte(`{
-		"access_token": "39_VzXkFDAJsEVTWbXUZDU3NqHtP6mzcAA7RJvcy1o9e-7fdJ-UuxPYLdBFMiGhpdoeKqVWMGqBe8ldUrMasRv1z_T8RmHKDiybC29wZ_vexHlyQ5YDGb33rff1mBNpOLM9f5nv7oag8UYBSc79ASMcAAADVP",
-		"expires_in": 7200
-	}`), nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(client)
+	oa.SetClient(wx.WithHTTPClient(client))
 
 	accessToken, err := oa.AccessToken(context.TODO())
 

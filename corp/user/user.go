@@ -4,31 +4,63 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/shenghui0779/gochat/corp/common"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
+type ExternalProfile struct {
+	ExternalCorpName string  `json:"external_corp_name"`
+	WechatChannels   string  `json:"wechat_channels"`
+	ExternalAttr     []*Attr `json:"external_attr"`
+}
+
+type ExtAttr struct {
+	Attrs []*Attr `json:"attrs"`
+}
+
+type Attr struct {
+	Type        int        `json:"type"`
+	Name        string     `json:"name"`
+	Text        *AttrText  `json:"text,omitempty"`
+	Web         *AttrWeb   `json:"web,omitempty"`
+	Miniprogram *AttrMinip `json:"miniprogram,omitempty"`
+}
+
+type AttrText struct {
+	Value string `json:"value"`
+}
+
+type AttrWeb struct {
+	Title string `json:"title"`
+	URL   string `json:"url"`
+}
+
+type AttrMinip struct {
+	Title    string `json:"title"`
+	AppID    string `json:"appid"`
+	Pagepath string `json:"pagepath"`
+}
+
 type ParamsUserCreate struct {
-	UserID           string                  `json:"user_id"`
-	Name             string                  `json:"name"`
-	Alias            string                  `json:"alias,omitempty"`
-	Mobile           string                  `json:"mobile,omitempty"`
-	Department       []int64                 `json:"department"`
-	Order            []int64                 `json:"order,omitempty"`
-	Position         string                  `json:"position,omitempty"`
-	Gender           int                     `json:"gender,omitempty"`
-	Email            string                  `json:"email,omitempty"`
-	IsLeaderInDept   []int64                 `json:"is_leader_in_dept,omitempty"`
-	Enable           int                     `json:"enable,omitempty"`
-	AvatarMediaID    string                  `json:"avatar_mediaid,omitempty"`
-	Telephone        string                  `json:"telephone,omitempty"`
-	Address          string                  `json:"address,omitempty"`
-	MainDepartment   int64                   `json:"main_department,omitempty"`
-	ExtAttr          *common.ExtAttr         `json:"extattr,omitempty"`
-	ToInvite         bool                    `json:"to_invite,omitempty"`
-	ExternalPosition string                  `json:"external_position,omitempty"`
-	ExternalProfile  *common.ExternalProfile `json:"external_profile,omitempty"`
+	UserID           string           `json:"user_id"`
+	Name             string           `json:"name"`
+	Alias            string           `json:"alias,omitempty"`
+	Mobile           string           `json:"mobile,omitempty"`
+	Department       []int64          `json:"department"`
+	Order            []int64          `json:"order,omitempty"`
+	Position         string           `json:"position,omitempty"`
+	Gender           int              `json:"gender,omitempty"`
+	Email            string           `json:"email,omitempty"`
+	IsLeaderInDept   []int64          `json:"is_leader_in_dept,omitempty"`
+	Enable           int              `json:"enable,omitempty"`
+	AvatarMediaID    string           `json:"avatar_mediaid,omitempty"`
+	Telephone        string           `json:"telephone,omitempty"`
+	Address          string           `json:"address,omitempty"`
+	MainDepartment   int64            `json:"main_department,omitempty"`
+	ExtAttr          *ExtAttr         `json:"extattr,omitempty"`
+	ToInvite         bool             `json:"to_invite,omitempty"`
+	ExternalPosition string           `json:"external_position,omitempty"`
+	ExternalProfile  *ExternalProfile `json:"external_profile,omitempty"`
 }
 
 // CreateUser 创建成员
@@ -41,25 +73,25 @@ func CreateUser(params *ParamsUserCreate) wx.Action {
 }
 
 type ParamsUserUpdate struct {
-	UserID           string                  `json:"user_id"`
-	Name             string                  `json:"name,omitempty"`
-	Alias            string                  `json:"alias,omitempty"`
-	Mobile           string                  `json:"mobile,omitempty"`
-	Department       []int64                 `json:"department"`
-	Order            []int64                 `json:"order,omitempty"`
-	Position         string                  `json:"position,omitempty"`
-	Gender           int                     `json:"gender,omitempty"`
-	Email            string                  `json:"email,omitempty"`
-	IsLeaderInDept   []int64                 `json:"is_leader_in_dept,omitempty"`
-	Enable           int                     `json:"enable,omitempty"`
-	AvatarMediaID    string                  `json:"avatar_mediaid,omitempty"`
-	Telephone        string                  `json:"telephone,omitempty"`
-	Address          string                  `json:"address,omitempty"`
-	MainDepartment   int64                   `json:"main_department,omitempty"`
-	ExtAttr          *common.ExtAttr         `json:"extattr,omitempty"`
-	ToInvite         bool                    `json:"to_invite,omitempty"`
-	ExternalPosition string                  `json:"external_position,omitempty"`
-	ExternalProfile  *common.ExternalProfile `json:"external_profile,omitempty"`
+	UserID           string           `json:"user_id"`
+	Name             string           `json:"name,omitempty"`
+	Alias            string           `json:"alias,omitempty"`
+	Mobile           string           `json:"mobile,omitempty"`
+	Department       []int64          `json:"department"`
+	Order            []int64          `json:"order,omitempty"`
+	Position         string           `json:"position,omitempty"`
+	Gender           int              `json:"gender,omitempty"`
+	Email            string           `json:"email,omitempty"`
+	IsLeaderInDept   []int64          `json:"is_leader_in_dept,omitempty"`
+	Enable           int              `json:"enable,omitempty"`
+	AvatarMediaID    string           `json:"avatar_mediaid,omitempty"`
+	Telephone        string           `json:"telephone,omitempty"`
+	Address          string           `json:"address,omitempty"`
+	MainDepartment   int64            `json:"main_department,omitempty"`
+	ExtAttr          *ExtAttr         `json:"extattr,omitempty"`
+	ToInvite         bool             `json:"to_invite,omitempty"`
+	ExternalPosition string           `json:"external_position,omitempty"`
+	ExternalProfile  *ExternalProfile `json:"external_profile,omitempty"`
 }
 
 // UpdateUser 更新成员
@@ -72,28 +104,28 @@ func UpdateUser(params *ParamsUserUpdate) wx.Action {
 }
 
 type UserInfo struct {
-	UserID           string                  `json:"user_id"`
-	Name             string                  `json:"name"`
-	Alias            string                  `json:"alias,omitempty"`
-	Mobile           string                  `json:"mobile,omitempty"`
-	Department       []int64                 `json:"department"`
-	Order            []int64                 `json:"order,omitempty"`
-	Position         string                  `json:"position,omitempty"`
-	Gender           int                     `json:"gender,omitempty"`
-	Email            string                  `json:"email,omitempty"`
-	IsLeaderInDept   []int64                 `json:"is_leader_in_dept,omitempty"`
-	Enable           int                     `json:"enable,omitempty"`
-	Avatar           string                  `json:"avatar,omitempty"`
-	ThumbAvatar      string                  `json:"thumb_avatar,omitempty"`
-	Telephone        string                  `json:"telephone,omitempty"`
-	Address          string                  `json:"address,omitempty"`
-	OpenUserID       string                  `json:"open_userid,omitempty"`
-	MainDepartment   int64                   `json:"main_department,omitempty"`
-	ExtAttr          *common.ExtAttr         `json:"extattr,omitempty"`
-	Status           int                     `json:"status,omitempty"`
-	QRCode           string                  `json:"qr_code,omitempty"`
-	ExternalPosition string                  `json:"external_position,omitempty"`
-	ExternalProfile  *common.ExternalProfile `json:"external_profile,omitempty"`
+	UserID           string           `json:"user_id"`
+	Name             string           `json:"name"`
+	Alias            string           `json:"alias,omitempty"`
+	Mobile           string           `json:"mobile,omitempty"`
+	Department       []int64          `json:"department"`
+	Order            []int64          `json:"order,omitempty"`
+	Position         string           `json:"position,omitempty"`
+	Gender           int              `json:"gender,omitempty"`
+	Email            string           `json:"email,omitempty"`
+	IsLeaderInDept   []int64          `json:"is_leader_in_dept,omitempty"`
+	Enable           int              `json:"enable,omitempty"`
+	Avatar           string           `json:"avatar,omitempty"`
+	ThumbAvatar      string           `json:"thumb_avatar,omitempty"`
+	Telephone        string           `json:"telephone,omitempty"`
+	Address          string           `json:"address,omitempty"`
+	OpenUserID       string           `json:"open_userid,omitempty"`
+	MainDepartment   int64            `json:"main_department,omitempty"`
+	ExtAttr          *ExtAttr         `json:"extattr,omitempty"`
+	Status           int              `json:"status,omitempty"`
+	QRCode           string           `json:"qr_code,omitempty"`
+	ExternalPosition string           `json:"external_position,omitempty"`
+	ExternalProfile  *ExternalProfile `json:"external_profile,omitempty"`
 }
 
 // GetUser 读取成员

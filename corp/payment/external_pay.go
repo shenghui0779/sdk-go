@@ -48,12 +48,12 @@ func GetMerchant(params *ParamsMerchantGet, result *ResultMerchantGet) wx.Action
 	)
 }
 
-type ParamsMerchantDel struct {
+type ParamsMerchantDelete struct {
 	MchID string `json:"mch_id"`
 }
 
-func DelMerchant(params *ParamsMerchantDel) wx.Action {
-	return wx.NewPostAction(urls.CorpPaymentMerchantDel,
+func DeleteMerchant(params *ParamsMerchantDelete) wx.Action {
+	return wx.NewPostAction(urls.CorpPaymentMerchantDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

@@ -121,12 +121,12 @@ func GetSchedule(params *ParamsScheduleGet, result *ResultScheduleGet) wx.Action
 	)
 }
 
-type ParamsScheduleDel struct {
+type ParamsScheduleDelete struct {
 	ScheduleID string `json:"schedule_id"`
 }
 
-func DelSchedule(params *ParamsScheduleDel) wx.Action {
-	return wx.NewPostAction(urls.CorpToolsScheduleDel,
+func DeleteSchedule(params *ParamsScheduleDelete) wx.Action {
+	return wx.NewPostAction(urls.CorpToolsScheduleDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

@@ -25,27 +25,27 @@ type APIDomainIP struct {
 	IPList []string `json:"ip_list"`
 }
 
-func GetAPIDomainIP(dest *APIDomainIP) wx.Action {
+func GetAPIDomainIP(result *APIDomainIP) wx.Action {
 	return wx.NewGetAction(urls.CorpCgiBinAPIDomainIP,
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-type UserInfo struct {
+type ResultOAuthUser struct {
 	UserID         string `json:"UserId"`
 	OpenID         string `json:"OpenId"`
 	DeviceID       string `json:"DeviceId"`
 	ExternalUserID string `json:"external_userid"`
 }
 
-// GetUserInfo 获取访问用户身份
-func GetUserInfo(dest *UserInfo, code string) wx.Action {
+// GetOAuthUser 获取访问用户身份
+func GetOAuthUser(code string, result *ResultOAuthUser) wx.Action {
 	return wx.NewGetAction(urls.CorpCgiBinUserInfo,
 		wx.WithQuery("code", code),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
