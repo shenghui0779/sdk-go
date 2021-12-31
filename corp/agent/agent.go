@@ -39,7 +39,7 @@ type AllowTags struct {
 	TagID []int64 `json:"tagid"`
 }
 
-func AgentGet(agentID int64, result *ResultAgentGet) wx.Action {
+func GetAgent(agentID int64, result *ResultAgentGet) wx.Action {
 	return wx.NewGetAction(urls.CorpAgentGet,
 		wx.WithQuery("agent_id", strconv.FormatInt(agentID, 10)),
 		wx.WithDecode(func(resp []byte) error {
@@ -49,16 +49,16 @@ func AgentGet(agentID int64, result *ResultAgentGet) wx.Action {
 }
 
 type ResultAgentList struct {
-	AgentList []*AgentListItem `json:"agentlist"`
+	AgentList []*AgentListData `json:"agentlist"`
 }
 
-type AgentListItem struct {
+type AgentListData struct {
 	AgentID       int64  `json:"agentid"`
 	Name          string `json:"name"`
 	SquareLogoURL string `json:"square_logo_url"`
 }
 
-func AgentList(result *ResultAgentList) wx.Action {
+func ListAgent(result *ResultAgentList) wx.Action {
 	return wx.NewGetAction(urls.CorpAgentList,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -77,7 +77,7 @@ type ParamsAgentSet struct {
 	HomeURL            string `json:"home_url"`
 }
 
-func AgentSet(params *ParamsAgentSet) wx.Action {
+func SetAgent(params *ParamsAgentSet) wx.Action {
 	return wx.NewPostAction(urls.CorpAgentSet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

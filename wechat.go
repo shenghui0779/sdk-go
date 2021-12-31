@@ -1,6 +1,8 @@
 package gochat
 
 import (
+	"crypto/tls"
+
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mch"
 	"github.com/shenghui0779/gochat/minip"
@@ -9,8 +11,8 @@ import (
 )
 
 // NewMch 微信商户
-func NewMch(appid, mchid, apikey, p12cert string) (*mch.Mch, error) {
-	return mch.New(appid, mchid, apikey, p12cert)
+func NewMch(appid, mchid, apikey string, certs ...tls.Certificate) *mch.Mch {
+	return mch.New(appid, mchid, apikey, certs...)
 }
 
 // NewOffia 微信公众号
@@ -30,5 +32,5 @@ func NewOplatform(appid, appsecret string) *oplatform.Oplatform {
 
 // NewCorp 企业微信
 func NewCorp(corpid string) *corp.Corp {
-	return corp.NewCorp(corpid)
+	return corp.New(corpid)
 }

@@ -2,31 +2,55 @@ package wx
 
 import "github.com/shenghui0779/yiigo"
 
+// ClientOption configures how we set up the wechat client.
+type ClientOption func(c *wxclient)
+
+// WithHTTPClient sets http client for wechat client.
+func WithHTTPClient(client yiigo.HTTPClient) ClientOption {
+	return func(c *wxclient) {
+		c.client = client
+	}
+}
+
+// WithHTTPClient sets logger for wechat client.
+func WithLogger(logger Logger) ClientOption {
+	return func(c *wxclient) {
+		c.logger = logger
+	}
+}
+
+// WithHTTPClient sets debug mode for wechat client.
+func WithDebug() ClientOption {
+	return func(c *wxclient) {
+		c.debug = true
+	}
+}
+
 // ActionOption configures how we set up the action
 type ActionOption func(a *action)
 
-// WithQuery specifies the `query` to Action.
+// WithQuery sets query params for action.
 func WithQuery(key, value string) ActionOption {
 	return func(a *action) {
 		a.query.Set(key, value)
 	}
 }
 
-// WithBody specifies the `body` to Action.
+// WithBody sets post body for action.
 func WithBody(f func() ([]byte, error)) ActionOption {
 	return func(a *action) {
 		a.body = f
 	}
 }
 
-// WithWXML specifies the `wxml` to Action.
+// WithWXML sets post with xml for action.
 func WithWXML(f func(appid, mchid, nonce string) (WXML, error)) ActionOption {
 	return func(a *action) {
 		a.wxml = f
 	}
 }
 
-// WithUpload specifies the `uploadform` to Action.
+// WithUpload sets uploadform for action.
 func WithUpload(f func() (yiigo.UploadForm, error)) ActionOption {
 	return func(a *action) {
 		a.upload = true
@@ -34,14 +58,14 @@ func WithUpload(f func() (yiigo.UploadForm, error)) ActionOption {
 	}
 }
 
-// WithDecode specifies the `decode` to Action.
+// WithDecode sets response decode for action.
 func WithDecode(f func(resp []byte) error) ActionOption {
 	return func(a *action) {
 		a.decode = f
 	}
 }
 
-// WithTLS specifies the `tls` to Action.
+// WithTLS sets request with tls for action.
 func WithTLS() ActionOption {
 	return func(a *action) {
 		a.tls = true

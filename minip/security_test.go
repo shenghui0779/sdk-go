@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 )
@@ -27,7 +28,7 @@ func TestImageSecCheck(t *testing.T) {
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/wxa/img_sec_check?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", ImageSecCheck("../mock/test.jpg"))
 
@@ -54,7 +55,7 @@ func TestMediaCheckAsync(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/media_check_async?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsMediaCheckAsync{
 		MediaType: SecMediaImage,
@@ -86,7 +87,7 @@ func TestMsgSecCheck(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/msg_sec_check?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", MsgSecCheck("hello world!"))
 

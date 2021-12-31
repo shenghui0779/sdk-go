@@ -3,6 +3,7 @@ package mch
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,9 +18,7 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	assert.Equal(t, "wx2421b1c4370ec43b", mch.AppID())
 	assert.Equal(t, "10000100", mch.MchID())
@@ -28,9 +27,7 @@ func TestNew(t *testing.T) {
 
 // 涉及时间戳，签名会变化（已通过固定时间戳验证）
 // func TestAPPAPI(t *testing.T) {
-// 	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
-
-// 	assert.Nil(t, err)
+// 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
 // 	mch.nonce = func(size int) string {
 // 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
@@ -51,7 +48,7 @@ func TestNew(t *testing.T) {
 
 // 涉及时间戳，签名会变化（已通过固定时间戳验证）
 // func TestJSAPI(t *testing.T) {
-// 	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+// 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
 //  assert.Nil(t, err)
 
@@ -73,7 +70,7 @@ func TestNew(t *testing.T) {
 
 // 涉及时间戳，签名会变化（已通过固定时间戳验证）
 // func TestMinipRedpackJSAPI(t *testing.T) {
-// 	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+// 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
 // 	assert.Nil(t, err)
 
@@ -120,15 +117,13 @@ func TestDownloadBill(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/downloadbill", body, gomock.AssignableToTypeOf(yiigo.WithHTTPClose())).Return(resp, nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "21df7dc9cd8616b56919f20d9f679233"
 	}
-	mch.SetClient(client)
-	mch.SetTLSClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	b, err := mch.DownloadBill(context.TODO(), "20141110", BillTypeAll)
 
@@ -168,15 +163,13 @@ func TestDownloadFundFlow(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/downloadfundflow", body, gomock.AssignableToTypeOf(yiigo.WithHTTPClose())).Return(resp, nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "21df7dc9cd8616b56919f20d9f679233"
 	}
-	mch.SetClient(client)
-	mch.SetTLSClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	b, err := mch.DownloadFundFlow(context.TODO(), "20141110", AccountTypeBasic)
 
@@ -202,8 +195,6 @@ func TestBatchQueryComment(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	fmt.Println("[wxml]", string(body))
-
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`100
@@ -219,15 +210,13 @@ func TestBatchQueryComment(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/billcommentsp/batchquerycomment", body, gomock.AssignableToTypeOf(yiigo.WithHTTPClose())).Return(resp, nil)
 
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
-	mch.SetClient(client)
-	mch.SetTLSClient(client)
+	mch.SetClient(wx.WithHTTPClient(client))
+	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	b, err := mch.BatchQueryComment(context.TODO(), "20170724000000", "20170725000000", 0, 100)
 
@@ -239,9 +228,7 @@ func TestBatchQueryComment(t *testing.T) {
 }
 
 func TestSignWithMD5(t *testing.T) {
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	m := wx.WXML{
 		"appid":     "wx2421b1c4370ec43b",
@@ -257,9 +244,7 @@ func TestSignWithMD5(t *testing.T) {
 }
 
 func TestSignWithHMacSHA256(t *testing.T) {
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	m := wx.WXML{
 		"appid":     "wx2421b1c4370ec43b",
@@ -275,9 +260,7 @@ func TestSignWithHMacSHA256(t *testing.T) {
 }
 
 func TestVerifyWXMLResult(t *testing.T) {
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	m := wx.WXML{
 		"return_code": "SUCCESS",
@@ -295,9 +278,7 @@ func TestVerifyWXMLResult(t *testing.T) {
 }
 
 func TestDecryptWithAES256ECB(t *testing.T) {
-	mch, err := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", "../mock/p12test.p12")
-
-	assert.Nil(t, err)
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	info, err := mch.DecryptWithAES256ECB("4gS8kbcHysCW7bHqyEU0M4GTNkgJQP6/zKHbA/E3CvwLlNgCKUkGRy0OpONZjd4saggSnB6Fr7dHRYn6tvu8XDRU6t9IC3GuUKHs3SXmFKkm5cy3YR0oWIZFU4C5LV9LU7U3hwvUSZNx1QcFQXX9yZz68Wq8pwf/DeZ6iOXy/XRulylo75C7n0p3dMm/yJamZ44ir2iwWwEis3Tiif9Y6foLxrFA+fESQK1aH/OEZhIrJPIlnrtoxGJVJfoWAOYrC13a52BaR7CHKmNhAtw60n+XBUPLx5VzwpHKf3zZB1EpCngiVGcxmEAy3I59wotsScP4iaUeObWqPs7RYdQCiFQ9oRo4/c6bUWocW6HfOJGyWXj3VNfZtjTp1J6R05bP/1PCNV9FIMlt+owfcjTPO4pmRx0SpuKPy7j80APUCyC4g/0FU2ppbw/jN3faXAOV/1+Vl5vrDWxg2hiWm9JCttJ5kAHD/9XB6hfM0BH4iwf/Z/FZO+ECvO2A9buqnpCeOYWsOZNN1Z2Ow9kfJXhiDs/N0UICa2lodyl44nBrbP3amju/Zm6yyyFr74jl2GUsGO3PBrqfP1mbX96WiG09BcjQp1PAw40kfw32o7LW8ZT7DakPEGf0Khhuy+xbdusziU/CihrSEIUJP2qlK2/WrM3MtKE7qMqGBMDTG/n/BB1B82zfpNEh1py0CKTS+ezCKQp4IlRnMZhAMtyOfcKLbMEwOF1u3TdfNh+GSXPbEdydvKTcrMddQ5bbUosAT0d+dcPSPlM8Ckq6OPWJfyaySg8x1PM39psr2UqhJGFQ/kcDLzCYt1gVX+qjOdMC0v0IBG+YszRCIvJkNGues9wip94bkBWQeHdtuES+XZS9wIR0jwIA5G+mJJD3tRW/JpCXeIVgW84XStyaniaekKdo/Q6lkmNwtztmzB0Ub6ct/rQPMdTzN/abK9lKoSRhUP5Hq3yjxpWFegmV3TtECOaAtSj8cubVTONJL2m2vzF7RpOCXbPq7TuRyVqYF1fTBJH50z8YV7B5zZ5f1JU2tCMvRaIe1jZ0yyZLytG/dONZ+ee7rjV3lKvcHiHEASz1EtvM")
 
@@ -320,12 +301,21 @@ func TestDecryptWithAES256ECB(t *testing.T) {
 }
 
 var (
+	p12cert tls.Certificate
 	// rsa key
 	privateKey []byte
 	publicKey  []byte
 )
 
 func TestMain(m *testing.M) {
+	var err error
+
+	p12cert, _ = wx.LoadP12Cert("../mock/p12test.p12", "10000100")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	privateKey = []byte(`-----BEGIN RSA PRIVATE KEY-----
 MIIEogIBAAKCAQEAl1c+37GJSFSqbuHJ/wgeLzxLp7C2GYrjzVAnEF3xgjJVTltk
 Qzdu3u+fcB3c/dgHX/Zdv5fqVoOqvoOMk4N4zdGeaxN+Cm19c1gsxigNJDtm6Qno

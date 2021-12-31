@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 )
@@ -33,7 +34,7 @@ func TestInvokeService(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/servicemarket?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsServiceInvoke{
 		Service: "wx79ac3de8be320b71",
@@ -76,7 +77,7 @@ func TestSoterVerify(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/soter/verify_signature?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsSoterVerify{
 		OpenID:        "$openid",
@@ -114,7 +115,7 @@ func TestGetUserRiskRank(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/getuserriskrank?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsUserRisk{
 		AppID:        "APPID",

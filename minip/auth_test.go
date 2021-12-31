@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,7 +31,7 @@ func TestGetPaidUnionIDByTransactionID(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxa/getpaidunionid?access_token=ACCESS_TOKEN&openid=OPENID&transaction_id=TRANSACTION_ID", nil).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultPaidUnionID)
 
@@ -60,7 +61,7 @@ func TestGetPaidUnionIDByOutTradeNO(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxa/getpaidunionid?access_token=ACCESS_TOKEN&mch_id=MCH_ID&openid=OPENID&out_trade_no=OUT_TRADE_NO", nil).Return(resp, nil)
 
 	mp := New("APPID", "APPSECRET")
-	mp.SetClient(client)
+	mp.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultPaidUnionID)
 
