@@ -81,7 +81,7 @@ type ResultGridList struct {
 	GridList []*Grid `json:"grid_list"`
 }
 
-func GetGridList(params *ParamsGridList, result *ResultGridList) wx.Action {
+func ListGrid(params *ParamsGridList, result *ResultGridList) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGridList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

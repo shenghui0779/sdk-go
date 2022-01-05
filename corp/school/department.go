@@ -93,7 +93,7 @@ type ResultDepartmentList struct {
 	Departments []*Department `json:"departments"`
 }
 
-func GetDepartmentList(id int64, result *ResultDepartmentList) wx.Action {
+func ListDepartment(id int64, result *ResultDepartmentList) wx.Action {
 	options := []wx.ActionOption{
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

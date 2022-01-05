@@ -60,7 +60,7 @@ type ResultMeetingRoomList struct {
 	MeetingRoomList []*MeetingRoom `json:"meetingroom_list"`
 }
 
-func MeetingRoomList(params *ParamsMeetingRoomList, result *ResultMeetingRoomList) wx.Action {
+func ListMeetingRoom(params *ParamsMeetingRoomList, result *ResultMeetingRoomList) wx.Action {
 	return wx.NewPostAction(urls.CorpOAMeetingRoomList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

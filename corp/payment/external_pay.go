@@ -110,7 +110,7 @@ type PayerInfo struct {
 	Address string `json:"address"`
 }
 
-type ParamsBillListGet struct {
+type ParamsBillList struct {
 	StartTime   int64  `json:"start_time"`
 	EndTime     int64  `json:"end_time"`
 	PayeeUserID string `json:"payee_userid,omitempty"`
@@ -118,12 +118,12 @@ type ParamsBillListGet struct {
 	Limit       int    `json:"limit,omitempty"`
 }
 
-type ResultBillListGet struct {
+type ResultBillList struct {
 	NextCursor string      `json:"next_cursor"`
 	BillList   []*BillInfo `json:"bill_list"`
 }
 
-func GetBillList(params *ParamsBillListGet, result *ResultBillListGet) wx.Action {
+func GetBillList(params *ParamsBillList, result *ResultBillList) wx.Action {
 	return wx.NewPostAction(urls.CorpPaymentBillListGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

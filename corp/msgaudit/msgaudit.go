@@ -7,15 +7,15 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type ParamsPermitUserListGet struct {
+type ParamsPermitUserList struct {
 	Type int `json:"type"`
 }
 
-type ResultPermitUserListGet struct {
+type ResultPermitUserList struct {
 	IDs []string `json:"ids"`
 }
 
-func GetPermitUserList(params *ParamsPermitUserListGet, result *ResultPermitUserListGet) wx.Action {
+func ListPermitUser(params *ParamsPermitUserList, result *ResultPermitUserList) wx.Action {
 	return wx.NewPostAction(urls.CorpMsgAuditGetPermitUserList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

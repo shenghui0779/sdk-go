@@ -142,7 +142,7 @@ type ResultPatrolOrderList struct {
 	OrderList  []*PatrolOrder `json:"order_list"`
 }
 
-func GetPatrolOrderList(params *ParamsPatrolOrderList, result *ResultPatrolOrderList) wx.Action {
+func ListPatrolOrder(params *ParamsPatrolOrderList, result *ResultPatrolOrderList) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGetPatrolOrderList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
