@@ -144,6 +144,7 @@ const (
 type EventMessage struct {
 	XMLName    xml.Name `xml:"xml"`
 	ToUserName string   `xml:"ToUserName"`
+	AgentID    string   `xml:"AgentID"`
 	Encrypt    string   `xml:"Encrypt"`
 }
 
