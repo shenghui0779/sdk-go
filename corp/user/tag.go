@@ -4,35 +4,39 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/tidwall/gjson"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type Tag struct {
-	ID   int64  `json:"tagid"`
-	Name string `json:"tagname"`
+type ParamsTagCreate struct {
+	TagName string `json:"tagname"`
+}
+
+type ResultTagCreate struct {
+	TagID int64 `json:"tagid"`
 }
 
 // CreateTag 创建标签
-func CreateTag(data *Tag) wx.Action {
+func CreateTag(params *ParamsTagCreate, result *ResultTagCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpTagCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(data)
+			return json.Marshal(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			data.ID = gjson.GetBytes(resp, "tagid").Int()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-func UpdateTag(data *Tag) wx.Action {
+type ParamsTagUpdate struct {
+	TagID   int64  `json:"tagid"`
+	TagName string `json:"tagname"`
+}
+
+func UpdateTag(params *ParamsTagUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpTagUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(data)
+			return json.Marshal(params)
 		}),
 	)
 }
@@ -43,30 +47,34 @@ func DeleteTag(tagID int64) wx.Action {
 	)
 }
 
-type TagUser struct {
-	UserID string `json:"userid"`
-	Name   string `json:"name"`
-}
-
-type TagSpec struct {
+type Tag struct {
 	TagName   string     `json:"tagname"`
 	UserList  []*TagUser `json:"userlist"`
 	PartyList []int      `json:"partylist"`
 }
 
-func GetTag(dest *TagSpec, tagID int64) wx.Action {
+type TagUser struct {
+	UserID string `json:"userid"`
+	Name   string `json:"name"`
+}
+
+func GetTag(tagID int64, result *Tag) wx.Action {
 	return wx.NewGetAction(urls.CorpTagGet,
 		wx.WithQuery("tagid", strconv.FormatInt(tagID, 10)),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-func GetTagList(dest *[]*Tag) wx.Action {
+type ResultTagList struct {
+	TagList []*Tag `json:"taglist"`
+}
+
+func ListTag(result *ResultTagList) wx.Action {
 	return wx.NewGetAction(urls.CorpTagList,
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal([]byte(gjson.GetBytes(resp, "taglist").Raw), dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

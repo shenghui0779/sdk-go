@@ -103,7 +103,7 @@ func UpdateUser(params *ParamsUserUpdate) wx.Action {
 	)
 }
 
-type UserInfo struct {
+type User struct {
 	UserID           string           `json:"user_id"`
 	Name             string           `json:"name"`
 	Alias            string           `json:"alias,omitempty"`
@@ -129,7 +129,7 @@ type UserInfo struct {
 }
 
 // GetUser 读取成员
-func GetUser(userID string, result *UserInfo) wx.Action {
+func GetUser(userID string, result *User) wx.Action {
 	return wx.NewGetAction(urls.CorpUserGet,
 		wx.WithQuery("userid", userID),
 		wx.WithDecode(func(resp []byte) error {
@@ -178,8 +178,8 @@ type ResultUserSimipleList struct {
 	UserList []*UserSimple `json:"userlist"`
 }
 
-// GetUserSimpleList 获取部门成员
-func GetUserSimpleList(params *ParamsUserSimpleList, result *ResultUserSimipleList) wx.Action {
+// ListUserSimple 获取部门成员
+func ListUserSimple(params *ParamsUserSimpleList, result *ResultUserSimipleList) wx.Action {
 	return wx.NewGetAction(urls.CorpUserSimpleList,
 		wx.WithQuery("department_id", strconv.FormatInt(params.DepartmentID, 10)),
 		wx.WithQuery("fetch_child", strconv.Itoa(params.FetchChild)),
@@ -198,8 +198,8 @@ type ResultUserList struct {
 	UserList []*UserSimple `json:"userlist"`
 }
 
-// GetUserList 获取部门成员详情
-func GetUserList(params *ParamsUserList, result *ResultUserList) wx.Action {
+// ListUser 获取部门成员详情
+func ListUser(params *ParamsUserList, result *ResultUserList) wx.Action {
 	return wx.NewGetAction(urls.CorpUserList,
 		wx.WithQuery("department_id", strconv.FormatInt(params.DepartmentID, 10)),
 		wx.WithQuery("fetch_child", strconv.Itoa(params.FetchChild)),
