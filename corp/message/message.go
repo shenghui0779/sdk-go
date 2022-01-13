@@ -75,11 +75,11 @@ type MinipNoticeMessage struct {
 	ContentItem       map[string]string `json:"content_item"`
 }
 
-type ParamsMessageStaticsGet struct {
+type ParamsMessageStatics struct {
 	TimeType int `json:"time_type"`
 }
 
-type ResultMessageStaticsGet struct {
+type ResultMessageStatics struct {
 	Statics *MessageStatic `json:"statics"`
 }
 
@@ -89,7 +89,7 @@ type MessageStatic struct {
 	Count   int64  `json:"count"`
 }
 
-func GetMessageStatics(params *ParamsMessageStaticsGet, result *ResultMessageStaticsGet) wx.Action {
+func GetMessageStatics(params *ParamsMessageStatics, result *ResultMessageStatics) wx.Action {
 	return wx.NewPostAction(urls.CorpMessageStaticsGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

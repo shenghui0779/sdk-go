@@ -7,7 +7,7 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type ParamsUserBehaviorDataGet struct {
+type ParamsUserBehaviorData struct {
 	UserID    []string `json:"userid,omitempty"`
 	PartyID   []string `json:"partyid,omitempty"`
 	StartTime int64    `json:"start_time"`
@@ -25,11 +25,11 @@ type UserBehaviorData struct {
 	NewContactCnt       int     `json:"new_contact_cnt"`
 }
 
-type ResultUserBehaviorDataGet struct {
+type ResultUserBehaviorData struct {
 	BehaviorData []*UserBehaviorData `json:"behavior_data"`
 }
 
-func GetUserBehaviorData(params *ParamsUserBehaviorDataGet, result *ResultUserBehaviorDataGet) wx.Action {
+func GetUserBehaviorData(params *ParamsUserBehaviorData, result *ResultUserBehaviorData) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetUserBehaviorData,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

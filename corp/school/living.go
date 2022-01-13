@@ -7,18 +7,18 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type ParamsUserAllLivingIDGet struct {
+type ParamsUserAllLivingID struct {
 	UserID string `json:"userid"`
 	Cursor string `json:"cursor"`
 	Limit  int    `json:"limit"`
 }
 
-type ResultUserAllLivingIDGet struct {
+type ResultUserAllLivingID struct {
 	NextCursor   string   `json:"next_cursor"`
 	LivingIDList []string `json:"livingid_list"`
 }
 
-func GetUserAllLivingID(params *ParamsUserAllLivingIDGet, result *ResultUserAllLivingIDGet) wx.Action {
+func GetUserAllLivingID(params *ParamsUserAllLivingID, result *ResultUserAllLivingID) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolGetUserAllLivingID,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -46,11 +46,11 @@ type LivingRange struct {
 	GroupNames []string `json:"group_names"`
 }
 
-type ResultLivingInfoGet struct {
+type ResultLivingInfo struct {
 	LivingInfo *LivingInfo `json:"living_info"`
 }
 
-func GetLivingInfo(livingID string, result *ResultLivingInfoGet) wx.Action {
+func GetLivingInfo(livingID string, result *ResultLivingInfo) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolGetLivingInfo,
 		wx.WithQuery("livingid", livingID),
 		wx.WithDecode(func(resp []byte) error {
@@ -82,18 +82,18 @@ type LivingWatchStatInfo struct {
 	Visitors []*LivingVisitor      `json:"visitors"`
 }
 
-type ParamsLivingWatchStatGet struct {
+type ParamsLivingWatchStat struct {
 	LivingID string `json:"livingid"`
 	NextKey  string `json:"next_key"`
 }
 
-type ResultLivingWatchStatGet struct {
+type ResultLivingWatchStat struct {
 	Ending     int                  `json:"ending"`
 	NextKey    string               `json:"next_key"`
 	StatInfoes *LivingWatchStatInfo `json:"stat_infoes"`
 }
 
-func GetLivingWatchStat(params *ParamsLivingWatchStatGet, result *ResultLivingWatchStatGet) wx.Action {
+func GetLivingWatchStat(params *ParamsLivingWatchStat, result *ResultLivingWatchStat) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolGetLivingWatchStat,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -114,18 +114,18 @@ type LivingUnwatchStatInfo struct {
 	Students []*LivingUnwatchStudent `json:"students"`
 }
 
-type ParamsLivingUnwatchStatGet struct {
+type ParamsLivingUnwatchStat struct {
 	LivingID string `json:"livingid"`
 	NextKey  string `json:"next_key"`
 }
 
-type ResultLivingUnwatchStatGet struct {
+type ResultLivingUnwatchStat struct {
 	Ending   int                    `json:"ending"`
 	NextKey  string                 `json:"next_key"`
 	StatInfo *LivingUnwatchStatInfo `json:"stat_info"`
 }
 
-func GetLivingUnwatchStat(params *ParamsLivingUnwatchStatGet, result *ResultLivingUnwatchStatGet) wx.Action {
+func GetLivingUnwatchStat(params *ParamsLivingUnwatchStat, result *ResultLivingUnwatchStat) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolGetLivingUnwatchStat,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -140,7 +140,11 @@ type ParamsLivingReplayDataDelete struct {
 	LivingID string `json:"livingid"`
 }
 
-func DeleteLivingReplayData(params *ParamsLivingReplayDataDelete) wx.Action {
+func DeleteLivingReplayData(livingID string) wx.Action {
+	params := &ParamsLivingReplayDataDelete{
+		LivingID: livingID,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolDeleteLivingReplayData,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

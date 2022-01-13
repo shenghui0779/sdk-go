@@ -115,7 +115,7 @@ type MeetingRoomBookingSchedule struct {
 	Booker     string `json:"booker"`
 }
 
-type ParamsMeetingRoomBookingInfoGet struct {
+type ParamsMeetingRoomBookingInfo struct {
 	MeetingRoomID int64  `json:"meetingroom_id"`
 	StartTime     int64  `json:"start_time,omitempty"`
 	EndTime       int64  `json:"end_time,omitempty"`
@@ -124,11 +124,11 @@ type ParamsMeetingRoomBookingInfoGet struct {
 	Floor         string `json:"floor,omitempty"`
 }
 
-type ResultMeetingRoomBookingInfoGet struct {
+type ResultMeetingRoomBookingInfo struct {
 	BookingList []*MeetingRoomBookingInfo `json:"booking_list"`
 }
 
-func GetMeetingRoomBookingInfo(params *ParamsMeetingRoomBookingInfoGet, result *ResultMeetingRoomBookingInfoGet) wx.Action {
+func GetMeetingRoomBookingInfo(params *ParamsMeetingRoomBookingInfo, result *ResultMeetingRoomBookingInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetMeetingRoomBookingInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

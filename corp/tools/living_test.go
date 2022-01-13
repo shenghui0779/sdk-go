@@ -164,7 +164,7 @@ func TestGetLivingInfo(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetLivingWatchStatData(t *testing.T) {
+func TestGetLivingWatchStat(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,

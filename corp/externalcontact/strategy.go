@@ -90,17 +90,17 @@ type CustomerStrategyRange struct {
 	PartyID int64  `json:"partyid,omitempty"`
 }
 
-type ParamsCustomerStrategyRangeGet struct {
+type ParamsCustomerStrategyRange struct {
 	StrategyID int64  `json:"strategy_id"`
 	Cursor     string `json:"cursor,omitempty"`
 	Limit      int    `json:"limit,omitempty"`
 }
 
-type ResultCustomerStrategyRangeGet struct {
+type ResultCustomerStrategyRange struct {
 	Range []*CustomerStrategyRange `json:"range"`
 }
 
-func GetCustomerStrategyRange(params *ParamsCustomerStrategyRangeGet, result *ResultCustomerStrategyRangeGet) wx.Action {
+func GetCustomerStrategyRange(params *ParamsCustomerStrategyRange, result *ResultCustomerStrategyRange) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyGetRange,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -228,17 +228,17 @@ type MomentStrategyRange struct {
 	PartyID int64  `json:"partyid,omitempty"`
 }
 
-type ParamsMomentStrategyRangeGet struct {
+type ParamsMomentStrategyRange struct {
 	StrategyID int64  `json:"strategy_id"`
 	Cursor     string `json:"cursor,omitempty"`
 	Limit      int    `json:"limit,omitempty"`
 }
 
-type ResultMomentStrategyRangeGet struct {
+type ResultMomentStrategyRange struct {
 	Range []*MomentStrategyRange `json:"range"`
 }
 
-func GetMomentStrategyRange(params *ParamsMomentStrategyRangeGet, result *ResultMomentStrategyRangeGet) wx.Action {
+func GetMomentStrategyRange(params *ParamsMomentStrategyRange, result *ResultMomentStrategyRange) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyGetRange,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

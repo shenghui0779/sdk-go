@@ -80,16 +80,16 @@ type VacationItem struct {
 	Name []*DisplayText `json:"name"`
 }
 
-type ParamsTemplateDetailGet struct {
+type ParamsTemplateDetail struct {
 	TemplateID string `json:"template_id"`
 }
 
-type ResultTemplateDetailGet struct {
+type ResultTemplateDetail struct {
 	TemplateNames   []*DisplayText   `json:"template_names"`
 	TemplateContent *TemplateContent `json:"template_content"`
 }
 
-func GetTemplateDetail(params *ParamsTemplateDetailGet, result *ResultTemplateDetailGet) wx.Action {
+func GetTemplateDetail(params *ParamsTemplateDetail, result *ResultTemplateDetail) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetTemplateDetail,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

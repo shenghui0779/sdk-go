@@ -72,7 +72,7 @@ func CancelMeeting(params *ParamsMeetingCancel) wx.Action {
 	)
 }
 
-type ParamsUserMeetingIDGet struct {
+type ParamsUserMeetingID struct {
 	UserID    string `json:"userid"`
 	Cursor    string `json:"cursor,omitempty"`
 	BeginTime int64  `json:"begin_time,omitempty"`
@@ -80,11 +80,11 @@ type ParamsUserMeetingIDGet struct {
 	Limit     int    `json:"limit,omitempty"`
 }
 
-type ResultUserMeetingIDGet struct {
+type ResultUserMeetingID struct {
 	MeetingIDList []string `json:"meetingid_list"`
 }
 
-func GetUserMeetingID(params *ParamsUserMeetingIDGet, result *ResultUserMeetingIDGet) wx.Action {
+func GetUserMeetingID(params *ParamsUserMeetingID, result *ResultUserMeetingID) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsMeetingGetUserMeetingID,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -95,11 +95,11 @@ func GetUserMeetingID(params *ParamsUserMeetingIDGet, result *ResultUserMeetingI
 	)
 }
 
-type ParamsMeetingInfoGet struct {
+type ParamsMeetingInfo struct {
 	MeetingID string `json:"meetingid"`
 }
 
-type ResultMeetingInfoGet struct {
+type ResultMeetingInfo struct {
 	CreatorUserID          string            `json:"creator_userid"`
 	Title                  string            `json:"title"`
 	ReserveMeetingStart    int64             `json:"reserve_meeting_start"`
@@ -135,7 +135,7 @@ type MeetingDevice struct {
 	Status   int    `json:"status"`
 }
 
-func GetMeetingInfo(params *ParamsMeetingInfoGet, result *ResultMeetingInfoGet) wx.Action {
+func GetMeetingInfo(params *ParamsMeetingInfo, result *ResultMeetingInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsMeetingGetInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
