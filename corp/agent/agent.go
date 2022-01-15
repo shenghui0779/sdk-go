@@ -9,22 +9,23 @@ import (
 )
 
 type ResultAgentGet struct {
-	AgentID            int64           `json:"agentid"`
-	Name               string          `json:"name"`
-	SquareLogoURL      string          `json:"square_logo_url"`
-	Description        string          `json:"description"`
-	Close              int             `json:"close"`
-	RedirectDomain     string          `json:"redirect_domain"`
-	ReportLocationFlag int             `json:"report_location_flag"`
-	ISReportenter      int             `json:"is_reportenter"`
-	HomeURL            string          `json:"home_url"`
-	AllowUserInfos     *AllowUserInfos `json:"allow_userinfos"`
-	AllowPartys        *AllowPartys    `json:"allow_partys"`
-	AllowTags          *AllowTags      `json:"allow_tags"`
+	AgentID                 int64          `json:"agentid"`
+	Name                    string         `json:"name"`
+	SquareLogoURL           string         `json:"square_logo_url"`
+	Description             string         `json:"description"`
+	Close                   int            `json:"close"`
+	RedirectDomain          string         `json:"redirect_domain"`
+	ReportLocationFlag      int            `json:"report_location_flag"`
+	ISReportenter           int            `json:"is_reportenter"`
+	HomeURL                 string         `json:"home_url"`
+	CustomizedPublishStatus int            `json:"customized_publish_status"`
+	AllowUserInfos          AllowUserInfos `json:"allow_userinfos"`
+	AllowPartys             AllowPartys    `json:"allow_partys"`
+	AllowTags               AllowTags      `json:"allow_tags"`
 }
 
 type AllowUserInfos struct {
-	User []*AllowUser `json:"user"`
+	User []AllowUser `json:"user"`
 }
 
 type AllowUser struct {
@@ -32,7 +33,7 @@ type AllowUser struct {
 }
 
 type AllowPartys struct {
-	PartID []int64 `json:"partid"`
+	PartyID []int64 `json:"partyid"`
 }
 
 type AllowTags struct {
@@ -41,7 +42,7 @@ type AllowTags struct {
 
 func GetAgent(agentID int64, result *ResultAgentGet) wx.Action {
 	return wx.NewGetAction(urls.CorpAgentGet,
-		wx.WithQuery("agent_id", strconv.FormatInt(agentID, 10)),
+		wx.WithQuery("agentid", strconv.FormatInt(agentID, 10)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
@@ -68,12 +69,12 @@ func ListAgent(result *ResultAgentList) wx.Action {
 
 type ParamsAgentSet struct {
 	AgentID            int64  `json:"agentid"`
-	Name               string `json:"name"`
+	ReportLocationFlag int    `json:"report_location_flag"`
 	LogoMediaID        string `json:"logo_mediaid"`
+	Name               string `json:"name"`
 	Description        string `json:"description"`
 	RedirectDomain     string `json:"redirect_domain"`
-	ReportLocationFlag int    `json:"report_location_flag"`
-	ISReportenter      int    `json:"is_reportenter"`
+	ISReportEnter      int    `json:"isreportenter"`
 	HomeURL            string `json:"home_url"`
 }
 

@@ -14,11 +14,17 @@ type CorpInfo struct {
 }
 
 type ParamsAppShareInfoList struct {
-	AgentID int64 `json:"agentid"`
+	AgentID      int64  `json:"agentid"`
+	BusinessType int    `json:"business_type,omitempty"`
+	CorpID       string `json:"corpid,omitempty"`
+	Limit        int    `json:"limit,omitempty"`
+	Cursor       string `json:"cursor,omitempty"`
 }
 
 type ResultAppShareInfoList struct {
-	CorpList []*CorpInfo `json:"corp_list"`
+	Ending     int         `json:"ending"`
+	CorpList   []*CorpInfo `json:"corp_list"`
+	NextCursor string      `json:"next_cursor"`
 }
 
 func ListAppShareInfo(params *ParamsAppShareInfoList, result *ResultAppShareInfoList) wx.Action {
@@ -32,18 +38,19 @@ func ListAppShareInfo(params *ParamsAppShareInfoList, result *ResultAppShareInfo
 	)
 }
 
-type ParamsTokenGet struct {
-	CorpID  string `json:"corpid"`
-	AgentID int64  `json:"agentid"`
+type ParamsCorpAccessToken struct {
+	CorpID       string `json:"corpid"`
+	BusinessType int    `json:"business_type,omitempty"`
+	AgentID      int64  `json:"agentid"`
 }
 
-type ResultTokenGet struct {
+type ResultCorpAccessToken struct {
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int    `json:"expires_in"`
 }
 
-func GetToken(params *ParamsTokenGet, result *ResultTokenGet) wx.Action {
-	return wx.NewPostAction(urls.CorpGroupGetToken,
+func GetCorpAccessToken(params *ParamsCorpAccessToken, result *ResultCorpAccessToken) wx.Action {
+	return wx.NewPostAction(urls.CorpGroupGetAccessToken,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

@@ -2,6 +2,7 @@ package agent
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -29,8 +30,8 @@ type Button struct {
 	Name      string     `json:"name,omitempty"`       // 菜单标题，不超过16个字节，子菜单不超过60个字节
 	Key       string     `json:"key,omitempty"`        // click等点击类型必须，菜单KEY值，用于消息接口推送，不超过128字节
 	URL       string     `json:"url,omitempty"`        // view、miniprogram类型必须，网页 链接，用户点击菜单可打开链接，不超过1024字节。 type为miniprogram时，不支持小程序的老版本客户端将打开本url。
-	AppID     string     `json:"appid,omitempty"`      // miniprogram类型必须，小程序的appid（仅认证公众号可配置）
 	PagePath  string     `json:"pagepath,omitempty"`   // miniprogram类型必须，小程序的页面路径
+	AppID     string     `json:"appid,omitempty"`      // miniprogram类型必须，小程序的appid（仅认证公众号可配置）
 	SubButton []*Button  `json:"sub_button,omitempty"` // 二级菜单数组，个数应为1~5个
 }
 
@@ -39,8 +40,9 @@ type ParamsMenuCreate struct {
 }
 
 // CreateMenu 创建菜单
-func CreateMenu(params *ParamsMenuCreate) wx.Action {
+func CreateMenu(agentID int64, params *ParamsMenuCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpMenuCreate,
+		wx.WithQuery("agentid", strconv.FormatInt(agentID, 10)),
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -52,8 +54,9 @@ type ResultMenuGet struct {
 }
 
 // GetMenu 获取菜单
-func GetMenu(result *ResultMenuGet) wx.Action {
+func GetMenu(agentID int64, result *ResultMenuGet) wx.Action {
 	return wx.NewGetAction(urls.CorpMenuGet,
+		wx.WithQuery("agentid", strconv.FormatInt(agentID, 10)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
@@ -61,8 +64,10 @@ func GetMenu(result *ResultMenuGet) wx.Action {
 }
 
 // DeleteMenu 删除菜单
-func DeleteMenu(agentID string) wx.Action {
-	return wx.NewGetAction(urls.CorpMenuDelete)
+func DeleteMenu(agentID int64) wx.Action {
+	return wx.NewGetAction(urls.CorpMenuDelete,
+		wx.WithQuery("agentid", strconv.FormatInt(agentID, 10)),
+	)
 }
 
 // GroupButton 组合按钮
@@ -153,7 +158,7 @@ func ViewMinipButton(name, appid, pagepath string) *Button {
 	return &Button{
 		Type:     ButtonViewMinip,
 		Name:     name,
-		AppID:    appid,
 		PagePath: pagepath,
+		AppID:    appid,
 	}
 }

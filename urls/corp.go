@@ -269,7 +269,7 @@ const (
 // cropgroup
 const (
 	CorpGroupListAppShareInfo     = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/list_app_share_info"
-	CorpGroupGetToken             = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/gettoken"
+	CorpGroupGetAccessToken       = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/gettoken"
 	CorpGroupMinipTransferSession = "https://qyapi.weixin.qq.com/cgi-bin/miniprogram/transfer_session"
 )
 
