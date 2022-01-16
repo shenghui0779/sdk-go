@@ -8,8 +8,8 @@ import (
 )
 
 type ParamsCustomerStrategyList struct {
-	Cursor string `json:"cursor"`
-	Limit  int    `json:"limit"`
+	Cursor string `json:"cursor,omitempty"`
+	Limit  int    `json:"limit,omitempty"`
 }
 
 type ResultCustomerStrategyList struct {
@@ -73,7 +73,11 @@ type ResultCustomerStrategyGet struct {
 	Strategy *CustomerStrategy `json:"strategy"`
 }
 
-func GetCustomerStrategy(params *ParamsCustomerStrategyGet, result *ResultCustomerStrategyGet) wx.Action {
+func GetCustomerStrategy(strategyID int64, result *ResultCustomerStrategyGet) wx.Action {
+	params := &ParamsCustomerStrategyGet{
+		StrategyID: strategyID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -155,7 +159,11 @@ type ParamsCustomerStrategyDelete struct {
 	StrategyID int64 `json:"strategy_id"`
 }
 
-func DeleteCustomerStrategy(params *ParamsCustomerStrategyDelete) wx.Action {
+func DeleteCustomerStrategy(strategyID int64) wx.Action {
+	params := &ParamsCustomerStrategyDelete{
+		StrategyID: strategyID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

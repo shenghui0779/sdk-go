@@ -41,6 +41,7 @@ type ContactWay struct {
 	Remark        string       `json:"remark"`
 	SkipVerify    bool         `json:"skip_verify"`
 	State         string       `json:"state"`
+	QRCode        string       `json:"qr_code"`
 	User          []string     `json:"user"`
 	Party         []int64      `json:"party"`
 	IsTemp        bool         `json:"is_temp"`
@@ -51,10 +52,10 @@ type ContactWay struct {
 }
 
 type Conclusions struct {
-	Text        *TextConclusion  `json:"text,omitempty"`
-	Image       *ImageConclusion `json:"image,omitempty"`
-	Link        *LinkConclusion  `json:"link,omitempty"`
-	MiniProgram *MinipConclusion `json:"mini_program,omitempty"`
+	Text  *TextConclusion  `json:"text,omitempty"`
+	Image *ImageConclusion `json:"image,omitempty"`
+	Link  *LinkConclusion  `json:"link,omitempty"`
+	Minip *MinipConclusion `json:"miniprogram,omitempty"`
 }
 
 type TextConclusion struct {
@@ -113,15 +114,12 @@ func AddContactWay(params *ParamsContactWayAdd, result *ResultContactWayAdd) wx.
 
 type ParamsContactWayUpdate struct {
 	ConfigID      string       `json:"config_id"`
-	Type          ContactType  `json:"type,omitempty"`
-	Scene         ContactScene `json:"scene,omitempty"`
-	Style         int          `json:"style,omitempty"`
 	Remark        string       `json:"remark,omitempty"`
 	SkipVerify    bool         `json:"skip_verify,omitempty"`
+	Style         int          `json:"style,omitempty"`
 	State         string       `json:"state,omitempty"`
 	User          []string     `json:"user,omitempty"`
 	Party         []int64      `json:"party,omitempty"`
-	IsTemp        bool         `json:"is_temp,omitempty"`
 	ExpiresIn     int          `json:"expires_in,omitempty"`
 	ChatExpiresIn int          `json:"chat_expires_in,omitempty"`
 	UnionID       string       `json:"unionid,omitempty"`
@@ -144,7 +142,11 @@ type ResultContactWayGet struct {
 	ContactWay *ContactWay `json:"contact_way"`
 }
 
-func GetContactWay(params *ParamsContactWayGet, result *ResultContactWayGet) wx.Action {
+func GetContactWay(configID string, result *ResultContactWayGet) wx.Action {
+	params := &ParamsContactWayGet{
+		ConfigID: configID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactWayGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -186,7 +188,11 @@ type ParamsContactWayDelete struct {
 	ConfigID string `json:"config_id"`
 }
 
-func DeleteContactWay(params *ParamsContactWayDelete) wx.Action {
+func DeleteContactWay(configID string) wx.Action {
+	params := &ParamsContactWayDelete{
+		ConfigID: configID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactWayDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

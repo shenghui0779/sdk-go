@@ -21,9 +21,14 @@ type ExternalContact struct {
 }
 
 type ExternalProfile struct {
-	ExternalCorpName string  `json:"external_corp_name"`
-	WechatChannels   string  `json:"wechat_channels"`
-	ExternalAttr     []*Attr `json:"external_attr"`
+	ExternalCorpName string          `json:"external_corp_name"`
+	WechatChannels   *WechatChannels `json:"wechat_channels"`
+	ExternalAttr     []*Attr         `json:"external_attr"`
+}
+
+type WechatChannels struct {
+	Nickname string `json:"nickname"`
+	Status   int    `json:"status"`
 }
 
 type ExtAttr struct {
@@ -61,6 +66,7 @@ type FollowInfo struct {
 	TagID          []string `json:"tag_id"`
 	RemarkCorpName string   `json:"remark_corp_name"`
 	RemarkMobiles  []string `json:"remark_mobiles"`
+	State          string   `json:"state"`
 	OperUserID     string   `json:"oper_userid"`
 	AddWay         int      `json:"add_way"`
 }
@@ -79,10 +85,10 @@ type FollowUser struct {
 }
 
 type FollowTag struct {
-	TagID     string
-	TagName   string
-	Type      int
 	GroupName string
+	TagName   string
+	TagID     string
+	Type      int
 }
 
 type ResultCustomerList struct {

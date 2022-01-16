@@ -32,14 +32,14 @@ func TestUploadAttachment(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/upload_attachment?access_token=accesstoken001&media_type=TYPE&attachment_type=1", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsAttachmentUpload{
 		MediaType:      MediaImage,
-		AttachmentType: 1,
+		AttachmentType: AttachmentMoment,
 		Path:           "../mock/test.jpg",
 	}
 	result := new(ResultAttachmentUpload)
@@ -48,7 +48,7 @@ func TestUploadAttachment(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultAttachmentUpload{
-		Type:      "image",
+		Type:      MediaImage,
 		MediaID:   "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
 		CreatedAt: 1380000000,
 	}, result)
@@ -71,15 +71,16 @@ func TestUploadAttachmentByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/upload_attachment?access_token=accesstoken001&media_type=TYPE&attachment_type=1", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsAttachmentUploadByURL{
-		MediaType: MediaImage,
-		Filename:  "test.png",
-		URL:       "https://golang.google.cn/doc/gopher/pkg.png",
+		MediaType:      MediaImage,
+		AttachmentType: AttachmentMoment,
+		Filename:       "test.png",
+		URL:            "https://golang.google.cn/doc/gopher/pkg.png",
 	}
 	result := new(ResultAttachmentUpload)
 
@@ -87,7 +88,7 @@ func TestUploadAttachmentByURL(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultAttachmentUpload{
-		Type:      "image",
+		Type:      MediaImage,
 		MediaID:   "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
 		CreatedAt: 1380000000,
 	}, result)

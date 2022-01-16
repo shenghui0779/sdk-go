@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
+	"strconv"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -15,10 +16,15 @@ type MediaType string
 
 const (
 	MediaImage MediaType = "image"
-	MediaLink  MediaType = "link"
-	MediaMinip MediaType = "miniprogram"
 	MediaVideo MediaType = "video"
 	MediaFile  MediaType = "file"
+)
+
+type AttachmentType int
+
+const (
+	AttachmentMoment       AttachmentType = 1 // 朋友圈
+	AttachmentProductAlbum AttachmentType = 2 // 商品相册
 )
 
 type ResultAttachmentUpload struct {
@@ -28,16 +34,17 @@ type ResultAttachmentUpload struct {
 }
 
 type ParamsAttachmentUpload struct {
-	MediaType      MediaType
-	AttachmentType int
-	Path           string
+	MediaType      MediaType      `json:"media_type"`
+	AttachmentType AttachmentType `json:"attachment_type"`
+	Path           string         `json:"path"`
 }
 
 func UploadAttachment(params *ParamsAttachmentUpload, result *ResultAttachmentUpload) wx.Action {
 	_, filename := filepath.Split(params.Path)
 
-	return wx.NewPostAction(urls.OffiaMediaUpload,
-		wx.WithQuery("type", string(params.MediaType)),
+	return wx.NewPostAction(urls.CorpExternalContactUploadAttachment,
+		wx.WithQuery("media_type", string(params.MediaType)),
+		wx.WithQuery("attachment_type", strconv.Itoa(int(params.AttachmentType))),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(params.Path))
 
@@ -62,16 +69,17 @@ func UploadAttachment(params *ParamsAttachmentUpload, result *ResultAttachmentUp
 }
 
 type ParamsAttachmentUploadByURL struct {
-	MediaType      MediaType
-	AttachmentType int
-	Filename       string
-	URL            string
+	MediaType      MediaType      `json:"media_type"`
+	AttachmentType AttachmentType `json:"attachment_type"`
+	Filename       string         `json:"filename"`
+	URL            string         `json:"url"`
 }
 
 // UploadAttachmentByURL 上传附件资源
 func UploadAttachmentByURL(params *ParamsAttachmentUploadByURL, result *ResultAttachmentUpload) wx.Action {
 	return wx.NewPostAction(urls.OffiaMediaUpload,
-		wx.WithQuery("type", string(params.MediaType)),
+		wx.WithQuery("media_type", string(params.MediaType)),
+		wx.WithQuery("attachment_type", strconv.Itoa(int(params.AttachmentType))),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
 			resp, err := yiigo.HTTPGet(context.Background(), params.URL)
 
