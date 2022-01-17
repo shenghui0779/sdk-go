@@ -34,10 +34,15 @@ func TransferCustomer(params *ParamsCustomerTranster, result *ResultCustomerTran
 	)
 }
 
-type ParamsTransferResultGet struct {
+type ParamsTransferResult struct {
 	HandoverUserID string `json:"handover_userid"`
 	TakeoverUserID string `json:"takeover_userid"`
 	Cursor         string `json:"cursor,omitempty"`
+}
+
+type ResultTransferResult struct {
+	Customer   []*TransferResult `json:"customer"`
+	NextCursor string            `json:"next_cursor"`
 }
 
 type TransferResult struct {
@@ -46,12 +51,7 @@ type TransferResult struct {
 	TakeoverTime   int64  `json:"takeover_time"`
 }
 
-type ResultTransferResultGet struct {
-	Customer   []*TransferResult `json:"customer"`
-	NextCursor string            `json:"next_cursor"`
-}
-
-func GetTransferResult(params *ParamsTransferResultGet, result *ResultTransferResultGet) wx.Action {
+func GetTransferResult(params *ParamsTransferResult, result *ResultTransferResult) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactTransferResult,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

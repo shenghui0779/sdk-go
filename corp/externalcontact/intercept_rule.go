@@ -17,7 +17,7 @@ type RuleApplicableRange struct {
 }
 
 type InterceptRule struct {
-	RuleID          int64                `json:"rule_id"`
+	RuleID          string               `json:"rule_id"`
 	RuleName        string               `json:"rule_name"`
 	WordList        []string             `json:"word_list"`
 	ExtraRule       *ExtraRule           `json:"extra_rule"`
@@ -34,7 +34,7 @@ type ParamsInterceptRuleAdd struct {
 }
 
 type ResultInterceptRuleAdd struct {
-	RuleID int64 `json:"rule_id"`
+	RuleID string `json:"rule_id"`
 }
 
 func AddInterceptRule(params *ParamsInterceptRuleAdd, result *ResultInterceptRuleAdd) wx.Action {
@@ -49,7 +49,7 @@ func AddInterceptRule(params *ParamsInterceptRuleAdd, result *ResultInterceptRul
 }
 
 type ParamsInterceptRuleUpdate struct {
-	RuleID                int64                `json:"rule_id"`
+	RuleID                string               `json:"rule_id"`
 	RuleName              string               `json:"rule_name,omitempty"`
 	WordList              []string             `json:"word_list,omitempty"`
 	ExtraRule             *ExtraRule           `json:"extra_rule,omitempty"`
@@ -67,7 +67,7 @@ func UpdateInterceptRule(params *ParamsInterceptRuleUpdate) wx.Action {
 }
 
 type RuleListData struct {
-	RuleID     int64  `json:"rule_id"`
+	RuleID     string `json:"rule_id"`
 	RuleName   string `json:"rule_name"`
 	CreateTime int64  `json:"create_time"`
 }
@@ -85,14 +85,18 @@ func ListInterceptRule(result *ResultInterceptRuleList) wx.Action {
 }
 
 type ParamsInterceptRuleGet struct {
-	RuleID int64 `json:"rule_id"`
+	RuleID string `json:"rule_id"`
 }
 
 type ResultInterceptRuleGet struct {
 	Rule *InterceptRule `json:"rule"`
 }
 
-func GetInterceptRule(params *ParamsInterceptRuleGet, result *ResultInterceptRuleGet) wx.Action {
+func GetInterceptRule(ruleID string, result *ResultInterceptRuleGet) wx.Action {
+	params := &ParamsInterceptRuleGet{
+		RuleID: ruleID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactInterceptRuleGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -104,10 +108,14 @@ func GetInterceptRule(params *ParamsInterceptRuleGet, result *ResultInterceptRul
 }
 
 type ParamsInterceptRuleDelete struct {
-	RuleID int64 `json:"rule_id"`
+	RuleID string `json:"rule_id"`
 }
 
-func DeleteInterceptRule(params *ParamsInterceptRuleDelete) wx.Action {
+func DeleteInterceptRule(ruleID string) wx.Action {
+	params := &ParamsInterceptRuleDelete{
+		RuleID: ruleID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactInterceptRuleDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

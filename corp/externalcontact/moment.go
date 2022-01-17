@@ -74,6 +74,14 @@ func AddMomentTask(params *ParamsMomentTaskAdd, result *ResultMomentTaskAdd) wx.
 	)
 }
 
+type MomentTaskResult struct {
+	ErrCode                    int                               `json:"errcode"`
+	ErrMsg                     string                            `json:"errmsg"`
+	MomentID                   string                            `json:"moment_id"`
+	InvalidSenderList          *MomentInvalidSenderList          `json:"invalid_sender_list"`
+	InvalidExternalContactList *MomentInvalidExternalContactList `json:"invalid_external_contact_list"`
+}
+
 type MomentInvalidSenderList struct {
 	UserList      []string `json:"user_list"`
 	DeparmentList []int64  `json:"deparment_list"`
@@ -83,21 +91,13 @@ type MomentInvalidExternalContactList struct {
 	TagList []string `json:"tag_list"`
 }
 
-type MomentTaskResult struct {
-	ErrCode                    int                               `json:"errcode"`
-	ErrMsg                     string                            `json:"errmsg"`
-	MomentID                   string                            `json:"moment_id"`
-	InvalidSenderList          *MomentInvalidSenderList          `json:"invalid_sender_list"`
-	InvalidExternalContactList *MomentInvalidExternalContactList `json:"invalid_external_contact_list"`
-}
-
-type ResultMomentTaskResultGet struct {
+type ResultMomentTaskResult struct {
 	Status int               `json:"status"`
 	Type   string            `json:"type"`
 	Result *MomentTaskResult `json:"result"`
 }
 
-func GetMomentTaskResult(jobID string, result *ResultMomentTaskResultGet) wx.Action {
+func GetMomentTaskResult(jobID string, result *ResultMomentTaskResult) wx.Action {
 	return wx.NewGetAction(urls.CorpExternalContactGetMomentTaskResult,
 		wx.WithQuery("jobid", jobID),
 		wx.WithDecode(func(resp []byte) error {
@@ -150,14 +150,14 @@ type ParamsMomentTaskGet struct {
 	Limit    int    `json:"limit,omitempty"`
 }
 
-type MomentTaskListData struct {
+type MomentTask struct {
 	UserID        string `json:"userid"`
 	PublishStatus int    `json:"publish_status"`
 }
 
 type ResultMomentTaskGet struct {
-	NextCursor string                `json:"next_cursor"`
-	TaskList   []*MomentTaskListData `json:"task_list"`
+	NextCursor string        `json:"next_cursor"`
+	TaskList   []*MomentTask `json:"task_list"`
 }
 
 func GetMomentTask(params *ParamsMomentTaskGet, result *ResultMomentTaskGet) wx.Action {
@@ -199,23 +199,23 @@ func ListMomentCustomer(params *ParamsMomentCustomerList, result *ResultMomentCu
 	)
 }
 
-type ParamsMomentSendResultGet struct {
+type ParamsMomentSendResult struct {
 	MomentID string `json:"moment_id"`
 	UserID   string `json:"user_id"`
 	Cursor   string `json:"cursor,omitempty"`
 	Limit    int    `json:"limit,omitempty"`
 }
 
-type MomentSendCustomer struct {
-	ExternalUserID string `json:"external_userid"`
-}
-
-type ResultMomentSendResultGet struct {
+type ResultMomentSendResult struct {
 	NextCursor   string                `json:"next_cursor"`
 	CustomerList []*MomentSendCustomer `json:"customer_list"`
 }
 
-func GetMomentSendResult(params *ParamsMomentSendResultGet, result *ResultMomentSendResultGet) wx.Action {
+type MomentSendCustomer struct {
+	ExternalUserID string `json:"external_userid"`
+}
+
+func GetMomentSendResult(params *ParamsMomentSendResult, result *ResultMomentSendResult) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentSentResult,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -226,7 +226,7 @@ func GetMomentSendResult(params *ParamsMomentSendResultGet, result *ResultMoment
 	)
 }
 
-type ParamsMomentCommentsGet struct {
+type ParamsMomentComments struct {
 	MomentID string `json:"moment_id"`
 	UserID   string `json:"user_id"`
 	Cursor   string `json:"cursor,omitempty"`
@@ -245,12 +245,12 @@ type MomentLikeData struct {
 	CreateTime     int64  `json:"create_time"`
 }
 
-type ResultMomentCommentsGet struct {
+type ResultMomentComments struct {
 	CommentList []*MomentCommentData `json:"comment_list"`
 	LikeList    []*MomentLikeData    `json:"like_list"`
 }
 
-func GetMomentComments(params *ParamsMomentCommentsGet, result *ResultMomentCommentsGet) wx.Action {
+func GetMomentComments(params *ParamsMomentComments, result *ResultMomentComments) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentComments,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

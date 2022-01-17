@@ -96,7 +96,11 @@ type ResultOpenGIDToChatID struct {
 	ChatID string `json:"chat_id"`
 }
 
-func OpenGIDToChatID(params *ParamsOpenGIDToChatID, result *ResultOpenGIDToChatID) wx.Action {
+func OpenGIDToChatID(opengid string, result *ResultOpenGIDToChatID) wx.Action {
+	params := &ParamsOpenGIDToChatID{
+		OpenGID: opengid,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactOpenGIDToChatID,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

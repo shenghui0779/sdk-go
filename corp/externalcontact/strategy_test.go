@@ -384,12 +384,21 @@ func TestDeleteCustomerStrategy(t *testing.T) {
 }
 
 func TestListMomentStrategy(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"cursor":"CURSOR","limit":1000}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
 	"errcode": 0,
-	"errmsg": "ok"
+	"errmsg": "ok",
+	"strategy": [
+		{
+			"strategy_id": 1
+		},
+		{
+			"strategy_id": 2
+		}
+	],
+	"next_cursor": "NEXT_CURSOR"
 }`))),
 	}
 
@@ -398,23 +407,56 @@ func TestListMomentStrategy(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	params := &ParamsMomentStrategyList{
+		Cursor: "CURSOR",
+		Limit:  1000,
+	}
+
+	result := new(ResultMomentStrategyList)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListMomentStrategy(params, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultMomentStrategyList{
+		Strategy: []*MomentStrategyListData{
+			{
+				StrategyID: 1,
+			},
+			{
+				StrategyID: 2,
+			},
+		},
+		NextCursor: "NEXT_CURSOR",
+	}, result)
 }
 
 func TestGetMomentStrategy(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"strategy_id":1}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
 	"errcode": 0,
-	"errmsg": "ok"
+	"errmsg": "ok",
+	"strategy": {
+		"strategy_id": 1,
+		"parent_id": 0,
+		"strategy_name": "NAME",
+		"create_time": 1557838797,
+		"admin_list": [
+			"zhangsan",
+			"lisi"
+		],
+		"privilege": {
+			"view_moment_list": true,
+			"send_moment": true,
+			"manage_moment_cover_and_sign": true
+		}
+	}
 }`))),
 	}
 
@@ -423,23 +465,50 @@ func TestGetMomentStrategy(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultMomentStrategyGet)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentStrategy(1, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultMomentStrategyGet{
+		Strategy: &MomentStrategy{
+			StrategyID:   1,
+			ParentID:     0,
+			StrategyName: "NAME",
+			CreateTime:   1557838797,
+			AdminList:    []string{"zhangsan", "lisi"},
+			Privilege: &MomentStrategyPrivilege{
+				ViewMomentList:           true,
+				SendMoment:               true,
+				ManageMomentCoverAndSign: true,
+			},
+		},
+	}, result)
 }
 
 func TestGetMomentStrategyRange(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"strategy_id":1,"cursor":"CURSOR","limit":1000}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
 	"errcode": 0,
-	"errmsg": "ok"
+	"errmsg": "ok",
+	"range": [
+		{
+			"type": 1,
+			"userid": "zhangsan"
+		},
+		{
+			"type": 2,
+			"partyid": 1
+		}
+	],
+	"next_cursor": "NEXT_CURSOR"
 }`))),
 	}
 
@@ -448,23 +517,44 @@ func TestGetMomentStrategyRange(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/get_range?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	params := &ParamsMomentStrategyRange{
+		StrategyID: 1,
+		Cursor:     "CURSOR",
+		Limit:      1000,
+	}
+
+	result := new(ResultMomentStrategyRange)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentStrategyRange(params, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultMomentStrategyRange{
+		Range: []*MomentStrategyRange{
+			{
+				Type:   1,
+				UserID: "zhangsan",
+			},
+			{
+				Type:    2,
+				PartyID: 1,
+			},
+		},
+	}, result)
 }
 
 func TestCreateMomentStrategy(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"parent_id":0,"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"send_moment":true,"view_moment_list":true,"manage_moment_cover_and_sign":true},"range":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}]}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
 	"errcode": 0,
-	"errmsg": "ok"
+	"errmsg": "ok",
+	"strategy_id": 1
 }`))),
 	}
 
@@ -473,18 +563,44 @@ func TestCreateMomentStrategy(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	params := &ParamsMomentStrategyCreate{
+		ParentID:     0,
+		StrategyName: "NAME",
+		AdminList:    []string{"zhangsan", "lisi"},
+		Privilege: &MomentStrategyPrivilege{
+			ViewMomentList:           true,
+			SendMoment:               true,
+			ManageMomentCoverAndSign: true,
+		},
+		Range: []*MomentStrategyRange{
+			{
+				Type:   1,
+				UserID: "zhangsan",
+			},
+			{
+				Type:    2,
+				PartyID: 1,
+			},
+		},
+	}
+
+	result := new(ResultMomentStrategyCreate)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", CreateMomentStrategy(params, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultMomentStrategyCreate{
+		StrategyID: 1,
+	}, result)
 }
 
 func TestEditMomentStrategy(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"strategy_id":1,"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"view_moment_list":true,"send_moment":true,"manage_moment_cover_and_sign":true},"range_add":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}],"range_del":[{"type":1,"userid":"lisi"},{"type":2,"partyid":2}]}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -498,18 +614,49 @@ func TestEditMomentStrategy(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/edit?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	params := &ParamsMomentStrategyEdit{
+		StrategyID:   1,
+		StrategyName: "NAME",
+		AdminList:    []string{"zhangsan", "lisi"},
+		Privilege: &MomentStrategyPrivilege{
+			ViewMomentList:           true,
+			SendMoment:               true,
+			ManageMomentCoverAndSign: true,
+		},
+		RangeAdd: []*MomentStrategyRange{
+			{
+				Type:   1,
+				UserID: "zhangsan",
+			},
+			{
+				Type:    2,
+				PartyID: 1,
+			},
+		},
+		RangeDel: []*MomentStrategyRange{
+			{
+				Type:   1,
+				UserID: "lisi",
+			},
+			{
+				Type:    2,
+				PartyID: 2,
+			},
+		},
+	}
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", EditMomentStrategy(params))
 
 	assert.Nil(t, err)
 }
 
 func TestDeleteMomentStrategy(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"strategy_id":1}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -523,12 +670,12 @@ func TestDeleteMomentStrategy(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/del?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteMomentStrategy(1))
 
 	assert.Nil(t, err)
 }

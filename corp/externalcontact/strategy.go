@@ -219,7 +219,11 @@ type ResultMomentStrategyGet struct {
 	Strategy *MomentStrategy `json:"strategy"`
 }
 
-func GetMomentStrategy(params *ParamsMomentStrategyGet, result *ResultMomentStrategyGet) wx.Action {
+func GetMomentStrategy(strategyID int64, result *ResultMomentStrategyGet) wx.Action {
+	params := &ParamsMomentStrategyGet{
+		StrategyID: strategyID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -301,7 +305,11 @@ type ParamsMomentStrategyDelete struct {
 	StrategyID int64 `json:"strategy_id"`
 }
 
-func DeleteMomentStrategy(params *ParamsMomentStrategyDelete) wx.Action {
+func DeleteMomentStrategy(strategyID int64) wx.Action {
+	params := &ParamsMomentStrategyDelete{
+		StrategyID: strategyID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
