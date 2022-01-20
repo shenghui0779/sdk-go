@@ -7,9 +7,10 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/shenghui0779/yiigo"
+
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/shenghui0779/yiigo"
 )
 
 type MediaType string

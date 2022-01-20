@@ -8,11 +8,12 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestAddMsgTemplate(t *testing.T) {
@@ -43,20 +44,20 @@ func TestAddMsgTemplate(t *testing.T) {
 		ChatType:       "single",
 		ExternalUserID: []string{"woAJ2GCAAAXtWyujaWJHDDGi0mACAAAA", "wmqfasd1e1927831123109rBAAAA"},
 		Sender:         "zhangsan",
-		Text: &Text{
+		Text: &GroupText{
 			Content: "文本消息内容",
 		},
 		Attachments: []*MsgAttachment{
 			{
 				MsgType: event.MsgImage,
-				Image: &Image{
+				Image: &GroupImage{
 					MediaID: "MEDIA_ID",
 					PicURL:  "http://p.qpic.cn/pic_wework/3474110808/7a6344sdadfwehe42060/0",
 				},
 			},
 			{
 				MsgType: event.MsgLink,
-				Link: &Link{
+				Link: &GroupLink{
 					Title:  "消息标题",
 					PicURL: "https://example.pic.com/path",
 					Desc:   "消息描述",
@@ -65,7 +66,7 @@ func TestAddMsgTemplate(t *testing.T) {
 			},
 			{
 				MsgType: event.MsgMinip,
-				Minip: &Minip{
+				Minip: &GroupMinip{
 					Title:      "消息标题",
 					PicMediaID: "MEDIA_ID",
 					AppID:      "wx8bd80126147dfAAA",
@@ -74,13 +75,13 @@ func TestAddMsgTemplate(t *testing.T) {
 			},
 			{
 				MsgType: event.MsgVideo,
-				Video: &Video{
+				Video: &GroupVideo{
 					MediaID: "MEDIA_ID",
 				},
 			},
 			{
 				MsgType: event.MsgFile,
-				File: &File{
+				File: &GroupFile{
 					MediaID: "MEDIA_ID",
 				},
 			},
@@ -141,20 +142,20 @@ func TestListGroupMsg(t *testing.T) {
 				Creator:    "xxxx",
 				CreateTime: "xxxx",
 				CreateType: 1,
-				Text: &Text{
+				Text: &GroupText{
 					Content: "文本消息内容",
 				},
 				Attachments: []*MsgAttachment{
 					{
 						MsgType: event.MsgImage,
-						Image: &Image{
+						Image: &GroupImage{
 							MediaID: "MEDIA_ID",
 							PicURL:  "http://p.qpic.cn/pic_wework/3474110808/7a6344sdadfwehe42060/0",
 						},
 					},
 					{
 						MsgType: event.MsgLink,
-						Link: &Link{
+						Link: &GroupLink{
 							Title:  "消息标题",
 							PicURL: "https://example.pic.com/path",
 							Desc:   "消息描述",
@@ -163,7 +164,7 @@ func TestListGroupMsg(t *testing.T) {
 					},
 					{
 						MsgType: event.MsgMinip,
-						Minip: &Minip{
+						Minip: &GroupMinip{
 							Title:      "消息标题",
 							PicMediaID: "MEDIA_ID",
 							AppID:      "wx8bd80126147dfAAA",
@@ -172,13 +173,13 @@ func TestListGroupMsg(t *testing.T) {
 					},
 					{
 						MsgType: event.MsgVideo,
-						Video: &Video{
+						Video: &GroupVideo{
 							MediaID: "MEDIA_ID",
 						},
 					},
 					{
 						MsgType: event.MsgFile,
-						File: &File{
+						File: &GroupFile{
 							MediaID: "MEDIA_ID",
 						},
 					},
@@ -317,20 +318,20 @@ func TestSendWelcomeMsg(t *testing.T) {
 
 	params := &ParamsWelcomeMsgSend{
 		WelcomeCode: "CALLBACK_CODE",
-		Text: &Text{
+		Text: &GroupText{
 			Content: "文本消息内容",
 		},
 		Attachments: []*MsgAttachment{
 			{
 				MsgType: event.MsgImage,
-				Image: &Image{
+				Image: &GroupImage{
 					MediaID: "MEDIA_ID",
 					PicURL:  "http://p.qpic.cn/pic_wework/3474110808/7a6344sdadfwehe42060/0",
 				},
 			},
 			{
 				MsgType: event.MsgLink,
-				Link: &Link{
+				Link: &GroupLink{
 					Title:  "消息标题",
 					PicURL: "https://example.pic.com/path",
 					Desc:   "消息描述",
@@ -339,7 +340,7 @@ func TestSendWelcomeMsg(t *testing.T) {
 			},
 			{
 				MsgType: event.MsgMinip,
-				Minip: &Minip{
+				Minip: &GroupMinip{
 					Title:      "消息标题",
 					PicMediaID: "MEDIA_ID",
 					AppID:      "wx8bd80126147dfAAA",
@@ -348,13 +349,13 @@ func TestSendWelcomeMsg(t *testing.T) {
 			},
 			{
 				MsgType: event.MsgVideo,
-				Video: &Video{
+				Video: &GroupVideo{
 					MediaID: "MEDIA_ID",
 				},
 			},
 			{
 				MsgType: event.MsgFile,
-				File: &File{
+				File: &GroupFile{
 					MediaID: "MEDIA_ID",
 				},
 			},
@@ -388,29 +389,29 @@ func TestAddGroupWelcomeTemplate(t *testing.T) {
 	cp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsGroupWelcomeTemplateAdd{
-		Text: &Text{
+		Text: &GroupText{
 			Content: "亲爱的%NICKNAME%用户，你好",
 		},
-		Image: &Image{
+		Image: &GroupImage{
 			MediaID: "MEDIA_ID",
 			PicURL:  "http://p.qpic.cn/pic_wework/3474110808/7a6344sdadfwehe42060/0",
 		},
-		Link: &Link{
+		Link: &GroupLink{
 			Title:  "消息标题",
 			PicURL: "https://example.pic.com/path",
 			Desc:   "消息描述",
 			URL:    "https://example.link.com/path",
 		},
-		Minip: &Minip{
+		Minip: &GroupMinip{
 			Title:      "消息标题",
 			PicMediaID: "MEDIA_ID",
 			AppID:      "wx8bd80126147dfAAA",
 			Page:       "/path/index",
 		},
-		File: &File{
+		File: &GroupFile{
 			MediaID: "1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o",
 		},
-		Video: &Video{
+		Video: &GroupVideo{
 			MediaID: "MEDIA_ID",
 		},
 		AgentID: 1000014,
@@ -449,29 +450,29 @@ func TestEditGroupWelcomeTemplate(t *testing.T) {
 
 	params := &ParamsGroupWelcomeTemplateEdit{
 		TemplateID: "msgXXXXXXX",
-		Text: &Text{
+		Text: &GroupText{
 			Content: "文本消息内容",
 		},
-		Image: &Image{
+		Image: &GroupImage{
 			MediaID: "MEDIA_ID",
 			PicURL:  "http://p.qpic.cn/pic_wework/3474110808/7a6344sdadfwehe42060/0",
 		},
-		Link: &Link{
+		Link: &GroupLink{
 			Title:  "消息标题",
 			PicURL: "https://example.pic.com/path",
 			Desc:   "消息描述",
 			URL:    "https://example.link.com/path",
 		},
-		Minip: &Minip{
+		Minip: &GroupMinip{
 			Title:      "消息标题",
 			PicMediaID: "MEDIA_ID",
 			AppID:      "wx8bd80126147df384",
 			Page:       "/path/index",
 		},
-		File: &File{
+		File: &GroupFile{
 			MediaID: "1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o",
 		},
-		Video: &Video{
+		Video: &GroupVideo{
 			MediaID: "MEDIA_ID",
 		},
 		AgentID: 1000014,
@@ -532,28 +533,28 @@ func TestGetGroupWelcomeTemplate(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultGroupWelcomeTemplateGet{
-		Text: &Text{
+		Text: &GroupText{
 			Content: "文本消息内容",
 		},
-		Image: &Image{
+		Image: &GroupImage{
 			PicURL: "http://p.qpic.cn/pic_wework/XXXXX",
 		},
-		Link: &Link{
+		Link: &GroupLink{
 			Title:  "消息标题",
 			PicURL: "https://example.pic.com/path",
 			Desc:   "消息描述",
 			URL:    "https://example.link.com/path",
 		},
-		Minip: &Minip{
+		Minip: &GroupMinip{
 			Title:      "消息标题",
 			PicMediaID: "MEDIA_ID",
 			AppID:      "wx8bd80126147df384",
 			Page:       "/path/index",
 		},
-		File: &File{
+		File: &GroupFile{
 			MediaID: "1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o",
 		},
-		Video: &Video{
+		Video: &GroupVideo{
 			MediaID: "MEDIA_ID",
 		},
 	}, result)

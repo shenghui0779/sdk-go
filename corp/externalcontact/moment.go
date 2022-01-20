@@ -3,6 +3,7 @@ package externalcontact
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -47,10 +48,10 @@ type MomentVisibleRange struct {
 }
 
 type MomentAttachment struct {
-	MsgType MediaType    `json:"msg_type"`
-	Image   *MomentImage `json:"image,omitempty"`
-	Video   *MomentVideo `json:"video,omitempty"`
-	Link    *MomentLink  `json:"link,omitempty"`
+	MsgType event.MsgType `json:"msg_type"`
+	Image   *MomentImage  `json:"image,omitempty"`
+	Video   *MomentVideo  `json:"video,omitempty"`
+	Link    *MomentLink   `json:"link,omitempty"`
 }
 
 type ParamsMomentTaskAdd struct {
