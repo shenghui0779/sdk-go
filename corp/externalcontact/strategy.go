@@ -210,8 +210,8 @@ type MomentStrategy struct {
 }
 
 type MomentStrategyPrivilege struct {
-	ViewMomentList           bool `json:"view_moment_list"`
 	SendMoment               bool `json:"send_moment"`
+	ViewMomentList           bool `json:"view_moment_list"`
 	ManageMomentCoverAndSign bool `json:"manage_moment_cover_and_sign"`
 }
 

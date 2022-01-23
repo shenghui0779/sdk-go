@@ -71,7 +71,11 @@ type ResultProductAlbumGet struct {
 	Product *ProductAlbum `json:"product"`
 }
 
-func GetProductAlbum(params *ParamsProductAlbumGet, result *ResultProductAlbumGet) wx.Action {
+func GetProductAlbum(productID string, result *ResultProductAlbumGet) wx.Action {
+	params := &ParamsProductAlbumGet{
+		ProductID: productID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactProductAlbumGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -107,7 +111,11 @@ type ParamsProductAlbumDelete struct {
 	ProductID string `json:"product_id"`
 }
 
-func DeleteProductAlbum(params *ParamsProductAlbumDelete) wx.Action {
+func DeleteProductAlbum(productID string) wx.Action {
+	params := &ParamsProductAlbumDelete{
+		ProductID: productID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactProductAlbumDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

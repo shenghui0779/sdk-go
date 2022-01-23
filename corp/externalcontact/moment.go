@@ -34,8 +34,8 @@ type MomentLocation struct {
 }
 
 type MomentSenderList struct {
-	UserList      []string `json:"user_list,omitempty"`
-	DeparmentList []int64  `json:"deparment_list,omitempty"`
+	UserList       []string `json:"user_list,omitempty"`
+	DepartmentList []int64  `json:"department_list,omitempty"`
 }
 
 type MomentExternalContactList struct {
@@ -48,7 +48,7 @@ type MomentVisibleRange struct {
 }
 
 type MomentAttachment struct {
-	MsgType event.MsgType `json:"msg_type"`
+	MsgType event.MsgType `json:"msgtype"`
 	Image   *MomentImage  `json:"image,omitempty"`
 	Video   *MomentVideo  `json:"video,omitempty"`
 	Link    *MomentLink   `json:"link,omitempty"`
@@ -84,8 +84,8 @@ type MomentTaskResult struct {
 }
 
 type MomentInvalidSenderList struct {
-	UserList      []string `json:"user_list"`
-	DeparmentList []int64  `json:"deparment_list"`
+	UserList       []string `json:"user_list"`
+	DepartmentList []int64  `json:"department_list"`
 }
 
 type MomentInvalidExternalContactList struct {
@@ -119,7 +119,7 @@ type ParamsMomentList struct {
 type MomentListData struct {
 	MomentID    string          `json:"moment_id"`
 	Creator     string          `json:"creator"`
-	CreateTime  int64           `json:"create_time"`
+	CreateTime  string          `json:"create_time"`
 	CreateType  int             `json:"create_type"`
 	VisibleType int             `json:"visible_type"`
 	Text        *MomentText     `json:"text"`
@@ -174,19 +174,19 @@ func GetMomentTask(params *ParamsMomentTaskGet, result *ResultMomentTaskGet) wx.
 
 type ParamsMomentCustomerList struct {
 	MomentID string `json:"moment_id"`
-	UserID   string `json:"user_id"`
+	UserID   string `json:"userid"`
 	Cursor   string `json:"cursor,omitempty"`
 	Limit    int    `json:"limit,omitempty"`
 }
 
-type MomentCustomerListData struct {
+type MomentCustomer struct {
 	UserID         string `json:"userid"`
 	ExternalUserID string `json:"external_userid"`
 }
 
 type ResultMomentCustomerList struct {
-	NextCursor   string                    `json:"next_cursor"`
-	CustomerList []*MomentCustomerListData `json:"customer_list"`
+	NextCursor   string            `json:"next_cursor"`
+	CustomerList []*MomentCustomer `json:"customer_list"`
 }
 
 func ListMomentCustomer(params *ParamsMomentCustomerList, result *ResultMomentCustomerList) wx.Action {
@@ -202,18 +202,14 @@ func ListMomentCustomer(params *ParamsMomentCustomerList, result *ResultMomentCu
 
 type ParamsMomentSendResult struct {
 	MomentID string `json:"moment_id"`
-	UserID   string `json:"user_id"`
+	UserID   string `json:"userid"`
 	Cursor   string `json:"cursor,omitempty"`
 	Limit    int    `json:"limit,omitempty"`
 }
 
 type ResultMomentSendResult struct {
-	NextCursor   string                `json:"next_cursor"`
-	CustomerList []*MomentSendCustomer `json:"customer_list"`
-}
-
-type MomentSendCustomer struct {
-	ExternalUserID string `json:"external_userid"`
+	NextCursor   string            `json:"next_cursor"`
+	CustomerList []*MomentCustomer `json:"customer_list"`
 }
 
 func GetMomentSendResult(params *ParamsMomentSendResult, result *ResultMomentSendResult) wx.Action {
@@ -229,7 +225,7 @@ func GetMomentSendResult(params *ParamsMomentSendResult, result *ResultMomentSen
 
 type ParamsMomentComments struct {
 	MomentID string `json:"moment_id"`
-	UserID   string `json:"user_id"`
+	UserID   string `json:"userid"`
 	Cursor   string `json:"cursor,omitempty"`
 	Limit    int    `json:"limit,omitempty"`
 }

@@ -47,7 +47,7 @@ type GroupFile struct {
 }
 
 type MsgAttachment struct {
-	MsgType event.MsgType `json:"msg_type"`
+	MsgType event.MsgType `json:"msgtype"`
 	Image   *GroupImage   `json:"image,omitempty"`
 	Link    *GroupLink    `json:"link,omitempty"`
 	Minip   *GroupMinip   `json:"miniprogram,omitempty"`
@@ -80,7 +80,7 @@ func AddMsgTemplate(params *ParamsMsgTemplateAdd, result *ResultMsgTemplateAdd) 
 }
 
 type GroupMsg struct {
-	MsgID       string           `json:"msg_id"`
+	MsgID       string           `json:"msgid"`
 	Creator     string           `json:"creator"`
 	CreateTime  string           `json:"create_time"`
 	CreateType  int              `json:"create_type"`
@@ -115,7 +115,7 @@ func ListGroupMsg(params *ParamsGroupMsgList, result *ResultGroupMsgList) wx.Act
 }
 
 type ParamsGroupMsgTask struct {
-	MsgID  string `json:"msg_id"`
+	MsgID  string `json:"msgid"`
 	Limit  int    `json:"limit,omitempty"`
 	Cursor string `json:"cursor,omitempty"`
 }
@@ -194,7 +194,7 @@ type ParamsGroupWelcomeTemplateAdd struct {
 	Minip   *GroupMinip `json:"miniprogram,omitempty"`
 	File    *GroupFile  `json:"file,omitempty"`
 	Video   *GroupVideo `json:"video,omitempty"`
-	AgentID int64       `json:"agent_id,omitempty"`
+	AgentID int64       `json:"agentid,omitempty"`
 	Notify  int         `json:"notify,omitempty"`
 }
 
@@ -221,7 +221,7 @@ type ParamsGroupWelcomeTemplateEdit struct {
 	Minip      *GroupMinip `json:"miniprogram,omitempty"`
 	File       *GroupFile  `json:"file,omitempty"`
 	Video      *GroupVideo `json:"video,omitempty"`
-	AgentID    int64       `json:"agent_id,omitempty"`
+	AgentID    int64       `json:"agentid,omitempty"`
 }
 
 func EditGroupWelcomeTemplate(params *ParamsGroupWelcomeTemplateEdit) wx.Action {

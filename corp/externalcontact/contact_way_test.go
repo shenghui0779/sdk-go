@@ -263,7 +263,7 @@ func TestGetContactWay(t *testing.T) {
 					Content: "文本消息内容",
 				},
 				Image: &ImageConclusion{
-					MediaID: "http://p.qpic.cn/pic_wework/XXXXX",
+					PicURL: "http://p.qpic.cn/pic_wework/XXXXX",
 				},
 				Link: &LinkConclusion{
 					Title:  "消息标题",
@@ -313,7 +313,7 @@ func TestListContactWay(t *testing.T) {
 
 	params := &ParamsContactWayList{
 		StartTime: 1622476800,
-		EntTime:   1625068800,
+		EndTime:   1625068800,
 		Cursor:    "CURSOR",
 		Limit:     1000,
 	}

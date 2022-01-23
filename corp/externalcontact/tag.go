@@ -7,12 +7,13 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type CorpTag struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	CreateTime int64  `json:"create_time"`
-	Order      uint32 `json:"order"`
-	Deleted    bool   `json:"delete"`
+type ParamsCorpTagList struct {
+	TagID   []string `json:"tag_id,omitempty"`
+	GroupID []string `json:"group_id,omitempty"`
+}
+
+type ResultCorpTagList struct {
+	TagGroup []*CorpTagGroup `json:"tag_group"`
 }
 
 type CorpTagGroup struct {
@@ -24,13 +25,12 @@ type CorpTagGroup struct {
 	Tag        []*CorpTag `json:"tag"`
 }
 
-type ParamsCorpTagList struct {
-	TagID   []string `json:"tag_id,omitempty"`
-	GroupID []string `json:"group_id,omitempty"`
-}
-
-type ResultCorpTagList struct {
-	TagGroup []*CorpTagGroup `json:"tag_group"`
+type CorpTag struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	CreateTime int64  `json:"create_time"`
+	Order      uint32 `json:"order"`
+	Deleted    bool   `json:"deleted"`
 }
 
 func ListCorpTag(params *ParamsCorpTagList, result *ResultCorpTagList) wx.Action {
@@ -101,22 +101,6 @@ func DeleteCorpTag(params *ParamsCorpTagDelete) wx.Action {
 	)
 }
 
-type StrategyTag struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	CreateTime int64  `json:"create_time"`
-	Order      uint32 `json:"order"`
-}
-
-type StrategyTagGroup struct {
-	GroupID    string     `json:"group_id"`
-	GroupName  string     `json:"group_name"`
-	CreateTime int64      `json:"create_time"`
-	Order      uint32     `json:"order"`
-	StrategyID int64      `json:"strategy_id"`
-	Tag        []*CorpTag `json:"tag"`
-}
-
 type ParamsStrategyTagList struct {
 	StrategyID int64    `json:"strategy_id,omitempty"`
 	TagID      []string `json:"tag_id,omitempty"`
@@ -124,7 +108,23 @@ type ParamsStrategyTagList struct {
 }
 
 type ResultStrategyTagList struct {
-	TagGroup []*CorpTagGroup `json:"tag_group"`
+	TagGroup []*StrategyTagGroup `json:"tag_group"`
+}
+
+type StrategyTagGroup struct {
+	GroupID    string         `json:"group_id"`
+	GroupName  string         `json:"group_name"`
+	CreateTime int64          `json:"create_time"`
+	Order      uint32         `json:"order"`
+	StrategyID int64          `json:"strategy_id"`
+	Tag        []*StrategyTag `json:"tag"`
+}
+
+type StrategyTag struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	CreateTime int64  `json:"create_time"`
+	Order      uint32 `json:"order"`
 }
 
 func ListStrategyTag(params *ParamsStrategyTagList, result *ResultStrategyTagList) wx.Action {
@@ -138,11 +138,6 @@ func ListStrategyTag(params *ParamsStrategyTagList, result *ResultStrategyTagLis
 	)
 }
 
-type ParamsStrategyTag struct {
-	Name  string `json:"name"`
-	Order uint32 `json:"order,omitempty"`
-}
-
 type ParamsStrategyTagAdd struct {
 	StrategyID int64                `json:"strategy_id,omitempty"`
 	GroupID    string               `json:"group_id"`
@@ -151,11 +146,16 @@ type ParamsStrategyTagAdd struct {
 	Tag        []*ParamsStrategyTag `json:"tag"`
 }
 
-type ResultStrategyTagAdd struct {
-	TagGroup *CorpTagGroup `json:"tag_group"`
+type ParamsStrategyTag struct {
+	Name  string `json:"name"`
+	Order uint32 `json:"order,omitempty"`
 }
 
-func AddStrategyTag(params *ParamsStrategyTag, result *ResultStrategyTagAdd) wx.Action {
+type ResultStrategyTagAdd struct {
+	TagGroup *StrategyTagGroup `json:"tag_group"`
+}
+
+func AddStrategyTag(params *ParamsStrategyTagAdd, result *ResultStrategyTagAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactStrategyTagAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

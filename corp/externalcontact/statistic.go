@@ -9,7 +9,7 @@ import (
 
 type ParamsUserBehaviorData struct {
 	UserID    []string `json:"userid,omitempty"`
-	PartyID   []string `json:"partyid,omitempty"`
+	PartyID   []int64  `json:"partyid,omitempty"`
 	StartTime int64    `json:"start_time"`
 	EndTime   int64    `json:"end_time"`
 }
@@ -90,8 +90,8 @@ type ParamsGroupChatStatisticByDay struct {
 }
 
 type GroupChatStatisticByDayItem struct {
-	StartTime int64                   `json:"start_time"`
-	Data      *GroupChatStatisticData `json:"data"`
+	StatTime int64                   `json:"stat_time"`
+	Data     *GroupChatStatisticData `json:"data"`
 }
 
 type ResultGroupChatStatisticByDay struct {

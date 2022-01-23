@@ -78,7 +78,7 @@ type ParamsAttachmentUploadByURL struct {
 
 // UploadAttachmentByURL 上传附件资源
 func UploadAttachmentByURL(params *ParamsAttachmentUploadByURL, result *ResultAttachmentUpload) wx.Action {
-	return wx.NewPostAction(urls.OffiaMediaUpload,
+	return wx.NewPostAction(urls.CorpExternalContactUploadAttachment,
 		wx.WithQuery("media_type", string(params.MediaType)),
 		wx.WithQuery("attachment_type", strconv.Itoa(int(params.AttachmentType))),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {

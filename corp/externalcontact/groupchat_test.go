@@ -16,7 +16,7 @@ import (
 )
 
 func TestListGroupChat(t *testing.T) {
-	body := []byte(`{"status_filter":0,"owner_filter":{"userid_list":["abel"]},"cursor":"r9FqSqsI8fgNbHLHE5QoCP50UIg2cFQbfma3l2QsmwI","limit":10}`)
+	body := []byte(`{"owner_filter":{"userid_list":["abel"]},"cursor":"r9FqSqsI8fgNbHLHE5QoCP50UIg2cFQbfma3l2QsmwI","limit":10}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -47,7 +47,6 @@ func TestListGroupChat(t *testing.T) {
 	cp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsGroupChatList{
-		StatusFilter: 0,
 		OwnerFilter: &GroupChatOwnerFilter{
 			UserIDList: []string{"abel"},
 		},

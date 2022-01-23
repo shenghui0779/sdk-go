@@ -8,10 +8,11 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestListCustomerStrategy(t *testing.T) {
@@ -159,7 +160,7 @@ func TestGetCustomerStrategy(t *testing.T) {
 }
 
 func TestCreateCustomerStrategy(t *testing.T) {
-	body := []byte(`{"parent_id":0,"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"view_customer_list":true,"view_customer_data":true,"view_room_list":true,"contact_me":true,"join_room":true,"share_customer":false,"oper_resign_customer":true,"send_customer_msg":true,"edit_welcome_msg":true,"view_behavior_data":true,"view_room_data":true,"send_group_msg":true,"room_deduplication":true,"rapid_reply":true,"onjob_customer_transfer":true,"edit_anti_spam_rule":true,"export_customer_list":true,"export_customer_data":true,"export_customer_group_list":true,"manage_customer_tag":true},"range":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}]}`)
+	body := []byte(`{"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"view_customer_list":true,"view_customer_data":true,"view_room_list":true,"contact_me":true,"join_room":true,"share_customer":false,"oper_resign_customer":true,"oper_resign_group":true,"send_customer_msg":true,"edit_welcome_msg":true,"view_behavior_data":true,"view_room_data":true,"send_group_msg":true,"room_deduplication":true,"rapid_reply":true,"onjob_customer_transfer":true,"edit_anti_spam_rule":true,"export_customer_list":true,"export_customer_data":true,"export_customer_group_list":true,"manage_customer_tag":true},"range":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}]}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -180,7 +181,6 @@ func TestCreateCustomerStrategy(t *testing.T) {
 	cp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsCustomerStrategyCreate{
-		ParentID:     0,
 		StrategyName: "NAME",
 		AdminList:    []string{"zhangsan", "lisi"},
 		Privilege: &CustomerStrategyPrivilege{
@@ -548,7 +548,7 @@ func TestGetMomentStrategyRange(t *testing.T) {
 }
 
 func TestCreateMomentStrategy(t *testing.T) {
-	body := []byte(`{"parent_id":0,"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"send_moment":true,"view_moment_list":true,"manage_moment_cover_and_sign":true},"range":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}]}`)
+	body := []byte(`{"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"send_moment":true,"view_moment_list":true,"manage_moment_cover_and_sign":true},"range":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}]}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -569,12 +569,11 @@ func TestCreateMomentStrategy(t *testing.T) {
 	cp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsMomentStrategyCreate{
-		ParentID:     0,
 		StrategyName: "NAME",
 		AdminList:    []string{"zhangsan", "lisi"},
 		Privilege: &MomentStrategyPrivilege{
-			ViewMomentList:           true,
 			SendMoment:               true,
+			ViewMomentList:           true,
 			ManageMomentCoverAndSign: true,
 		},
 		Range: []*MomentStrategyRange{
@@ -600,7 +599,7 @@ func TestCreateMomentStrategy(t *testing.T) {
 }
 
 func TestEditMomentStrategy(t *testing.T) {
-	body := []byte(`{"strategy_id":1,"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"view_moment_list":true,"send_moment":true,"manage_moment_cover_and_sign":true},"range_add":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}],"range_del":[{"type":1,"userid":"lisi"},{"type":2,"partyid":2}]}`)
+	body := []byte(`{"strategy_id":1,"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"send_moment":true,"view_moment_list":true,"manage_moment_cover_and_sign":true},"range_add":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}],"range_del":[{"type":1,"userid":"lisi"},{"type":2,"partyid":2}]}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -624,8 +623,8 @@ func TestEditMomentStrategy(t *testing.T) {
 		StrategyName: "NAME",
 		AdminList:    []string{"zhangsan", "lisi"},
 		Privilege: &MomentStrategyPrivilege{
-			ViewMomentList:           true,
 			SendMoment:               true,
+			ViewMomentList:           true,
 			ManageMomentCoverAndSign: true,
 		},
 		RangeAdd: []*MomentStrategyRange{

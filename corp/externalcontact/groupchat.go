@@ -19,8 +19,8 @@ type ParamsGroupChatList struct {
 }
 
 type GroupChatListData struct {
-	ChatID string
-	Status int
+	ChatID string `json:"chat_id"`
+	Status int    `json:"status"`
 }
 
 type ResultGroupChatList struct {

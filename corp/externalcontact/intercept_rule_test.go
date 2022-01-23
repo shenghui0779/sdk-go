@@ -42,8 +42,8 @@ func TestAddInterceptRule(t *testing.T) {
 		SemanticsList: []int{1, 2, 3},
 		InterceptType: 1,
 		ApplicableRange: &RuleApplicableRange{
-			UserList:      []string{"zhangshan"},
-			DeparmentList: []int64{2, 3},
+			UserList:       []string{"zhangshan"},
+			DepartmentList: []int64{2, 3},
 		},
 	}
 
@@ -52,7 +52,7 @@ func TestAddInterceptRule(t *testing.T) {
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", AddInterceptRule(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, ResultInterceptRuleAdd{
+	assert.Equal(t, &ResultInterceptRuleAdd{
 		RuleID: "xxx",
 	}, result)
 }
@@ -86,12 +86,12 @@ func TestUpdateInterceptRule(t *testing.T) {
 		},
 		InterceptType: 1,
 		AddApplicableRange: &RuleApplicableRange{
-			UserList:      []string{"zhangshan"},
-			DeparmentList: []int64{2, 3},
+			UserList:       []string{"zhangshan"},
+			DepartmentList: []int64{2, 3},
 		},
 		RemoveApplicableRange: &RuleApplicableRange{
-			UserList:      []string{"zhangshan"},
-			DeparmentList: []int64{2, 3},
+			UserList:       []string{"zhangshan"},
+			DepartmentList: []int64{2, 3},
 		},
 	}
 
@@ -202,8 +202,8 @@ func TestGetInterceptRule(t *testing.T) {
 			},
 			InterceptType: 1,
 			ApplicableRange: &RuleApplicableRange{
-				UserList:      []string{"zhangshan"},
-				DeparmentList: []int64{2, 3},
+				UserList:       []string{"zhangshan"},
+				DepartmentList: []int64{2, 3},
 			},
 		},
 	}, result)

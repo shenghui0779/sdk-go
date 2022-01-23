@@ -12,8 +12,8 @@ type ExtraRule struct {
 }
 
 type RuleApplicableRange struct {
-	UserList      []string `json:"user_list,omitempty"`
-	DeparmentList []int64  `json:"deparment_list,omitempty"`
+	UserList       []string `json:"user_list,omitempty"`
+	DepartmentList []int64  `json:"department_list,omitempty"`
 }
 
 type InterceptRule struct {

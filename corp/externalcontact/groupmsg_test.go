@@ -104,8 +104,59 @@ func TestListGroupMsg(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "next_cursor": "CURSOR",
+    "group_msg_list": [
+        {
+            "msgid": "msgGCAAAXtWyujaWJHDDGi0mAAAA",
+            "creator": "xxxx",
+            "create_time": "xxxx",
+            "create_type": 1,
+            "text": {
+                "content": "文本消息内容"
+            },
+            "attachments": [
+                {
+                    "msgtype": "image",
+                    "image": {
+                        "media_id": "MEDIA_ID",
+                        "pic_url": "http://p.qpic.cn/pic_wework/3474110808/7a6344sdadfwehe42060/0"
+                    }
+                },
+                {
+                    "msgtype": "link",
+                    "link": {
+                        "title": "消息标题",
+                        "picurl": "https://example.pic.com/path",
+                        "desc": "消息描述",
+                        "url": "https://example.link.com/path"
+                    }
+                },
+                {
+                    "msgtype": "miniprogram",
+                    "miniprogram": {
+                        "title": "消息标题",
+                        "pic_media_id": "MEDIA_ID",
+                        "appid": "wx8bd80126147dfAAA",
+                        "page": "/path/index.html"
+                    }
+                },
+                {
+                    "msgtype": "video",
+                    "video": {
+                        "media_id": "MEDIA_ID"
+                    }
+                },
+                {
+                    "msgtype": "file",
+                    "file": {
+                        "media_id": "MEDIA_ID"
+                    }
+                }
+            ]
+        }
+    ]
 }`))),
 	}
 
@@ -241,7 +292,7 @@ func TestGetGroupMsgTask(t *testing.T) {
 }
 
 func TestGetGroupMsgSendResult(t *testing.T) {
-	body := []byte(`{"msgid":"msgGCAAAXtWyujaWJHDDGi0mACAAAA","userid":"zhangsan ","limit":50,"cursor":"CURSOR"}`)
+	body := []byte(`{"msgid":"msgGCAAAXtWyujaWJHDDGi0mACAAAA","userid":"zhangsan","limit":50,"cursor":"CURSOR"}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

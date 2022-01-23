@@ -65,8 +65,8 @@ func TestAddMomentTask(t *testing.T) {
 		},
 		VisibleRange: &MomentVisibleRange{
 			SenderList: &MomentSenderList{
-				UserList:      []string{"zhangshan", "lisi"},
-				DeparmentList: []int64{2, 3},
+				UserList:       []string{"zhangshan", "lisi"},
+				DepartmentList: []int64{2, 3},
 			},
 			ExternalContactList: &MomentExternalContactList{
 				TagList: []string{"etXXXXXXXXXX", "etYYYYYYYYYY"},
@@ -138,8 +138,8 @@ func TestGetMomentTaskResult(t *testing.T) {
 			ErrMsg:   "ok",
 			MomentID: "xxxx",
 			InvalidSenderList: &MomentInvalidSenderList{
-				UserList:      []string{"zhangshan", "lisi"},
-				DeparmentList: []int64{2, 3},
+				UserList:       []string{"zhangshan", "lisi"},
+				DepartmentList: []int64{2, 3},
 			},
 			InvalidExternalContactList: &MomentInvalidExternalContactList{
 				TagList: []string{"xxx"},
@@ -216,18 +216,52 @@ func TestListMoment(t *testing.T) {
 	assert.Equal(t, &ResultMomentList{
 		NextCursor: "CURSOR",
 		MomentList: []*MomentListData{
-			{},
+			{
+				MomentID:    "momxxx",
+				Creator:     "xxxx",
+				CreateTime:  "xxxx",
+				CreateType:  1,
+				VisibleType: 1,
+				Text: &MomentText{
+					Content: "test",
+				},
+				Image: []*MomentImage{
+					{
+						MediaID: "WWCISP_xxxxx",
+					},
+				},
+				Video: &MomentVideo{
+					MediaID:      "WWCISP_xxxxx",
+					ThumbMediaID: "WWCISP_xxxxx",
+				},
+				Link: &MomentLink{
+					Title: "腾讯网-QQ.COM",
+					URL:   "https://www.qq.com",
+				},
+				Location: &MomentLocation{
+					Latitude:  "23.10647",
+					Longitude: "113.32446",
+					Name:      "广州市 · 广州塔",
+				},
+			},
 		},
 	}, result)
 }
 
 func TestGetMomentTask(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"moment_id":"momxxx","cursor":"CURSOR","limit":10}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "next_cursor": "CURSOR",
+    "task_list": [
+        {
+            "userid": "zhangsan",
+            "publish_status": 1
+        }
+    ]
 }`))),
 	}
 
@@ -236,23 +270,47 @@ func TestGetMomentTask(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_moment_task?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	params := &ParamsMomentTaskGet{
+		MomentID: "momxxx",
+		Cursor:   "CURSOR",
+		Limit:    10,
+	}
+
+	result := new(ResultMomentTaskGet)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentTask(params, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultMomentTaskGet{
+		NextCursor: "CURSOR",
+		TaskList: []*MomentTask{
+			{
+				UserID:        "zhangsan",
+				PublishStatus: 1,
+			},
+		},
+	}, result)
 }
 
 func TestListMomentCustomer(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"moment_id":"momxxx","userid":"xxx","cursor":"CURSOR","limit":10}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+	"errcode":0,
+	"errmsg":"ok",
+	"next_cursor":"CURSOR",
+	"customer_list":[
+		{
+			"userid":"xxx",
+			"external_userid":"woAJ2GCAAAXtWyujaWJHDDGi0mACCCC"
+		}
+	]
 }`))),
 	}
 
@@ -261,23 +319,47 @@ func TestListMomentCustomer(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_moment_customer_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	params := &ParamsMomentCustomerList{
+		MomentID: "momxxx",
+		UserID:   "xxx",
+		Cursor:   "CURSOR",
+		Limit:    10,
+	}
+
+	result := new(ResultMomentCustomerList)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListMomentCustomer(params, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultMomentCustomerList{
+		NextCursor: "CURSOR",
+		CustomerList: []*MomentCustomer{
+			{
+				UserID:         "xxx",
+				ExternalUserID: "woAJ2GCAAAXtWyujaWJHDDGi0mACCCC",
+			},
+		},
+	}, result)
 }
 
 func TestGetMomentSendResult(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"moment_id":"momxxx","userid":"xxx","cursor":"CURSOR","limit":100}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "next_cursor": "CURSOR",
+    "customer_list": [
+        {
+            "external_userid": "woAJ2GCAAAXtWyujaWJHDDGi0mACCCC"
+        }
+    ]
 }`))),
 	}
 
@@ -286,23 +368,60 @@ func TestGetMomentSendResult(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_moment_send_result?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	params := &ParamsMomentSendResult{
+		MomentID: "momxxx",
+		UserID:   "xxx",
+		Cursor:   "CURSOR",
+		Limit:    100,
+	}
+
+	result := new(ResultMomentSendResult)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentSendResult(params, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultMomentSendResult{
+		NextCursor: "CURSOR",
+		CustomerList: []*MomentCustomer{
+			{
+				ExternalUserID: "woAJ2GCAAAXtWyujaWJHDDGi0mACCCC",
+			},
+		},
+	}, result)
 }
 
 func TestGetMomentComments(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"moment_id":"momxxx","userid":"xxx"}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "comment_list": [
+        {
+            "external_userid": "woAJ2GCAAAXtWyujaWJHDDGi0mACAAAA",
+            "create_time": 1605172726
+        },
+        {
+            "userid": "zhangshan",
+            "create_time": 1605172729
+        }
+    ],
+    "like_list": [
+        {
+            "external_userid": "woAJ2GCAAAXtWyujaWJHDDGi0mACBBBB",
+            "create_time": 1605172726
+        },
+        {
+            "userid": "zhangshan",
+            "create_time": 1605172720
+        }
+    ]
 }`))),
 	}
 
@@ -311,12 +430,41 @@ func TestGetMomentComments(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_moment_comments?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	params := &ParamsMomentComments{
+		MomentID: "momxxx",
+		UserID:   "xxx",
+	}
+
+	result := new(ResultMomentComments)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentComments(params, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultMomentComments{
+		CommentList: []*MomentCommentData{
+			{
+				ExternalUserID: "woAJ2GCAAAXtWyujaWJHDDGi0mACAAAA",
+				CreateTime:     1605172726,
+			},
+			{
+				UserID:     "zhangshan",
+				CreateTime: 1605172729,
+			},
+		},
+		LikeList: []*MomentLikeData{
+			{
+				ExternalUserID: "woAJ2GCAAAXtWyujaWJHDDGi0mACBBBB",
+				CreateTime:     1605172726,
+			},
+			{
+				UserID:     "zhangshan",
+				CreateTime: 1605172720,
+			},
+		},
+	}, result)
 }

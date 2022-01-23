@@ -62,7 +62,7 @@ type FollowInfo struct {
 	UserID         string   `json:"userid"`
 	Remark         string   `json:"remark"`
 	Description    string   `json:"description"`
-	CreateTime     int64    `json:"create_time"`
+	CreateTime     int64    `json:"createtime"`
 	TagID          []string `json:"tag_id"`
 	RemarkCorpName string   `json:"remark_corp_name"`
 	RemarkMobiles  []string `json:"remark_mobiles"`
@@ -75,7 +75,7 @@ type FollowUser struct {
 	UserID         string       `json:"userid"`
 	Remark         string       `json:"remark"`
 	Description    string       `json:"description"`
-	CreateTime     int64        `json:"create_time"`
+	CreateTime     int64        `json:"createtime"`
 	RemarkCorpName string       `json:"remark_corp_name"`
 	RemarkMobiles  []string     `json:"remark_mobiles"`
 	OperUserID     string       `json:"oper_userid"`
@@ -85,10 +85,10 @@ type FollowUser struct {
 }
 
 type FollowTag struct {
-	GroupName string
-	TagName   string
-	TagID     string
-	Type      int
+	GroupName string `json:"group_name"`
+	TagName   string `json:"tag_name"`
+	TagID     string `json:"tag_id"`
+	Type      int    `json:"type"`
 }
 
 type ResultCustomerList struct {

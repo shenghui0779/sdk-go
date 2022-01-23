@@ -148,7 +148,7 @@ func TestGetCustomer(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get?access_token=ACCESS_TOKEN&external_userid=EXTERNAL_USERID&cursor=CURSOR", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get?access_token=ACCESS_TOKEN&cursor=CURSOR&external_userid=EXTERNAL_USERID", nil).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
@@ -427,7 +427,7 @@ func TestBatchGetCustomerByUser(t *testing.T) {
 					CorpFullName:   "腾讯科技有限公司",
 					Type:           2,
 					Gender:         1,
-					UnionID:        "ozynqsulJFCZ2asdaf8h",
+					UnionID:        "ozynqsulJFCZ2asdaf8h-nuasdAAA",
 				},
 				FollowInfo: &FollowInfo{
 					UserID:      "lisi",

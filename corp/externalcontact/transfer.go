@@ -91,6 +91,55 @@ func ListUnassigned(params *ParamsUnassignedList, result *ResultUnassignedList) 
 	)
 }
 
+type ParamsResignedCustomerTransfer struct {
+	HandoverUserID string   `json:"handover_userid"`
+	TakeoverUserID string   `json:"takeover_userid"`
+	ExternalUserID []string `json:"external_userid"`
+}
+
+type ResultResignedCustomerTransfer struct {
+	Customer []*ErrCustomerTransfer `json:"customer"`
+}
+
+func TransferResignedCustomer(params *ParamsResignedCustomerTransfer, result *ResultResignedCustomerTransfer) wx.Action {
+	return wx.NewPostAction(urls.CorpExternalContactTransferResignedCustomer,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsResignedTransferResult struct {
+	HandoverUserID string `json:"handover_userid"`
+	TakeoverUserID string `json:"takeover_userid"`
+	Cursor         string `json:"cursor,omitempty"`
+}
+
+type ResultResignedTransferResult struct {
+	Customer   []*ResignedTransferResult `json:"customer"`
+	NextCursor string                    `json:"next_cursor"`
+}
+
+type ResignedTransferResult struct {
+	ExternalUserID string `json:"external_userid"`
+	Status         int    `json:"status"`
+	TakeoverTime   int64  `json:"takeover_time"`
+}
+
+func GetResignedTransferResult(params *ParamsResignedTransferResult, result *ResultResignedTransferResult) wx.Action {
+	return wx.NewPostAction(urls.CorpExternalContactResignedTransferResult,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
 type ParamsGroupChatTransfer struct {
 	ChatIDList []string `json:"chat_id_list"`
 	NewOwner   string   `json:"new_owner"`

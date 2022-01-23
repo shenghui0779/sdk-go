@@ -48,7 +48,7 @@ type ContactWay struct {
 	ExpiresIn     int          `json:"expires_in"`
 	ChatExpiresIn int          `json:"chat_expires_in"`
 	UnionID       string       `json:"unionid"`
-	Conclusions   *Conclusions `json:"conclusion"`
+	Conclusions   *Conclusions `json:"conclusions"`
 }
 
 type Conclusions struct {
@@ -64,6 +64,7 @@ type TextConclusion struct {
 
 type ImageConclusion struct {
 	MediaID string `json:"media_id"`
+	PicURL  string `json:"pic_url,omitempty"`
 }
 
 type LinkConclusion struct {
@@ -159,7 +160,7 @@ func GetContactWay(configID string, result *ResultContactWayGet) wx.Action {
 
 type ParamsContactWayList struct {
 	StartTime int64  `json:"start_time,omitempty"`
-	EntTime   int64  `json:"ent_time,omitempty"`
+	EndTime   int64  `json:"end_time,omitempty"`
 	Cursor    string `json:"cursor,omitempty"`
 	Limit     int    `json:"limit,omitempty"`
 }
