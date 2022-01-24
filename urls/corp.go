@@ -136,6 +136,8 @@ const (
 	CorpKFServicerAdd             = "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/add"
 	CorpKFServicerDelete          = "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/del"
 	CorpKFServicerList            = "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/list"
+	CorpKFServiceStateGet         = "https://qyapi.weixin.qq.com/cgi-bin/kf/service_state/get"
+	CorpKFServiceStateTransfer    = "https://qyapi.weixin.qq.com/cgi-bin/kf/service_state/trans"
 	CorpKFSyncMsg                 = "https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg"
 	CorpKFSendMsg                 = "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg"
 	CorpKFCustomerBatchGet        = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/batchget"

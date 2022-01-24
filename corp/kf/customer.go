@@ -75,7 +75,29 @@ type GroupChat struct {
 	Wording string `json:"wording"`
 }
 
-func UpgradeService(params *ParamsServiceUpgrade) wx.Action {
+func UpgradeMemberService(openKFID, externalUserID string, member *Member) wx.Action {
+	params := &ParamsServiceUpgrade{
+		OpenKFID:       openKFID,
+		ExternalUserID: externalUserID,
+		Type:           1,
+		Member:         member,
+	}
+
+	return wx.NewPostAction(urls.CorpKFUpgradeService,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+	)
+}
+
+func UpgradeGroupChatService(openKFID, externalUserID string, groupChat *GroupChat) wx.Action {
+	params := &ParamsServiceUpgrade{
+		OpenKFID:       openKFID,
+		ExternalUserID: externalUserID,
+		Type:           2,
+		GroupChat:      groupChat,
+	}
+
 	return wx.NewPostAction(urls.CorpKFUpgradeService,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -88,7 +110,12 @@ type ParamsServiceUpgradeCancel struct {
 	ExternalUserID string `json:"external_userid"`
 }
 
-func CancelUpgradeService(params *ParamsServiceUpgradeCancel) wx.Action {
+func CancelUpgradeService(openKFID, externalUserID string) wx.Action {
+	params := &ParamsServiceUpgradeCancel{
+		OpenKFID:       openKFID,
+		ExternalUserID: externalUserID,
+	}
+
 	return wx.NewPostAction(urls.CorpKFCancelUpgradeService,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

@@ -96,6 +96,9 @@ type Event struct {
 	EventType         event.EventType `json:"event_type"`
 	OpenKFID          string          `json:"open_kfid,omitempty"`
 	ExternalUserID    string          `json:"external_userid,omitempty"`
+	Scene             string          `json:"scene,omitempty"`
+	SceneParam        string          `json:"scene_param,omitempty"`
+	WelcomeCode       string          `json:"welcome_code,omitempty"`
 	FailMsgID         string          `json:"fail_msgid,omitempty"`
 	FailType          int             `json:"fail_type,omitempty"`
 	ServicerUserID    string          `json:"servicer_userid,omitempty"`
@@ -103,12 +106,14 @@ type Event struct {
 	ChangeType        int             `json:"change_type,omitempty"`
 	OldServicerUserID string          `json:"old_servicer_userid,omitempty"`
 	NewServicerUserID string          `json:"new_servicer_userid,omitempty"`
+	MsgCode           string          `json:"msg_code,omitempty"`
 }
 
 type ParamsMsgSync struct {
-	Cursor string `json:"cursor"`
-	Token  string `json:"token"`
-	Limit  int    `json:"limit"`
+	Cursor      string `json:"cursor,omitempty"`
+	Token       string `json:"token,omitempty"`
+	Limit       int    `json:"limit,omitempty"`
+	VoiceFormat int    `json:"voice_format,omitempty"`
 }
 
 type ResultMsgSync struct {
@@ -124,7 +129,7 @@ type MsgListData struct {
 	SendTime       int64         `json:"send_time"`
 	Origin         int           `json:"origin"`
 	ServicerUserID string        `json:"servicer_userid"`
-	MsgType        event.MsgType `json:"msg_type"`
+	MsgType        event.MsgType `json:"msgtype"`
 	Text           *Text         `json:"text"`
 	Image          *Image        `json:"image"`
 	Voice          *Voice        `json:"voice"`

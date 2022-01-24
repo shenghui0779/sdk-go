@@ -31,7 +31,11 @@ type ParamsAccountDelete struct {
 	OpenKFID string `json:"open_kfid"`
 }
 
-func DeleteAccount(params *ParamsAccountDelete) wx.Action {
+func DeleteAccount(openKFID string) wx.Action {
+	params := &ParamsAccountDelete{
+		OpenKFID: openKFID,
+	}
+
 	return wx.NewPostAction(urls.CorpKFAccountDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -71,16 +75,16 @@ func ListAccount(result *ResultAccountList) wx.Action {
 	)
 }
 
-type ParamsAddContactWay struct {
+type ParamsContactWayAdd struct {
 	OpenKFID string `json:"open_kfid"`
 	Scene    string `json:"scene"`
 }
 
-type ResultAddContactWay struct {
+type ResultContactWayAdd struct {
 	URL string `json:"url"`
 }
 
-func AddContactWay(params *ParamsAddContactWay, result *ResultAddContactWay) wx.Action {
+func AddContactWay(params *ParamsContactWayAdd, result *ResultContactWayAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpKFAddContactWay,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
