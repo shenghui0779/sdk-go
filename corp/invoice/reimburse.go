@@ -17,18 +17,29 @@ const (
 )
 
 type InvoiceUserInfo struct {
-	Fee             int                   `json:"fee"`
-	Title           string                `json:"title"`
-	BillingTime     int64                 `json:"billing_time"`
-	BillingNO       string                `json:"billing_no"`
-	BillingCode     string                `json:"billing_code"`
-	FeeWithoutTax   int                   `json:"fee_without_tax"`
-	Tax             int                   `json:"tax"`
-	Detail          string                `json:"detail"`
-	PdfURL          string                `json:"pdf_url"`
-	ReimburseStatus ReimburseStatus       `json:"reimburse_status"`
-	CheckCode       string                `json:"check_code"`
-	Info            []*InvoiceProductInfo `json:"info"`
+	Fee                   int                   `json:"fee"`
+	Title                 string                `json:"title"`
+	BillingTime           int64                 `json:"billing_time"`
+	BillingNO             string                `json:"billing_no"`
+	BillingCode           string                `json:"billing_code"`
+	Tax                   int                   `json:"tax"`
+	FeeWithoutTax         int                   `json:"fee_without_tax"`
+	Detail                string                `json:"detail"`
+	PdfURL                string                `json:"pdf_url"`
+	TriPdfUrl             string                `json:"tri_pdf_url"`
+	CheckCode             string                `json:"check_code"`
+	BuyerNumber           string                `json:"buyer_number"`
+	BuyerAddressAndPhone  string                `json:"buyer_address_and_phone"`
+	BuyerBankAccount      string                `json:"buyer_bank_account"`
+	SellerNumber          string                `json:"seller_number"`
+	SellerAddressAndPhone string                `json:"seller_address_and_phone"`
+	SellerBankAccount     string                `json:"seller_bank_account"`
+	Remarks               string                `json:"remarks"`
+	Cashier               string                `json:"cashier"`
+	Maker                 string                `json:"maker"`
+	ReimburseStatus       ReimburseStatus       `json:"reimburse_status"`
+	OrderID               string                `json:"order_id"`
+	Info                  []*InvoiceProductInfo `json:"info"`
 }
 
 type InvoiceProductInfo struct {
@@ -39,23 +50,23 @@ type InvoiceProductInfo struct {
 	Price int    `json:"price"`
 }
 
-type ParamsInvoiceInfoGet struct {
+type ParamsInvoiceInfo struct {
 	CardID      string `json:"card_id"`
 	EncryptCode string `json:"encrypt_code"`
 }
 
-type ResultInvoiceInfoGet struct {
+type ResultInvoiceInfo struct {
 	CardID    string           `json:"card_id"`
 	BeginTime int64            `json:"begin_time"`
 	EndTime   int64            `json:"end_time"`
-	OpenID    string           `json:"open_id"`
+	OpenID    string           `json:"openid"`
 	Type      string           `json:"type"`
 	Payee     string           `json:"payee"`
 	Detail    string           `json:"detail"`
 	UserInfo  *InvoiceUserInfo `json:"user_info"`
 }
 
-func GetInvoiceInfo(params *ParamsInvoiceInfoGet, result *ResultInvoiceInfoGet) wx.Action {
+func GetInvoiceInfo(params *ParamsInvoiceInfo, result *ResultInvoiceInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpInvoiceGetInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -66,14 +77,47 @@ func GetInvoiceInfo(params *ParamsInvoiceInfoGet, result *ResultInvoiceInfoGet) 
 	)
 }
 
-type ParamsInvoiceReimburseStatusUpdate struct {
+type ParamsInvoiceStatusUpdate struct {
 	CardID          string          `json:"card_id"`
 	EncryptCode     string          `json:"encrypt_code"`
 	ReimburseStatus ReimburseStatus `json:"reimburse_status"`
 }
 
-func UpdateInvoiceReimburseStatus(params *ParamsInvoiceReimburseStatusUpdate) wx.Action {
-	return wx.NewPostAction(urls.CorpInvoiceUpdateReimburseStatus,
+func UpdateInvoiceStatus(params *ParamsInvoiceStatusUpdate) wx.Action {
+	return wx.NewPostAction(urls.CorpInvoiceUpdateStatus,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+	)
+}
+
+type ParamsInvoiceBatchInfo struct {
+	ItemList []*ParamsInvoiceInfo `json:"item_list"`
+}
+
+type ResultInvoiceBatchInfo struct {
+	ItemList []*ResultInvoiceInfo `json:"item_list"`
+}
+
+func BatchGetInvoiceInfo(params *ParamsInvoiceBatchInfo, result *ResultInvoiceBatchInfo) wx.Action {
+	return wx.NewPostAction(urls.CorpInvoiceBatchGetInfo,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsInvoiceStatusBatchUpdate struct {
+	OpenID          string               `json:"openid"`
+	ReimburseStatus ReimburseStatus      `json:"reimburse_status"`
+	InvoiceList     []*ParamsInvoiceInfo `json:"invoice_list"`
+}
+
+func BatchUpdateInvoiceStatus(params *ParamsInvoiceStatusBatchUpdate) wx.Action {
+	return wx.NewPostAction(urls.CorpInvoiceBatchUpdateStatus,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

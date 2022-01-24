@@ -285,10 +285,10 @@ const (
 
 // invoice
 const (
-	CorpInvoiceGetInfo                    = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/getinvoiceinfo"
-	CorpInvoiceBatchGetInfo               = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/getinvoiceinfobatch"
-	CorpInvoiceUpdateReimburseStatus      = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updateinvoicestatus"
-	CorpInvoiceBatchUpdateReimburseStatus = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updatestatusbatch"
+	CorpInvoiceGetInfo           = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/getinvoiceinfo"
+	CorpInvoiceBatchGetInfo      = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/getinvoiceinfobatch"
+	CorpInvoiceUpdateStatus      = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updateinvoicestatus"
+	CorpInvoiceBatchUpdateStatus = "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updatestatusbatch"
 )
 
 // school
