@@ -54,10 +54,10 @@ type File struct {
 }
 
 type Location struct {
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
 	Name      string  `json:"name"`
 	Address   string  `json:"address"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
 }
 
 type Link struct {
@@ -137,7 +137,7 @@ type MsgListData struct {
 	File           *File         `json:"file"`
 	Location       *Location     `json:"location"`
 	Link           *Link         `json:"link"`
-	BussinessCard  *BusinessCard `json:"bussiness_card"`
+	BusinessCard   *BusinessCard `json:"business_card"`
 	Minip          *Minip        `json:"miniprogram"`
 	Menu           *Menu         `json:"msgmenu"`
 	Event          *Event        `json:"event"`
@@ -217,7 +217,7 @@ func SendVoiceMsg(toUser, openKFID, msgID string, voice *Voice, result *ResultMs
 		ToUser:   toUser,
 		OpenKFID: openKFID,
 		MsgID:    msgID,
-		MsgType:  event.MsgText,
+		MsgType:  event.MsgVoice,
 		Voice:    voice,
 	}
 
@@ -236,7 +236,7 @@ func SendVideoMsg(toUser, openKFID, msgID string, video *Video, result *ResultMs
 		ToUser:   toUser,
 		OpenKFID: openKFID,
 		MsgID:    msgID,
-		MsgType:  event.MsgText,
+		MsgType:  event.MsgVideo,
 		Video:    video,
 	}
 
@@ -255,7 +255,7 @@ func SendFileMsg(toUser, openKFID, msgID string, file *File, result *ResultMsgSe
 		ToUser:   toUser,
 		OpenKFID: openKFID,
 		MsgID:    msgID,
-		MsgType:  event.MsgText,
+		MsgType:  event.MsgFile,
 		File:     file,
 	}
 
@@ -274,7 +274,7 @@ func SendLinkMsg(toUser, openKFID, msgID string, link *Link, result *ResultMsgSe
 		ToUser:   toUser,
 		OpenKFID: openKFID,
 		MsgID:    msgID,
-		MsgType:  event.MsgText,
+		MsgType:  event.MsgLink,
 		Link:     link,
 	}
 
@@ -293,7 +293,7 @@ func SendMinipMsg(toUser, openKFID, msgID string, minip *Minip, result *ResultMs
 		ToUser:   toUser,
 		OpenKFID: openKFID,
 		MsgID:    msgID,
-		MsgType:  event.MsgText,
+		MsgType:  event.MsgMinip,
 		Minip:    minip,
 	}
 

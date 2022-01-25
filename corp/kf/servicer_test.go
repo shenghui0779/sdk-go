@@ -173,7 +173,7 @@ func TestListServicer(t *testing.T) {
 			},
 			{
 				UserID: "lisi",
-				Status: 0,
+				Status: 1,
 			},
 		},
 	}, result)
