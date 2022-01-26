@@ -8,19 +8,34 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestListDeparment(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"department_id":"LINKEDID/DEPARTMENTID"}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "department_list": [
+        {
+            "department_id": "1",
+            "department_name": "测试部门1",
+            "parentid": "0",
+            "order": 100000000
+        },
+        {
+            "department_id": "2",
+            "department_name": "测试部门2",
+            "parentid": "1",
+            "order": 99999999
+        }
+    ]
 }`))),
 	}
 
@@ -29,12 +44,30 @@ func TestListDeparment(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/department/list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultDepartmentList)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListDeparment("LINKEDID", "DEPARTMENTID", result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultDepartmentList{
+		DepartmentList: []*DepartmentListData{
+			{
+				DepartmentID:   "1",
+				DepartmentName: "测试部门1",
+				ParentID:       "0",
+				Order:          100000000,
+			},
+			{
+				DepartmentID:   "2",
+				DepartmentName: "测试部门2",
+				ParentID:       "1",
+				Order:          99999999,
+			},
+		},
+	}, result)
 }

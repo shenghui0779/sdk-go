@@ -6,11 +6,9 @@ import (
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/shenghui0779/yiigo"
 )
 
 type ParamsDepartmentList struct {
-	LinkedID     string `json:"linked_id"`
 	DepartmentID string `json:"department_id"`
 }
 
@@ -25,12 +23,14 @@ type ResultDepartmentList struct {
 	DepartmentList []*DepartmentListData `json:"department_list"`
 }
 
-func ListDeparment(params *ParamsDepartmentList, result *ResultDepartmentList) wx.Action {
+func ListDeparment(linkedID, departmentID string, result *ResultDepartmentList) wx.Action {
+	params := &ParamsDepartmentList{
+		DepartmentID: fmt.Sprintf("%s/%s", linkedID, departmentID),
+	}
+
 	return wx.NewPostAction(urls.CorpLinkedcorpDepartmentList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
-				"department_id": fmt.Sprintf("%s/%s", params.LinkedID, params.DepartmentID),
-			})
+			return json.Marshal(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

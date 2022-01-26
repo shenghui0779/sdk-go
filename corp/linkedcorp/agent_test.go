@@ -8,19 +8,25 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestListAgentPerm(t *testing.T) {
-	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "userids": [
+        "CORPID/USERID"
+    ],
+    "department_ids": [
+        "LINKEDID/DEPARTMENTID"
+    ]
 }`))),
 	}
 
@@ -29,12 +35,18 @@ func TestListAgentPerm(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/agent/get_perm_list?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultAgentPermList)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListAgentPerm(result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultAgentPermList{
+		UserIDs:       []string{"CORPID/USERID"},
+		DepartmentIDs: []string{"LINKEDID/DEPARTMENTID"},
+	}, result)
 }
