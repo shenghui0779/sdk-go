@@ -36,13 +36,9 @@ func TestUploadMedia(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMediaUpload{
-		MediaType: MediaImage,
-		Path:      "../mock/test.jpg",
-	}
 	result := new(ResultMediaUpload)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(MediaImage, "../mock/test.jpg", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMediaUpload{
@@ -74,14 +70,9 @@ func TestUploadMediaByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMediaUploadByURL{
-		MediaType: MediaImage,
-		Filename:  "test.png",
-		URL:       "https://golang.google.cn/doc/gopher/pkg.png",
-	}
 	result := new(ResultMediaUpload)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMediaByURL(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadMediaByURL(MediaImage, "test.png", "https://golang.google.cn/doc/gopher/pkg.png", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMediaUpload{
@@ -112,13 +103,9 @@ func TestAddMaterial(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMaterialAdd{
-		MediaType: MediaImage,
-		Path:      "../mock/test.jpg",
-	}
 	result := new(ResultMaterialAdd)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddMaterial(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddMaterial(MediaImage, "../mock/test.jpg", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMaterialAdd{
@@ -148,19 +135,100 @@ func TestAddMaterialByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMaterialAddByURL{
-		MediaType: MediaImage,
-		Filename:  "test.png",
-		URL:       "https://golang.google.cn/doc/gopher/pkg.png",
-	}
 	result := new(ResultMaterialAdd)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddMaterialByURL(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddMaterialByURL(MediaImage, "test.png", "https://golang.google.cn/doc/gopher/pkg.png", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMaterialAdd{
 		MediaID: "MEDIA_ID",
 		URL:     "URL",
+	}, result)
+}
+
+func TestGetNewsMaterial(t *testing.T) {
+	body := []byte(`{"media_id":"MEDIA_ID"}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"news_item": [
+		{
+			"title": "TITLE",
+			"thumb_media_id": "THUMB_MEDIA_ID",
+			"show_cover_pic": 1,
+			"author": "AUTHOR",
+			"digest": "DIGEST",
+			"content": "CONTENT",
+			"url": "URL",
+			"content_source_url": "CONTENT_SOURCE_URL"
+		}
+	]
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/material/get_material?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultNewsMaterialGet)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetNewsMaterial("MEDIA_ID", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultNewsMaterialGet{
+		NewsItem: []*NewsItem{
+			{
+				Title:            "TITLE",
+				ThumbMediaID:     "THUMB_MEDIA_ID",
+				ShowCoverPic:     1,
+				Author:           "AUTHOR",
+				Digest:           "DIGEST",
+				Content:          "CONTENT",
+				URL:              "URL",
+				ContentSourceURL: "CONTENT_SOURCE_URL",
+			},
+		},
+	}, result)
+}
+
+func TestGetVideoMaterial(t *testing.T) {
+	body := []byte(`{"media_id":"MEDIA_ID"}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"title": "TITLE",
+	"description": "DESCRIPTION",
+	"down_url": "DOWN_URL"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/material/get_material?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultVideoMaterialGet)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetVideoMaterial("MEDIA_ID", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultVideoMaterialGet{
+		Title:       "TITLE",
+		Description: "DESCRIPTION",
+		DownURL:     "DOWN_URL",
 	}, result)
 }
 
@@ -187,7 +255,7 @@ func TestDeleteMaterial(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestUploadImage(t *testing.T) {
+func TestUploadImg(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -209,7 +277,7 @@ func TestUploadImage(t *testing.T) {
 
 	result := new(ResultMaterialAdd)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadImage("../mock/test.jpg", result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadImg("../mock/test.jpg", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMaterialAdd{
@@ -217,7 +285,7 @@ func TestUploadImage(t *testing.T) {
 	}, result)
 }
 
-func TestUploadImageByURL(t *testing.T) {
+func TestUploadImgByURL(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -237,13 +305,9 @@ func TestUploadImageByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsImageUploadByURL{
-		Filename: "test.png",
-		URL:      "https://golang.google.cn/doc/gopher/pkg.png",
-	}
 	result := new(ResultMaterialAdd)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadImageByURL(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadImgByURL("test.png", "https://golang.google.cn/doc/gopher/pkg.png", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMaterialAdd{
@@ -371,4 +435,44 @@ func TestAddNews(t *testing.T) {
 	assert.Equal(t, &ResultMaterialAdd{
 		MediaID: "MEDIA_ID",
 	}, result)
+}
+
+func TestUpdateNews(t *testing.T) {
+	body := []byte(`{"media_id":"MEDIA_ID","index":"INDEX","articles":{"title":"TITLE","thumb_media_id":"THUMB_MEDIA_ID","author":"AUTHOR","digest":"DIGEST","show_cover_pic":1,"content":"CONTENT","content_source_url":"CONTENT_SOURCE_URL"}}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/material/update_news?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	params := &ParamsNewsUpdate{
+		MediaID: "MEDIA_ID",
+		Index:   "INDEX",
+		Articles: &NewsArticle{
+			Title:            "TITLE",
+			ThumbMediaID:     "THUMB_MEDIA_ID",
+			Author:           "AUTHOR",
+			Digest:           "DIGEST",
+			ShowCoverPic:     1,
+			Content:          "CONTENT",
+			ContentSourceURL: "CONTENT_SOURCE_URL",
+		},
+	}
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UpdateNews(params))
+
+	assert.Nil(t, err)
 }

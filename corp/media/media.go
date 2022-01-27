@@ -95,21 +95,17 @@ func UploadByURL(params *ParamsUploadByURL, result *ResultUpload) wx.Action {
 	)
 }
 
-type ParamsUploadImg struct {
-	Path string
-}
-
 type ResultUploadImg struct {
 	URL string `json:"url"`
 }
 
 // UploadImg 上传图片
-func UploadImg(params *ParamsUploadImg, result *ResultUploadImg) wx.Action {
-	_, filename := filepath.Split(params.Path)
+func UploadImg(imgPath string, result *ResultUploadImg) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.CorpMediaUploadImg,
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(params.Path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
@@ -131,16 +127,11 @@ func UploadImg(params *ParamsUploadImg, result *ResultUploadImg) wx.Action {
 	)
 }
 
-type ParamsUploadImgByURL struct {
-	ImageURL string
-	Filename string
-}
-
 // UploadImgByURL 上传图片
-func UploadImgByURL(params *ParamsUploadImgByURL, result *ResultUploadImg) wx.Action {
+func UploadImgByURL(filename, url string, result *ResultUploadImg) wx.Action {
 	return wx.NewPostAction(urls.CorpMediaUploadImg,
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			resp, err := yiigo.HTTPGet(context.Background(), params.ImageURL)
+			resp, err := yiigo.HTTPGet(context.Background(), url)
 
 			if err != nil {
 				return nil, err
@@ -155,7 +146,7 @@ func UploadImgByURL(params *ParamsUploadImgByURL, result *ResultUploadImg) wx.Ac
 			}
 
 			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", params.Filename, body),
+				yiigo.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {

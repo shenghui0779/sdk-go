@@ -72,7 +72,7 @@ func GetUser(corpID, userID string, result *ResultUserGet) wx.Action {
 
 type ParamsUserSimpleList struct {
 	DepartmentID string `json:"department_id"`
-	FetchChild   int    `json:"fetch_child,omitempty"`
+	FetchChild   bool   `json:"fetch_child"`
 }
 
 type UserSimpleListData struct {
@@ -89,10 +89,7 @@ type ResultUserSimpleList struct {
 func ListUserSimple(linkedID, departmentID string, fetchChild bool, result *ResultUserSimpleList) wx.Action {
 	params := &ParamsUserSimpleList{
 		DepartmentID: fmt.Sprintf("%s/%s", linkedID, departmentID),
-	}
-
-	if fetchChild {
-		params.FetchChild = 1
+		FetchChild:   fetchChild,
 	}
 
 	return wx.NewPostAction(urls.CorpLinkedcorpUserSimpleList,
@@ -106,7 +103,6 @@ func ListUserSimple(linkedID, departmentID string, fetchChild bool, result *Resu
 }
 
 type ParamsUserList struct {
-	LinkedID     string `json:"linked_id"`
 	DepartmentID string `json:"department_id"`
 	FetchChild   bool   `json:"fetch_child"`
 }
@@ -116,12 +112,9 @@ type ResultUserList struct {
 }
 
 func ListUser(linkedID, departmentID string, fetchChild bool, result *ResultUserList) wx.Action {
-	params := &ParamsUserSimpleList{
+	params := &ParamsUserList{
 		DepartmentID: fmt.Sprintf("%s/%s", linkedID, departmentID),
-	}
-
-	if fetchChild {
-		params.FetchChild = 1
+		FetchChild:   fetchChild,
 	}
 
 	return wx.NewPostAction(urls.CorpLinkedcorpUserList,

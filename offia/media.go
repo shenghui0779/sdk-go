@@ -31,19 +31,14 @@ type ResultMediaUpload struct {
 	CreatedAt int64  `json:"created_at"`
 }
 
-type ParamsMediaUpload struct {
-	MediaType MediaType `json:"media_type"`
-	Path      string    `json:"path"`
-}
-
 // UploadMedia 上传临时素材
-func UploadMedia(params *ParamsMediaUpload, result *ResultMediaUpload) wx.Action {
-	_, filename := filepath.Split(params.Path)
+func UploadMedia(mediaType MediaType, mediaPath string, result *ResultMediaUpload) wx.Action {
+	_, filename := filepath.Split(mediaPath)
 
 	return wx.NewPostAction(urls.OffiaMediaUpload,
-		wx.WithQuery("type", string(params.MediaType)),
+		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(params.Path))
+			path, err := filepath.Abs(filepath.Clean(mediaPath))
 
 			if err != nil {
 				return nil, err
@@ -72,11 +67,11 @@ type ParamsMediaUploadByURL struct {
 }
 
 // UploadMediaByURL 上传临时素材
-func UploadMediaByURL(params *ParamsMediaUploadByURL, result *ResultMediaUpload) wx.Action {
+func UploadMediaByURL(mediaType MediaType, filename, url string, result *ResultMediaUpload) wx.Action {
 	return wx.NewPostAction(urls.OffiaMediaUpload,
-		wx.WithQuery("type", string(params.MediaType)),
+		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			resp, err := yiigo.HTTPGet(context.Background(), params.URL)
+			resp, err := yiigo.HTTPGet(context.Background(), url)
 
 			if err != nil {
 				return nil, err
@@ -91,7 +86,7 @@ func UploadMediaByURL(params *ParamsMediaUploadByURL, result *ResultMediaUpload)
 			}
 
 			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", params.Filename, body),
+				yiigo.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -106,19 +101,14 @@ type ResultMaterialAdd struct {
 	URL     string `json:"url"`
 }
 
-type ParamsMaterialAdd struct {
-	MediaType MediaType `json:"media_type"`
-	Path      string    `json:"path"`
-}
-
 // AddMaterial 新增其他类型永久素材（支持图片、音频、缩略图）
-func AddMaterial(params *ParamsMaterialAdd, result *ResultMaterialAdd) wx.Action {
-	_, filename := filepath.Split(params.Path)
+func AddMaterial(mediaType MediaType, mediaPath string, result *ResultMaterialAdd) wx.Action {
+	_, filename := filepath.Split(mediaPath)
 
 	return wx.NewPostAction(urls.OffiaMaterialAdd,
-		wx.WithQuery("type", string(params.MediaType)),
+		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(params.Path))
+			path, err := filepath.Abs(filepath.Clean(mediaPath))
 
 			if err != nil {
 				return nil, err
@@ -139,70 +129,13 @@ func AddMaterial(params *ParamsMaterialAdd, result *ResultMaterialAdd) wx.Action
 		}),
 	)
 }
-type UpdateArticles struct {
-	MediaID  string   `json:"media_id"`
-	Index    string   `json:"index"`
-	Articles Articles `json:"articles"`
-}
-
-type Articles struct {
-	Title            string `json:"title"`
-	ThumbMediaID     string `json:"thumb_media_id"`
-	Author           string `json:"author"`
-	Digest           string `json:"digest"`
-	ShowCoverPic     int    `json:"show_cover_pic"`
-	Content          string `json:"content"`
-	ContentSourceURL string `json:"content_source_url"`
-}
-
-// UpdateNews 编辑图文素材
-func UpdateNews(articles *UpdateArticles) wx.Action {
-	return wx.NewPostAction(urls.OffiaNewUpdate,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(&articles)
-		}),
-	)
-}
-
-//GetArticle 永久图文素材
-type GetArticle struct {
-	NewsItem []*NewsItem `json:"news_item"`
-}
-type NewsItem struct {
-	Title            string `json:"title"`
-	ThumbMediaID     string `json:"thumb_media_id"`
-	ShowCoverPic     int    `json:"show_cover_pic"`
-	Author           string `json:"author"`
-	Digest           string `json:"digest"`
-	Content          string `json:"content"`
-	URL              string `json:"url"`
-	ContentSourceURL string `json:"content_source_url"`
-}
-
-// GetNews 获取图文素材信息
-func GetNews(dest *GetArticle, mediaId string) wx.Action {
-	return wx.NewPostAction(urls.OffiaMaterialGet,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{"media_id": mediaId})
-		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, &dest)
-		}),
-	)
-}
-
-type ParamsMaterialAddByURL struct {
-	MediaType MediaType `json:"media_type"`
-	Filename  string    `json:"filename"`
-	URL       string    `json:"url"`
-}
 
 // AddMaterialByURL 新增其他类型永久素材（支持图片、音频、缩略图）
-func AddMaterialByURL(params *ParamsMaterialAddByURL, result *ResultMaterialAdd) wx.Action {
+func AddMaterialByURL(mediaType MediaType, filename, url string, result *ResultMaterialAdd) wx.Action {
 	return wx.NewPostAction(urls.OffiaMaterialAdd,
-		wx.WithQuery("type", string(params.MediaType)),
+		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			resp, err := yiigo.HTTPGet(context.Background(), params.URL)
+			resp, err := yiigo.HTTPGet(context.Background(), url)
 
 			if err != nil {
 				return nil, err
@@ -217,11 +150,91 @@ func AddMaterialByURL(params *ParamsMaterialAddByURL, result *ResultMaterialAdd)
 			}
 
 			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", params.Filename, body),
+				yiigo.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsMaterialGet struct {
+	MediaID string `json:"media_id"`
+}
+
+type ResultNewsMaterialGet struct {
+	NewsItem []*NewsItem `json:"news_item"`
+}
+
+type NewsItem struct {
+	Title            string `json:"title"`
+	ThumbMediaID     string `json:"thumb_media_id"`
+	ShowCoverPic     int    `json:"show_cover_pic"`
+	Author           string `json:"author"`
+	Digest           string `json:"digest"`
+	Content          string `json:"content"`
+	URL              string `json:"url"`
+	ContentSourceURL string `json:"content_source_url"`
+}
+
+// GetNewsMaterial 获取永久素材 - 图文
+func GetNewsMaterial(mediaID string, result *ResultNewsMaterialGet) wx.Action {
+	params := &ParamsMaterialGet{
+		MediaID: mediaID,
+	}
+
+	return wx.NewPostAction(urls.OffiaMaterialGet,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ResultVideoMaterialGet struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	DownURL     string `json:"down_url"`
+}
+
+// GetVideoMaterial 获取永久素材 - 视频消息
+func GetVideoMaterial(mediaID string, result *ResultVideoMaterialGet) wx.Action {
+	params := &ParamsMaterialGet{
+		MediaID: mediaID,
+	}
+
+	return wx.NewPostAction(urls.OffiaMaterialGet,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ResultOtherMaterialGet struct {
+	Buffer []byte
+}
+
+// GetOtherMaterial 获取永久素材 - 其他类型的素材消息（返回的直接为素材的内容）
+func GetOtherMaterial(mediaID string, result *ResultOtherMaterialGet) wx.Action {
+	params := &ParamsMaterialGet{
+		MediaID: mediaID,
+	}
+
+	return wx.NewPostAction(urls.OffiaMaterialGet,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			result.Buffer = make([]byte, len(resp))
+			copy(result.Buffer, resp)
+
+			return nil
 		}),
 	)
 }
@@ -235,13 +248,13 @@ func DeleteMaterial(mediaID string) wx.Action {
 	)
 }
 
-// UploadImage 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
-func UploadImage(path string, result *ResultMaterialAdd) wx.Action {
-	_, filename := filepath.Split(path)
+// UploadImg 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
+func UploadImg(imgPath string, result *ResultMaterialAdd) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
-	return wx.NewPostAction(urls.OffiaNewsImageUpload,
+	return wx.NewPostAction(urls.OffiaNewsImgUpload,
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
@@ -263,16 +276,11 @@ func UploadImage(path string, result *ResultMaterialAdd) wx.Action {
 	)
 }
 
-type ParamsImageUploadByURL struct {
-	Filename string `json:"filename"`
-	URL      string `json:"url"`
-}
-
-// UploadImageByURL 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
-func UploadImageByURL(params *ParamsImageUploadByURL, result *ResultMaterialAdd) wx.Action {
-	return wx.NewPostAction(urls.OffiaNewsImageUpload,
+// UploadImgByURL 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
+func UploadImgByURL(filename, url string, result *ResultMaterialAdd) wx.Action {
+	return wx.NewPostAction(urls.OffiaNewsImgUpload,
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			resp, err := yiigo.HTTPGet(context.Background(), params.URL)
+			resp, err := yiigo.HTTPGet(context.Background(), url)
 
 			if err != nil {
 				return nil, err
@@ -287,7 +295,7 @@ func UploadImageByURL(params *ParamsImageUploadByURL, result *ResultMaterialAdd)
 			}
 
 			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", params.Filename, body),
+				yiigo.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -378,8 +386,8 @@ type NewsArticle struct {
 	ShowCoverPic       int    `json:"show_cover_pic"`
 	Content            string `json:"content"`
 	ContentSourceURL   string `json:"content_source_url"`
-	NeedOpenComment    int    `json:"need_open_comment"`
-	OnlyFansCanComment int    `json:"only_fans_can_comment"`
+	NeedOpenComment    int    `json:"need_open_comment,omitempty"`
+	OnlyFansCanComment int    `json:"only_fans_can_comment,omitempty"`
 }
 
 type ParamsNewsAdd struct {
@@ -394,6 +402,21 @@ func AddNews(params *ParamsNewsAdd, result *ResultMaterialAdd) wx.Action {
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsNewsUpdate struct {
+	MediaID  string       `json:"media_id"`
+	Index    string       `json:"index"`
+	Articles *NewsArticle `json:"articles"`
+}
+
+// UpdateNews 编辑图文素材
+func UpdateNews(params *ParamsNewsUpdate) wx.Action {
+	return wx.NewPostAction(urls.OffiaNewsUpdate,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
 		}),
 	)
 }
