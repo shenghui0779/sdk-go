@@ -8,14 +8,18 @@ import (
 )
 
 type ParamsPermitUserList struct {
-	Type int `json:"type"`
+	Type int `json:"type,omitempty"`
 }
 
 type ResultPermitUserList struct {
 	IDs []string `json:"ids"`
 }
 
-func ListPermitUser(params *ParamsPermitUserList, result *ResultPermitUserList) wx.Action {
+func ListPermitUser(listType int, result *ResultPermitUserList) wx.Action {
+	params := &ParamsPermitUserList{
+		Type: listType,
+	}
+
 	return wx.NewPostAction(urls.CorpMsgAuditGetPermitUserList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -26,24 +30,24 @@ func ListPermitUser(params *ParamsPermitUserList, result *ResultPermitUserList) 
 	)
 }
 
-type CheckInfo struct {
-	UserID         string `json:"userid"`
-	ExternalOpenID string `json:"externalopenid"`
-}
-
-type AgreeInfo struct {
-	StatusChangeTime int64  `json:"status_change_time"`
-	UserID           string `json:"userid"`
-	ExternalOpenID   string `json:"externalopenid"`
-	AgreeStatus      string `json:"agree_status"`
-}
-
 type ParamsSingleAgreeCheck struct {
-	Info []*CheckInfo `json:"info"`
+	Info []*SingleCheckInfo `json:"info"`
+}
+
+type SingleCheckInfo struct {
+	UserID         string `json:"userid"`
+	ExternalOpenID string `json:"exteranalopenid"`
 }
 
 type ResultSingleAgreeCheck struct {
-	AgreeInfo []*AgreeInfo `json:"agree_info"`
+	AgreeInfo []*SingleAgreeInfo `json:"agreeinfo"`
+}
+
+type SingleAgreeInfo struct {
+	StatusChangeTime int64  `json:"status_change_time"`
+	UserID           string `json:"userid"`
+	ExternalOpenID   string `json:"exteranalopenid"`
+	AgreeStatus      string `json:"agree_status"`
 }
 
 func CheckSingleAgree(params *ParamsSingleAgreeCheck, result *ResultSingleAgreeCheck) wx.Action {
@@ -62,10 +66,20 @@ type ParamsRoomAgreeCheck struct {
 }
 
 type ResultRoomAgreeCheck struct {
-	AgreeInfo []*AgreeInfo `json:"agree_info"`
+	AgreeInfo []*RoomAgreeInfo `json:"agreeinfo"`
 }
 
-func CheckRoomAgree(params *ParamsRoomAgreeCheck, result *ResultRoomAgreeCheck) wx.Action {
+type RoomAgreeInfo struct {
+	StatusChangeTime int64  `json:"status_change_time"`
+	ExternalOpenID   string `json:"exteranalopenid"`
+	AgreeStatus      string `json:"agree_status"`
+}
+
+func CheckRoomAgree(roomID string, result *ResultRoomAgreeCheck) wx.Action {
+	params := &ParamsRoomAgreeCheck{
+		RoomID: roomID,
+	}
+
 	return wx.NewPostAction(urls.CorpMsgAuditCheckRoomAgree,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -93,7 +107,11 @@ type ResultGroupChatGet struct {
 	Members        []*GroupMember `json:"members"`
 }
 
-func GetGroupChat(params *ParamsGroupChatGet, result *ResultGroupChatGet) wx.Action {
+func GetGroupChat(roomID string, result *ResultGroupChatGet) wx.Action {
+	params := &ParamsGroupChatGet{
+		RoomID: roomID,
+	}
+
 	return wx.NewPostAction(urls.CorpMsgAuditGroupChatGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
