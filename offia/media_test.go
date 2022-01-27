@@ -183,7 +183,7 @@ func TestGetNewsMaterial(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultNewsMaterialGet{
-		NewsItem: []*NewsItem{
+		NewsItem: []*MaterialNewsItem{
 			{
 				Title:            "TITLE",
 				ThumbMediaID:     "THUMB_MEDIA_ID",
@@ -475,4 +475,163 @@ func TestUpdateNews(t *testing.T) {
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UpdateNews(params))
 
 	assert.Nil(t, err)
+}
+
+func TestGetMaterialCount(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"voice_count": 1,
+	"video_count": 2,
+	"image_count": 3,
+	"news_count": 4
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultMaterialCount)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetMaterialCount(result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultMaterialCount{
+		VoiceCount: 1,
+		VideoCount: 2,
+		ImageCount: 3,
+		NewsCount:  4,
+	}, result)
+}
+
+func TestListMaterial(t *testing.T) {
+	body := []byte(`{"type":"image","offset":0,"count":10}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"total_count": 10,
+	"item_count": 1,
+	"item": [
+		{
+			"media_id": "MEDIA_ID",
+			"name": "NAME",
+			"update_time": 1643266823,
+			"url": "URL"
+		}
+	]
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	params := &ParamsMaterialList{
+		Type:   MediaImage,
+		Offset: 0,
+		Count:  10,
+	}
+	result := new(ResultMaterialList)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ListMatertial(params, result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultMaterialList{
+		TotalCount: 10,
+		ItemCount:  1,
+		Item: []*MaterialListItem{
+			{
+				MediaID:    "MEDIA_ID",
+				Name:       "NAME",
+				UpdateTime: 1643266823,
+				URL:        "URL",
+			},
+		},
+	}, result)
+}
+
+func TestListMaterialNews(t *testing.T) {
+	body := []byte(`{"type":"news","offset":0,"count":10}`)
+
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"total_count": 10,
+	"item_count": 1,
+	"item": [
+		{
+			"media_id": "MEDIA_ID",
+			"update_time": 1643266823,
+			"content": {
+				"news_item": [
+					{
+						"title": "TITLE",
+						"thumb_media_id": "THUMB_MEDIA_ID",
+						"show_cover_pic": 1,
+						"author": "AUTHOR",
+						"digest": "DIGEST",
+						"content": "CONTENT",
+						"url": "URL",
+						"content_source_url": "CONTETN_SOURCE_URL"
+					}
+				]
+			}
+		}
+	]
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultMaterialNewsList)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ListMaterialNews(0, 10, result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultMaterialNewsList{
+		TotalCount: 10,
+		ItemCount:  1,
+		Item: []*MaterialNewsListItem{
+			{
+				MediaID:    "MEDIA_ID",
+				UpdateTime: 1643266823,
+				Content: &MaterialNewsListContent{
+					NewsItem: []*MaterialNewsItem{
+						{
+							Title:            "TITLE",
+							ThumbMediaID:     "THUMB_MEDIA_ID",
+							ShowCoverPic:     1,
+							Author:           "AUTHOR",
+							Digest:           "DIGEST",
+							Content:          "CONTENT",
+							URL:              "URL",
+							ContentSourceURL: "CONTETN_SOURCE_URL",
+						},
+					},
+				},
+			},
+		},
+	}, result)
 }

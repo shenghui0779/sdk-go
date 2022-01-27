@@ -164,10 +164,10 @@ type ParamsMaterialGet struct {
 }
 
 type ResultNewsMaterialGet struct {
-	NewsItem []*NewsItem `json:"news_item"`
+	NewsItem []*MaterialNewsItem `json:"news_item"`
 }
 
-type NewsItem struct {
+type MaterialNewsItem struct {
 	Title            string `json:"title"`
 	ThumbMediaID     string `json:"thumb_media_id"`
 	ShowCoverPic     int    `json:"show_cover_pic"`
@@ -417,6 +417,84 @@ func UpdateNews(params *ParamsNewsUpdate) wx.Action {
 	return wx.NewPostAction(urls.OffiaNewsUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
+		}),
+	)
+}
+
+type ResultMaterialCount struct {
+	VoiceCount int `json:"voice_count"`
+	VideoCount int `json:"video_count"`
+	ImageCount int `json:"image_count"`
+	NewsCount  int `json:"news_count"`
+}
+
+func GetMaterialCount(result *ResultMaterialCount) wx.Action {
+	return wx.NewGetAction(urls.OffiaMaterialCountGet,
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsMaterialList struct {
+	Type   MediaType `json:"type"`
+	Offset int       `json:"offset"`
+	Count  int       `json:"count"`
+}
+
+type ResultMaterialList struct {
+	TotalCount int                 `json:"total_count"`
+	ItemCount  int                 `json:"item_count"`
+	Item       []*MaterialListItem `json:"item"`
+}
+
+type MaterialListItem struct {
+	MediaID    string `json:"media_id"`
+	Name       string `json:"name"`
+	UpdateTime int64  `json:"update_time"`
+	URL        string `json:"url"`
+}
+
+func ListMatertial(params *ParamsMaterialList, result *ResultMaterialList) wx.Action {
+	return wx.NewPostAction(urls.OffiaMaterialBatchGet,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ResultMaterialNewsList struct {
+	TotalCount int                     `json:"total_count"`
+	ItemCount  int                     `json:"item_count"`
+	Item       []*MaterialNewsListItem `json:"item"`
+}
+
+type MaterialNewsListItem struct {
+	MediaID    string                   `json:"media_id"`
+	UpdateTime int64                    `json:"update_time"`
+	Content    *MaterialNewsListContent `json:"content"`
+}
+
+type MaterialNewsListContent struct {
+	NewsItem []*MaterialNewsItem `json:"news_item"`
+}
+
+func ListMaterialNews(offset, count int, result *ResultMaterialNewsList) wx.Action {
+	params := &ParamsMaterialList{
+		Type:   MediaType("news"),
+		Offset: offset,
+		Count:  count,
+	}
+
+	return wx.NewPostAction(urls.OffiaMaterialBatchGet,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

@@ -62,14 +62,16 @@ const (
 
 // media
 const (
-	OffiaMediaUpload    = "https://api.weixin.qq.com/cgi-bin/media/upload"
-	OffiaMediaGet       = "https://api.weixin.qq.com/cgi-bin/media/get"
-	OffiaNewsAdd        = "https://api.weixin.qq.com/cgi-bin/material/add_news"
-	OffiaNewsUpdate     = "https://api.weixin.qq.com/cgi-bin/material/update_news"
-	OffiaNewsImgUpload  = "https://api.weixin.qq.com/cgi-bin/media/uploadimg"
-	OffiaMaterialAdd    = "https://api.weixin.qq.com/cgi-bin/material/add_material"
-	OffiaMaterialDelete = "https://api.weixin.qq.com/cgi-bin/material/del_material"
-	OffiaMaterialGet    = "https://api.weixin.qq.com/cgi-bin/material/get_material"
+	OffiaMediaUpload      = "https://api.weixin.qq.com/cgi-bin/media/upload"
+	OffiaMediaGet         = "https://api.weixin.qq.com/cgi-bin/media/get"
+	OffiaNewsAdd          = "https://api.weixin.qq.com/cgi-bin/material/add_news"
+	OffiaNewsUpdate       = "https://api.weixin.qq.com/cgi-bin/material/update_news"
+	OffiaNewsImgUpload    = "https://api.weixin.qq.com/cgi-bin/media/uploadimg"
+	OffiaMaterialAdd      = "https://api.weixin.qq.com/cgi-bin/material/add_material"
+	OffiaMaterialDelete   = "https://api.weixin.qq.com/cgi-bin/material/del_material"
+	OffiaMaterialGet      = "https://api.weixin.qq.com/cgi-bin/material/get_material"
+	OffiaMaterialCountGet = "https://api.weixin.qq.com/cgi-bin/material/get_materialcount"
+	OffiaMaterialBatchGet = "https://api.weixin.qq.com/cgi-bin/material/batchget_material"
 )
 
 // image
