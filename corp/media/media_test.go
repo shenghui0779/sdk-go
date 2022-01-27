@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/corp"
@@ -16,12 +17,14 @@ import (
 )
 
 func TestUpload(t *testing.T) {
-	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
 	"errcode": 0,
-	"errmsg": "ok"
+	"errmsg": "ok",
+	"type": "image",
+	"media_id": "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
+	"created_at": "1380000000"
 }`))),
 	}
 
@@ -30,23 +33,32 @@ func TestUpload(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultUpload)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", Upload(MediaImage, "../../mock/test.jpg", result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultUpload{
+		Type:      MediaImage,
+		MediaID:   "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
+		CreatedAt: "1380000000",
+	}, result)
 }
 
 func TestUploadByURL(t *testing.T) {
-	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
 	"errcode": 0,
-	"errmsg": "ok"
+	"errmsg": "ok",
+	"type": "image",
+	"media_id": "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
+	"created_at": "1380000000"
 }`))),
 	}
 
@@ -55,23 +67,30 @@ func TestUploadByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultUpload)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UploadByURL(MediaImage, "test.png", "https://golang.google.cn/doc/gopher/pkg.png", result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultUpload{
+		Type:      MediaImage,
+		MediaID:   "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
+		CreatedAt: "1380000000",
+	}, result)
 }
 
 func TestUploadImg(t *testing.T) {
-	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
 	"errcode": 0,
-	"errmsg": "ok"
+	"errmsg": "ok",
+	"url": "http://p.qpic.cn/pic_wework/3474110808/7a7c8471673ff0f178f63447935d35a5c1247a7f31d9c060/0"
 }`))),
 	}
 
@@ -80,23 +99,28 @@ func TestUploadImg(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultUploadImg)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UploadImg("../../mock/test.jpg", result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultUploadImg{
+		URL: "http://p.qpic.cn/pic_wework/3474110808/7a7c8471673ff0f178f63447935d35a5c1247a7f31d9c060/0",
+	}, result)
 }
 
 func TestUploadImgByURL(t *testing.T) {
-	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
 	"errcode": 0,
-	"errmsg": "ok"
+	"errmsg": "ok",
+	"url": "http://p.qpic.cn/pic_wework/3474110808/7a7c8471673ff0f178f63447935d35a5c1247a7f31d9c060/0"
 }`))),
 	}
 
@@ -105,12 +129,17 @@ func TestUploadImgByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/uploadimg?access_token=ACCESS_TOKEN", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultUploadImg)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UploadImgByURL("test.png", "https://golang.google.cn/doc/gopher/pkg.png", result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultUploadImg{
+		URL: "http://p.qpic.cn/pic_wework/3474110808/7a7c8471673ff0f178f63447935d35a5c1247a7f31d9c060/0",
+	}, result)
 }
