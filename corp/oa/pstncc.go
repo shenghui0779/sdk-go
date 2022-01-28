@@ -32,19 +32,19 @@ func CallPstncc(params *ParamsPstnccCall, result *ResultPstnccCall) wx.Action {
 	)
 }
 
-type ParamsPstnccStatesGet struct {
+type ParamsPstnccStates struct {
 	CalleeUserID string `json:"callee_userid"`
 	CallID       string `json:"callid"`
 }
 
-type ResultPstnccStatesGet struct {
+type ResultPstnccStates struct {
 	IsTalked int   `json:"istalked"`
 	CallTime int64 `json:"calltime"`
 	TalkTime int   `json:"talktime"`
 	Reason   int   `json:"reason"`
 }
 
-func GetPstnccStates(params *ParamsPstnccStatesGet, result *ResultPstnccStatesGet) wx.Action {
+func GetPstnccStates(params *ParamsPstnccStates, result *ResultPstnccStates) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetPstnccStates,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

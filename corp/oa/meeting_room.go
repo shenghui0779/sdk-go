@@ -94,7 +94,11 @@ type ParamsMeetingRoomDelete struct {
 	MeetingRoomID int64 `json:"meetingroom_id"`
 }
 
-func DeleteMeetingRoom(params *ParamsMeetingRoomDelete) wx.Action {
+func DeleteMeetingRoom(meetingRoomID int64) wx.Action {
+	params := &ParamsMeetingRoomDelete{
+		MeetingRoomID: meetingRoomID,
+	}
+
 	return wx.NewPostAction(urls.CorpOAMeetingRoomDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

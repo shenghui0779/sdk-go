@@ -16,70 +16,6 @@ type TemplateControl struct {
 	Config   *ControlConfig   `json:"config"`
 }
 
-type ControlProperty struct {
-	Control     string         `json:"control"`
-	ID          string         `json:"id"`
-	Title       []*DisplayText `json:"title"`
-	Placeholder []*DisplayText `json:"placeholder"`
-	Require     int            `json:"require"`
-	UnPrint     int            `json:"un_print"`
-}
-
-type ControlConfig struct {
-	Date         *ControlDate       `json:"date,omitempty"`
-	Selector     *ControlSelector   `json:"selector,omitempty"`
-	Table        *ControlTable      `json:"table,omitempty"`
-	Attendance   *ControlAttendance `json:"attendance,omitempty"`
-	VacationList *ControlVacation   `json:"vacation_list,omitempty"`
-}
-
-type ControlDate struct {
-	Type string `json:"type"`
-}
-
-type ControlSelector struct {
-	Type    string            `json:"type"`
-	ExpType int               `json:"exp_type"`
-	Options []*SelectorOption `json:"options"`
-}
-
-type SelectorOption struct {
-	Key   string         `json:"key"`
-	Value []*DisplayText `json:"value"`
-}
-
-type ControlContact struct {
-	Type string `json:"type"`
-	Mode string `json:"mode"`
-}
-
-type ControlTable struct {
-	Childern  []*TableChild `json:"childern"`
-	StatField interface{}   `json:"stat_field"`
-}
-
-type TableChild struct {
-	Property *ControlProperty
-}
-
-type ControlAttendance struct {
-	Type      int                  `json:"type"`
-	DateRange *AttendanceDateRange `json:"date_range"`
-}
-
-type AttendanceDateRange struct {
-	Type string `json:"type"`
-}
-
-type ControlVacation struct {
-	Item []*VacationItem `json:"item"`
-}
-
-type VacationItem struct {
-	ID   int64          `json:"id"`
-	Name []*DisplayText `json:"name"`
-}
-
 type ParamsTemplateDetail struct {
 	TemplateID string `json:"template_id"`
 }
@@ -89,7 +25,11 @@ type ResultTemplateDetail struct {
 	TemplateContent *TemplateContent `json:"template_content"`
 }
 
-func GetTemplateDetail(params *ParamsTemplateDetail, result *ResultTemplateDetail) wx.Action {
+func GetTemplateDetail(templateID string, result *ResultTemplateDetail) wx.Action {
+	params := &ParamsTemplateDetail{
+		TemplateID: templateID,
+	}
+
 	return wx.NewPostAction(urls.CorpOAGetTemplateDetail,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -103,16 +43,6 @@ func GetTemplateDetail(params *ParamsTemplateDetail, result *ResultTemplateDetai
 type Approver struct {
 	Attr   int      `json:"attr"`
 	UserID []string `json:"userid"`
-}
-
-type ApplyData struct {
-	Contents []*ApplyContent `json:"contents"`
-}
-
-type ApplyContent struct {
-	Control string       `json:"control"`
-	ID      string       `json:"id"`
-	Value   *DisplayText `json:"value"`
 }
 
 type ApplySummaryInfo struct {
@@ -132,7 +62,7 @@ type ParamsApplyEvent struct {
 }
 
 type ResultApplyEvent struct {
-	SpNo string `json:"sp_no"`
+	SPNO string `json:"sp_no"`
 }
 
 func ApplyEvent(params *ParamsApplyEvent, result *ResultApplyEvent) wx.Action {
@@ -144,6 +74,96 @@ func ApplyEvent(params *ParamsApplyEvent, result *ResultApplyEvent) wx.Action {
 			return json.Unmarshal(resp, result)
 		}),
 	)
+}
+
+type ParamsApprovalInfo struct {
+	StartTime int64
+	EndTime   int64
+	Cursor    int
+	Size      int
+	Filters   []*KeyValue `json:"filters,omitempty"`
+}
+
+type ResultApprovalInfo struct {
+	SPNOList []string `json:"sp_no_list"`
+}
+
+func GetApprovalInfo(params *ParamsApprovalInfo, result *ResultApprovalInfo) wx.Action {
+	return wx.NewPostAction(urls.CorpOAGetApprovalInfo,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsApprovalDetail struct {
+	SPNO string `json:"sp_no"`
+}
+
+type ResultApprovalDetail struct {
+	SPNO       string              `json:"spno"`
+	SPName     string              `json:"sp_name"`
+	SPStatus   int                 `json:"sp_status"`
+	TemplateID string              `json:"template_id"`
+	ApplyTime  int64               `json:"apply_time"`
+	Applyer    *Applyer            `json:"applyer"`
+	SPRecord   []*ApprovalSPRecord `json:"sp_record"`
+	Notifyer   []*OAUser           `json:"notifyer"`
+	ApplyData  *ApplyData          `json:"apply_data"`
+	Comments   []*ApprovalComment  `json:"comments"`
+}
+
+type Applyer struct {
+	UserID  string `json:"user_id"`
+	PartyID string `json:"party_id"`
+}
+
+type ApprovalSPRecord struct {
+	SPStatus     int                 `json:"sp_status"`
+	ApproverAttr int                 `json:"approverattr"`
+	Details      []*ApprovalSPDetail `json:"details"`
+}
+
+type ApprovalSPDetail struct {
+	Approver *OAUser  `json:"approver"`
+	Speech   string   `json:"speech"`
+	SPStatus int      `json:"sp_status"`
+	SPTime   int64    `json:"sptime"`
+	MediaID  []string `json:"media_id"`
+}
+
+type ApprovalComment struct {
+	CommentUserInfo *OAUser  `json:"commentUserInfo"`
+	CommentTime     int64    `json:"commenttime"`
+	CommentContent  string   `json:"commentcontent"`
+	CommentID       string   `json:"commentid"`
+	MediaID         []string `json:"media_id"`
+}
+
+func GetApprovalDetail(spno string, result *ResultApprovalDetail) wx.Action {
+	params := &ParamsApprovalDetail{
+		SPNO: spno,
+	}
+
+	return wx.NewPostAction(urls.CorpOAGetApprovalDetail,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsOpenApprovalDataGet struct {
+	ThirdNO string `json:"thirdNo"`
+}
+
+type ResultOpenApprovalDataGet struct {
+	Data *OpenApprovalData `json:"data"`
 }
 
 type ApprovalNodes struct {
@@ -171,11 +191,11 @@ type ApprovalNodeItem struct {
 	ItemOPTime int64  `json:"ItemOPTime"`
 }
 
-type NotifyNodes struct {
-	NotifyNode []*NotifyNode `json:"NotifyNode"`
+type ApprovalNotifyNodes struct {
+	NotifyNode []*ApprovalNotifyNode `json:"NotifyNode"`
 }
 
-type NotifyNode struct {
+type ApprovalNotifyNode struct {
 	ItemName   string `json:"ItemName"`
 	ItemParty  string `json:"ItemParty"`
 	ItemImage  string `json:"ItemImage"`
@@ -183,30 +203,27 @@ type NotifyNode struct {
 }
 
 type OpenApprovalData struct {
-	ThirdNO        string         `json:"ThirdNo"`
-	OpenTemplateID string         `json:"OpenTemplateId"`
-	OpenSPName     string         `json:"OpenSpName"`
-	OpenSPStatus   string         `json:"OpenSpstatus"`
-	ApplyTime      int64          `json:"ApplyTime"`
-	ApplyUsername  string         `json:"ApplyUsername"`
-	ApplyUserParty string         `json:"ApplyUserParty"`
-	ApplyUserImage string         `json:"ApplyUserImage"`
-	ApplyUserID    string         `json:"ApplyUserId"`
-	ApprovalNodes  *ApprovalNodes `json:"ApprovalNodes"`
-	NotifyNodes    *NotifyNodes   `json:"NotifyNodes"`
-	ApproverStep   int            `json:"ApproverStep"`
+	ThirdNO        string               `json:"ThirdNo"`
+	OpenTemplateID string               `json:"OpenTemplateId"`
+	OpenSPName     string               `json:"OpenSpName"`
+	OpenSPStatus   string               `json:"OpenSpstatus"`
+	ApplyTime      int64                `json:"ApplyTime"`
+	ApplyUsername  string               `json:"ApplyUsername"`
+	ApplyUserParty string               `json:"ApplyUserParty"`
+	ApplyUserImage string               `json:"ApplyUserImage"`
+	ApplyUserID    string               `json:"ApplyUserId"`
+	ApprovalNodes  *ApprovalNodes       `json:"ApprovalNodes"`
+	NotifyNodes    *ApprovalNotifyNodes `json:"NotifyNodes"`
+	ApproverStep   int                  `json:"ApproverStep"`
 }
 
-type ParamsOpenApprovalDataGet struct {
-	ThirdNO string `json:"thirdNo"`
-}
+// GetOpenApprovalData 查询自建应用审批单当前状态
+func GetOpenApprovalData(thirdNO string, result *ResultOpenApprovalDataGet) wx.Action {
+	params := &ParamsOpenApprovalDataGet{
+		ThirdNO: thirdNO,
+	}
 
-type ResultOpenApprovalDataGet struct {
-	Data *OpenApprovalData `json:"data"`
-}
-
-func GetOpenApprovalData(params *ParamsOpenApprovalDataGet, result *ResultOpenApprovalDataGet) wx.Action {
-	return wx.NewPostAction(urls.CorpOAOpenApprovalDataGet,
+	return wx.NewPostAction(urls.CorpOAGetOpenApprovalData,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
