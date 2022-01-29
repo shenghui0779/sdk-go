@@ -28,11 +28,11 @@ type CorpCheckinOption struct {
 	ReporterInfo           *CheckinReporter  `json:"reporterinfo"`
 	OtInfo                 *CheckinOt        `json:"ot_info"`
 	AllowApplyBKCnt        int               `json:"allow_apply_bk_cnt"`
-	AllowApplyBKDayLimit   int               `json:"allow_apply_bk_day_limit"`
 	OptionOutRange         int               `json:"option_out_range"`
 	CreateUserID           string            `json:"create_userid"`
-	UpdateUserID           string            `json:"update_userid"`
 	UseFaceDetect          bool              `json:"use_face_detect"`
+	AllowApplyBKDayLimit   int               `json:"allow_apply_bk_day_limit"`
+	UpdateUserID           string            `json:"update_userid"`
 	ScheduleList           []*OptionSchedule `json:"schedulelist"`
 	OffWorkIntervalTime    int               `json:"off_work_interval_time"`
 }
@@ -101,8 +101,8 @@ type CheckinRange struct {
 }
 
 type CheckinReporter struct {
-	Reporters  []*CheckinReporter `json:"reporters"`
-	UpdateTime int64              `json:"updatetime"`
+	Reporters  []*OAUser `json:"reporters"`
+	UpdateTime int64     `json:"updatetime"`
 }
 
 type CheckinOt struct {
@@ -110,8 +110,8 @@ type CheckinOt struct {
 	AllowOtWorkingDay    bool            `json:"allow_ot_workingday"`
 	AllowOtNonWorkingDay bool            `json:"allow_ot_nonworkingday"`
 	OtCheckInfo          *CheckinOtCheck `json:"otcheckinfo"`
-	OtApplyInfo          *CheckinOtApply `json:"otapplyinfo"`
 	UpTime               int64           `json:"uptime"`
+	OtApplyInfo          *CheckinOtApply `json:"otapplyinfo"`
 }
 
 type CheckinOtCheck struct {
@@ -196,6 +196,9 @@ type ResultCorpCheckinOption struct {
 
 func GetCorpCheckinOption(result *ResultCorpCheckinOption) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetCorpCheckinOption,
+		wx.WithBody(func() ([]byte, error) {
+			return []byte("{}"), nil
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),

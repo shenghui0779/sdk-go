@@ -77,10 +77,10 @@ func ApplyEvent(params *ParamsApplyEvent, result *ResultApplyEvent) wx.Action {
 }
 
 type ParamsApprovalInfo struct {
-	StartTime int64
-	EndTime   int64
-	Cursor    int
-	Size      int
+	StartTime string      `json:"starttime"`
+	EndTime   string      `json:"endtime"`
+	Cursor    int         `json:"cursor"`
+	Size      int         `json:"size"`
 	Filters   []*KeyValue `json:"filters,omitempty"`
 }
 
@@ -158,11 +158,11 @@ func GetApprovalDetail(spno string, result *ResultApprovalDetail) wx.Action {
 	)
 }
 
-type ParamsOpenApprovalDataGet struct {
+type ParamsOpenApprovalData struct {
 	ThirdNO string `json:"thirdNo"`
 }
 
-type ResultOpenApprovalDataGet struct {
+type ResultOpenApprovalData struct {
 	Data *OpenApprovalData `json:"data"`
 }
 
@@ -206,7 +206,7 @@ type OpenApprovalData struct {
 	ThirdNO        string               `json:"ThirdNo"`
 	OpenTemplateID string               `json:"OpenTemplateId"`
 	OpenSPName     string               `json:"OpenSpName"`
-	OpenSPStatus   string               `json:"OpenSpstatus"`
+	OpenSPStatus   int                  `json:"OpenSpstatus"`
 	ApplyTime      int64                `json:"ApplyTime"`
 	ApplyUsername  string               `json:"ApplyUsername"`
 	ApplyUserParty string               `json:"ApplyUserParty"`
@@ -218,8 +218,8 @@ type OpenApprovalData struct {
 }
 
 // GetOpenApprovalData 查询自建应用审批单当前状态
-func GetOpenApprovalData(thirdNO string, result *ResultOpenApprovalDataGet) wx.Action {
-	params := &ParamsOpenApprovalDataGet{
+func GetOpenApprovalData(thirdNO string, result *ResultOpenApprovalData) wx.Action {
+	params := &ParamsOpenApprovalData{
 		ThirdNO: thirdNO,
 	}
 
