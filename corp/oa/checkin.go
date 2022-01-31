@@ -62,6 +62,7 @@ type CheckinOption struct {
 type CheckinDate struct {
 	Workdays        []int          `json:"workdays"`
 	CheckinTime     []*CheckinTime `json:"checkintime"`
+	FlexTime        int            `json:"flex_time"`
 	NoNeedOffWork   bool           `json:"noneed_offwork"`
 	LimitAheadTime  int            `json:"limit_aheadtime"`
 	FlexOnDutyTime  int            `json:"flex_on_duty_time"`
@@ -238,6 +239,9 @@ type CheckinData struct {
 	WifiMac        string   `json:"wifimac"`
 	Notes          string   `json:"notes"`
 	MediaIDs       []string `json:"mediaids"`
+	Lat            int64    `json:"lat"`
+	Lng            int64    `json:"lng"`
+	DeviceID       string   `json:"deviceid"`
 	SchCheckinTime int64    `json:"sch_checkin_time"`
 	ScheduleID     int64    `json:"schedule_id"`
 	TimelineID     int64    `json:"timeline_id"`
@@ -347,9 +351,9 @@ type CheckinException struct {
 }
 
 type CheckinDayOt struct {
-	OtStatus          int `json:"ot_status"`
-	OtDuration        int `json:"ot_duration"`
-	ExceptionDuration int `json:"exception_duration"`
+	OtStatus          int   `json:"ot_status"`
+	OtDuration        int   `json:"ot_duration"`
+	ExceptionDuration []int `json:"exception_duration"`
 }
 
 type CheckinSPItem struct {
@@ -435,9 +439,9 @@ type ScheduleData struct {
 }
 
 type ScheduleInfo struct {
-	ScheduleID   int64                `json:"schedule_id"`
-	ScheduleName string               `json:"schedule_name"`
-	TimeSection  *ScheduleTimeSection `json:"time_section"`
+	ScheduleID   int64                  `json:"schedule_id"`
+	ScheduleName string                 `json:"schedule_name"`
+	TimeSection  []*ScheduleTimeSection `json:"time_section"`
 }
 
 type ScheduleTimeSection struct {
@@ -484,10 +488,44 @@ type ParamsCheckinUserFaceAdd struct {
 	UserFace string `json:"userface"`
 }
 
-func AddCheckinUserFace(params *ParamsCheckinUserFaceAdd) wx.Action {
+func AddCheckinUserFace(userID, userFace string) wx.Action {
+	params := &ParamsCheckinUserFaceAdd{
+		UserID:   userID,
+		UserFace: userFace,
+	}
+
 	return wx.NewPostAction(urls.CorpOAAddCheckinUserFace,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
+		}),
+	)
+}
+
+type ParamsHardwareCheckinData struct {
+	FilterType int      `json:"filter_type"`
+	StartTime  int64    `json:"starttime"`
+	EndTime    int64    `json:"endtime"`
+	UserIDList []string `json:"user_id_list"`
+}
+
+type ResultHardwareCheckinData struct {
+	CheckinData []*HardwareCheckinData
+}
+
+type HardwareCheckinData struct {
+	UserID      string `json:"userid"`
+	CheckinTime int64  `json:"checkin_time"`
+	DeviceSN    string `json:"device_sn"`
+	DeviceName  string `json:"device_name"`
+}
+
+func GetHardwareCheckinData(params *ParamsHardwareCheckinData, result *ResultHardwareCheckinData) wx.Action {
+	return wx.NewPostAction(urls.CorpOAGetHardwareCheckinData,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

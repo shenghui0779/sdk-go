@@ -21,7 +21,11 @@ type PstnccState struct {
 	UserID string `json:"userid"`
 }
 
-func CallPstncc(params *ParamsPstnccCall, result *ResultPstnccCall) wx.Action {
+func CallPstncc(calleeUserIDs []string, result *ResultPstnccCall) wx.Action {
+	params := &ParamsPstnccCall{
+		CalleeUserID: calleeUserIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpOACallPstncc,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -44,7 +48,12 @@ type ResultPstnccStates struct {
 	Reason   int   `json:"reason"`
 }
 
-func GetPstnccStates(params *ParamsPstnccStates, result *ResultPstnccStates) wx.Action {
+func GetPstnccStates(calleeUserID, callID string, result *ResultPstnccStates) wx.Action {
+	params := &ParamsPstnccStates{
+		CalleeUserID: calleeUserID,
+		CallID:       callID,
+	}
+
 	return wx.NewPostAction(urls.CorpOAGetPstnccStates,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
