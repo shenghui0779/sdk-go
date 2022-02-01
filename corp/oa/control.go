@@ -41,27 +41,27 @@ type ControlConfig struct {
 }
 
 type ControlValue struct {
-	Text            string                  `json:"text"`
-	NewNumber       string                  `json:"new_number"`
-	NewMoney        string                  `json:"new_money"`
-	Tips            interface{}             `json:"tips"`
-	Date            *DateValue              `json:"date"`
-	Seletor         *SelectorValue          `json:"seletor"`
-	Members         []*ContactMember        `json:"members"`
-	Departments     []*ContactDepartment    `json:"departments"`
-	Files           []*FileValue            `json:"files"`
-	Children        []*TableValue           `json:"children"`
-	StatField       interface{}             `json:"stat_field"`
-	SumField        interface{}             `json:"sum_field"`
-	Students        []*SchoolContactStudent `json:"students"`
-	Classes         []*SchoolContactClass   `json:"classes"`
-	DateRange       *DateRangeValue         `json:"date_range"`
-	Location        *LocationValue          `json:"location"`
-	Formula         *FormulaValue           `json:"formula"`
-	Vacation        *VacationValue          `json:"vacation"`
-	Attendance      *AttendanceValue        `json:"attendance"`
-	PunchCorrection *PunchCorrectionValue   `json:"punch_correction"`
-	RelatedApproval []*RelatedApprovalValue `json:"related_approval"`
+	Text            string                  `json:"text,omitempty"`
+	NewNumber       string                  `json:"new_number,omitempty"`
+	NewMoney        string                  `json:"new_money,omitempty"`
+	Tips            interface{}             `json:"tips,omitempty"`
+	Date            *DateValue              `json:"date,omitempty"`
+	Seletor         *SelectorValue          `json:"seletor,omitempty"`
+	Members         []*ContactMember        `json:"members,omitempty"`
+	Departments     []*ContactDepartment    `json:"departments,omitempty"`
+	Files           []*FileValue            `json:"files,omitempty"`
+	Children        []*TableValue           `json:"children,omitempty"`
+	StatField       interface{}             `json:"stat_field,omitempty"`
+	SumField        interface{}             `json:"sum_field,omitempty"`
+	Students        []*SchoolContactStudent `json:"students,omitempty"`
+	Classes         []*SchoolContactClass   `json:"classes,omitempty"`
+	DateRange       *DateRangeValue         `json:"date_range,omitempty"`
+	Location        *LocationValue          `json:"location,omitempty"`
+	Formula         *FormulaValue           `json:"formula,omitempty"`
+	Vacation        *VacationValue          `json:"vacation,omitempty"`
+	Attendance      *AttendanceValue        `json:"attendance,omitempty"`
+	PunchCorrection *PunchCorrectionValue   `json:"punch_correction,omitempty"`
+	RelatedApproval []*RelatedApprovalValue `json:"related_approval,omitempty"`
 }
 
 type DateConfig struct {
@@ -224,6 +224,6 @@ type ApplyData struct {
 type ApplyContent struct {
 	Control ControlType    `json:"control"`
 	ID      string         `json:"id"`
-	Title   []*DisplayText `json:"title"`
+	Title   []*DisplayText `json:"title,omitempty"`
 	Value   *ControlValue  `json:"value"`
 }

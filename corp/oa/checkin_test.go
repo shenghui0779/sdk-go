@@ -279,26 +279,28 @@ func TestGetCorpCheckinOption(t *testing.T) {
 				GroupType: 1,
 				GroupID:   69,
 				GroupName: "打卡规则1",
-				CheckinDate: &CheckinDate{
-					Workdays: []int{1, 2, 3, 4, 5},
-					CheckinTime: []*CheckinTime{
-						{
-							WorkSec:          36000,
-							OffWorkSec:       43200,
-							RemindWorkSec:    35400,
-							RemindOffWorkSec: 43200,
+				CheckinDate: []*CheckinDate{
+					{
+						Workdays: []int{1, 2, 3, 4, 5},
+						CheckinTime: []*CheckinTime{
+							{
+								WorkSec:          36000,
+								OffWorkSec:       43200,
+								RemindWorkSec:    35400,
+								RemindOffWorkSec: 43200,
+							},
+							{
+								WorkSec:          50400,
+								OffWorkSec:       72000,
+								RemindWorkSec:    49800,
+								RemindOffWorkSec: 72000,
+							},
 						},
-						{
-							WorkSec:          50400,
-							OffWorkSec:       72000,
-							RemindWorkSec:    49800,
-							RemindOffWorkSec: 72000,
-						},
+						NoNeedOffWork:   true,
+						LimitAheadTime:  10800000,
+						FlexOnDutyTime:  0,
+						FlexOffDutyTime: 0,
 					},
-					NoNeedOffWork:   true,
-					LimitAheadTime:  10800000,
-					FlexOnDutyTime:  0,
-					FlexOffDutyTime: 0,
 				},
 				SpeWorkdays: []*CheckinSpeDay{
 					{
@@ -346,7 +348,7 @@ func TestGetCorpCheckinOption(t *testing.T) {
 					},
 					{
 						Lat:       23097490,
-						Lng:       1133237500,
+						Lng:       113323750,
 						LocTitle:  "T.I.T创意园",
 						LocDetail: "广东省广州市海珠区新港中路397号",
 						Distance:  300,
@@ -536,7 +538,7 @@ func TestGetCheckinOption(t *testing.T) {
 						"noneed_offwork": true,
 						"limit_aheadtime": 10800000,
 						"flex_on_duty_time": 0,
-						"flex_off_duty_time": 0,
+						"flex_off_duty_time": 0
 					}
 				],
 				"spe_workdays": [
@@ -565,11 +567,11 @@ func TestGetCheckinOption(t *testing.T) {
 				"wifimac_infos": [
 					{
 						"wifiname": "Tencent-WiFi-1",
-						"wifimac": "c0:7b:bc:37:f8:d3",
+						"wifimac": "c0:7b:bc:37:f8:d3"
 					},
 					{
 						"wifiname": "Tencent-WiFi-2",
-						"wifimac": "70:10:5c:7d:f6:d5",
+						"wifimac": "70:10:5c:7d:f6:d5"
 					}
 				],
 				"note_can_use_local_pic": false,
@@ -652,34 +654,36 @@ func TestGetCheckinOption(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCheckinOption{
-		Info: &CheckinInfo{
-			UserID: "james",
-			Group: []*CheckinOption{
-				{
+		Info: []*CheckinOption{
+			{
+				UserID: "james",
+				Group: &CheckinGroup{
 					GroupType: 1,
 					GroupID:   69,
 					GroupName: "打卡规则1",
-					CheckinDate: &CheckinDate{
-						Workdays: []int{1, 2, 3, 4, 5},
-						CheckinTime: []*CheckinTime{
-							{
-								WorkSec:          36000,
-								OffWorkSec:       43200,
-								RemindWorkSec:    35400,
-								RemindOffWorkSec: 43200,
+					CheckinDate: []*CheckinDate{
+						{
+							Workdays: []int{1, 2, 3, 4, 5},
+							CheckinTime: []*CheckinTime{
+								{
+									WorkSec:          36000,
+									OffWorkSec:       43200,
+									RemindWorkSec:    35400,
+									RemindOffWorkSec: 43200,
+								},
+								{
+									WorkSec:          50400,
+									OffWorkSec:       72000,
+									RemindWorkSec:    49800,
+									RemindOffWorkSec: 72000,
+								},
 							},
-							{
-								WorkSec:          50400,
-								OffWorkSec:       72000,
-								RemindWorkSec:    49800,
-								RemindOffWorkSec: 72000,
-							},
+							FlexTime:        300000,
+							NoNeedOffWork:   true,
+							LimitAheadTime:  10800000,
+							FlexOnDutyTime:  0,
+							FlexOffDutyTime: 0,
 						},
-						FlexTime:        300000,
-						NoNeedOffWork:   true,
-						LimitAheadTime:  10800000,
-						FlexOnDutyTime:  0,
-						FlexOffDutyTime: 0,
 					},
 					SpeWorkdays: []*CheckinSpeDay{
 						{
@@ -1244,9 +1248,9 @@ func TestGetCheckinMonthData(t *testing.T) {
 				},
 				SummaryInfo: &CheckinMonthSummary{
 					WorkDays:        3,
-					ExceptDays:      31,
-					RegularWorkSec:  29040,
-					StandardWorkSec: 3,
+					ExceptDays:      3,
+					RegularWorkSec:  31,
+					StandardWorkSec: 29040,
 				},
 				ExceptionInfos: []*CheckinException{
 					{
@@ -1374,7 +1378,7 @@ func TestGetCheckinScheduleList(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCheckinScheduleListGet{
-		ScheduleList: []*UserCheckinSchedule{
+		ScheduleList: []*CheckinSchedule{
 			{
 				UserID:    "james",
 				YearMonth: 202011,

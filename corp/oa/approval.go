@@ -104,7 +104,11 @@ type ParamsApprovalDetail struct {
 }
 
 type ResultApprovalDetail struct {
-	SPNO       string              `json:"spno"`
+	Info *ApprovalDetail `json:"info"`
+}
+
+type ApprovalDetail struct {
+	SPNO       string              `json:"sp_no"`
 	SPName     string              `json:"sp_name"`
 	SPStatus   int                 `json:"sp_status"`
 	TemplateID string              `json:"template_id"`
@@ -117,8 +121,8 @@ type ResultApprovalDetail struct {
 }
 
 type Applyer struct {
-	UserID  string `json:"user_id"`
-	PartyID string `json:"party_id"`
+	UserID  string `json:"userid"`
+	PartyID string `json:"partyid"`
 }
 
 type ApprovalSPRecord struct {

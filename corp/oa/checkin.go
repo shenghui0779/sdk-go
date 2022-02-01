@@ -11,7 +11,7 @@ type CorpCheckinOption struct {
 	GroupType              int               `json:"grouptype"`
 	GroupID                int64             `json:"groupid"`
 	GroupName              string            `json:"groupname"`
-	CheckinDate            *CheckinDate      `json:"checkindate"`
+	CheckinDate            []*CheckinDate    `json:"checkindate"`
 	SpeWorkdays            []*CheckinSpeDay  `json:"spe_workdays"`
 	SpeOffDays             []*CheckinSpeDay  `json:"spe_offdays"`
 	SyncHolidays           bool              `json:"sync_holidays"`
@@ -34,19 +34,19 @@ type CorpCheckinOption struct {
 	AllowApplyBKDayLimit   int               `json:"allow_apply_bk_day_limit"`
 	UpdateUserID           string            `json:"update_userid"`
 	ScheduleList           []*OptionSchedule `json:"schedulelist"`
-	OffWorkIntervalTime    int               `json:"off_work_interval_time"`
-}
-
-type CheckinInfo struct {
-	UserID string           `json:"userid"`
-	Group  []*CheckinOption `json:"group"`
+	OffWorkIntervalTime    int               `json:"offwork_interval_time"`
 }
 
 type CheckinOption struct {
+	UserID string        `json:"userid"`
+	Group  *CheckinGroup `json:"group"`
+}
+
+type CheckinGroup struct {
 	GroupType              int               `json:"grouptype"`
 	GroupID                int64             `json:"groupid"`
 	GroupName              string            `json:"groupname"`
-	CheckinDate            *CheckinDate      `json:"checkindate"`
+	CheckinDate            []*CheckinDate    `json:"checkindate"`
 	SpeWorkdays            []*CheckinSpeDay  `json:"spe_workdays"`
 	SpeOffDays             []*CheckinSpeDay  `json:"spe_offdays"`
 	SyncHolidays           bool              `json:"sync_holidays"`
@@ -161,7 +161,7 @@ type OptionSchedule struct {
 	TimeSection         []*CheckinTimeSection `json:"time_section"`
 	LimitAheadTime      int                   `json:"limit_aheadtime"`
 	NoNeedOffWork       bool                  `json:"noneed_offwork"`
-	LimitOffTime        int                   `json:"limit_off_time"`
+	LimitOffTime        int                   `json:"limit_offtime"`
 	FlexOnDutyTime      int                   `json:"flex_on_duty_time"`
 	FlexOffDutyTime     int                   `json:"flex_off_duty_time"`
 	AllowFlex           bool                  `json:"allow_flex"`
@@ -212,7 +212,7 @@ type ParamsCheckinOption struct {
 }
 
 type ResultCheckinOption struct {
-	Info *CheckinInfo `json:"info"`
+	Info []*CheckinOption `json:"info"`
 }
 
 func GetCheckinOption(params *ParamsCheckinOption, result *ResultCheckinOption) wx.Action {
@@ -418,10 +418,10 @@ type ParamsCheckinScheduleListGet struct {
 }
 
 type ResultCheckinScheduleListGet struct {
-	ScheduleList []*UserCheckinSchedule `json:"schedule_list"`
+	ScheduleList []*CheckinSchedule `json:"schedule_list"`
 }
 
-type UserCheckinSchedule struct {
+type CheckinSchedule struct {
 	UserID    string    `json:"userid"`
 	YearMonth int       `json:"yearmonth"`
 	GroupID   int64     `json:"groupid"`
@@ -430,7 +430,7 @@ type UserCheckinSchedule struct {
 }
 
 type Schedule struct {
-	ScheduleList []*ScheduleData `json:"schedule_list"`
+	ScheduleList []*ScheduleData `json:"scheduleList"`
 }
 
 type ScheduleData struct {
@@ -505,7 +505,7 @@ type ParamsHardwareCheckinData struct {
 	FilterType int      `json:"filter_type"`
 	StartTime  int64    `json:"starttime"`
 	EndTime    int64    `json:"endtime"`
-	UserIDList []string `json:"user_id_list"`
+	UserIDList []string `json:"useridlist"`
 }
 
 type ResultHardwareCheckinData struct {

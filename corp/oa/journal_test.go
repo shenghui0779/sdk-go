@@ -204,13 +204,13 @@ func TestGetJournalRecordDetail(t *testing.T) {
 						},
 						Value: &ControlValue{
 							Text:            "今日暂无工作",
-							Tips:            nil,
+							Tips:            []interface{}{},
 							Members:         []*ContactMember{},
 							Departments:     []*ContactDepartment{},
 							Files:           []*FileValue{},
 							Children:        []*TableValue{},
-							StatField:       nil,
-							SumField:        nil,
+							StatField:       []interface{}{},
+							SumField:        []interface{}{},
 							Students:        []*SchoolContactStudent{},
 							Classes:         []*SchoolContactClass{},
 							RelatedApproval: []*RelatedApprovalValue{},
@@ -354,7 +354,7 @@ func TestListJournalStat(t *testing.T) {
 					},
 					PartyList: []*JournalParty{
 						{
-							PartyID: "1",
+							OpenPartyID: "1",
 						},
 					},
 					TagList: []*JournalTag{},

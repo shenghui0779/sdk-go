@@ -107,7 +107,7 @@ func TestGetTemplateDetail(t *testing.T) {
 				{
 					Property: &ControlProperty{
 						Control: ControlSelector,
-						ID:      "",
+						ID:      "Selector-15111111111",
 						Title: []*DisplayText{
 							{
 								Text: "单选控件",
@@ -134,6 +134,11 @@ func TestGetTemplateDetail(t *testing.T) {
 											Text: "选项1",
 											Lang: "zh_CN",
 										},
+									},
+								},
+								{
+									Key: "option-15222222222",
+									Value: []*DisplayText{
 										{
 											Text: "选项2",
 											Lang: "zh_CN",
@@ -192,7 +197,6 @@ func TestApplyEvent(t *testing.T) {
 				{
 					Control: ControlText,
 					ID:      "Text-15111111111",
-					Title:   []*DisplayText{},
 					Value: &ControlValue{
 						Text: "文本填写的内容",
 					},
@@ -243,7 +247,12 @@ func TestGetApprovalInfo(t *testing.T) {
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
 	"errcode": 0,
-	"errmsg": "ok"
+	"errmsg": "ok",
+	"sp_no_list": [
+		"201909270001",
+		"201909270002",
+		"201909270003"
+	]
 }`))),
 	}
 
@@ -400,78 +409,80 @@ func TestGetApprovalDetail(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultApprovalDetail{
-		SPNO:       "201909270002",
-		SPName:     "全字段",
-		SPStatus:   1,
-		TemplateID: "Bs5KJ2NT4ncf4ZygaE8MB3779yUW8nsMaJd3mmE9v",
-		ApplyTime:  1569584428,
-		Applyer: &Applyer{
-			UserID:  "WuJunJie",
-			PartyID: "2",
-		},
-		SPRecord: []*ApprovalSPRecord{
-			{
-				SPStatus:     1,
-				ApproverAttr: 1,
-				Details: []*ApprovalSPDetail{
-					{
-						Approver: &OAUser{
-							UserID: "WuJunJie",
-						},
-						Speech:   "",
-						SPStatus: 1,
-						SPTime:   0,
-						MediaID:  []string{},
-					},
-					{
-						Approver: &OAUser{
-							UserID: "WangXiaoMing",
-						},
-						Speech:   "",
-						SPStatus: 1,
-						SPTime:   0,
-						MediaID:  []string{},
-					},
-				},
+		Info: &ApprovalDetail{
+			SPNO:       "201909270002",
+			SPName:     "全字段",
+			SPStatus:   1,
+			TemplateID: "Bs5KJ2NT4ncf4ZygaE8MB3779yUW8nsMaJd3mmE9v",
+			ApplyTime:  1569584428,
+			Applyer: &Applyer{
+				UserID:  "WuJunJie",
+				PartyID: "2",
 			},
-		},
-		Notifyer: []*OAUser{
-			{
-				UserID: "LiuXiaoGang",
-			},
-		},
-		ApplyData: &ApplyData{
-			Contents: []*ApplyContent{
+			SPRecord: []*ApprovalSPRecord{
 				{
-					Control: ControlText,
-					ID:      "Text-15111111111",
-					Title: []*DisplayText{
+					SPStatus:     1,
+					ApproverAttr: 1,
+					Details: []*ApprovalSPDetail{
 						{
-							Text: "文本控件",
-							Lang: "zh_CN",
+							Approver: &OAUser{
+								UserID: "WuJunJie",
+							},
+							Speech:   "",
+							SPStatus: 1,
+							SPTime:   0,
+							MediaID:  []string{},
 						},
-					},
-					Value: &ControlValue{
-						Text:        "文本填写的内容",
-						Tips:        nil,
-						Members:     []*ContactMember{},
-						Departments: []*ContactDepartment{},
-						Files:       []*FileValue{},
-						Children:    []*TableValue{},
-						StatField:   nil,
+						{
+							Approver: &OAUser{
+								UserID: "WangXiaoMing",
+							},
+							Speech:   "",
+							SPStatus: 1,
+							SPTime:   0,
+							MediaID:  []string{},
+						},
 					},
 				},
 			},
-		},
-		Comments: []*ApprovalComment{
-			{
-				CommentUserInfo: &OAUser{
-					UserID: "WuJunJie",
+			Notifyer: []*OAUser{
+				{
+					UserID: "LiuXiaoGang",
 				},
-				CommentTime:    1569584111,
-				CommentContent: "这是备注信息",
-				CommentID:      "6741314136717778040",
-				MediaID:        []string{"WWCISP_Xa1dXIyC9VC2vGTXyBjUXh4GQ31G-a7jilEjFjkYBfncSJv0kM1cZAIXULWbbtosVqA7hprZIUkl4GP0DYZKDrIay9vCzeQelmmHiczwfn80v51EtuNouzBhUBTWo9oQIIzsSftjaVmd4EC_dj5-rayfDl6yIIRdoUs1V_Gz6Pi3yH37ELOgLNAPYUSJpA6V190Xunl7b0s5K5XC9c7eX5vlJek38rB_a2K-kMFMiM1mHDqnltoPa_NT9QynXuHi"},
+			},
+			ApplyData: &ApplyData{
+				Contents: []*ApplyContent{
+					{
+						Control: ControlText,
+						ID:      "Text-15111111111",
+						Title: []*DisplayText{
+							{
+								Text: "文本控件",
+								Lang: "zh_CN",
+							},
+						},
+						Value: &ControlValue{
+							Text:        "文本填写的内容",
+							Tips:        []interface{}{},
+							Members:     []*ContactMember{},
+							Departments: []*ContactDepartment{},
+							Files:       []*FileValue{},
+							Children:    []*TableValue{},
+							StatField:   []interface{}{},
+						},
+					},
+				},
+			},
+			Comments: []*ApprovalComment{
+				{
+					CommentUserInfo: &OAUser{
+						UserID: "WuJunJie",
+					},
+					CommentTime:    1569584111,
+					CommentContent: "这是备注信息",
+					CommentID:      "6741314136717778040",
+					MediaID:        []string{"WWCISP_Xa1dXIyC9VC2vGTXyBjUXh4GQ31G-a7jilEjFjkYBfncSJv0kM1cZAIXULWbbtosVqA7hprZIUkl4GP0DYZKDrIay9vCzeQelmmHiczwfn80v51EtuNouzBhUBTWo9oQIIzsSftjaVmd4EC_dj5-rayfDl6yIIRdoUs1V_Gz6Pi3yH37ELOgLNAPYUSJpA6V190Xunl7b0s5K5XC9c7eX5vlJek38rB_a2K-kMFMiM1mHDqnltoPa_NT9QynXuHi"},
+				},
 			},
 		},
 	}, result)

@@ -68,7 +68,7 @@ func GetUserVacationQuota(userID string, result *ResultUserVacationQuota) wx.Act
 type ParamsOneUserQuotaSet struct {
 	UserID       string `json:"userid"`
 	VacationID   int64  `json:"vacation_id"`
-	LeftDuration int    `json:"left_duration"`
+	LeftDuration int    `json:"leftduration"`
 	TimeAttr     int    `json:"time_attr"`
 	Remarks      string `json:"remarks"`
 }

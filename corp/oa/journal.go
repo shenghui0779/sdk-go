@@ -116,7 +116,7 @@ type JournalUser struct {
 }
 
 type JournalParty struct {
-	PartyID string `json:"partyid"`
+	OpenPartyID string `json:"open_partyid"`
 }
 
 type JournalTag struct {
@@ -133,8 +133,8 @@ type JournalReport struct {
 }
 
 type JournalReportItem struct {
-	JournalUUID string `json:"journal_uuid"`
-	ReportTime  int64  `json:"report_time"`
+	JournalUUID string `json:"journaluuid"`
+	ReportTime  int64  `json:"reporttime"`
 	Flag        int    `json:"flag"`
 }
 
