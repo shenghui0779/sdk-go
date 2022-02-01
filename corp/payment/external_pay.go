@@ -12,7 +12,12 @@ type ParamsMerchantAdd struct {
 	MerchantName string `json:"merchant_name"`
 }
 
-func AddMerchant(params *ParamsMerchantAdd) wx.Action {
+func AddMerchant(mchID, mchName string) wx.Action {
+	params := &ParamsMerchantAdd{
+		MchID:        mchID,
+		MerchantName: mchName,
+	}
+
 	return wx.NewPostAction(urls.CorpPaymentMerchantAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -37,7 +42,11 @@ type ResultMerchantGet struct {
 	AllowUseScope *AllowUseScope `json:"allow_use_scope"`
 }
 
-func GetMerchant(params *ParamsMerchantGet, result *ResultMerchantGet) wx.Action {
+func GetMerchant(mchID string, result *ResultMerchantGet) wx.Action {
+	params := &ParamsMerchantGet{
+		MchID: mchID,
+	}
+
 	return wx.NewPostAction(urls.CorpPaymentMerchantGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -52,7 +61,11 @@ type ParamsMerchantDelete struct {
 	MchID string `json:"mch_id"`
 }
 
-func DeleteMerchant(params *ParamsMerchantDelete) wx.Action {
+func DeleteMerchant(mchID string) wx.Action {
+	params := &ParamsMerchantDelete{
+		MchID: mchID,
+	}
+
 	return wx.NewPostAction(urls.CorpPaymentMerchantDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -65,7 +78,12 @@ type ParamsMchUseScopeSet struct {
 	AllowUseScope *AllowUseScope `json:"allow_use_scope"`
 }
 
-func SetMchUseScope(params *ParamsMchUseScopeSet) wx.Action {
+func SetMchUseScope(mchID string, scope *AllowUseScope) wx.Action {
+	params := &ParamsMchUseScopeSet{
+		MchID:         mchID,
+		AllowUseScope: scope,
+	}
+
 	return wx.NewPostAction(urls.CorpPaymentMchUseScopeSet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -111,7 +129,7 @@ type PayerInfo struct {
 }
 
 type ParamsBillList struct {
-	StartTime   int64  `json:"start_time"`
+	BeginTime   int64  `json:"begin_time"`
 	EndTime     int64  `json:"end_time"`
 	PayeeUserID string `json:"payee_userid,omitempty"`
 	Cursor      string `json:"cursor,omitempty"`
