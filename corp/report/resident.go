@@ -39,7 +39,11 @@ type ResultResidentCorpStatus struct {
 	TotalSolved   int `json:"total_solved"`
 }
 
-func GetResidentCorpStatus(params *ParamsResidentCorpStatus, result *ResultResidentCorpStatus) wx.Action {
+func GetResidentCorpStatus(gridID string, result *ResultResidentCorpStatus) wx.Action {
+	params := &ParamsResidentCorpStatus{
+		GridID: gridID,
+	}
+
 	return wx.NewPostAction(urls.CorpReportGetResidentCorpStatus,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -61,7 +65,11 @@ type ResultResidentUserStatus struct {
 	Pending     int `json:"pending"`
 }
 
-func GetResidentUserStatus(params *ParamsResidentUserStatus, result *ResultResidentUserStatus) wx.Action {
+func GetResidentUserStatus(userID string, result *ResultResidentUserStatus) wx.Action {
+	params := &ParamsResidentUserStatus{
+		UserID: userID,
+	}
+
 	return wx.NewPostAction(urls.CorpReportGetResidentUserStatus,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -89,7 +97,11 @@ type ResultResidentCategoryStatistic struct {
 	DashboardList []*ResidentCategoryStatistic `json:"dashboard_list"`
 }
 
-func GetResidentCategoryStatistic(params *ParamsResidentCategoryStatistic, result *ResultResidentCategoryStatistic) wx.Action {
+func GetResidentCategoryStatistic(categoryID string, result *ResultResidentCategoryStatistic) wx.Action {
+	params := &ParamsResidentCategoryStatistic{
+		CategoryID: categoryID,
+	}
+
 	return wx.NewPostAction(urls.CorpReportResidentCategoryStatistic,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -149,7 +161,11 @@ type ResultResidentOrderInfo struct {
 	OrderInfo *ResidentOrder `json:"order_info"`
 }
 
-func GetResidentOrderInfo(params *ParamsResidentOrderInfo, result *ResultResidentOrderInfo) wx.Action {
+func GetResidentOrderInfo(orderID string, result *ResultResidentOrderInfo) wx.Action {
+	params := &ParamsResidentOrderInfo{
+		OrderID: orderID,
+	}
+
 	return wx.NewPostAction(urls.CorpReportGetResidentOrderInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

@@ -57,7 +57,11 @@ type ParamsGridDelete struct {
 	GridID string `json:"grid_id"`
 }
 
-func DeleteGrid(params *ParamsGridDelete) wx.Action {
+func DeleteGrid(gridID string) wx.Action {
+	params := &ParamsGridDelete{
+		GridID: gridID,
+	}
+
 	return wx.NewPostAction(urls.CorpReportGridDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -81,7 +85,11 @@ type ResultGridList struct {
 	GridList []*Grid `json:"grid_list"`
 }
 
-func ListGrid(params *ParamsGridList, result *ResultGridList) wx.Action {
+func ListGrid(gridID string, result *ResultGridList) wx.Action {
+	params := &ParamsGridList{
+		GridID: gridID,
+	}
+
 	return wx.NewPostAction(urls.CorpReportGridList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -97,11 +105,20 @@ type ParamsUserGridInfo struct {
 }
 
 type ResultUserGridInfo struct {
-	ManageGrids []*Grid `json:"manage_grids"`
-	JoinedGrids []*Grid `json:"joined_grids"`
+	ManageGrids []*UserGridInfo `json:"manage_grids"`
+	JoinedGrids []*UserGridInfo `json:"joined_grids"`
 }
 
-func GetUserGridInfo(params *ParamsUserGridInfo, result *ResultUserGridInfo) wx.Action {
+type UserGridInfo struct {
+	GridID   string `json:"grid_id"`
+	GridName string `json:"grid_name"`
+}
+
+func GetUserGridInfo(userID string, result *ResultUserGridInfo) wx.Action {
+	params := &ParamsUserGridInfo{
+		UserID: userID,
+	}
+
 	return wx.NewPostAction(urls.CorpReportGetUserGridInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

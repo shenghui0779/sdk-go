@@ -47,7 +47,11 @@ type ParamsGridCataDelete struct {
 	CategoryID string `json:"category_id"`
 }
 
-func DeleteGridCata(params *ParamsGridCataDelete) wx.Action {
+func DeleteGridCata(categoryID string) wx.Action {
+	params := &ParamsGridCataDelete{
+		CategoryID: categoryID,
+	}
+
 	return wx.NewPostAction(urls.CorpReportGridCataDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
