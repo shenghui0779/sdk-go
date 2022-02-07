@@ -16,7 +16,11 @@ type ResultHealthReportStat struct {
 	UV int `json:"uv"`
 }
 
-func GetHealthReportStat(params *ParamsHealthReportStat, result *ResultHealthReportStat) wx.Action {
+func GetHealthReportStat(date string, result *ResultHealthReportStat) wx.Action {
+	params := &ParamsHealthReportStat{
+		Date: date,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetHealthReportStat,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -62,7 +66,7 @@ type HealthReportJobInfo struct {
 
 type HealthReportApplyRange struct {
 	UserIDs  []string `json:"userids"`
-	PartyIDs []string `json:"partyids"`
+	PartyIDs []int64  `json:"partyids"`
 }
 
 type HealthReportTo struct {
@@ -73,9 +77,7 @@ type HealthQuestionTemplate struct {
 	QuestionID   int64                   `json:"question_id"`
 	Title        string                  `json:"title"`
 	QuestionType int                     `json:"question_type"`
-	IsRequired   int                     `json:"is_required"`    // 健康上报：任务详情返回
-	IsMustFill   int                     `json:"is_must_fill"`   // 复学码：老师/学生健康信息返回
-	IsNotDisplay int                     `json:"is_not_display"` // 复学码：老师/学生健康信息返回
+	IsRequired   int                     `json:"is_required"`
 	OptionList   []*HealthQuestionOption `json:"option_list"`
 }
 
@@ -105,9 +107,12 @@ func GetHealthReportJobInfo(params *ParamsHealthReportJobInfo, result *ResultHea
 }
 
 type HealthReportAnswer struct {
-	IDType       int                  `json:"id_type"`
-	UserID       string               `json:"userid"`
-	ReportValues []*HealthReportValue `json:"report_values"`
+	IDType        int                  `json:"id_type"`
+	UserID        string               `json:"userid"`
+	StudentUserID string               `json:"student_user_id"`
+	ParentUserID  string               `json:"parent_user_id"`
+	ReportTime    int64                `json:"report_time"`
+	ReportValues  []*HealthReportValue `json:"report_values"`
 }
 
 type HealthReportValue struct {
@@ -140,28 +145,43 @@ func GetHealthReportAnswer(params *ParamsHealthReportAnswer, result *ResultHealt
 	)
 }
 
-type HealthInfo struct {
-	UserID             string               `json:"userid"`
-	HealthQRCodeStatus int                  `json:"health_qrcode_status"`
-	SelfSubmit         int                  `json:"self_submit"`
-	ReportValues       []*HealthReportValue `json:"report_values"`
+type CustomizeHealthQuestionTemplate struct {
+	QuestionID   int64                   `json:"question_id"`
+	Title        string                  `json:"title"`
+	QuestionType int                     `json:"question_type"`
+	IsMustFill   int                     `json:"is_must_fill"`
+	IsNotDisplay int                     `json:"is_not_display"`
+	OptionList   []*HealthQuestionOption `json:"option_list"`
 }
 
-type ParamsTeacherHealthInfo struct {
+type CustomizeHealthReportValue struct {
+	QuestionID  int64  `json:"question_id"`
+	SingleChose int    `json:"single_chose"`
+	Text        string `json:"text"`
+}
+
+type CustomizeHealthInfo struct {
+	UserID             string                        `json:"userid"`
+	HealthQRCodeStatus int                           `json:"health_qrcode_status"`
+	SelfSubmit         int                           `json:"self_submit"`
+	ReportValues       []*CustomizeHealthReportValue `json:"report_values"`
+}
+
+type ParamsCustomizeHealthInfo struct {
 	Date    string `json:"date"`
 	NextKey string `json:"next_key"`
 	Limit   int    `json:"limit"`
 }
 
-type ResultTeacherHealthInfo struct {
-	HealthInfos       []*HealthInfo             `json:"health_infos"`
-	QuestionTemplates []*HealthQuestionTemplate `json:"question_templates"`
-	TemplateID        string                    `json:"template_id"`
-	Ending            int                       `json:"ending"`
-	NextKey           string                    `json:"next_key"`
+type ResultCustomizeHealthInfo struct {
+	HealthInfos       []*CustomizeHealthInfo             `json:"health_infos"`
+	QuestionTemplates []*CustomizeHealthQuestionTemplate `json:"question_templates"`
+	TemplateID        string                             `json:"template_id"`
+	Ending            int                                `json:"ending"`
+	NextKey           string                             `json:"next_key"`
 }
 
-func GetTeacherHealthInfo(params *ParamsTeacherHealthInfo, result *ResultHealthInfo) wx.Action {
+func GetTeacherHealthInfo(params *ParamsCustomizeHealthInfo, result *ResultCustomizeHealthInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolGetTeacherHealthInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -172,21 +192,7 @@ func GetTeacherHealthInfo(params *ParamsTeacherHealthInfo, result *ResultHealthI
 	)
 }
 
-type ParamsHealthInfo struct {
-	Date    string `json:"date"`
-	NextKey string `json:"next_key"`
-	Limit   int    `json:"limit"`
-}
-
-type ResultHealthInfo struct {
-	HealthInfos       []*HealthInfo             `json:"health_infos"`
-	QuestionTemplates []*HealthQuestionTemplate `json:"question_templates"`
-	TemplateID        string                    `json:"template_id"`
-	Ending            int                       `json:"ending"`
-	NextKey           string                    `json:"next_key"`
-}
-
-func GetStudentHealthInfo(params *ParamsHealthInfo, result *ResultHealthInfo) wx.Action {
+func GetStudentHealthInfo(params *ParamsCustomizeHealthInfo, result *ResultCustomizeHealthInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolGetStudentHealthInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

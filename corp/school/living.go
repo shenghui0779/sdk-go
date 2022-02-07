@@ -84,7 +84,7 @@ type LivingWatchStatInfo struct {
 
 type ParamsLivingWatchStat struct {
 	LivingID string `json:"livingid"`
-	NextKey  string `json:"next_key"`
+	NextKey  string `json:"next_key,omitempty"`
 }
 
 type ResultLivingWatchStat struct {
@@ -116,7 +116,7 @@ type LivingUnwatchStatInfo struct {
 
 type ParamsLivingUnwatchStat struct {
 	LivingID string `json:"livingid"`
-	NextKey  string `json:"next_key"`
+	NextKey  string `json:"next_key,omitempty"`
 }
 
 type ResultLivingUnwatchStat struct {
