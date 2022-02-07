@@ -8,10 +8,11 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestAddGridCata(t *testing.T) {
@@ -145,17 +146,17 @@ func TestListGridCata(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultGridCataList{
-		CataList: []*GridCata{
+		CategoryList: []*GridCategory{
 			{
-				CataID:   "category_id",
-				CataName: "2222",
-				LevelID:  1,
+				CategoryID:   "category_id",
+				CategoryName: "2222",
+				Level:        1,
 			},
 			{
-				CataID:       "category_id",
-				CataName:     "2222",
-				LevelID:      2,
-				ParentCataID: "parent_category_id",
+				CategoryID:       "category_id",
+				CategoryName:     "2222",
+				Level:            2,
+				ParentCategoryID: "parent_category_id",
 			},
 		},
 	}, result)

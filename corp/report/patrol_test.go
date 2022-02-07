@@ -93,11 +93,11 @@ func TestGetPatrolCorpStatus(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultPatrolCorpStatus{
 		Processing:   1,
-		AddedToday:   2,
-		SolvedToday:  3,
-		TotalCase:    4,
-		ToBeAssigned: 5,
-		TotalSolved:  6,
+		AddedToday:   1,
+		SolvedToday:  1,
+		TotalCase:    1,
+		ToBeAssigned: 1,
+		TotalSolved:  1,
 	}, result)
 }
 
@@ -177,9 +177,9 @@ func TestGetPatrolCategoryStatistic(t *testing.T) {
 				CategoryID:    "category_id",
 				CategoryName:  "category name",
 				CategoryLevel: 1,
-				CategoryType:  100,
+				CategoryType:  1,
 				TotalCase:     100,
-				TotalSolved:   1,
+				TotalSolved:   100,
 			},
 		},
 	}, result)
@@ -385,7 +385,7 @@ func TestGetPatrolOrderInfo(t *testing.T) {
 				Latitude:  0,
 				Longitude: 0,
 			},
-			ProcessorUserIDs: []string{},
+			ProcessorUserIDs: []string{"zhangsan", "lisi"},
 			ProcessList: []*Process{
 				{
 					ProcessType:   1,
