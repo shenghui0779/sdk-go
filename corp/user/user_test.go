@@ -8,10 +8,11 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateUser(t *testing.T) {
@@ -139,7 +140,7 @@ func TestBatchDeleteUser(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestListUserSimple(t *testing.T) {
+func TestListSimpleUser(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -289,7 +290,7 @@ func TestGetJoinQRCode(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetUserActiveStat(t *testing.T) {
+func TestGetActiveStat(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,

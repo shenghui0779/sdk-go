@@ -21,17 +21,25 @@ func CreateStudent(params *ParamsStudentCreate) wx.Action {
 	)
 }
 
-func DeleteStudent(userID string) wx.Action {
-	return wx.NewGetAction(urls.CorpSchoolStudentDelete,
-		wx.WithQuery("userid", userID),
-	)
-}
-
 type ParamsStudentUpdate struct {
 	StudentUserID    string  `json:"student_userid"`
 	NewStudentUserID string  `json:"new_student_userid,omitempty"`
 	Name             string  `json:"name,omitempty"`
 	Department       []int64 `json:"department,omitempty"`
+}
+
+func UpdateStudent(params *ParamsStudentUpdate) wx.Action {
+	return wx.NewPostAction(urls.CorpSchoolStudentUpdate,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+	)
+}
+
+func DeleteStudent(userID string) wx.Action {
+	return wx.NewGetAction(urls.CorpSchoolStudentDelete,
+		wx.WithQuery("userid", userID),
+	)
 }
 
 type StudentErrResult struct {
@@ -59,25 +67,6 @@ func BatchCreateStudent(params *ParamsStudentBatchCreate, result *ResultStudentB
 	)
 }
 
-type ParamsStudentBatchDelete struct {
-	UserIDList []string `json:"useridlist"`
-}
-
-type ResultStudentBatchDelete struct {
-	ResultList []*StudentErrResult `json:"result_list"`
-}
-
-func BatchDeleteStudent(params *ParamsStudentBatchDelete, result *ResultStudentBatchDelete) wx.Action {
-	return wx.NewPostAction(urls.CorpSchoolStudentBatchDelete,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
-		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
-		}),
-	)
-}
-
 type ParamsStudentBatchUpdate struct {
 	Students []*ParamsStudentUpdate `json:"students"`
 }
@@ -88,6 +77,25 @@ type ResultStudentBatchUpdate struct {
 
 func BatchUpdateStudent(params *ParamsStudentBatchUpdate, result *ResultStudentBatchUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolStudentBatchUpdate,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsStudentBatchDelete struct {
+	UserIDList []string `json:"useridlist"`
+}
+
+type ResultStudentBatchDelete struct {
+	ResultList []*StudentErrResult `json:"result_list"`
+}
+
+func BatchDeleteStudent(params *ParamsStudentBatchDelete, result *ResultStudentBatchDelete) wx.Action {
+	return wx.NewPostAction(urls.CorpSchoolStudentBatchDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

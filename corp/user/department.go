@@ -21,7 +21,7 @@ type ResultDepartmentCreate struct {
 
 // CreateDepartment 创建部门
 func CreateDepartment(params *ParamsDepartmentCreate, result *ResultDepartmentCreate) wx.Action {
-	return wx.NewPostAction(urls.CorpDepartmentCreate,
+	return wx.NewPostAction(urls.CorpUserDepartmentCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -41,7 +41,7 @@ type ParamsDepartmentUpdate struct {
 
 // UpdateDepartment 更新部门
 func UpdateDepartment(params *ParamsDepartmentUpdate) wx.Action {
-	return wx.NewPostAction(urls.CorpDepartmentUpdate,
+	return wx.NewPostAction(urls.CorpUserDepartmentUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -50,7 +50,7 @@ func UpdateDepartment(params *ParamsDepartmentUpdate) wx.Action {
 
 // DeleteDepartment 删除部门
 func DeleteDepartment(id int64) wx.Action {
-	return wx.NewGetAction(urls.CorpDepartmentDelete,
+	return wx.NewGetAction(urls.CorpUserDepartmentDelete,
 		wx.WithQuery("id", strconv.FormatInt(id, 10)),
 	)
 }
@@ -67,8 +67,8 @@ type ResultDepartmentList struct {
 	Department []*Department `json:"department"`
 }
 
-// GetDepartmentList 获取部门列表
-func GetDepartmentList(id int64, result *ResultDepartmentList) wx.Action {
+// ListDepartment 获取部门列表
+func ListDepartment(id int64, result *ResultDepartmentList) wx.Action {
 	options := []wx.ActionOption{
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -79,5 +79,5 @@ func GetDepartmentList(id int64, result *ResultDepartmentList) wx.Action {
 		options = append(options, wx.WithQuery("id", strconv.FormatInt(id, 10)))
 	}
 
-	return wx.NewGetAction(urls.CorpDepartmentList, options...)
+	return wx.NewGetAction(urls.CorpUserDepartmentList, options...)
 }

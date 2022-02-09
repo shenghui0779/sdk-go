@@ -31,10 +31,6 @@ type WechatChannels struct {
 	Status   int    `json:"status"`
 }
 
-type ExtAttr struct {
-	Attrs []*Attr `json:"attrs"`
-}
-
 type Attr struct {
 	Type        int        `json:"type"`
 	Name        string     `json:"name"`
@@ -91,12 +87,12 @@ type FollowTag struct {
 	Type      int    `json:"type"`
 }
 
-type ResultCustomerList struct {
+type ResultList struct {
 	ExternalUserID []string `json:"external_userid"`
 }
 
-func ListCustomer(userID string, result *ResultCustomerList) wx.Action {
-	return wx.NewGetAction(urls.CorpExternalContactCustomerList,
+func List(userID string, result *ResultList) wx.Action {
+	return wx.NewGetAction(urls.CorpExternalContactList,
 		wx.WithQuery("userid", userID),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -104,39 +100,34 @@ func ListCustomer(userID string, result *ResultCustomerList) wx.Action {
 	)
 }
 
-type ParamsCustomerGet struct {
-	ExternalUserID string `json:"external_userid"`
-	Cursor         string `json:"cursor"`
-}
-
-type ResultCustomerGet struct {
+type ResultGet struct {
 	ExternalContact *ExternalContact `json:"external_contact"`
 	FollowUser      []*FollowUser    `json:"follow_user"`
 	NextCursor      string           `json:"next_cursor"`
 }
 
-func GetCustomer(params *ParamsCustomerGet, result *ResultCustomerGet) wx.Action {
+func Get(externalUserID, cursor string, result *ResultGet) wx.Action {
 	options := []wx.ActionOption{
-		wx.WithQuery("external_userid", params.ExternalUserID),
+		wx.WithQuery("external_userid", externalUserID),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
 	}
 
-	if len(params.Cursor) != 0 {
-		options = append(options, wx.WithQuery("cursor", params.Cursor))
+	if len(cursor) != 0 {
+		options = append(options, wx.WithQuery("cursor", cursor))
 	}
 
-	return wx.NewGetAction(urls.CorpExternalContactCustomerGet, options...)
+	return wx.NewGetAction(urls.CorpExternalContactGet, options...)
 }
 
-type ParamsCustomerBatchGetByUser struct {
+type ParamsBatchGetByUser struct {
 	UserIDList []string `json:"userid_list"`
 	Cursor     string   `json:"cursor,omitempty"`
 	Limit      int      `json:"limit,omitempty"`
 }
 
-type ResultCustomerBatchGetByUser struct {
+type ResultBatchGetByUser struct {
 	ExternalContactList []*CustomerBatchGetData `json:"external_contact_list"`
 	NextCursor          string                  `json:"next_cursor"`
 }
@@ -146,8 +137,8 @@ type CustomerBatchGetData struct {
 	FollowInfo      *FollowInfo      `json:"follow_info"`
 }
 
-func BatchGetCustomerByUser(params *ParamsCustomerBatchGetByUser, result *ResultCustomerBatchGetByUser) wx.Action {
-	return wx.NewPostAction(urls.CorpExternalContactCustomerBatchGetByUser,
+func BatchGetCustomerByUser(params *ParamsBatchGetByUser, result *ResultBatchGetByUser) wx.Action {
+	return wx.NewPostAction(urls.CorpExternalContactBatchGetByUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -157,7 +148,7 @@ func BatchGetCustomerByUser(params *ParamsCustomerBatchGetByUser, result *Result
 	)
 }
 
-type ParamsCustomerRemark struct {
+type ParamsRemark struct {
 	UserID           string   `json:"userid"`
 	ExternalUserID   string   `json:"external_userid"`
 	Remark           string   `json:"remark"`
@@ -167,8 +158,8 @@ type ParamsCustomerRemark struct {
 	RemarkPicMediaID string   `json:"remark_pic_mediaid"`
 }
 
-func RemarkCustomer(params *ParamsCustomerRemark) wx.Action {
-	return wx.NewPostAction(urls.CorpExternalContactCustomerRemark,
+func Remark(params *ParamsRemark) wx.Action {
+	return wx.NewPostAction(urls.CorpExternalContactRemark,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

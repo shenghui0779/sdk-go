@@ -17,8 +17,12 @@ type ResultTagCreate struct {
 }
 
 // CreateTag 创建标签
-func CreateTag(params *ParamsTagCreate, result *ResultTagCreate) wx.Action {
-	return wx.NewPostAction(urls.CorpTagCreate,
+func CreateTag(name string, result *ResultTagCreate) wx.Action {
+	params := &ParamsTagCreate{
+		TagName: name,
+	}
+
+	return wx.NewPostAction(urls.CorpUserTagCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -33,8 +37,13 @@ type ParamsTagUpdate struct {
 	TagName string `json:"tagname"`
 }
 
-func UpdateTag(params *ParamsTagUpdate) wx.Action {
-	return wx.NewPostAction(urls.CorpTagUpdate,
+func UpdateTag(tagID int64, tagName string) wx.Action {
+	params := &ParamsTagUpdate{
+		TagID:   tagID,
+		TagName: tagName,
+	}
+
+	return wx.NewPostAction(urls.CorpUserTagUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -42,7 +51,7 @@ func UpdateTag(params *ParamsTagUpdate) wx.Action {
 }
 
 func DeleteTag(tagID int64) wx.Action {
-	return wx.NewGetAction(urls.CorpTagDelete,
+	return wx.NewGetAction(urls.CorpUserTagDelete,
 		wx.WithQuery("tagid", strconv.FormatInt(tagID, 10)),
 	)
 }
@@ -59,7 +68,7 @@ type TagUser struct {
 }
 
 func GetTag(tagID int64, result *Tag) wx.Action {
-	return wx.NewGetAction(urls.CorpTagGet,
+	return wx.NewGetAction(urls.CorpUserTagGet,
 		wx.WithQuery("tagid", strconv.FormatInt(tagID, 10)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -72,7 +81,7 @@ type ResultTagList struct {
 }
 
 func ListTag(result *ResultTagList) wx.Action {
-	return wx.NewGetAction(urls.CorpTagList,
+	return wx.NewGetAction(urls.CorpUserTagList,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),

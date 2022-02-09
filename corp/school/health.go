@@ -109,8 +109,8 @@ func GetHealthReportJobInfo(params *ParamsHealthReportJobInfo, result *ResultHea
 type HealthReportAnswer struct {
 	IDType        int                  `json:"id_type"`
 	UserID        string               `json:"userid"`
-	StudentUserID string               `json:"student_user_id"`
-	ParentUserID  string               `json:"parent_user_id"`
+	StudentUserID string               `json:"student_userid"`
+	ParentUserID  string               `json:"parent_userid"`
 	ReportTime    int64                `json:"report_time"`
 	ReportValues  []*HealthReportValue `json:"report_values"`
 }

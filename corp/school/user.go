@@ -8,6 +8,21 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
+type Parent struct {
+	ParentUserID   string   `json:"parent_userid"`
+	Relation       string   `json:"relation"`
+	Mobile         string   `json:"mobile"`
+	IsSubscribe    int      `json:"is_subscribe"`
+	ExternalUserID string   `json:"external_userid"`
+	Children       []*Child `json:"children"`
+}
+
+type Child struct {
+	StudentUserID string `json:"student_userid"`
+	Relation      string `json:"relation"`
+	Name          string `json:"name"`
+}
+
 type Student struct {
 	StudentUserID string    `json:"student_userid"`
 	Name          string    `json:"name"`
@@ -30,19 +45,14 @@ func GetUser(userID string, result *ResultUserGet) wx.Action {
 	)
 }
 
-type ParamsUserList struct {
-	DepartmentID int64 `json:"department_id"`
-	FetchChild   int   `json:"fetch_child"`
-}
-
 type ResultUserList struct {
 	Students []*Student `json:"students"`
 }
 
-func ListUser(params *ParamsUserList, result *ResultUserList) wx.Action {
+func ListUser(departmentID int64, fetchChild int, result *ResultUserList) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolUserList,
-		wx.WithQuery("department_id", strconv.FormatInt(params.DepartmentID, 10)),
-		wx.WithQuery("fetch_child", strconv.Itoa(params.FetchChild)),
+		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),
+		wx.WithQuery("fetch_child", strconv.Itoa(fetchChild)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
@@ -53,7 +63,11 @@ type ParamsArchSyncModeSet struct {
 	ArchSyncMode int `json:"arch_sync_mode"`
 }
 
-func SetArchSyncMode(params *ParamsArchSyncModeSet) wx.Action {
+func SetArchSyncMode(mode int) wx.Action {
+	params := &ParamsArchSyncModeSet{
+		ArchSyncMode: mode,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolSetArchSyncMode,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

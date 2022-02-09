@@ -8,10 +8,11 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateDepartment(t *testing.T) {
@@ -89,7 +90,7 @@ func TestDeleteDepartment(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestLitDepartment(t *testing.T) {
+func TestListDepartment(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,

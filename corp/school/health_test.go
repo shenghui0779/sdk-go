@@ -49,7 +49,7 @@ func TestGetHealthReportStat(t *testing.T) {
 }
 
 func TestGetHealthReportJobIDs(t *testing.T) {
-	body := []byte(`{"offset":0,"limit":100}`)
+	body := []byte(`{"offset":1,"limit":100}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -74,7 +74,7 @@ func TestGetHealthReportJobIDs(t *testing.T) {
 	cp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsHealthReportJobIDs{
-		Offset: 0,
+		Offset: 1,
 		Limit:  100,
 	}
 	result := new(ResultHealthReportJobIDs)
@@ -209,7 +209,7 @@ func TestGetHealthReportJobInfo(t *testing.T) {
 }
 
 func TestGetHealthReportAnswer(t *testing.T) {
-	body := []byte(`{"jobid":"jobid1","date":"2020-03-27","offset":0,"limit":100}`)
+	body := []byte(`{"jobid":"jobid1","date":"2020-03-27","offset":1,"limit":100}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -291,7 +291,7 @@ func TestGetHealthReportAnswer(t *testing.T) {
 	params := &ParamsHealthReportAnswer{
 		JobID:  "jobid1",
 		Date:   "2020-03-27",
-		Offset: 0,
+		Offset: 1,
 		Limit:  100,
 	}
 	result := new(ResultHealthReportAnswer)
@@ -332,11 +332,11 @@ func TestGetHealthReportAnswer(t *testing.T) {
 				ReportValues: []*HealthReportValue{
 					{
 						QuestionID:   1,
-						SingleChoice: 2,
+						SingleChoice: 1,
 					},
 					{
 						QuestionID: 2,
-						Text:       "广东省广州市",
+						Text:       "广东省深圳市",
 					},
 					{
 						QuestionID:  3,
@@ -561,7 +561,7 @@ func TestGetStudentHealthInfo(t *testing.T) {
 			"is_not_display": 2
 		}
 	],
-	"template_id": "XXXXXXXXXXXXXXXXX"
+	"template_id": "XXXXXXXXXXXXXXXXX",
 	"ending": 1,
 	"next_key": "NEXT_KEY"
 }`))),

@@ -12,14 +12,14 @@ func WithHTTPClient(client yiigo.HTTPClient) ClientOption {
 	}
 }
 
-// WithHTTPClient sets logger for wechat client.
+// WithLogger sets logger for wechat client.
 func WithLogger(logger Logger) ClientOption {
 	return func(c *wxclient) {
 		c.logger = logger
 	}
 }
 
-// WithHTTPClient sets debug mode for wechat client.
+// WithDebug sets debug mode for wechat client.
 func WithDebug() ClientOption {
 	return func(c *wxclient) {
 		c.debug = true

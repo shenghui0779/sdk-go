@@ -162,7 +162,7 @@ func BatchDeleteUser(userids ...string) wx.Action {
 	)
 }
 
-type UserSimple struct {
+type SimpleUser struct {
 	UserID     string  `json:"userid"`
 	Name       string  `json:"name"`
 	Department []int64 `json:"department"`
@@ -175,11 +175,11 @@ type ParamsUserSimpleList struct {
 }
 
 type ResultUserSimipleList struct {
-	UserList []*UserSimple `json:"userlist"`
+	UserList []*SimpleUser `json:"userlist"`
 }
 
-// ListUserSimple 获取部门成员
-func ListUserSimple(params *ParamsUserSimpleList, result *ResultUserSimipleList) wx.Action {
+// ListSimpleUser 获取部门成员
+func ListSimpleUser(params *ParamsUserSimpleList, result *ResultUserSimipleList) wx.Action {
 	return wx.NewGetAction(urls.CorpUserSimpleList,
 		wx.WithQuery("department_id", strconv.FormatInt(params.DepartmentID, 10)),
 		wx.WithQuery("fetch_child", strconv.Itoa(params.FetchChild)),
@@ -195,7 +195,7 @@ type ParamsUserList struct {
 }
 
 type ResultUserList struct {
-	UserList []*UserSimple `json:"userlist"`
+	UserList []*SimpleUser `json:"userlist"`
 }
 
 // ListUser 获取部门成员详情
@@ -223,7 +223,7 @@ func ConvertToOpenID(userID string, result *ResultOpenIDConvert) wx.Action {
 		UserID: userID,
 	}
 
-	return wx.NewPostAction(urls.CorpConvertToOpenID,
+	return wx.NewPostAction(urls.CorpUserConvertToOpenID,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -247,7 +247,7 @@ func ConvertToUserID(openid string, result *ResultUserIDConvert) wx.Action {
 		OpenID: openid,
 	}
 
-	return wx.NewPostAction(urls.CorpConvertToUserID,
+	return wx.NewPostAction(urls.CorpUserConvertToUserID,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -271,7 +271,7 @@ type ResultBatchInvite struct {
 
 // BatchInvite 邀请成员
 func BatchInvite(params *ParamsBatchInvite, result *ResultBatchInvite) wx.Action {
-	return wx.NewPostAction(urls.CorpBatchInvite,
+	return wx.NewPostAction(urls.CorpUserBatchInvite,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -302,7 +302,7 @@ func GetJoinQRCode(size int, result *JoinQRCode) wx.Action {
 		options = append(options, wx.WithQuery("size_type", strconv.Itoa(size)))
 	}
 
-	return wx.NewGetAction(urls.CorpJoinQRCode, options...)
+	return wx.NewGetAction(urls.CorpUserJoinQRCode, options...)
 }
 
 type ParamsActiveStat struct {
@@ -313,8 +313,8 @@ type ResultActiveStat struct {
 	ActiveCnt int `json:"active_cnt"`
 }
 
-// GetUserActiveStat 获取企业活跃成员数
-func GetUserActiveStat(date string, result *ResultActiveStat) wx.Action {
+// GetActiveStat 获取企业活跃成员数
+func GetActiveStat(date string, result *ResultActiveStat) wx.Action {
 	params := &ParamsActiveStat{
 		Date: date,
 	}
