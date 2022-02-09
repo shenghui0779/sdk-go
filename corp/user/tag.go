@@ -56,7 +56,7 @@ func DeleteTag(tagID int64) wx.Action {
 	)
 }
 
-type Tag struct {
+type ResultTagUser struct {
 	TagName   string     `json:"tagname"`
 	UserList  []*TagUser `json:"userlist"`
 	PartyList []int      `json:"partylist"`
@@ -67,9 +67,53 @@ type TagUser struct {
 	Name   string `json:"name"`
 }
 
-func GetTag(tagID int64, result *Tag) wx.Action {
-	return wx.NewGetAction(urls.CorpUserTagGet,
+func GetTagUser(tagID int64, result *ResultTagUser) wx.Action {
+	return wx.NewGetAction(urls.CorpUserTagGetUser,
 		wx.WithQuery("tagid", strconv.FormatInt(tagID, 10)),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsTagUserAdd struct {
+	TagID     int64    `json:"tagid"`
+	UserList  []string `json:"userlist"`
+	PartyList []int64  `json:"partylist"`
+}
+
+type ResultTagUserAdd struct {
+	InvalidList  string  `json:"invalidlist"`
+	InvalidParty []int64 `json:"invalidparty"`
+}
+
+func AddTagUser(params *ParamsTagUserAdd, result *ResultTagUserAdd) wx.Action {
+	return wx.NewPostAction(urls.CorpUserTagAddUser,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsTagUserDelete struct {
+	TagID     int64    `json:"tagid"`
+	UserList  []string `json:"userlist"`
+	PartyList []int64  `json:"partylist"`
+}
+
+type ResultTagUserDelete struct {
+	InvalidList  string  `json:"invalidlist"`
+	InvalidParty []int64 `json:"invalidparty"`
+}
+
+func DeleteTagUser(params *ParamsTagUserDelete, result *ResultTagUserDelete) wx.Action {
+	return wx.NewPostAction(urls.CorpUserTagDeleteUser,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
@@ -78,6 +122,11 @@ func GetTag(tagID int64, result *Tag) wx.Action {
 
 type ResultTagList struct {
 	TagList []*Tag `json:"taglist"`
+}
+
+type Tag struct {
+	TagID   int64  `json:"tagid"`
+	TagName string `json:"tagname"`
 }
 
 func ListTag(result *ResultTagList) wx.Action {

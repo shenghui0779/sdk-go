@@ -32,14 +32,19 @@ const (
 	CorpUserTagCreate         = "https://qyapi.weixin.qq.com/cgi-bin/tag/create"
 	CorpUserTagUpdate         = "https://qyapi.weixin.qq.com/cgi-bin/tag/update"
 	CorpUserTagDelete         = "https://qyapi.weixin.qq.com/cgi-bin/tag/delete"
-	CorpUserTagGet            = "https://qyapi.weixin.qq.com/cgi-bin/tag/get"
 	CorpUserTagList           = "https://qyapi.weixin.qq.com/cgi-bin/tag/list"
-	CorpUserTagAddUsers       = "https://qyapi.weixin.qq.com/cgi-bin/tag/addtagusers"
-	CorpUserTagDeleteUsers    = "https://qyapi.weixin.qq.com/cgi-bin/tag/deltagusers"
+	CorpUserTagGetUser        = "https://qyapi.weixin.qq.com/cgi-bin/tag/get"
+	CorpUserTagAddUser        = "https://qyapi.weixin.qq.com/cgi-bin/tag/addtagusers"
+	CorpUserTagDeleteUser     = "https://qyapi.weixin.qq.com/cgi-bin/tag/deltagusers"
 	CorpUserBatchSyncUser     = "https://qyapi.weixin.qq.com/cgi-bin/batch/syncuser"
 	CorpUserBatchReplaceUser  = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceuser"
 	CorpUserBatchReplaceParty = "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceparty"
 	CorpUserGetBatchResult    = "https://qyapi.weixin.qq.com/cgi-bin/batch/getresult"
+	CorpUserExportSimpleUser  = "https://qyapi.weixin.qq.com/cgi-bin/export/simple_user"
+	CorpUserExportUser        = "https://qyapi.weixin.qq.com/cgi-bin/export/user"
+	CorpUserExportDepartment  = "https://qyapi.weixin.qq.com/cgi-bin/export/department"
+	CorpUserExportTagUser     = "https://qyapi.weixin.qq.com/cgi-bin/export/taguser"
+	CorpUserGetExportResult   = "https://qyapi.weixin.qq.com/cgi-bin/export/get_result"
 )
 
 // linkedcorp

@@ -15,7 +15,7 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-func TestCreateTag(t *testing.T) {
+func TestExportSimpleUser(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -40,7 +40,7 @@ func TestCreateTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestUpdateTag(t *testing.T) {
+func TestExportUser(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -65,7 +65,7 @@ func TestUpdateTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestDeleteTag(t *testing.T) {
+func TestExportDepartment(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -90,7 +90,7 @@ func TestDeleteTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetTagUser(t *testing.T) {
+func TestExportTagUser(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -115,57 +115,7 @@ func TestGetTagUser(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestAddTagUser(t *testing.T) {
-	body := []byte(``)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
-}`))),
-	}
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := mock.NewMockHTTPClient(ctrl)
-
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
-
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
-
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
-
-	assert.Nil(t, err)
-}
-
-func TestDeleteTagUser(t *testing.T) {
-	body := []byte(``)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
-}`))),
-	}
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := mock.NewMockHTTPClient(ctrl)
-
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
-
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
-
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
-
-	assert.Nil(t, err)
-}
-
-func TestListTag(t *testing.T) {
+func TestGetExportResult(t *testing.T) {
 	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,

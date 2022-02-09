@@ -2,6 +2,7 @@ package user
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"net/http"
 	"testing"

@@ -15,6 +15,10 @@ const (
 	ReplaceParty BatchType = "replace_party"
 )
 
+type ResultBatch struct {
+	JobID string `json:"jobid"`
+}
+
 type SyncCallback struct {
 	URL            string `json:"url,omitempty"`
 	Token          string `json:"token,omitempty"`
@@ -27,11 +31,7 @@ type ParamsUserBatchSync struct {
 	Callback *SyncCallback `json:"callback,omitempty"`
 }
 
-type ResultUserBatchSync struct {
-	JobID string `json:"jobid"`
-}
-
-func BatchSyncUser(params *ParamsUserBatchSync, result *ResultUserBatchSync) wx.Action {
+func BatchSyncUser(params *ParamsUserBatchSync, result *ResultBatch) wx.Action {
 	return wx.NewPostAction(urls.CorpUserBatchSyncUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -48,11 +48,7 @@ type ParamsUserBatchReplace struct {
 	Callback *SyncCallback `json:"callback,omitempty"`
 }
 
-type ResultUserBatchReplace struct {
-	JobID string `json:"jobid"`
-}
-
-func BatchReplaceUser(params *ParamsUserBatchReplace, result *ResultUserBatchReplace) wx.Action {
+func BatchReplaceUser(params *ParamsUserBatchReplace, result *ResultBatch) wx.Action {
 	return wx.NewPostAction(urls.CorpUserBatchReplaceUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -68,11 +64,7 @@ type ParamsPartyBatchReplace struct {
 	Callback *SyncCallback `json:"callback,omitempty"`
 }
 
-type ResultPartyBatchReplace struct {
-	JobID string `json:"jobid"`
-}
-
-func BatchReplaceParty(params *ParamsPartyBatchReplace, result *ResultPartyBatchReplace) wx.Action {
+func BatchReplaceParty(params *ParamsPartyBatchReplace, result *ResultBatch) wx.Action {
 	return wx.NewPostAction(urls.CorpUserBatchReplaceParty,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
