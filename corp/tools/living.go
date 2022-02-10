@@ -17,7 +17,7 @@ type ParamsLivingCreate struct {
 	Theme                string          `json:"theme"`
 	LivingStart          int64           `json:"living_start"`
 	LivingDuration       int             `json:"living_duration"`
-	Description          string          `json:"description"`
+	Description          string          `json:"description,omitempty"`
 	Type                 int             `json:"type,omitempty"`
 	AgentID              int64           `json:"agentid,omitempty"`
 	RemindTime           int             `json:"remind_time,omitempty"`
@@ -63,7 +63,11 @@ type ParamsLivingCancel struct {
 	LivingID string `json:"livingid"`
 }
 
-func CancelLiving(params *ParamsMeetingCancel) wx.Action {
+func CancelLiving(livingID string) wx.Action {
+	params := &ParamsLivingCancel{
+		LivingID: livingID,
+	}
+
 	return wx.NewPostAction(urls.CorpToolsLivingCancel,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -75,7 +79,11 @@ type ParamsLivingReplayDataDelete struct {
 	LivingID string `json:"livingid"`
 }
 
-func DeleteLivingReplayData(params *ParamsLivingReplayDataDelete) wx.Action {
+func DeleteLivingReplayData(livingID string) wx.Action {
+	params := &ParamsLivingReplayDataDelete{
+		LivingID: livingID,
+	}
+
 	return wx.NewPostAction(urls.CorpToolsLivingDeleteReplayData,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -92,7 +100,12 @@ type ResultLivingCode struct {
 	LivingCode string `json:"living_code"`
 }
 
-func GetLivingCode(params *ParamsLivingCode, result *ResultLivingCode) wx.Action {
+func GetLivingCode(livingID, openID string, result *ResultLivingCode) wx.Action {
+	params := &ParamsLivingCode{
+		LivingID: livingID,
+		OpenID:   openID,
+	}
+
 	return wx.NewPostAction(urls.CorpToolsLivingGetCode,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -114,7 +127,13 @@ type ResultUserAllLivingID struct {
 	LivingIDList []string `json:"livingid_list"`
 }
 
-func GetUserAllLivingID(params *ParamsUserAllLivingID, result *ResultUserAllLivingID) wx.Action {
+func GetUserAllLivingID(userID, cursor string, limit int, result *ResultUserAllLivingID) wx.Action {
+	params := &ParamsUserAllLivingID{
+		UserID: userID,
+		Cursor: cursor,
+		Limit:  limit,
+	}
+
 	return wx.NewPostAction(urls.CorpToolsLivingGetUserAllLivingID,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -152,7 +171,7 @@ type ResultLivingInfo struct {
 
 func GetLivingInfo(livingID string, result *ResultLivingInfo) wx.Action {
 	return wx.NewGetAction(urls.CorpToolsLivingGetInfo,
-		wx.WithQuery("living", livingID),
+		wx.WithQuery("livingid", livingID),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
@@ -191,7 +210,12 @@ type ResultLivingWatchStat struct {
 	StatInfo *LivingStatInfo `json:"stat_info"`
 }
 
-func GetLivingWatchStat(params *ParamsLivingWatchStat, result *ResultLivingWatchStat) wx.Action {
+func GetLivingWatchStat(livingID, nextKey string, result *ResultLivingWatchStat) wx.Action {
+	params := &ParamsLivingWatchStat{
+		LivingID: livingID,
+		NextKey:  nextKey,
+	}
+
 	return wx.NewPostAction(urls.CorpToolsLivingGetWatchStat,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -214,7 +238,11 @@ type ResultLivingShareInfo struct {
 	InvitorExternalUserID string `json:"Invitor_external_userid"`
 }
 
-func GetLivingShareInfo(params *ParamsLivingShareInfo, result *ResultLivingShareInfo) wx.Action {
+func GetLivingShareInfo(wwshareCode string, result *ResultLivingShareInfo) wx.Action {
+	params := &ParamsLivingShareInfo{
+		WWShareCode: wwshareCode,
+	}
+
 	return wx.NewPostAction(urls.CorpToolsLivingGetShareInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

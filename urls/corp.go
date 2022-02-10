@@ -232,11 +232,8 @@ const (
 	CorpToolsScheduleGet              = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/get"
 	CorpToolsScheduleDelete           = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/del"
 	CorpToolsScheduleGetByCalendar    = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/get_by_calendar"
-	CorpToolsMeetingCreate            = "https://qyapi.weixin.qq.com/cgi-bin/meeting/create"
-	CorpToolsMeetingUpdate            = "https://qyapi.weixin.qq.com/cgi-bin/meeting/update"
-	CorpToolsMeetingCancel            = "https://qyapi.weixin.qq.com/cgi-bin/meeting/cancel"
-	CorpToolsMeetingGetUserMeetingID  = "https://qyapi.weixin.qq.com/cgi-bin/meeting/get_user_meetingid"
-	CorpToolsMeetingGetInfo           = "https://qyapi.weixin.qq.com/cgi-bin/meeting/get_info"
+	CorpToolsScheduleAttendeeAdd      = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/add_attendees"
+	CorpToolsScheduleAttendeeDelete   = "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/del_attendees"
 	CorpToolsLivingCreate             = "https://qyapi.weixin.qq.com/cgi-bin/living/create"
 	CorpToolsLivingModify             = "https://qyapi.weixin.qq.com/cgi-bin/living/modify"
 	CorpToolsLivingCancel             = "https://qyapi.weixin.qq.com/cgi-bin/living/cancel"
@@ -266,7 +263,7 @@ const (
 	CorpToolsWedriveFileAclDelete     = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_acl_del"
 	CorpToolsWedriveFileSetting       = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_setting"
 	CorpToolsWedriveFileShare         = "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_share"
-	CorpToolsDialGetRecord            = "https://qyapi.weixin.qq.com/cgi-bin/dial/get_dial_record"
+	CorpToolsDialRecordGet            = "https://qyapi.weixin.qq.com/cgi-bin/dial/get_dial_record"
 )
 
 // payment

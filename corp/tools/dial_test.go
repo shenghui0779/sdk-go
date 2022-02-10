@@ -8,19 +8,56 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestGetDialRecord(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"start_time":1536508800,"end_time":1536940800,"offset":1,"limit":100}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "record": [
+        {
+            "call_time": 1536508800,
+            "total_duration": 10,
+            "call_type": 1,
+            "caller": {
+                "userid": "tony",
+                "duration": 10
+            },
+            "callee": [
+                {
+                    "phone": "138000800",
+                    "duration": 10
+                }
+            ]
+        },
+        {
+            "call_time": 1536940800,
+            "total_duration": 20,
+            "call_type": 2,
+            "caller": {
+                "userid": "tony",
+                "duration": 10
+            },
+            "callee": [
+                {
+                    "phone": "138000800",
+                    "duration": 5
+                },
+                {
+                    "userid": "tom",
+                    "duration": 5
+                }
+            ]
+        }
+    ]
 }`))),
 	}
 
@@ -29,12 +66,58 @@ func TestGetDialRecord(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/dial/get_dial_record?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	params := &ParamsDialRecord{
+		StartTime: 1536508800,
+		EndTime:   1536940800,
+		Offset:    1,
+		Limit:     100,
+	}
+	result := new(ResultDialRecord)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetDialRecord(params, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultDialRecord{
+		Record: []*DialRecord{
+			{
+				CallTime:      1536508800,
+				TotalDuration: 10,
+				CallType:      1,
+				Caller: &DialCaller{
+					UserID:   "tony",
+					Duration: 10,
+				},
+				Callee: []*DialCallee{
+					{
+						Phone:    "138000800",
+						Duration: 10,
+					},
+				},
+			},
+			{
+				CallTime:      1536940800,
+				TotalDuration: 20,
+				CallType:      2,
+				Caller: &DialCaller{
+					UserID:   "tony",
+					Duration: 10,
+				},
+				Callee: []*DialCallee{
+					{
+						Phone:    "138000800",
+						Duration: 5,
+					},
+					{
+						UserID:   "tom",
+						Duration: 5,
+					},
+				},
+			},
+		},
+	}, result)
 }
