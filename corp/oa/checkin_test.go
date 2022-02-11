@@ -644,13 +644,11 @@ func TestGetCheckinOption(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCheckinOption{
-		DateTime:   1511971200,
-		UserIDList: []string{"james", "paul"},
-	}
+	userIDs := []string{"james", "paul"}
+
 	result := new(ResultCheckinOption)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCheckinOption(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCheckinOption(1511971200, userIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCheckinOption{
@@ -841,15 +839,11 @@ func TestGetCheckinData(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCheckinData{
-		OpenCheckinDataType: 3,
-		StartTime:           1492617600,
-		EndTime:             1492790400,
-		UserIDList:          []string{"james", "paul"},
-	}
+	userIDs := []string{"james", "paul"}
+
 	result := new(ResultCheckinData)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCheckinData(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCheckinData(3, 1492617600, 1492790400, userIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCheckinData{
@@ -1022,14 +1016,11 @@ func TestGetCheckinDayData(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCheckinDayData{
-		StartTime:  1599062400,
-		EndTime:    1599062400,
-		UserIDList: []string{"ZhangSan"},
-	}
+	userIDs := []string{"ZhangSan"}
+
 	result := new(ResultCheckinDayData)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCheckinDayData(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCheckinDayData(1599062400, 1599062400, userIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCheckinDayData{
@@ -1222,14 +1213,11 @@ func TestGetCheckinMonthData(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCheckinMonthData{
-		StartTime:  1599062400,
-		EndTime:    1599408000,
-		UserIDList: []string{"ZhangSan"},
-	}
+	userIDs := []string{"ZhangSan"}
+
 	result := new(ResultCheckinMonthData)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCheckinMonthData(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCheckinMonthData(1599062400, 1599408000, userIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCheckinMonthData{
@@ -1367,14 +1355,11 @@ func TestGetCheckinScheduleList(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCheckinScheduleListGet{
-		StartTime:  1492617600,
-		EndTime:    1492790400,
-		UserIDList: []string{"james", "paul"},
-	}
+	userIDs := []string{"james", "paul"}
+
 	result := new(ResultCheckinScheduleListGet)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCheckinScheduleList(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCheckinScheduleList(1492617600, 1492790400, userIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCheckinScheduleListGet{
@@ -1453,19 +1438,15 @@ func TestSetCheckinScheduleList(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCheckinScheduleListSet{
-		GroupID:   226,
-		YearMonth: 202012,
-		Items: []*ScheduleItem{
-			{
-				UserID:     "james",
-				Day:        5,
-				ScheduleID: 234,
-			},
+	items := []*ScheduleListItem{
+		{
+			UserID:     "james",
+			Day:        5,
+			ScheduleID: 234,
 		},
 	}
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SetCheckinScheduleList(params))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SetCheckinScheduleList(226, 202012, items...))
 
 	assert.Nil(t, err)
 }
@@ -1529,15 +1510,11 @@ func TestGetHardwareCheckinData(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsHardwareCheckinData{
-		FilterType: 1,
-		StartTime:  1492617600,
-		EndTime:    1492790400,
-		UserIDList: []string{"james", "paul"},
-	}
+	userIDs := []string{"james", "paul"}
+
 	result := new(ResultHardwareCheckinData)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetHardwareCheckinData(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetHardwareCheckinData(1, 1492617600, 1492790400, userIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultHardwareCheckinData{
