@@ -25,19 +25,14 @@ type ResultMediaUpload struct {
 	CreatedAt int64     `json:"created_at"`
 }
 
-type ParamsMediaUpload struct {
-	MediaType MediaType `json:"media_type"`
-	Path      string    `json:"path"`
-}
-
 // UploadMedia 上传临时素材到微信服务器
-func UploadMedia(params *ParamsMediaUpload, result *ResultMediaUpload) wx.Action {
-	_, filename := filepath.Split(params.Path)
+func UploadMedia(mediaType MediaType, mediaPath string, result *ResultMediaUpload) wx.Action {
+	_, filename := filepath.Split(mediaPath)
 
 	return wx.NewPostAction(urls.MinipMediaUpload,
-		wx.WithQuery("type", string(params.MediaType)),
+		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(params.Path))
+			path, err := filepath.Abs(filepath.Clean(mediaPath))
 
 			if err != nil {
 				return nil, err
@@ -59,18 +54,12 @@ func UploadMedia(params *ParamsMediaUpload, result *ResultMediaUpload) wx.Action
 	)
 }
 
-type ParamsMediaUploadByURL struct {
-	MediaType MediaType
-	Filename  string
-	URL       string
-}
-
 // UploadMediaByURL 上传临时素材到微信服务器
-func UploadMediaByURL(params *ParamsMediaUploadByURL, result *ResultMediaUpload) wx.Action {
+func UploadMediaByURL(mediaType MediaType, filename, url string, result *ResultMediaUpload) wx.Action {
 	return wx.NewPostAction(urls.MinipMediaUpload,
-		wx.WithQuery("type", string(params.MediaType)),
+		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			resp, err := yiigo.HTTPGet(context.TODO(), params.URL)
+			resp, err := yiigo.HTTPGet(context.TODO(), url)
 
 			if err != nil {
 				return nil, err
@@ -85,7 +74,7 @@ func UploadMediaByURL(params *ParamsMediaUploadByURL, result *ResultMediaUpload)
 			}
 
 			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", params.Filename, body),
+				yiigo.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {

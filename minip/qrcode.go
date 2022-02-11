@@ -24,7 +24,12 @@ type ParamsQRCodeCreate struct {
 }
 
 // CreateQRCode 创建小程序二维码（数量有限）
-func CreateQRCode(params *ParamsQRCodeCreate, qrcode *QRCode) wx.Action {
+func CreateQRCode(pagepath string, width int, qrcode *QRCode) wx.Action {
+	params := ParamsQRCodeCreate{
+		Path:  pagepath,
+		Width: width,
+	}
+
 	return wx.NewPostAction(urls.MinipQRCodeCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalWithNoEscapeHTML(params)

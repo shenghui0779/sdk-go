@@ -47,7 +47,13 @@ type ResultSoterVerify struct {
 }
 
 // SoterVerify 生物认证秘钥签名验证
-func SoterVerify(params *ParamsSoterVerify, result *ResultSoterVerify) wx.Action {
+func SoterVerify(openID, jsonStr, jsonSign string, result *ResultSoterVerify) wx.Action {
+	params := &ParamsSoterVerify{
+		OpenID:        openID,
+		JSONString:    jsonStr,
+		JSONSignature: jsonSign,
+	}
+
 	return wx.NewPostAction(urls.MinipSoterVerify,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -58,7 +64,7 @@ func SoterVerify(params *ParamsSoterVerify, result *ResultSoterVerify) wx.Action
 	)
 }
 
-// 风控场景
+// RiskScene 风控场景
 type RiskScene int
 
 // 微信支持的风控场景值

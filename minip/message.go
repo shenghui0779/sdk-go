@@ -64,7 +64,7 @@ type ParamsUniformMsg struct {
 	MPTemplateMsg *TemplateMsg `json:"mp_template_msg"`
 }
 
-// Uniform 发送统一服务消息
+// SendUniformMsg 发送统一服务消息
 func SendUniformMsg(params *ParamsUniformMsg) wx.Action {
 	return wx.NewPostAction(urls.MinipUniformMsgSend,
 		wx.WithBody(func() ([]byte, error) {

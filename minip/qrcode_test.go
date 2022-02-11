@@ -8,9 +8,10 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateQRCode(t *testing.T) {
@@ -31,13 +32,9 @@ func TestCreateQRCode(t *testing.T) {
 	mp := New("APPID", "APPSECRET")
 	mp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsQRCodeCreate{
-		Path:  "page/index/index",
-		Width: 430,
-	}
 	qrcode := new(QRCode)
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", CreateQRCode(params, qrcode))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", CreateQRCode("page/index/index", 430, qrcode))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "BUFFER", string(qrcode.Buffer))

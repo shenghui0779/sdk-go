@@ -121,7 +121,13 @@ type ParamsDevPluginApplyStatus struct {
 }
 
 // SetDevPluginApplyStatus 修改插件使用申请的状态（供插件开发者调用）
-func SetDevPluginApplyStatus(params *ParamsDevPluginApplyStatus) wx.Action {
+func SetDevPluginApplyStatus(action PluginAction, appid string, reason string) wx.Action {
+	params := &ParamsDevPluginApplyStatus{
+		Action: action,
+		AppID:  appid,
+		Reason: reason,
+	}
+
 	return wx.NewPostAction(urls.MinipPluginDevManage,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

@@ -8,10 +8,11 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestImageSecCheck(t *testing.T) {
@@ -57,13 +58,9 @@ func TestMediaCheckAsync(t *testing.T) {
 	mp := New("APPID", "APPSECRET")
 	mp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMediaCheckAsync{
-		MediaType: SecMediaImage,
-		MediaURL:  "https://developers.weixin.qq.com/miniprogram/assets/images/head_global_z_@all.png",
-	}
 	result := new(ResultMediaCheckAsync)
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", MediaCheckAsync(params, result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", MediaCheckAsync(SecMediaImage, "https://developers.weixin.qq.com/miniprogram/assets/images/head_global_z_@all.png", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMediaCheckAsync{
