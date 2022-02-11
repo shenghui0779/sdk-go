@@ -73,13 +73,9 @@ func TestGetHealthReportJobIDs(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsHealthReportJobIDs{
-		Offset: 1,
-		Limit:  100,
-	}
 	result := new(ResultHealthReportJobIDs)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetHealthReportJobIDs(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetHealthReportJobIDs(1, 100, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultHealthReportJobIDs{
@@ -156,13 +152,9 @@ func TestGetHealthReportJobInfo(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsHealthReportJobInfo{
-		JobID: "jobid1",
-		Date:  "2020-03-27",
-	}
 	result := new(ResultHealthReportJobInfo)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetHealthReportJobInfo(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetHealthReportJobInfo("jobid1", "2020-03-27", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultHealthReportJobInfo{
@@ -288,15 +280,9 @@ func TestGetHealthReportAnswer(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsHealthReportAnswer{
-		JobID:  "jobid1",
-		Date:   "2020-03-27",
-		Offset: 1,
-		Limit:  100,
-	}
 	result := new(ResultHealthReportAnswer)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetHealthReportAnswer(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetHealthReportAnswer("jobid1", "2020-03-27", 1, 100, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultHealthReportAnswer{
@@ -429,14 +415,9 @@ func TestGetTeacherHealthInfo(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCustomizeHealthInfo{
-		Date:    "2020-03-27",
-		NextKey: "NEXT_KEY",
-		Limit:   100,
-	}
 	result := new(ResultCustomizeHealthInfo)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetTeacherHealthInfo(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetTeacherHealthInfo("2020-03-27", "NEXT_KEY", 100, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCustomizeHealthInfo{
@@ -577,14 +558,9 @@ func TestGetStudentHealthInfo(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCustomizeHealthInfo{
-		Date:    "2020-03-27",
-		NextKey: "NEXT_KEY",
-		Limit:   100,
-	}
 	result := new(ResultCustomizeHealthInfo)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetStudentHealthInfo(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetStudentHealthInfo("2020-03-27", "NEXT_KEY", 100, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCustomizeHealthInfo{
@@ -681,13 +657,11 @@ func TestGetHealthQRCode(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsHealthQRCode{
-		Type:    1,
-		UserIDs: []string{"userid1", "userid2"},
-	}
+	userIDs := []string{"userid1", "userid2"}
+
 	result := new(ResultHealthQRCode)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetHealthQRCode(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetHealthQRCode(1, userIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultHealthQRCode{

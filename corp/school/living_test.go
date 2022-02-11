@@ -40,14 +40,9 @@ func TestGetUserAllLivingID(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsUserAllLivingID{
-		UserID: "USERID",
-		Cursor: "NEXT_KEY",
-		Limit:  20,
-	}
 	result := new(ResultUserAllLivingID)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetUserAllLivingID(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetUserAllLivingID("USERID", "NEXT_KEY", 20, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultUserAllLivingID{
@@ -185,13 +180,9 @@ func TestGetLivingWatchStat(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsLivingWatchStat{
-		LivingID: "livingid1",
-		NextKey:  "NEXT_KEY",
-	}
 	result := new(ResultLivingWatchStat)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetLivingWatchStat(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetLivingWatchStat("livingid1", "NEXT_KEY", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultLivingWatchStat{
@@ -279,13 +270,9 @@ func TestGetLivingUnwatchStat(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsLivingUnwatchStat{
-		LivingID: "livingid1",
-		NextKey:  "NEXT_KEY",
-	}
 	result := new(ResultLivingUnwatchStat)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetLivingUnwatchStat(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetLivingUnwatchStat("livingid1", "NEXT_KEY", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultLivingUnwatchStat{

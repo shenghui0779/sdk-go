@@ -244,12 +244,11 @@ func TestBatchDeleteStudent(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsStudentBatchDelete{
-		UserIDList: []string{"zhangsan", "lisi"},
-	}
+	userIDs := []string{"zhangsan", "lisi"}
+
 	result := new(ResultStudentBatchDelete)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchDeleteStudent(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchDeleteStudent(userIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultStudentBatchDelete{

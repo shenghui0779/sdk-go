@@ -49,7 +49,12 @@ type ResultTradeGet struct {
 	PayTime       int64  `json:"pay_time"`
 }
 
-func GetTrade(params *ParamsTradeGet, result *ResultTradeGet) wx.Action {
+func GetTrade(paymentID, tradeNO string, result *ResultTradeGet) wx.Action {
+	params := &ParamsTradeGet{
+		PaymentID: paymentID,
+		TradeNO:   tradeNO,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetTrade,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

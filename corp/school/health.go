@@ -41,7 +41,12 @@ type ResultHealthReportJobIDs struct {
 	JobIDs []string `json:"jobids"`
 }
 
-func GetHealthReportJobIDs(params *ParamsHealthReportJobIDs, result *ResultHealthReportJobIDs) wx.Action {
+func GetHealthReportJobIDs(offset, limit int, result *ResultHealthReportJobIDs) wx.Action {
+	params := &ParamsHealthReportJobIDs{
+		Offset: offset,
+		Limit:  limit,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetHealthReportJobIDs,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -95,7 +100,12 @@ type ResultHealthReportJobInfo struct {
 	JobInfo *HealthReportJobInfo `json:"job_info"`
 }
 
-func GetHealthReportJobInfo(params *ParamsHealthReportJobInfo, result *ResultHealthReportJobInfo) wx.Action {
+func GetHealthReportJobInfo(jobID, date string, result *ResultHealthReportJobInfo) wx.Action {
+	params := &ParamsHealthReportJobInfo{
+		JobID: jobID,
+		Date:  date,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetHealthReportJobInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -134,7 +144,14 @@ type ResultHealthReportAnswer struct {
 	Answers []*HealthReportAnswer `json:"answers"`
 }
 
-func GetHealthReportAnswer(params *ParamsHealthReportAnswer, result *ResultHealthReportAnswer) wx.Action {
+func GetHealthReportAnswer(jobID, date string, offset, limit int, result *ResultHealthReportAnswer) wx.Action {
+	params := &ParamsHealthReportAnswer{
+		JobID:  jobID,
+		Date:   date,
+		Offset: offset,
+		Limit:  limit,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetHealthReportAnswer,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -181,7 +198,13 @@ type ResultCustomizeHealthInfo struct {
 	NextKey           string                             `json:"next_key"`
 }
 
-func GetTeacherHealthInfo(params *ParamsCustomizeHealthInfo, result *ResultCustomizeHealthInfo) wx.Action {
+func GetTeacherHealthInfo(date, nextKey string, limit int, result *ResultCustomizeHealthInfo) wx.Action {
+	params := &ParamsCustomizeHealthInfo{
+		Date:    date,
+		NextKey: nextKey,
+		Limit:   limit,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetTeacherHealthInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -192,7 +215,13 @@ func GetTeacherHealthInfo(params *ParamsCustomizeHealthInfo, result *ResultCusto
 	)
 }
 
-func GetStudentHealthInfo(params *ParamsCustomizeHealthInfo, result *ResultCustomizeHealthInfo) wx.Action {
+func GetStudentHealthInfo(date, nextKey string, limit int, result *ResultCustomizeHealthInfo) wx.Action {
+	params := &ParamsCustomizeHealthInfo{
+		Date:    date,
+		NextKey: nextKey,
+		Limit:   limit,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetStudentHealthInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -219,7 +248,12 @@ type ResultHealthQRCode struct {
 	ResultList []*HealthQRCode `json:"result_list"`
 }
 
-func GetHealthQRCode(params *ParamsHealthQRCode, result *ResultHealthQRCode) wx.Action {
+func GetHealthQRCode(objType int, userIDs []string, result *ResultHealthQRCode) wx.Action {
+	params := &ParamsHealthQRCode{
+		Type:    objType,
+		UserIDs: userIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetHealthQRCode,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

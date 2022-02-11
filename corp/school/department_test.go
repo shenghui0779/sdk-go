@@ -272,13 +272,9 @@ func TestSetUpgradeInfo(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsUpgradeInfoSet{
-		UpgradeTime:   1594090969,
-		UpgradeSwitch: 2,
-	}
 	result := new(ResultUpgradeInfoSet)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SetUpgradeInfo(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SetUpgradeInfo(1594090969, 2, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultUpgradeInfoSet{

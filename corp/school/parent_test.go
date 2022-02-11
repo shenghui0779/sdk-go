@@ -292,12 +292,11 @@ func TestBatchDeleteParent(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsParentBatchDelete{
-		UserIDList: []string{"zhangsan", "lisi"},
-	}
+	userIDs := []string{"zhangsan", "lisi"}
+
 	result := new(ResultParentBatchDelete)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchDeleteParent(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchDeleteParent(userIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultParentBatchDelete{

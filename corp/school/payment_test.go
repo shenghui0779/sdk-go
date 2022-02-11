@@ -86,13 +86,9 @@ func TestGetTrade(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsTradeGet{
-		PaymentID: "xxxx",
-		TradeNO:   "xxxx",
-	}
 	result := new(ResultTradeGet)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetTrade(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetTrade("xxxx", "xxxx", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultTradeGet{

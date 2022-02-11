@@ -100,7 +100,11 @@ type ResultParentBatchDelete struct {
 	ResultList []*ParentErrResult `json:"result_list"`
 }
 
-func BatchDeleteParent(params *ParamsParentBatchDelete, result *ResultParentBatchDelete) wx.Action {
+func BatchDeleteParent(userIDs []string, result *ResultParentBatchDelete) wx.Action {
+	params := &ParamsParentBatchDelete{
+		UserIDList: userIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolParentBatchDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

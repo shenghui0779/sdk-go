@@ -119,7 +119,12 @@ type ResultUpgradeInfoSet struct {
 	NextUpgradeTime int64 `json:"next_upgrade_time"`
 }
 
-func SetUpgradeInfo(params *ParamsUpgradeInfoSet, result *ResultUpgradeInfoSet) wx.Action {
+func SetUpgradeInfo(upgradeTime int64, upgradeSwitch int, result *ResultUpgradeInfoSet) wx.Action {
+	params := &ParamsUpgradeInfoSet{
+		UpgradeTime:   upgradeTime,
+		UpgradeSwitch: upgradeSwitch,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolSetUpgradeInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
