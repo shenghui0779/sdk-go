@@ -56,11 +56,12 @@ func DeleteDepartment(id int64) wx.Action {
 }
 
 type Department struct {
-	ID       int64  `json:"id"`
-	Name     string `json:"name"`
-	NameEN   string `json:"name_en"`
-	ParentID int64  `json:"parentid"`
-	Order    int64  `json:"order"`
+	ID               int64    `json:"id"`
+	Name             string   `json:"name"`
+	NameEN           string   `json:"name_en"`
+	DepartmentLeader []string `json:"department_leader"`
+	ParentID         int64    `json:"parentid"`
+	Order            int64    `json:"order"`
 }
 
 type ResultDepartmentList struct {
@@ -75,9 +76,51 @@ func ListDepartment(id int64, result *ResultDepartmentList) wx.Action {
 		}),
 	}
 
-	if id != 0 {
+	if id > 0 {
 		options = append(options, wx.WithQuery("id", strconv.FormatInt(id, 10)))
 	}
 
 	return wx.NewGetAction(urls.CorpUserDepartmentList, options...)
+}
+
+type SimpleDepartment struct {
+	ID       int64 `json:"id"`
+	ParentID int64 `json:"parentid"`
+	Order    int64 `json:"order"`
+}
+
+type ResultSimpleDepartmentList struct {
+	DepartmentID []*SimpleDepartment `json:"department_id"`
+}
+
+func ListSimpleDepartment(id int64, result *ResultSimpleDepartmentList) wx.Action {
+	options := []wx.ActionOption{
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	}
+
+	if id > 0 {
+		options = append(options, wx.WithQuery("id", strconv.FormatInt(id, 10)))
+	}
+
+	return wx.NewGetAction(urls.CorpUserDepartmentSimpleList, options...)
+}
+
+type ResultDepartmentGet struct {
+	Department *Department `json:"department"`
+}
+
+func GetDepartment(id int64, result *ResultDepartmentGet) wx.Action {
+	options := []wx.ActionOption{
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	}
+
+	if id > 0 {
+		options = append(options, wx.WithQuery("id", strconv.FormatInt(id, 10)))
+	}
+
+	return wx.NewGetAction(urls.CorpUserDepartmentGet, options...)
 }

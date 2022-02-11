@@ -8,7 +8,7 @@ import (
 )
 
 type ParamsExport struct {
-	TagID          int64  `json:"tag_id,omitempty"`
+	TagID          int64  `json:"tagid,omitempty"`
 	EncodingAESKey string `json:"encoding_aeskey"`
 	BlockSize      int64  `json:"block_size"`
 }

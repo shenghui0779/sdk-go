@@ -16,12 +16,13 @@ import (
 )
 
 func TestExportSimpleUser(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"encoding_aeskey":"IJUiXNpvGbODwKEBSEsAeOAPAhkqHqNCF6g19t9wfg2","block_size":1000000}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "jobid": "jobid_xxxxxxxxx"
 }`))),
 	}
 
@@ -30,23 +31,29 @@ func TestExportSimpleUser(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/export/simple_user?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultExport)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ExportSimpleUser("IJUiXNpvGbODwKEBSEsAeOAPAhkqHqNCF6g19t9wfg2", 1000000, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultExport{
+		JobID: "jobid_xxxxxxxxx",
+	}, result)
 }
 
 func TestExportUser(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"encoding_aeskey":"IJUiXNpvGbODwKEBSEsAeOAPAhkqHqNCF6g19t9wfg2","block_size":1000000}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "jobid": "jobid_xxxxxxxxx"
 }`))),
 	}
 
@@ -55,23 +62,29 @@ func TestExportUser(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/export/user?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultExport)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ExportUser("IJUiXNpvGbODwKEBSEsAeOAPAhkqHqNCF6g19t9wfg2", 1000000, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultExport{
+		JobID: "jobid_xxxxxxxxx",
+	}, result)
 }
 
 func TestExportDepartment(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"encoding_aeskey":"IJUiXNpvGbODwKEBSEsAeOAPAhkqHqNCF6g19t9wfg2","block_size":1000000}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "jobid": "jobid_xxxxxxxxx"
 }`))),
 	}
 
@@ -80,23 +93,29 @@ func TestExportDepartment(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/export/department?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultExport)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ExportDepartment("IJUiXNpvGbODwKEBSEsAeOAPAhkqHqNCF6g19t9wfg2", 1000000, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultExport{
+		JobID: "jobid_xxxxxxxxx",
+	}, result)
 }
 
 func TestExportTagUser(t *testing.T) {
-	body := []byte(``)
+	body := []byte(`{"tagid":1,"encoding_aeskey":"IJUiXNpvGbODwKEBSEsAeOAPAhkqHqNCF6g19t9wfg2","block_size":1000000}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "jobid": "jobid_xxxxxxxxx"
 }`))),
 	}
 
@@ -105,23 +124,40 @@ func TestExportTagUser(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/export/taguser?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultExport)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ExportTagUser(1, "IJUiXNpvGbODwKEBSEsAeOAPAhkqHqNCF6g19t9wfg2", 1000000, result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultExport{
+		JobID: "jobid_xxxxxxxxx",
+	}, result)
 }
 
 func TestGetExportResult(t *testing.T) {
-	body := []byte(``)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok"
+    "errcode": 0,
+    "errmsg": "ok",
+    "status": 2,
+    "data_list": [
+        {
+            "url": "https://xxxxx",
+            "size": 10240,
+            "md5": "xxxxxxxxx"
+        },
+        {
+            "url": "https://xxxxx",
+            "size": 20480,
+            "md5": "xxxxxxxx"
+        }
+    ]
 }`))),
 	}
 
@@ -130,12 +166,29 @@ func TestGetExportResult(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/export/get_result?access_token=ACCESS_TOKEN&jobid=jobid_xxxxxxxxxxxxxxx", nil).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN")
+	result := new(ResultExportResult)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetExportResult("jobid_xxxxxxxxxxxxxxx", result))
 
 	assert.Nil(t, err)
+	assert.Equal(t, &ResultExportResult{
+		Status: 2,
+		DataList: []*ExportData{
+			{
+				URL:  "https://xxxxx",
+				Size: 10240,
+				MD5:  "xxxxxxxxx",
+			},
+			{
+				URL:  "https://xxxxx",
+				Size: 20480,
+				MD5:  "xxxxxxxx",
+			},
+		},
+	}, result)
 }

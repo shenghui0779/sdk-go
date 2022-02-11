@@ -9,9 +9,14 @@ import (
 )
 
 type ExternalProfile struct {
-	ExternalCorpName string  `json:"external_corp_name"`
-	WechatChannels   string  `json:"wechat_channels"`
-	ExternalAttr     []*Attr `json:"external_attr"`
+	ExternalCorpName string          `json:"external_corp_name"`
+	WechatChannels   *WechatChannels `json:"wechat_channels"`
+	ExternalAttr     []*Attr         `json:"external_attr"`
+}
+
+type WechatChannels struct {
+	Nickname string `json:"nickname,omitempty"`
+	Status   int    `json:"status,omitempty"`
 }
 
 type ExtAttr struct {
@@ -31,34 +36,36 @@ type AttrText struct {
 }
 
 type AttrWeb struct {
-	Title string `json:"title"`
 	URL   string `json:"url"`
+	Title string `json:"title"`
 }
 
 type AttrMinip struct {
-	Title    string `json:"title"`
 	AppID    string `json:"appid"`
 	Pagepath string `json:"pagepath"`
+	Title    string `json:"title"`
 }
 
 type ParamsUserCreate struct {
-	UserID           string           `json:"user_id"`
+	UserID           string           `json:"userid"`
 	Name             string           `json:"name"`
 	Alias            string           `json:"alias,omitempty"`
 	Mobile           string           `json:"mobile,omitempty"`
 	Department       []int64          `json:"department"`
-	Order            []int64          `json:"order,omitempty"`
+	Order            []int            `json:"order,omitempty"`
 	Position         string           `json:"position,omitempty"`
-	Gender           int              `json:"gender,omitempty"`
+	Gender           string           `json:"gender,omitempty"`
 	Email            string           `json:"email,omitempty"`
-	IsLeaderInDept   []int64          `json:"is_leader_in_dept,omitempty"`
+	BizMail          string           `json:"biz_mail,omitempty"`
+	IsLeaderInDept   []int            `json:"is_leader_in_dept,omitempty"`
+	DirectLeader     []string         `json:"direct_leader,omitempty"`
 	Enable           int              `json:"enable,omitempty"`
 	AvatarMediaID    string           `json:"avatar_mediaid,omitempty"`
 	Telephone        string           `json:"telephone,omitempty"`
 	Address          string           `json:"address,omitempty"`
 	MainDepartment   int64            `json:"main_department,omitempty"`
 	ExtAttr          *ExtAttr         `json:"extattr,omitempty"`
-	ToInvite         bool             `json:"to_invite,omitempty"`
+	ToInvite         *bool            `json:"to_invite,omitempty"`
 	ExternalPosition string           `json:"external_position,omitempty"`
 	ExternalProfile  *ExternalProfile `json:"external_profile,omitempty"`
 }
@@ -73,23 +80,24 @@ func CreateUser(params *ParamsUserCreate) wx.Action {
 }
 
 type ParamsUserUpdate struct {
-	UserID           string           `json:"user_id"`
+	UserID           string           `json:"userid"`
 	Name             string           `json:"name,omitempty"`
 	Alias            string           `json:"alias,omitempty"`
 	Mobile           string           `json:"mobile,omitempty"`
 	Department       []int64          `json:"department"`
-	Order            []int64          `json:"order,omitempty"`
+	Order            []int            `json:"order,omitempty"`
 	Position         string           `json:"position,omitempty"`
-	Gender           int              `json:"gender,omitempty"`
+	Gender           string           `json:"gender,omitempty"`
 	Email            string           `json:"email,omitempty"`
-	IsLeaderInDept   []int64          `json:"is_leader_in_dept,omitempty"`
+	BizMail          string           `json:"biz_mail,omitempty"`
+	IsLeaderInDept   []int            `json:"is_leader_in_dept,omitempty"`
+	DirectLeader     []string         `json:"direct_leader,omitempty"`
 	Enable           int              `json:"enable,omitempty"`
 	AvatarMediaID    string           `json:"avatar_mediaid,omitempty"`
 	Telephone        string           `json:"telephone,omitempty"`
 	Address          string           `json:"address,omitempty"`
 	MainDepartment   int64            `json:"main_department,omitempty"`
 	ExtAttr          *ExtAttr         `json:"extattr,omitempty"`
-	ToInvite         bool             `json:"to_invite,omitempty"`
 	ExternalPosition string           `json:"external_position,omitempty"`
 	ExternalProfile  *ExternalProfile `json:"external_profile,omitempty"`
 }
@@ -104,28 +112,29 @@ func UpdateUser(params *ParamsUserUpdate) wx.Action {
 }
 
 type User struct {
-	UserID           string           `json:"user_id"`
+	UserID           string           `json:"userid"`
 	Name             string           `json:"name"`
-	Alias            string           `json:"alias,omitempty"`
-	Mobile           string           `json:"mobile,omitempty"`
+	Alias            string           `json:"alias"`
+	Mobile           string           `json:"mobile"`
 	Department       []int64          `json:"department"`
-	Order            []int64          `json:"order,omitempty"`
-	Position         string           `json:"position,omitempty"`
-	Gender           int              `json:"gender,omitempty"`
-	Email            string           `json:"email,omitempty"`
-	IsLeaderInDept   []int64          `json:"is_leader_in_dept,omitempty"`
-	Enable           int              `json:"enable,omitempty"`
-	Avatar           string           `json:"avatar,omitempty"`
-	ThumbAvatar      string           `json:"thumb_avatar,omitempty"`
-	Telephone        string           `json:"telephone,omitempty"`
-	Address          string           `json:"address,omitempty"`
-	OpenUserID       string           `json:"open_userid,omitempty"`
-	MainDepartment   int64            `json:"main_department,omitempty"`
-	ExtAttr          *ExtAttr         `json:"extattr,omitempty"`
-	Status           int              `json:"status,omitempty"`
-	QRCode           string           `json:"qr_code,omitempty"`
-	ExternalPosition string           `json:"external_position,omitempty"`
-	ExternalProfile  *ExternalProfile `json:"external_profile,omitempty"`
+	Order            []int            `json:"order"`
+	Position         string           `json:"position"`
+	Gender           string           `json:"gender"`
+	Email            string           `json:"email"`
+	BizMail          string           `json:"biz_mail"`
+	IsLeaderInDept   []int            `json:"is_leader_in_dept"`
+	DirectLeader     []string         `json:"direct_leader,omitempty"`
+	Avatar           string           `json:"avatar"`
+	ThumbAvatar      string           `json:"thumb_avatar"`
+	Telephone        string           `json:"telephone"`
+	Address          string           `json:"address"`
+	OpenUserID       string           `json:"open_userid"`
+	MainDepartment   int64            `json:"main_department"`
+	ExtAttr          *ExtAttr         `json:"extattr"`
+	Status           int              `json:"status"`
+	QRCode           string           `json:"qr_code"`
+	ExternalPosition string           `json:"external_position"`
+	ExternalProfile  *ExternalProfile `json:"external_profile"`
 }
 
 // GetUser 读取成员
@@ -150,9 +159,9 @@ type ParamsUserBatchDelete struct {
 }
 
 // BatchDeleteUser 批量删除成员
-func BatchDeleteUser(userids ...string) wx.Action {
+func BatchDeleteUser(userIDs ...string) wx.Action {
 	params := &ParamsUserBatchDelete{
-		UserIDList: userids,
+		UserIDList: userIDs,
 	}
 
 	return wx.NewPostAction(urls.CorpUserBatchDelete,
@@ -169,40 +178,30 @@ type SimpleUser struct {
 	OpenUserID string  `json:"open_userid"`
 }
 
-type ParamsUserSimpleList struct {
-	DepartmentID int64 `json:"department_id"`
-	FetchChild   int   `json:"fetch_child"`
-}
-
-type ResultUserSimipleList struct {
+type ResultSimipleUserList struct {
 	UserList []*SimpleUser `json:"userlist"`
 }
 
 // ListSimpleUser 获取部门成员
-func ListSimpleUser(params *ParamsUserSimpleList, result *ResultUserSimipleList) wx.Action {
+func ListSimpleUser(departmentID int64, fetchChild int, result *ResultSimipleUserList) wx.Action {
 	return wx.NewGetAction(urls.CorpUserSimpleList,
-		wx.WithQuery("department_id", strconv.FormatInt(params.DepartmentID, 10)),
-		wx.WithQuery("fetch_child", strconv.Itoa(params.FetchChild)),
+		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),
+		wx.WithQuery("fetch_child", strconv.Itoa(fetchChild)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-type ParamsUserList struct {
-	DepartmentID int64 `json:"department_id"`
-	FetchChild   int   `json:"fetch_child"`
-}
-
 type ResultUserList struct {
-	UserList []*SimpleUser `json:"userlist"`
+	UserList []*User `json:"userlist"`
 }
 
 // ListUser 获取部门成员详情
-func ListUser(params *ParamsUserList, result *ResultUserList) wx.Action {
+func ListUser(departmentID int64, fetchChild int, result *ResultUserList) wx.Action {
 	return wx.NewGetAction(urls.CorpUserList,
-		wx.WithQuery("department_id", strconv.FormatInt(params.DepartmentID, 10)),
-		wx.WithQuery("fetch_child", strconv.Itoa(params.FetchChild)),
+		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),
+		wx.WithQuery("fetch_child", strconv.Itoa(fetchChild)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
@@ -259,18 +258,24 @@ func ConvertToUserID(openid string, result *ResultUserIDConvert) wx.Action {
 
 type ParamsBatchInvite struct {
 	User  []string `json:"user,omitempty"`  // 成员ID列表，最多支持1000个
-	Party []string `json:"party,omitempty"` // 部门ID列表，最多支持100个
-	Tag   []string `json:"tag,omitempty"`   // 标签ID列表，最多支持100个
+	Party []int64  `json:"party,omitempty"` // 部门ID列表，最多支持100个
+	Tag   []int64  `json:"tag,omitempty"`   // 标签ID列表，最多支持100个
 }
 
 type ResultBatchInvite struct {
 	InvalidUser  []string `json:"invaliduser"`
-	InvalidParth []string `json:"invalidparth"`
-	InvalidTag   []string `json:"invalidtag"`
+	InvalidParty []int64  `json:"invalidparty"`
+	InvalidTag   []int64  `json:"invalidtag"`
 }
 
 // BatchInvite 邀请成员
-func BatchInvite(params *ParamsBatchInvite, result *ResultBatchInvite) wx.Action {
+func BatchInvite(userIDs []string, partyIDs, tagIDs []int64, result *ResultBatchInvite) wx.Action {
+	params := &ParamsBatchInvite{
+		User:  userIDs,
+		Party: partyIDs,
+		Tag:   tagIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpUserBatchInvite,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -320,6 +325,29 @@ func GetActiveStat(date string, result *ResultActiveStat) wx.Action {
 	}
 
 	return wx.NewPostAction(urls.CorpUserActiveStat,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsUserID struct {
+	Mobile string `json:"mobile"`
+}
+
+type ResultUserID struct {
+	UserID string `json:"userid"`
+}
+
+func GetUserID(mobile string, result *ResultUserID) wx.Action {
+	params := &ParamsUserID{
+		Mobile: mobile,
+	}
+
+	return wx.NewPostAction(urls.CorpUserGetUserID,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

@@ -87,7 +87,13 @@ type ResultTagUserAdd struct {
 	InvalidParty []int64 `json:"invalidparty"`
 }
 
-func AddTagUser(params *ParamsTagUserAdd, result *ResultTagUserAdd) wx.Action {
+func AddTagUser(tagID int64, userIDs []string, partyIDs []int64, result *ResultTagUserAdd) wx.Action {
+	params := &ParamsTagUserAdd{
+		TagID:     tagID,
+		UserList:  userIDs,
+		PartyList: partyIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpUserTagAddUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -109,7 +115,13 @@ type ResultTagUserDelete struct {
 	InvalidParty []int64 `json:"invalidparty"`
 }
 
-func DeleteTagUser(params *ParamsTagUserDelete, result *ResultTagUserDelete) wx.Action {
+func DeleteTagUser(tagID int64, userIDs []string, partyIDs []int64, result *ResultTagUserDelete) wx.Action {
+	params := &ParamsTagUserDelete{
+		TagID:     tagID,
+		UserList:  userIDs,
+		PartyList: partyIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpUserTagDeleteUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

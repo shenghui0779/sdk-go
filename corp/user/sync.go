@@ -19,19 +19,25 @@ type ResultBatch struct {
 	JobID string `json:"jobid"`
 }
 
-type SyncCallback struct {
+type BatchCallback struct {
 	URL            string `json:"url,omitempty"`
 	Token          string `json:"token,omitempty"`
 	EncodingAESKey string `json:"encodingaeskey,omitempty"`
 }
 
 type ParamsUserBatchSync struct {
-	MediaID  string        `json:"media_id"`
-	ToInvite *bool         `json:"to_invite,omitempty"`
-	Callback *SyncCallback `json:"callback,omitempty"`
+	MediaID  string         `json:"media_id"`
+	ToInvite bool           `json:"to_invite"`
+	Callback *BatchCallback `json:"callback,omitempty"`
 }
 
-func BatchSyncUser(params *ParamsUserBatchSync, result *ResultBatch) wx.Action {
+func BatchSyncUser(mediaID string, toInvite bool, callback *BatchCallback, result *ResultBatch) wx.Action {
+	params := &ParamsUserBatchSync{
+		MediaID:  mediaID,
+		ToInvite: toInvite,
+		Callback: callback,
+	}
+
 	return wx.NewPostAction(urls.CorpUserBatchSyncUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -43,12 +49,18 @@ func BatchSyncUser(params *ParamsUserBatchSync, result *ResultBatch) wx.Action {
 }
 
 type ParamsUserBatchReplace struct {
-	MediaID  string        `json:"media_id"`
-	ToInvite *bool         `json:"to_invite,omitempty"`
-	Callback *SyncCallback `json:"callback,omitempty"`
+	MediaID  string         `json:"media_id"`
+	ToInvite bool           `json:"to_invite"`
+	Callback *BatchCallback `json:"callback,omitempty"`
 }
 
-func BatchReplaceUser(params *ParamsUserBatchReplace, result *ResultBatch) wx.Action {
+func BatchReplaceUser(mediaID string, toInvite bool, callback *BatchCallback, result *ResultBatch) wx.Action {
+	params := &ParamsUserBatchReplace{
+		MediaID:  mediaID,
+		ToInvite: toInvite,
+		Callback: callback,
+	}
+
 	return wx.NewPostAction(urls.CorpUserBatchReplaceUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -60,11 +72,16 @@ func BatchReplaceUser(params *ParamsUserBatchReplace, result *ResultBatch) wx.Ac
 }
 
 type ParamsPartyBatchReplace struct {
-	MediaID  string        `json:"media_id"`
-	Callback *SyncCallback `json:"callback,omitempty"`
+	MediaID  string         `json:"media_id"`
+	Callback *BatchCallback `json:"callback,omitempty"`
 }
 
-func BatchReplaceParty(params *ParamsPartyBatchReplace, result *ResultBatch) wx.Action {
+func BatchReplaceParty(mediaID string, callback *BatchCallback, result *ResultBatch) wx.Action {
+	params := &ParamsPartyBatchReplace{
+		MediaID:  mediaID,
+		Callback: callback,
+	}
+
 	return wx.NewPostAction(urls.CorpUserBatchReplaceParty,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
