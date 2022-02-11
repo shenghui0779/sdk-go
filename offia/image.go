@@ -5,9 +5,10 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
+	"github.com/shenghui0779/yiigo"
+
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/shenghui0779/yiigo"
 )
 
 // ImageSize 图片尺寸
@@ -45,12 +46,12 @@ type ResultAICrop struct {
 }
 
 // AICrop 图片智能裁切
-func AICrop(path string, result *ResultAICrop) wx.Action {
-	_, filename := filepath.Split(path)
+func AICrop(imgPath string, result *ResultAICrop) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaAICrop,
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
