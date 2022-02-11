@@ -142,7 +142,14 @@ type ResultResidentOrderList struct {
 	OrderList  []*ResidentOrder `json:"order_list"`
 }
 
-func ListResidentOrder(params *ParamsResidentOrderList, result *ResultResidentOrderList) wx.Action {
+func ListResidentOrder(beginCreateTime, beginModifyTime int64, cursor string, limit int, result *ResultResidentOrderList) wx.Action {
+	params := &ParamsResidentOrderList{
+		BeginCreateTime: beginCreateTime,
+		BeginModifyTime: beginModifyTime,
+		Cursor:          cursor,
+		Limit:           limit,
+	}
+
 	return wx.NewPostAction(urls.CorpReportGetResidentOrderList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

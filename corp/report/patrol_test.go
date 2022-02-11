@@ -252,15 +252,9 @@ func TestListPatrolOrder(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsPatrolOrderList{
-		BeginCreateTime: 12345678,
-		BeginModifyTime: 12345678,
-		Cursor:          "cursor",
-		Limit:           20,
-	}
 	result := new(ResultPatrolOrderList)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListPatrolOrder(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListPatrolOrder(12345678, 12345678, "cursor", 20, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultPatrolOrderList{
