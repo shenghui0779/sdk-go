@@ -64,14 +64,9 @@ func TestGetInvoiceInfo(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsInvoiceInfo{
-		CardID:      "CARDID",
-		EncryptCode: "ENCRYPTCODE",
-	}
-
 	result := new(ResultInvoiceInfo)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetInvoiceInfo(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetInvoiceInfo("CARDID", "ENCRYPTCODE", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultInvoiceInfo{
@@ -127,13 +122,7 @@ func TestUpdateInvoiceStatus(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsInvoiceStatusUpdate{
-		CardID:          "CARDID",
-		EncryptCode:     "ENCRYPTCODE",
-		ReimburseStatus: InvioceReimburseInit,
-	}
-
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UpdateInvoiceStatus(params))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UpdateInvoiceStatus("CARDID", "ENCRYPTCODE", InvioceReimburseInit))
 
 	assert.Nil(t, err)
 }
@@ -193,22 +182,20 @@ func TestBatchGetInvoiceInfo(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsInvoiceBatchInfo{
-		ItemList: []*ParamsInvoiceInfo{
-			{
-				CardID:      "CARDID1",
-				EncryptCode: "ENCRYPTCODE1",
-			},
-			{
-				CardID:      "CARDID2",
-				EncryptCode: "ENCRYPTCODE2",
-			},
+	invoices := []*ParamsInvoice{
+		{
+			CardID:      "CARDID1",
+			EncryptCode: "ENCRYPTCODE1",
+		},
+		{
+			CardID:      "CARDID2",
+			EncryptCode: "ENCRYPTCODE2",
 		},
 	}
 
 	result := new(ResultInvoiceBatchInfo)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchGetInvoiceInfo(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchGetInvoiceInfo(invoices, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultInvoiceBatchInfo{
@@ -270,22 +257,18 @@ func TestBatchUpdateInvoiceStatus(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsInvoiceStatusBatchUpdate{
-		OpenID:          "OPENID",
-		ReimburseStatus: "INVOICE_REIMBURSE_INIT",
-		InvoiceList: []*ParamsInvoiceInfo{
-			{
-				CardID:      "cardid_1",
-				EncryptCode: "encrypt_code_1",
-			},
-			{
-				CardID:      "cardid_2",
-				EncryptCode: "encrypt_code_2",
-			},
+	invoices := []*ParamsInvoice{
+		{
+			CardID:      "cardid_1",
+			EncryptCode: "encrypt_code_1",
+		},
+		{
+			CardID:      "cardid_2",
+			EncryptCode: "encrypt_code_2",
 		},
 	}
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchUpdateInvoiceStatus(params))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchUpdateInvoiceStatus("OPENID", "INVOICE_REIMBURSE_INIT", invoices...))
 
 	assert.Nil(t, err)
 }

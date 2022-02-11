@@ -50,7 +50,7 @@ type InvoiceProductInfo struct {
 	Price int    `json:"price"`
 }
 
-type ParamsInvoiceInfo struct {
+type ParamsInvoice struct {
 	CardID      string `json:"card_id"`
 	EncryptCode string `json:"encrypt_code"`
 }
@@ -66,7 +66,12 @@ type ResultInvoiceInfo struct {
 	UserInfo  *InvoiceUserInfo `json:"user_info"`
 }
 
-func GetInvoiceInfo(params *ParamsInvoiceInfo, result *ResultInvoiceInfo) wx.Action {
+func GetInvoiceInfo(cardID, encryptCode string, result *ResultInvoiceInfo) wx.Action {
+	params := &ParamsInvoice{
+		CardID:      cardID,
+		EncryptCode: encryptCode,
+	}
+
 	return wx.NewPostAction(urls.CorpInvoiceGetInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -83,7 +88,13 @@ type ParamsInvoiceStatusUpdate struct {
 	ReimburseStatus ReimburseStatus `json:"reimburse_status"`
 }
 
-func UpdateInvoiceStatus(params *ParamsInvoiceStatusUpdate) wx.Action {
+func UpdateInvoiceStatus(cardID, encryptCode string, status ReimburseStatus) wx.Action {
+	params := &ParamsInvoiceStatusUpdate{
+		CardID:          cardID,
+		EncryptCode:     encryptCode,
+		ReimburseStatus: status,
+	}
+
 	return wx.NewPostAction(urls.CorpInvoiceUpdateStatus,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -92,14 +103,18 @@ func UpdateInvoiceStatus(params *ParamsInvoiceStatusUpdate) wx.Action {
 }
 
 type ParamsInvoiceBatchInfo struct {
-	ItemList []*ParamsInvoiceInfo `json:"item_list"`
+	ItemList []*ParamsInvoice `json:"item_list"`
 }
 
 type ResultInvoiceBatchInfo struct {
 	ItemList []*ResultInvoiceInfo `json:"item_list"`
 }
 
-func BatchGetInvoiceInfo(params *ParamsInvoiceBatchInfo, result *ResultInvoiceBatchInfo) wx.Action {
+func BatchGetInvoiceInfo(invoices []*ParamsInvoice, result *ResultInvoiceBatchInfo) wx.Action {
+	params := &ParamsInvoiceBatchInfo{
+		ItemList: invoices,
+	}
+
 	return wx.NewPostAction(urls.CorpInvoiceBatchGetInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -111,12 +126,18 @@ func BatchGetInvoiceInfo(params *ParamsInvoiceBatchInfo, result *ResultInvoiceBa
 }
 
 type ParamsInvoiceStatusBatchUpdate struct {
-	OpenID          string               `json:"openid"`
-	ReimburseStatus ReimburseStatus      `json:"reimburse_status"`
-	InvoiceList     []*ParamsInvoiceInfo `json:"invoice_list"`
+	OpenID          string           `json:"openid"`
+	ReimburseStatus ReimburseStatus  `json:"reimburse_status"`
+	InvoiceList     []*ParamsInvoice `json:"invoice_list"`
 }
 
-func BatchUpdateInvoiceStatus(params *ParamsInvoiceStatusBatchUpdate) wx.Action {
+func BatchUpdateInvoiceStatus(openID string, status ReimburseStatus, invoices ...*ParamsInvoice) wx.Action {
+	params := &ParamsInvoiceStatusBatchUpdate{
+		OpenID:          openID,
+		ReimburseStatus: status,
+		InvoiceList:     invoices,
+	}
+
 	return wx.NewPostAction(urls.CorpInvoiceBatchUpdateStatus,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
