@@ -71,15 +71,9 @@ func TestGetDialRecord(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsDialRecord{
-		StartTime: 1536508800,
-		EndTime:   1536940800,
-		Offset:    1,
-		Limit:     100,
-	}
 	result := new(ResultDialRecord)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetDialRecord(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetDialRecord(1536508800, 1536940800, 1, 100, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultDialRecord{

@@ -37,7 +37,14 @@ type ResultDialRecord struct {
 	Record []*DialRecord `json:"record"`
 }
 
-func GetDialRecord(params *ParamsDialRecord, result *ResultDialRecord) wx.Action {
+func GetDialRecord(starttime, endtime int64, offset, limit int, result *ResultDialRecord) wx.Action {
+	params := &ParamsDialRecord{
+		StartTime: starttime,
+		EndTime:   endtime,
+		Offset:    offset,
+		Limit:     limit,
+	}
+
 	return wx.NewPostAction(urls.CorpToolsDialRecordGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
