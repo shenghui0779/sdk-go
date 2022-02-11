@@ -8,11 +8,12 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/shenghui0779/yiigo"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/offia"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/shenghui0779/yiigo"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestGetAccountList(t *testing.T) {
@@ -58,17 +59,17 @@ func TestGetAccountList(t *testing.T) {
 	assert.Equal(t, &ResultAccountList{
 		KFList: []*Account{
 			{
-				ID:         "1001",
-				Account:    "test1@test",
-				Nickname:   "ntest1",
-				HeadImgURL: "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
-				Weixin:     "kfwx1",
+				KFID:         "1001",
+				KFAccount:    "test1@test",
+				KFNick:       "ntest1",
+				KFHeadImgURL: "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
+				KFWX:         "kfwx1",
 			},
 			{
-				ID:               "1002",
-				Account:          "test2@test",
-				Nickname:         "ntest2",
-				HeadImgURL:       "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
+				KFID:             "1002",
+				KFAccount:        "test2@test",
+				KFNick:           "ntest2",
+				KFHeadImgURL:     "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
 				InviteWeixin:     "kfwx2",
 				InviteExpireTime: 123456789,
 				InviteStatus:     InviteWaiting,
@@ -116,14 +117,14 @@ func TestGetOnlineList(t *testing.T) {
 	assert.Equal(t, &ResultOnlineList{
 		KFOnlineList: []*Online{
 			{
-				ID:           "1001",
-				Account:      "test1@test",
+				KFID:         "1001",
+				KFAccount:    "test1@test",
 				Status:       1,
 				AcceptedCase: 1,
 			},
 			{
-				ID:           "1002",
-				Account:      "test2@test",
+				KFID:         "1002",
+				KFAccount:    "test2@test",
 				Status:       1,
 				AcceptedCase: 2,
 			},
@@ -149,12 +150,7 @@ func TestAddAccount(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsAccountAdd{
-		Account:  "test1@test",
-		Nickname: "客服1",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddAccount(params))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddAccount("test1@test", "客服1"))
 
 	assert.Nil(t, err)
 }
@@ -177,12 +173,7 @@ func TestUpdateAccount(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsAccountUpdate{
-		Account:  "test1@test",
-		Nickname: "客服1",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UpdateAccount(params))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UpdateAccount("test1@test", "客服1"))
 
 	assert.Nil(t, err)
 }
@@ -205,12 +196,7 @@ func TestInviteWorker(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsWorkerInvite{
-		KFAccount: "test1@test",
-		InviteWX:  "test_kfwx",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", InviteWorker(params))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", InviteWorker("test1@test", "test_kfwx"))
 
 	assert.Nil(t, err)
 }
@@ -231,12 +217,7 @@ func TestUploadAvatar(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsAvatarUpload{
-		KFAccount: "ACCOUNT",
-		Path:      "../../mock/test.jpg",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadAvatar(params))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadAvatar("ACCOUNT", "../../mock/test.jpg"))
 
 	assert.Nil(t, err)
 }

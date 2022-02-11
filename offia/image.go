@@ -97,12 +97,12 @@ type ResultQRCodeScan struct {
 }
 
 // ScanQRCode 条码/二维码识别
-func ScanQRCode(path string, result *ResultQRCodeScan) wx.Action {
-	_, filename := filepath.Split(path)
+func ScanQRCode(imgPath string, result *ResultQRCodeScan) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaScanQRCode,
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
@@ -140,12 +140,12 @@ type ResultSuperreSolution struct {
 }
 
 // SuperreSolution 图片高清化
-func SuperreSolution(path string, result *ResultSuperreSolution) wx.Action {
-	_, filename := filepath.Split(path)
+func SuperreSolution(imgPath string, result *ResultSuperreSolution) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaSuperreSolution,
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err

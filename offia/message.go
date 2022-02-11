@@ -12,7 +12,12 @@ type ParamsIndustrySet struct {
 	IndustryID2 string `json:"industry_id2"`
 }
 
-func SetIndustry(params *ParamsIndustrySet) wx.Action {
+func SetIndustry(id1, id2 string) wx.Action {
+	params := &ParamsIndustrySet{
+		IndustryID1: id1,
+		IndustryID2: id2,
+	}
+
 	return wx.NewPostAction(urls.OffiaSetIndustry,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -46,7 +51,11 @@ type ResultTemplAdd struct {
 	TemplateID string `json:"template_id"`
 }
 
-func AddTemplate(params *ParamsTemplAdd, result *ResultTemplAdd) wx.Action {
+func AddTemplate(templIDShort string, result *ResultTemplAdd) wx.Action {
+	params := &ParamsTemplAdd{
+		TemplateIDShort: templIDShort,
+	}
+
 	return wx.NewPostAction(urls.OffiaTemplateAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -71,7 +80,7 @@ type ResultAllPrivateTemplate struct {
 	TemplateList []*TemplateInfo `json:"template_list"`
 }
 
-// GetAllPrivateTempl 获取模板列表
+// GetAllPrivateTemplate 获取模板列表
 func GetAllPrivateTemplate(result *ResultAllPrivateTemplate) wx.Action {
 	return wx.NewGetAction(urls.OffiaGetAllPrivateTemplate,
 		wx.WithDecode(func(resp []byte) error {
@@ -84,7 +93,7 @@ type ParamsPrivateTemplateDel struct {
 	TemplateID string `json:"template_id"`
 }
 
-// DelPrivateTempl 删除模板
+// DelPrivateTemplate 删除模板
 func DelPrivateTemplate(templID string) wx.Action {
 	params := &ParamsPrivateTemplateDel{
 		TemplateID: templID,

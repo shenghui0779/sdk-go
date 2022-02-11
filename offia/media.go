@@ -304,20 +304,14 @@ func UploadImgByURL(filename, url string, result *ResultMaterialAdd) wx.Action {
 	)
 }
 
-type ParamsVideoUpload struct {
-	Path        string `json:"path"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-}
-
 // UploadVideo 上传视频永久素材
-func UploadVideo(params *ParamsVideoUpload, result *ResultMaterialAdd) wx.Action {
-	_, filename := filepath.Split(params.Path)
+func UploadVideo(videoPath, title, description string, result *ResultMaterialAdd) wx.Action {
+	_, filename := filepath.Split(videoPath)
 
 	return wx.NewPostAction(urls.OffiaMaterialAdd,
 		wx.WithQuery("type", string(MediaVideo)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(params.Path))
+			path, err := filepath.Abs(filepath.Clean(videoPath))
 
 			if err != nil {
 				return nil, err
@@ -331,7 +325,7 @@ func UploadVideo(params *ParamsVideoUpload, result *ResultMaterialAdd) wx.Action
 
 			return yiigo.NewUploadForm(
 				yiigo.WithFileField("media", filename, body),
-				yiigo.WithFormField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, params.Title, params.Description)),
+				yiigo.WithFormField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, description)),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -340,19 +334,12 @@ func UploadVideo(params *ParamsVideoUpload, result *ResultMaterialAdd) wx.Action
 	)
 }
 
-type ParamsVideoUploadByURL struct {
-	Filename    string `json:"filename"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	URL         string `json:"url"`
-}
-
 // UploadVideoByURL 上传视频永久素材
-func UploadVideoByURL(params *ParamsVideoUploadByURL, result *ResultMaterialAdd) wx.Action {
+func UploadVideoByURL(filename, videoURL, title, description string, result *ResultMaterialAdd) wx.Action {
 	return wx.NewPostAction(urls.OffiaMaterialAdd,
 		wx.WithQuery("type", string(MediaVideo)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			resp, err := yiigo.HTTPGet(context.Background(), params.URL)
+			resp, err := yiigo.HTTPGet(context.Background(), videoURL)
 
 			if err != nil {
 				return nil, err
@@ -367,8 +354,8 @@ func UploadVideoByURL(params *ParamsVideoUploadByURL, result *ResultMaterialAdd)
 			}
 
 			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", params.Filename, body),
-				yiigo.WithFormField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, params.Title, params.Description)),
+				yiigo.WithFileField("media", filename, body),
+				yiigo.WithFormField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, description)),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -395,7 +382,11 @@ type ParamsNewsAdd struct {
 }
 
 // AddNews 新增永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
-func AddNews(params *ParamsNewsAdd, result *ResultMaterialAdd) wx.Action {
+func AddNews(articles []*NewsArticle, result *ResultMaterialAdd) wx.Action {
+	params := &ParamsNewsAdd{
+		Articles: articles,
+	}
+
 	return wx.NewPostAction(urls.OffiaNewsAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -413,7 +404,13 @@ type ParamsNewsUpdate struct {
 }
 
 // UpdateNews 编辑图文素材
-func UpdateNews(params *ParamsNewsUpdate) wx.Action {
+func UpdateNews(mediaID, index string, article *NewsArticle) wx.Action {
+	params := &ParamsNewsUpdate{
+		MediaID:  mediaID,
+		Index:    index,
+		Articles: article,
+	}
+
 	return wx.NewPostAction(urls.OffiaNewsUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -455,7 +452,13 @@ type MaterialListItem struct {
 	URL        string `json:"url"`
 }
 
-func ListMatertial(params *ParamsMaterialList, result *ResultMaterialList) wx.Action {
+func ListMatertial(mediaType MediaType, offset, count int, result *ResultMaterialList) wx.Action {
+	params := &ParamsMaterialList{
+		Type:   mediaType,
+		Offset: offset,
+		Count:  count,
+	}
+
 	return wx.NewPostAction(urls.OffiaMaterialBatchGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

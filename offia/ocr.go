@@ -5,9 +5,10 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
+	"github.com/shenghui0779/yiigo"
+
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/shenghui0779/yiigo"
 )
 
 // OCRMode 识别模式
@@ -34,13 +35,13 @@ type ResultIDCardFrontOCR struct {
 }
 
 // OCRIDCardFront 身份证前面识别
-func OCRIDCardFront(mode OCRMode, path string, result *ResultIDCardFrontOCR) wx.Action {
-	_, filename := filepath.Split(path)
+func OCRIDCardFront(mode OCRMode, imgPath string, result *ResultIDCardFrontOCR) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaOCRIDCard,
 		wx.WithQuery("type", string(mode)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
@@ -79,13 +80,13 @@ type ResultIDCardBackOCR struct {
 }
 
 // OCRIDCardBack 身份证背面识别
-func OCRIDCardBack(mode OCRMode, path string, result *ResultIDCardBackOCR) wx.Action {
-	_, filename := filepath.Split(path)
+func OCRIDCardBack(mode OCRMode, imgPath string, result *ResultIDCardBackOCR) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaOCRIDCard,
 		wx.WithQuery("type", string(mode)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
@@ -124,13 +125,13 @@ type ResultBankCardOCR struct {
 }
 
 // OCRBankCard 银行卡识别
-func OCRBankCard(mode OCRMode, path string, result *ResultBankCardOCR) wx.Action {
-	_, filename := filepath.Split(path)
+func OCRBankCard(mode OCRMode, imgPath string, result *ResultBankCardOCR) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaOCRBankCard,
 		wx.WithQuery("type", string(mode)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
@@ -169,13 +170,13 @@ type ResultPlateNumberOCR struct {
 }
 
 // OCRPlateNumber 车牌号识别
-func OCRPlateNumber(mode OCRMode, path string, result *ResultPlateNumberOCR) wx.Action {
-	_, filename := filepath.Split(path)
+func OCRPlateNumber(mode OCRMode, imgPath string, result *ResultPlateNumberOCR) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaOCRPlateNumber,
 		wx.WithQuery("type", string(mode)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
@@ -224,13 +225,13 @@ type ResultDriverLicenseOCR struct {
 }
 
 // OCRDriverLicense 驾照识别
-func OCRDriverLicense(mode OCRMode, path string, result *ResultDriverLicenseOCR) wx.Action {
-	_, filename := filepath.Split(path)
+func OCRDriverLicense(mode OCRMode, imgPath string, result *ResultDriverLicenseOCR) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaOCRDriverLicense,
 		wx.WithQuery("type", string(mode)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
@@ -286,13 +287,13 @@ type ResultVehicleLicenseOCR struct {
 }
 
 // OCRVehicleLicense 行驶证识别
-func OCRVehicleLicense(mode OCRMode, path string, result *ResultVehicleLicenseOCR) wx.Action {
-	_, filename := filepath.Split(path)
+func OCRVehicleLicense(mode OCRMode, imgPath string, result *ResultVehicleLicenseOCR) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaOCRVehicleLicense,
 		wx.WithQuery("type", string(mode)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
@@ -344,13 +345,13 @@ type ResultBusinessLicenseOCR struct {
 }
 
 // OCRBusinessLicense 营业执照识别
-func OCRBusinessLicense(mode OCRMode, path string, result *ResultBusinessLicenseOCR) wx.Action {
-	_, filename := filepath.Split(path)
+func OCRBusinessLicense(mode OCRMode, imgPath string, result *ResultBusinessLicenseOCR) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaOCRBusinessLicense,
 		wx.WithQuery("type", string(mode)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
@@ -396,13 +397,13 @@ type ResultCommOCR struct {
 }
 
 // OCRComm 通用印刷体识别
-func OCRComm(mode OCRMode, path string, result *ResultCommOCR) wx.Action {
-	_, filename := filepath.Split(path)
+func OCRComm(mode OCRMode, imgPath string, result *ResultCommOCR) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaOCRComm,
 		wx.WithQuery("type", string(mode)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err

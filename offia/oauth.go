@@ -53,7 +53,7 @@ func GetOAuthUser(openid string, result *ResultOAuthUser) wx.Action {
 	)
 }
 
-// JS-SDK ticket 类型
+// TicketType JS-SDK ticket 类型
 type TicketType string
 
 // 微信支持的 JS-SDK ticket
@@ -76,9 +76,9 @@ type ResultApiTicket struct {
 }
 
 // GetApiTicket 获取 JS-SDK ticket (注意：使用普通access_token)
-func GetApiTicket(t TicketType, result *ResultApiTicket) wx.Action {
+func GetApiTicket(ticketType TicketType, result *ResultApiTicket) wx.Action {
 	return wx.NewGetAction(urls.OffiaCgiBinTicket,
-		wx.WithQuery("type", string(t)),
+		wx.WithQuery("type", string(ticketType)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),

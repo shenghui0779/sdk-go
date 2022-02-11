@@ -89,7 +89,7 @@ func (oa *Offia) SubscribeMsgAuthURL(scene, templateID, redirectURL, reserved st
 	return fmt.Sprintf("%s?action=get_confirm&appid=%s&template_id=%s&redirect_url=%s&reserved=%s#wechat_redirect", urls.SubscribeMsgAuth, oa.appid, templateID, redirectURL, reserved)
 }
 
-// Code2AuthToken 获取网页授权AccessToken
+// Code2OAuthToken 获取网页授权AccessToken
 func (oa *Offia) Code2OAuthToken(ctx context.Context, code string, options ...yiigo.HTTPOption) (*OAuthToken, error) {
 	resp, err := oa.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", urls.OffiaSnsCode2Token, oa.appid, oa.appsecret, code), nil, options...)
 
@@ -112,7 +112,7 @@ func (oa *Offia) Code2OAuthToken(ctx context.Context, code string, options ...yi
 	return token, nil
 }
 
-// RefreshAuthToken 刷新网页授权AccessToken
+// RefreshOAuthToken 刷新网页授权AccessToken
 func (oa *Offia) RefreshOAuthToken(ctx context.Context, refreshToken string, options ...yiigo.HTTPOption) (*OAuthToken, error) {
 	resp, err := oa.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", urls.OffiaSnsRefreshAccessToken, oa.appid, refreshToken), nil, options...)
 

@@ -8,10 +8,11 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestUploadMedia(t *testing.T) {
@@ -336,14 +337,9 @@ func TestUploadVideo(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsVideoUpload{
-		Path:        "../mock/test.mp4",
-		Title:       "TITLE",
-		Description: "INTRODUCTION",
-	}
 	result := new(ResultMaterialAdd)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadVideo(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadVideo("../mock/test.mp4", "TITLE", "INTRODUCTION", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMaterialAdd{
@@ -373,15 +369,9 @@ func TestUploadVideoByURL(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsVideoUploadByURL{
-		Filename:    "test.mp4",
-		Title:       "TITLE",
-		Description: "INTRODUCTION",
-		URL:         "https://video.ivwen.com/users/4576112/46e9506e35534ddb961772727f32399d.mp4",
-	}
 	result := new(ResultMaterialAdd)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadVideoByURL(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadVideoByURL("test.mp4", "https://video.ivwen.com/users/4576112/46e9506e35534ddb961772727f32399d.mp4", "TITLE", "INTRODUCTION", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMaterialAdd{
@@ -412,24 +402,23 @@ func TestAddNews(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsNewsAdd{
-		Articles: []*NewsArticle{
-			{
-				Title:              "TITLE",
-				ThumbMediaID:       "THUMB_MEDIA_ID",
-				Author:             "AUTHOR",
-				Digest:             "DIGEST",
-				ShowCoverPic:       1,
-				Content:            "CONTENT",
-				ContentSourceURL:   "CONTENT_SOURCE_URL",
-				NeedOpenComment:    1,
-				OnlyFansCanComment: 1,
-			},
+	articles := []*NewsArticle{
+		{
+			Title:              "TITLE",
+			ThumbMediaID:       "THUMB_MEDIA_ID",
+			Author:             "AUTHOR",
+			Digest:             "DIGEST",
+			ShowCoverPic:       1,
+			Content:            "CONTENT",
+			ContentSourceURL:   "CONTENT_SOURCE_URL",
+			NeedOpenComment:    1,
+			OnlyFansCanComment: 1,
 		},
 	}
+
 	result := new(ResultMaterialAdd)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddNews(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddNews(articles, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMaterialAdd{
@@ -458,21 +447,17 @@ func TestUpdateNews(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsNewsUpdate{
-		MediaID: "MEDIA_ID",
-		Index:   "INDEX",
-		Articles: &NewsArticle{
-			Title:            "TITLE",
-			ThumbMediaID:     "THUMB_MEDIA_ID",
-			Author:           "AUTHOR",
-			Digest:           "DIGEST",
-			ShowCoverPic:     1,
-			Content:          "CONTENT",
-			ContentSourceURL: "CONTENT_SOURCE_URL",
-		},
+	article := &NewsArticle{
+		Title:            "TITLE",
+		ThumbMediaID:     "THUMB_MEDIA_ID",
+		Author:           "AUTHOR",
+		Digest:           "DIGEST",
+		ShowCoverPic:     1,
+		Content:          "CONTENT",
+		ContentSourceURL: "CONTENT_SOURCE_URL",
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UpdateNews(params))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UpdateNews("MEDIA_ID", "INDEX", article))
 
 	assert.Nil(t, err)
 }
@@ -540,14 +525,9 @@ func TestListMaterial(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMaterialList{
-		Type:   MediaImage,
-		Offset: 0,
-		Count:  10,
-	}
 	result := new(ResultMaterialList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ListMatertial(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ListMatertial(MediaImage, 0, 10, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMaterialList{
