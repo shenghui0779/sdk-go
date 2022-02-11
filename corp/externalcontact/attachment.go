@@ -34,20 +34,14 @@ type ResultAttachmentUpload struct {
 	CreatedAt int64     `json:"created_at"`
 }
 
-type ParamsAttachmentUpload struct {
-	MediaType      MediaType      `json:"media_type"`
-	AttachmentType AttachmentType `json:"attachment_type"`
-	Path           string         `json:"path"`
-}
-
-func UploadAttachment(params *ParamsAttachmentUpload, result *ResultAttachmentUpload) wx.Action {
-	_, filename := filepath.Split(params.Path)
+func UploadAttachment(mediaType MediaType, attachmentType AttachmentType, attachmentPath string, result *ResultAttachmentUpload) wx.Action {
+	_, filename := filepath.Split(attachmentPath)
 
 	return wx.NewPostAction(urls.CorpExternalContactUploadAttachment,
-		wx.WithQuery("media_type", string(params.MediaType)),
-		wx.WithQuery("attachment_type", strconv.Itoa(int(params.AttachmentType))),
+		wx.WithQuery("media_type", string(mediaType)),
+		wx.WithQuery("attachment_type", strconv.Itoa(int(attachmentType))),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(params.Path))
+			path, err := filepath.Abs(filepath.Clean(attachmentPath))
 
 			if err != nil {
 				return nil, err
@@ -69,20 +63,13 @@ func UploadAttachment(params *ParamsAttachmentUpload, result *ResultAttachmentUp
 	)
 }
 
-type ParamsAttachmentUploadByURL struct {
-	MediaType      MediaType      `json:"media_type"`
-	AttachmentType AttachmentType `json:"attachment_type"`
-	Filename       string         `json:"filename"`
-	URL            string         `json:"url"`
-}
-
 // UploadAttachmentByURL 上传附件资源
-func UploadAttachmentByURL(params *ParamsAttachmentUploadByURL, result *ResultAttachmentUpload) wx.Action {
+func UploadAttachmentByURL(mediaType MediaType, attachmentType AttachmentType, filename, url string, result *ResultAttachmentUpload) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactUploadAttachment,
-		wx.WithQuery("media_type", string(params.MediaType)),
-		wx.WithQuery("attachment_type", strconv.Itoa(int(params.AttachmentType))),
+		wx.WithQuery("media_type", string(mediaType)),
+		wx.WithQuery("attachment_type", strconv.Itoa(int(attachmentType))),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			resp, err := yiigo.HTTPGet(context.Background(), params.URL)
+			resp, err := yiigo.HTTPGet(context.Background(), url)
 
 			if err != nil {
 				return nil, err
@@ -97,7 +84,7 @@ func UploadAttachmentByURL(params *ParamsAttachmentUploadByURL, result *ResultAt
 			}
 
 			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", params.Filename, body),
+				yiigo.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {

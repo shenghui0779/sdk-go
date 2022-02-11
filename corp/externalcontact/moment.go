@@ -161,7 +161,13 @@ type ResultMomentTaskGet struct {
 	TaskList   []*MomentTask `json:"task_list"`
 }
 
-func GetMomentTask(params *ParamsMomentTaskGet, result *ResultMomentTaskGet) wx.Action {
+func GetMomentTask(momentID, cursor string, limit int, result *ResultMomentTaskGet) wx.Action {
+	params := &ParamsMomentTaskGet{
+		MomentID: momentID,
+		Cursor:   cursor,
+		Limit:    limit,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentTask,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -189,7 +195,14 @@ type ResultMomentCustomerList struct {
 	CustomerList []*MomentCustomer `json:"customer_list"`
 }
 
-func ListMomentCustomer(params *ParamsMomentCustomerList, result *ResultMomentCustomerList) wx.Action {
+func ListMomentCustomer(momentID, userID, cursor string, limit int, result *ResultMomentCustomerList) wx.Action {
+	params := &ParamsMomentCustomerList{
+		MomentID: momentID,
+		UserID:   userID,
+		Cursor:   cursor,
+		Limit:    limit,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentCustomerList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -212,7 +225,14 @@ type ResultMomentSendResult struct {
 	CustomerList []*MomentCustomer `json:"customer_list"`
 }
 
-func GetMomentSendResult(params *ParamsMomentSendResult, result *ResultMomentSendResult) wx.Action {
+func GetMomentSendResult(momentID, userID, cursor string, limit int, result *ResultMomentSendResult) wx.Action {
+	params := &ParamsMomentSendResult{
+		MomentID: momentID,
+		UserID:   userID,
+		Cursor:   cursor,
+		Limit:    limit,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentSentResult,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -247,7 +267,14 @@ type ResultMomentComments struct {
 	LikeList    []*MomentLikeData    `json:"like_list"`
 }
 
-func GetMomentComments(params *ParamsMomentComments, result *ResultMomentComments) wx.Action {
+func GetMomentComments(momentID, userID, cursor string, limit int, result *ResultMomentComments) wx.Action {
+	params := &ParamsMomentComments{
+		MomentID: momentID,
+		UserID:   userID,
+		Cursor:   cursor,
+		Limit:    limit,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentComments,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

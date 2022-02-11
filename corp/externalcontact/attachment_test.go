@@ -38,14 +38,9 @@ func TestUploadAttachment(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsAttachmentUpload{
-		MediaType:      MediaImage,
-		AttachmentType: AttachmentMoment,
-		Path:           "../../mock/test.jpg",
-	}
 	result := new(ResultAttachmentUpload)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UploadAttachment(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UploadAttachment(MediaImage, AttachmentMoment, "../../mock/test.jpg", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultAttachmentUpload{
@@ -77,15 +72,9 @@ func TestUploadAttachmentByURL(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsAttachmentUploadByURL{
-		MediaType:      MediaImage,
-		AttachmentType: AttachmentMoment,
-		Filename:       "test.png",
-		URL:            "https://golang.google.cn/doc/gopher/pkg.png",
-	}
 	result := new(ResultAttachmentUpload)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UploadAttachmentByURL(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UploadAttachmentByURL(MediaImage, AttachmentMoment, "test.png", "https://golang.google.cn/doc/gopher/pkg.png", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultAttachmentUpload{

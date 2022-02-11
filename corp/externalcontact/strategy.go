@@ -21,7 +21,12 @@ type CustomerStrategyListData struct {
 	StrategyID int64 `json:"strategy_id"`
 }
 
-func ListCustomerStrategy(params *ParamsCustomerStrategyList, result *ResultCustomerStrategyList) wx.Action {
+func ListCustomerStrategy(cursor string, limit int, result *ResultCustomerStrategyList) wx.Action {
+	params := &ParamsCustomerStrategyList{
+		Cursor: cursor,
+		Limit:  limit,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -104,7 +109,13 @@ type ResultCustomerStrategyRange struct {
 	Range []*CustomerStrategyRange `json:"range"`
 }
 
-func GetCustomerStrategyRange(params *ParamsCustomerStrategyRange, result *ResultCustomerStrategyRange) wx.Action {
+func GetCustomerStrategyRange(strategyID int64, cursor string, limit int, result *ResultCustomerStrategyRange) wx.Action {
+	params := &ParamsCustomerStrategyRange{
+		StrategyID: strategyID,
+		Cursor:     cursor,
+		Limit:      limit,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyGetRange,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -185,7 +196,12 @@ type ResultMomentStrategyList struct {
 	NextCursor string                    `json:"next_cursor"`
 }
 
-func ListMomentStrategy(params *ParamsMomentStrategyList, result *ResultMomentStrategyList) wx.Action {
+func ListMomentStrategy(cursor string, limit int, result *ResultMomentStrategyList) wx.Action {
+	params := &ParamsMomentStrategyList{
+		Cursor: cursor,
+		Limit:  limit,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -250,7 +266,13 @@ type ResultMomentStrategyRange struct {
 	Range []*MomentStrategyRange `json:"range"`
 }
 
-func GetMomentStrategyRange(params *ParamsMomentStrategyRange, result *ResultMomentStrategyRange) wx.Action {
+func GetMomentStrategyRange(strategyID int64, cursor string, limit int, result *ResultMomentStrategyRange) wx.Action {
+	params := &ParamsMomentStrategyRange{
+		StrategyID: strategyID,
+		Cursor:     cursor,
+		Limit:      limit,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyGetRange,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

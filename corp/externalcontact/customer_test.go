@@ -348,14 +348,11 @@ func TestBatchGetByUser(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsBatchGetByUser{
-		UserIDList: []string{"zhangsan", "lisi"},
-		Limit:      100,
-	}
+	userIDs := []string{"zhangsan", "lisi"}
 
 	result := new(ResultBatchGetByUser)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchGetCustomerByUser(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchGetCustomerByUser(userIDs, "", 100, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultBatchGetByUser{

@@ -126,7 +126,7 @@ func PicSysPhotoButton(name, key string) *Button {
 	}
 }
 
-// PicPhotoOrAlbum 拍照或者相册发图按钮
+// PicPhotoOrAlbumButton 拍照或者相册发图按钮
 func PicPhotoOrAlbumButton(name, key string) *Button {
 	return &Button{
 		Type: ButtonPicPhotoOrAlbum,

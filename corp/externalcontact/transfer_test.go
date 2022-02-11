@@ -109,15 +109,9 @@ func TestGetTransferResult(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsTransferResult{
-		HandoverUserID: "zhangsan",
-		TakeoverUserID: "lisi",
-		Cursor:         "CURSOR",
-	}
-
 	result := new(ResultTransferResult)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetTransferResult(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetTransferResult("zhangsan", "lisi", "CURSOR", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultTransferResult{
@@ -176,13 +170,9 @@ func TestListUnassigned(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsUnassignedList{
-		PageSize: 100,
-	}
-
 	result := new(ResultUnassignedList)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListUnassigned(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListUnassigned(0, 100, "", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultUnassignedList{
@@ -233,15 +223,11 @@ func TestTransferResignedCustomer(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsResignedCustomerTransfer{
-		HandoverUserID: "zhangsan",
-		TakeoverUserID: "lisi",
-		ExternalUserID: []string{"woAJ2GCAAAXtWyujaWJHDDGi0mACBBBB", "woAJ2GCAAAXtWyujaWJHDDGi0mACAAAA"},
-	}
+	externalUserIDs := []string{"woAJ2GCAAAXtWyujaWJHDDGi0mACBBBB", "woAJ2GCAAAXtWyujaWJHDDGi0mACAAAA"}
 
 	result := new(ResultResignedCustomerTransfer)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", TransferResignedCustomer(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", TransferResignedCustomer("zhangsan", "lisi", externalUserIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultResignedCustomerTransfer{
@@ -296,15 +282,9 @@ func TestGetResignedTransferResult(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsResignedTransferResult{
-		HandoverUserID: "zhangsan",
-		TakeoverUserID: "lisi",
-		Cursor:         "CURSOR",
-	}
-
 	result := new(ResultResignedTransferResult)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetResignedTransferResult(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetResignedTransferResult("zhangsan", "lisi", "CURSOR", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultResignedTransferResult{
@@ -356,14 +336,9 @@ func TestTransferGroupChat(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsGroupChatTransfer{
-		ChatIDList: []string{"wrOgQhDgAAcwMTB7YmDkbeBsgT_AAAA", "wrOgQhDgAAMYQiS5ol9G7gK9JVQUAAAA"},
-		NewOwner:   "zhangsan",
-	}
-
 	result := new(ResultGroupChatTransfer)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", TransferGroupChat(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", TransferGroupChat([]string{"wrOgQhDgAAcwMTB7YmDkbeBsgT_AAAA", "wrOgQhDgAAMYQiS5ol9G7gK9JVQUAAAA"}, "zhangsan", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultGroupChatTransfer{

@@ -275,15 +275,9 @@ func TestGetMomentTask(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMomentTaskGet{
-		MomentID: "momxxx",
-		Cursor:   "CURSOR",
-		Limit:    10,
-	}
-
 	result := new(ResultMomentTaskGet)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentTask(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentTask("momxxx", "CURSOR", 10, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMomentTaskGet{
@@ -324,16 +318,9 @@ func TestListMomentCustomer(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMomentCustomerList{
-		MomentID: "momxxx",
-		UserID:   "xxx",
-		Cursor:   "CURSOR",
-		Limit:    10,
-	}
-
 	result := new(ResultMomentCustomerList)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListMomentCustomer(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListMomentCustomer("momxxx", "xxx", "CURSOR", 10, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMomentCustomerList{
@@ -373,16 +360,9 @@ func TestGetMomentSendResult(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMomentSendResult{
-		MomentID: "momxxx",
-		UserID:   "xxx",
-		Cursor:   "CURSOR",
-		Limit:    100,
-	}
-
 	result := new(ResultMomentSendResult)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentSendResult(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentSendResult("momxxx", "xxx", "CURSOR", 100, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMomentSendResult{
@@ -435,14 +415,9 @@ func TestGetMomentComments(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMomentComments{
-		MomentID: "momxxx",
-		UserID:   "xxx",
-	}
-
 	result := new(ResultMomentComments)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentComments(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentComments("momxxx", "xxx", "", 0, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMomentComments{

@@ -137,7 +137,13 @@ type CustomerBatchGetData struct {
 	FollowInfo      *FollowInfo      `json:"follow_info"`
 }
 
-func BatchGetCustomerByUser(params *ParamsBatchGetByUser, result *ResultBatchGetByUser) wx.Action {
+func BatchGetCustomerByUser(userIDs []string, cursor string, limit int, result *ResultBatchGetByUser) wx.Action {
+	params := &ParamsBatchGetByUser{
+		UserIDList: userIDs,
+		Cursor:     cursor,
+		Limit:      limit,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactBatchGetByUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
