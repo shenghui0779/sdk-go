@@ -24,7 +24,11 @@ type Customer struct {
 	UnionID        string `json:"unionid"`
 }
 
-func BatchGetCustomer(params *ParamsCustomerBatchGet, result *ResultCustomerBatchGet) wx.Action {
+func BatchGetCustomer(externalUserIDs []string, result *ResultCustomerBatchGet) wx.Action {
+	params := &ParamsCustomerBatchGet{
+		ExternalUseridList: externalUserIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpKFCustomerBatchGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

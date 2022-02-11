@@ -16,7 +16,12 @@ type ResultAccountAdd struct {
 	OpenKFID string `json:"open_kfid"`
 }
 
-func AddAccount(params *ParamsAccountAdd, result *ResultAccountAdd) wx.Action {
+func AddAccount(name, mediaID string, result *ResultAccountAdd) wx.Action {
+	params := &ParamsAccountAdd{
+		Name:    name,
+		MediaID: mediaID,
+	}
+
 	return wx.NewPostAction(urls.CorpKFAccountAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -49,7 +54,13 @@ type ParamsAccountUpdate struct {
 	MediaID  string `json:"media_id"`
 }
 
-func UpdateAccount(params *ParamsAccountUpdate) wx.Action {
+func UpdateAccount(openKFID, name, mediaID string) wx.Action {
+	params := &ParamsAccountUpdate{
+		OpenKFID: openKFID,
+		Name:     name,
+		MediaID:  mediaID,
+	}
+
 	return wx.NewPostAction(urls.CorpKFAccountUpdate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -84,7 +95,12 @@ type ResultContactWayAdd struct {
 	URL string `json:"url"`
 }
 
-func AddContactWay(params *ParamsContactWayAdd, result *ResultContactWayAdd) wx.Action {
+func AddContactWay(openKFID, scene string, result *ResultContactWayAdd) wx.Action {
+	params := &ParamsContactWayAdd{
+		OpenKFID: openKFID,
+		Scene:    scene,
+	}
+
 	return wx.NewPostAction(urls.CorpKFAddContactWay,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

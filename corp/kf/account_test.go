@@ -36,14 +36,9 @@ func TestAddAccount(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsAccountAdd{
-		Name:    "新建的客服帐号",
-		MediaID: "294DpAog3YA5b9rTK4PjjfRfYLO0L5qpDHAJIzhhQ2jAEWjb9i661Q4lk8oFnPtmj",
-	}
-
 	result := new(ResultAccountAdd)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", AddAccount(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", AddAccount("新建的客服帐号", "294DpAog3YA5b9rTK4PjjfRfYLO0L5qpDHAJIzhhQ2jAEWjb9i661Q4lk8oFnPtmj", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultAccountAdd{
@@ -96,13 +91,7 @@ func TestUpdateAccount(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsAccountUpdate{
-		OpenKFID: "wkAJ2GCAAAZSfhHCt7IFSvLKtMPxyJTw",
-		Name:     "修改客服名",
-		MediaID:  "294DpAog3YA5b9rTK4PjjfRfYLO0L5qpDHAJIzhhQ2jAEWjb9i661Q4lk8oFnPtmj",
-	}
-
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UpdateAccount(params))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UpdateAccount("wkAJ2GCAAAZSfhHCt7IFSvLKtMPxyJTw", "修改客服名", "294DpAog3YA5b9rTK4PjjfRfYLO0L5qpDHAJIzhhQ2jAEWjb9i661Q4lk8oFnPtmj"))
 
 	assert.Nil(t, err)
 }
@@ -170,14 +159,9 @@ func TestAddContactWay(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsContactWayAdd{
-		OpenKFID: "OPEN_KFID",
-		Scene:    "12345",
-	}
-
 	result := new(ResultContactWayAdd)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", AddContactWay(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", AddContactWay("OPEN_KFID", "12345", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultContactWayAdd{

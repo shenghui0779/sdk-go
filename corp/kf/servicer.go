@@ -22,7 +22,12 @@ type ResultServicerAdd struct {
 	ResultList []*ErrServicer `json:"result_list"`
 }
 
-func AddServicer(params *ParamsServicerAdd, result *ResultServicerAdd) wx.Action {
+func AddServicer(openKFID string, userIDs []string, result *ResultServicerAdd) wx.Action {
+	params := &ParamsServicerAdd{
+		OpenKFID:   openKFID,
+		UserIDList: userIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpKFServicerAdd,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -42,7 +47,12 @@ type ResultServicerDelete struct {
 	ResultList []*ErrServicer `json:"result_list"`
 }
 
-func DeleteServicer(params *ParamsServicerDelete, result *ResultServicerDelete) wx.Action {
+func DeleteServicer(openKFID string, userIDs []string, result *ResultServicerDelete) wx.Action {
+	params := &ParamsServicerDelete{
+		OpenKFID:   openKFID,
+		UserIDList: userIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpKFServicerDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -71,17 +81,22 @@ func ListServicer(openKFID string, result *ResultServicerList) wx.Action {
 	)
 }
 
-type ParamsServiceStateGet struct {
+type ParamsServiceState struct {
 	OpenKFID       string `json:"open_kfid"`
 	ExternalUserID string `json:"external_userid"`
 }
 
-type ResultServiceStateGet struct {
+type ResultServiceState struct {
 	ServiceState   int    `json:"service_state"`
 	ServicerUserID string `json:"servicer_userid"`
 }
 
-func GetServiceState(params *ParamsServiceStateGet, result *ResultServiceStateGet) wx.Action {
+func GetServiceState(openKFID, externalUserID string, result *ResultServiceState) wx.Action {
+	params := &ParamsServiceState{
+		OpenKFID:       openKFID,
+		ExternalUserID: externalUserID,
+	}
+
 	return wx.NewPostAction(urls.CorpKFServiceStateGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
