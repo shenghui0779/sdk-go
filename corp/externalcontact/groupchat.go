@@ -77,7 +77,12 @@ type ResultGroupChatGet struct {
 	GroupChat *GroupChat `json:"group_chat"`
 }
 
-func GetGroupChat(params *ParamsGroupChatGet, result *ResultGroupChatGet) wx.Action {
+func GetGroupChat(chatID string, needName int, result *ResultGroupChatGet) wx.Action {
+	params := &ParamsGroupChatGet{
+		ChatID:   chatID,
+		NeedName: needName,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactGroupChatGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

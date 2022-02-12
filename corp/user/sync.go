@@ -3,94 +3,116 @@ package user
 import (
 	"encoding/json"
 
-	"github.com/tidwall/gjson"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type BatchSyncType string
+type BatchType string
 
 const (
-	SyncUser     BatchSyncType = "sync_user"
-	ReplaceUser  BatchSyncType = "replace_user"
-	ReplaceParty BatchSyncType = "replace_party"
+	SyncUser     BatchType = "sync_user"
+	ReplaceUser  BatchType = "replace_user"
+	ReplaceParty BatchType = "replace_party"
 )
 
-type ParamsBatchSync struct {
-	MediaID  string        `json:"media_id"`
-	ToInvite bool          `json:"to_invite"`
-	Callback *SyncCallback `json:"callback,omitempty"`
+type ResultBatch struct {
+	JobID string `json:"jobid"`
 }
 
-type SyncCallback struct {
+type BatchCallback struct {
 	URL            string `json:"url,omitempty"`
 	Token          string `json:"token,omitempty"`
 	EncodingAESKey string `json:"encodingaeskey,omitempty"`
 }
 
-type BatchSyncJob struct {
-	JobID string `json:"jobid"`
+type ParamsUserBatchSync struct {
+	MediaID  string         `json:"media_id"`
+	ToInvite bool           `json:"to_invite"`
+	Callback *BatchCallback `json:"callback,omitempty"`
 }
 
-func BatchSyncUser(dest *BatchSyncJob, params *ParamsBatchSync) wx.Action {
-	return wx.NewPostAction(urls.CorpBatchSyncUser,
+func BatchSyncUser(mediaID string, toInvite bool, callback *BatchCallback, result *ResultBatch) wx.Action {
+	params := &ParamsUserBatchSync{
+		MediaID:  mediaID,
+		ToInvite: toInvite,
+		Callback: callback,
+	}
+
+	return wx.NewPostAction(urls.CorpUserBatchSyncUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			dest.JobID = gjson.GetBytes(resp, "jobid").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-func BatchReplaceUser(dest *BatchSyncJob, params *ParamsBatchSync) wx.Action {
-	return wx.NewPostAction(urls.CorpBatchReplaceUser,
+type ParamsUserBatchReplace struct {
+	MediaID  string         `json:"media_id"`
+	ToInvite bool           `json:"to_invite"`
+	Callback *BatchCallback `json:"callback,omitempty"`
+}
+
+func BatchReplaceUser(mediaID string, toInvite bool, callback *BatchCallback, result *ResultBatch) wx.Action {
+	params := &ParamsUserBatchReplace{
+		MediaID:  mediaID,
+		ToInvite: toInvite,
+		Callback: callback,
+	}
+
+	return wx.NewPostAction(urls.CorpUserBatchReplaceUser,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			dest.JobID = gjson.GetBytes(resp, "jobid").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-func BatchReplaceParty(dest *BatchSyncJob, params *ParamsBatchSync) wx.Action {
-	return wx.NewPostAction(urls.CorpBatchReplaceParty,
+type ParamsPartyBatchReplace struct {
+	MediaID  string         `json:"media_id"`
+	Callback *BatchCallback `json:"callback,omitempty"`
+}
+
+func BatchReplaceParty(mediaID string, callback *BatchCallback, result *ResultBatch) wx.Action {
+	params := &ParamsPartyBatchReplace{
+		MediaID:  mediaID,
+		Callback: callback,
+	}
+
+	return wx.NewPostAction(urls.CorpUserBatchReplaceParty,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
-			dest.JobID = gjson.GetBytes(resp, "jobid").String()
-
-			return nil
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }
 
-type BatchSyncResult struct {
-	Status     int           `json:"status"`
-	Type       BatchSyncType `json:"type"`
-	Total      int           `json:"total"`
-	Percentage int           `json:"percentage"`
-	Result     []*SyncResult `json:"result"`
+type ResultBatchResult struct {
+	Status     int            `json:"status"`
+	Type       BatchType      `json:"type"`
+	Total      int            `json:"total"`
+	Percentage int            `json:"percentage"`
+	Result     []*BatchResult `json:"result"`
 }
 
-type SyncResult struct {
+type BatchResult struct {
 	UserID  string `json:"userid"`
 	Action  int    `json:"action"`
 	PartyID int    `json:"partyid"`
+	ErrCode int    `json:"errcode"`
+	ErrMsg  string `json:"errmsg"`
 }
 
-func BatchGetResult(dest *BatchSyncResult, jobID string) wx.Action {
-	return wx.NewGetAction(urls.CorpBatchResult,
+func GetBatchResult(jobID string, result *ResultBatchResult) wx.Action {
+	return wx.NewGetAction(urls.CorpUserGetBatchResult,
 		wx.WithQuery("jobid", jobID),
 		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, dest)
+			return json.Unmarshal(resp, result)
 		}),
 	)
 }

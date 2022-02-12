@@ -31,10 +31,10 @@ func ListPermitUser(listType int, result *ResultPermitUserList) wx.Action {
 }
 
 type ParamsSingleAgreeCheck struct {
-	Info []*SingleCheckInfo `json:"info"`
+	Info []*ParamsSingleAgree `json:"info"`
 }
 
-type SingleCheckInfo struct {
+type ParamsSingleAgree struct {
 	UserID         string `json:"userid"`
 	ExternalOpenID string `json:"exteranalopenid"`
 }
@@ -50,7 +50,11 @@ type SingleAgreeInfo struct {
 	AgreeStatus      string `json:"agree_status"`
 }
 
-func CheckSingleAgree(params *ParamsSingleAgreeCheck, result *ResultSingleAgreeCheck) wx.Action {
+func CheckSingleAgree(agrees []*ParamsSingleAgree, result *ResultSingleAgreeCheck) wx.Action {
+	params := &ParamsSingleAgreeCheck{
+		Info: agrees,
+	}
+
 	return wx.NewPostAction(urls.CorpMsgAuditCheckSingleAgree,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -95,11 +99,11 @@ type GroupMember struct {
 	JoinTime int64  `json:"jointime"`
 }
 
-type ParamsGroupChatGet struct {
+type ParamsGroupChat struct {
 	RoomID string `json:"roomid"`
 }
 
-type ResultGroupChatGet struct {
+type ResultGroupChat struct {
 	RoomName       string         `json:"roomname"`
 	Creator        string         `json:"creator"`
 	RoomCreateTime int64          `json:"room_create_time"`
@@ -107,8 +111,8 @@ type ResultGroupChatGet struct {
 	Members        []*GroupMember `json:"members"`
 }
 
-func GetGroupChat(roomID string, result *ResultGroupChatGet) wx.Action {
-	params := &ParamsGroupChatGet{
+func GetGroupChat(roomID string, result *ResultGroupChat) wx.Action {
+	params := &ParamsGroupChat{
 		RoomID: roomID,
 	}
 

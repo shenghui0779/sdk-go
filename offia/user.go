@@ -53,7 +53,12 @@ type ParamsUserGet struct {
 }
 
 // GetUser 获取关注用户信息
-func GetUser(params *ParamsUserGet, result *UserInfo) wx.Action {
+func GetUser(openid, lang string, result *UserInfo) wx.Action {
+	params := &ParamsUserGet{
+		OpenID: openid,
+		Lang:   lang,
+	}
+
 	options := []wx.ActionOption{
 		wx.WithQuery("openid", params.OpenID),
 		wx.WithDecode(func(resp []byte) error {
@@ -77,7 +82,11 @@ type ResultUserBatchGet struct {
 }
 
 // BatchGetUser 批量关注用户信息
-func BatchGetUser(params *ParamsUserBatchGet, result *ResultUserBatchGet) wx.Action {
+func BatchGetUser(users []*ParamsUserGet, result *ResultUserBatchGet) wx.Action {
+	params := &ParamsUserBatchGet{
+		UserList: users,
+	}
+
 	return wx.NewPostAction(urls.OffiaUserBatchGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -162,7 +171,7 @@ type ParamsUnBlackUsers struct {
 	OpenIDList []string `json:"openid_list"`
 }
 
-// UnBlackUser 取消拉黑用户
+// UnBlackUsers 取消拉黑用户
 func UnBlackUsers(openids ...string) wx.Action {
 	params := &ParamsUnBlackUsers{
 		OpenIDList: openids,

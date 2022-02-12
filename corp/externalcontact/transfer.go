@@ -51,7 +51,13 @@ type TransferResult struct {
 	TakeoverTime   int64  `json:"takeover_time"`
 }
 
-func GetTransferResult(params *ParamsTransferResult, result *ResultTransferResult) wx.Action {
+func GetTransferResult(handoverUserID, takeoverUserID, cursor string, result *ResultTransferResult) wx.Action {
+	params := &ParamsTransferResult{
+		HandoverUserID: handoverUserID,
+		TakeoverUserID: takeoverUserID,
+		Cursor:         cursor,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactTransferResult,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -80,7 +86,13 @@ type ResultUnassignedList struct {
 	NextCursor string            `json:"next_cursor"`
 }
 
-func ListUnassigned(params *ParamsUnassignedList, result *ResultUnassignedList) wx.Action {
+func ListUnassigned(pageID, pageSize int, cursor string, result *ResultUnassignedList) wx.Action {
+	params := &ParamsUnassignedList{
+		PageID:   pageID,
+		Cursor:   cursor,
+		PageSize: pageSize,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactGetUnassignedList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -101,7 +113,13 @@ type ResultResignedCustomerTransfer struct {
 	Customer []*ErrCustomerTransfer `json:"customer"`
 }
 
-func TransferResignedCustomer(params *ParamsResignedCustomerTransfer, result *ResultResignedCustomerTransfer) wx.Action {
+func TransferResignedCustomer(handoverUserID, takeoverUserID string, externalUserIDs []string, result *ResultResignedCustomerTransfer) wx.Action {
+	params := &ParamsResignedCustomerTransfer{
+		HandoverUserID: handoverUserID,
+		TakeoverUserID: takeoverUserID,
+		ExternalUserID: externalUserIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactTransferResignedCustomer,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -129,7 +147,13 @@ type ResignedTransferResult struct {
 	TakeoverTime   int64  `json:"takeover_time"`
 }
 
-func GetResignedTransferResult(params *ParamsResignedTransferResult, result *ResultResignedTransferResult) wx.Action {
+func GetResignedTransferResult(handoverUserID, takeoverUserID, cursor string, result *ResultResignedTransferResult) wx.Action {
+	params := &ParamsResignedTransferResult{
+		HandoverUserID: handoverUserID,
+		TakeoverUserID: takeoverUserID,
+		Cursor:         cursor,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactResignedTransferResult,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -155,7 +179,12 @@ type ResultGroupChatTransfer struct {
 	FailedChatList []*ErrGroupChatTransfer `json:"failed_chat_list"`
 }
 
-func TransferGroupChat(params *ParamsGroupChatTransfer, result *ResultGroupChatTransfer) wx.Action {
+func TransferGroupChat(chatIDs []string, newOwner string, result *ResultGroupChatTransfer) wx.Action {
+	params := &ParamsGroupChatTransfer{
+		ChatIDList: chatIDs,
+		NewOwner:   newOwner,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactGroupChatTranster,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

@@ -7,24 +7,16 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type Parent struct {
-	ParentUserID   string   `json:"parent_userid"`
-	Mobile         string   `json:"mobile"`
-	IsSubscribe    int      `json:"is_subscribe"`
-	ExternalUserID string   `json:"external_userid"`
-	Children       []*Child `json:"children"`
-}
-
-type Child struct {
+type ParamsChild struct {
 	StudentUserID string `json:"student_userid"`
 	Relation      string `json:"relation"`
 }
 
 type ParamsParentCreate struct {
-	ParentUserID string   `json:"parent_userid"`
-	Mobile       string   `json:"mobile"`
-	ToInvite     bool     `json:"to_invite,omitempty"`
-	Children     []*Child `json:"children"`
+	ParentUserID string         `json:"parent_userid"`
+	Mobile       string         `json:"mobile"`
+	ToInvite     *bool          `json:"to_invite,omitempty"`
+	Children     []*ParamsChild `json:"children"`
 }
 
 func CreateParent(params *ParamsParentCreate) wx.Action {
@@ -35,17 +27,11 @@ func CreateParent(params *ParamsParentCreate) wx.Action {
 	)
 }
 
-func DeleteParent(userID string) wx.Action {
-	return wx.NewGetAction(urls.CorpSchoolParentDelete,
-		wx.WithQuery("userid", userID),
-	)
-}
-
 type ParamsParentUpdate struct {
-	ParentUserID    string   `json:"parent_userid"`
-	NewParentUserID string   `json:"new_parent_userid,omitempty"`
-	Mobile          string   `json:"mobile,omitempty"`
-	Children        []*Child `json:"children,omitempty"`
+	ParentUserID    string         `json:"parent_userid"`
+	NewParentUserID string         `json:"new_parent_userid,omitempty"`
+	Mobile          string         `json:"mobile,omitempty"`
+	Children        []*ParamsChild `json:"children,omitempty"`
 }
 
 func UpdateParent(params *ParamsParentUpdate) wx.Action {
@@ -53,6 +39,12 @@ func UpdateParent(params *ParamsParentUpdate) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
+	)
+}
+
+func DeleteParent(userID string) wx.Action {
+	return wx.NewGetAction(urls.CorpSchoolParentDelete,
+		wx.WithQuery("userid", userID),
 	)
 }
 
@@ -81,25 +73,6 @@ func BatchCreateParent(params *ParamsParentBatchCreate, result *ResultParentBatc
 	)
 }
 
-type ParamsParentBatchDelete struct {
-	UserIDList []string `json:"useridlist"`
-}
-
-type ResultParentBatchDelete struct {
-	ResultList []*ParentErrResult `json:"result_list"`
-}
-
-func BatchDeleteParent(params *ParamsParentBatchDelete, result *ResultParentBatchDelete) wx.Action {
-	return wx.NewPostAction(urls.CorpSchoolParentBatchDelete,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
-		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
-		}),
-	)
-}
-
 type ParamsParentBatchUpdate struct {
 	Parents []*ParamsParentUpdate `json:"parents"`
 }
@@ -110,6 +83,29 @@ type ResultParentBatchUpdate struct {
 
 func BatchUpdateParent(params *ParamsParentBatchUpdate, result *ResultParentBatchUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolParentBatchUpdate,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsParentBatchDelete struct {
+	UserIDList []string `json:"useridlist"`
+}
+
+type ResultParentBatchDelete struct {
+	ResultList []*ParentErrResult `json:"result_list"`
+}
+
+func BatchDeleteParent(userIDs []string, result *ResultParentBatchDelete) wx.Action {
+	params := &ParamsParentBatchDelete{
+		UserIDList: userIDs,
+	}
+
+	return wx.NewPostAction(urls.CorpSchoolParentBatchDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),

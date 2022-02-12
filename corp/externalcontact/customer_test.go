@@ -15,7 +15,7 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-func TestListCustomer(t *testing.T) {
+func TestList(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -38,12 +38,12 @@ func TestListCustomer(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultCustomerList)
+	result := new(ResultList)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListCustomer("USERID", result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", List("USERID", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultCustomerList{
+	assert.Equal(t, &ResultList{
 		ExternalUserID: []string{
 			"woAJ2GCAAAXtWyujaWJHDDGi0mACAAA",
 			"wmqfasd1e1927831291723123109rAAA",
@@ -51,7 +51,7 @@ func TestListCustomer(t *testing.T) {
 	}, result)
 }
 
-func TestGetCustomer(t *testing.T) {
+func TestGet(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -153,17 +153,12 @@ func TestGetCustomer(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCustomerGet{
-		ExternalUserID: "EXTERNAL_USERID",
-		Cursor:         "CURSOR",
-	}
+	result := new(ResultGet)
 
-	result := new(ResultCustomerGet)
-
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCustomer(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", Get("EXTERNAL_USERID", "CURSOR", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultCustomerGet{
+	assert.Equal(t, &ResultGet{
 		ExternalContact: &ExternalContact{
 			ExternalUserID: "woAJ2GCAAAXtWyujaWJHDDGi0mACHAAA",
 			Name:           "李四",
@@ -247,7 +242,7 @@ func TestGetCustomer(t *testing.T) {
 	}, result)
 }
 
-func TestBatchGetCustomerByUser(t *testing.T) {
+func TestBatchGetByUser(t *testing.T) {
 	body := []byte(`{"userid_list":["zhangsan","lisi"],"limit":100}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -353,17 +348,14 @@ func TestBatchGetCustomerByUser(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCustomerBatchGetByUser{
-		UserIDList: []string{"zhangsan", "lisi"},
-		Limit:      100,
-	}
+	userIDs := []string{"zhangsan", "lisi"}
 
-	result := new(ResultCustomerBatchGetByUser)
+	result := new(ResultBatchGetByUser)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchGetCustomerByUser(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchGetCustomerByUser(userIDs, "", 100, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultCustomerBatchGetByUser{
+	assert.Equal(t, &ResultBatchGetByUser{
 		ExternalContactList: []*CustomerBatchGetData{
 			{
 				ExternalContact: &ExternalContact{
@@ -448,7 +440,7 @@ func TestBatchGetCustomerByUser(t *testing.T) {
 	}, result)
 }
 
-func TestRemarkCustomer(t *testing.T) {
+func TestRemark(t *testing.T) {
 	body := []byte(`{"userid":"zhangsan","external_userid":"woAJ2GCAAAd1asdasdjO4wKmE8Aabj9AAA","remark":"备注信息","description":"描述信息","remark_company":"腾讯科技","remark_mobiles":["13800000001","13800000002"],"remark_pic_mediaid":"MEDIAID"}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -468,7 +460,7 @@ func TestRemarkCustomer(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCustomerRemark{
+	params := &ParamsRemark{
 		UserID:           "zhangsan",
 		ExternalUserID:   "woAJ2GCAAAd1asdasdjO4wKmE8Aabj9AAA",
 		Remark:           "备注信息",
@@ -478,7 +470,7 @@ func TestRemarkCustomer(t *testing.T) {
 		RemarkPicMediaID: "MEDIAID",
 	}
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", RemarkCustomer(params))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", Remark(params))
 
 	assert.Nil(t, err)
 }

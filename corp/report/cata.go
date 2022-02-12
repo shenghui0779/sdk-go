@@ -59,15 +59,15 @@ func DeleteGridCata(categoryID string) wx.Action {
 	)
 }
 
-type GridCata struct {
-	CataID       string `json:"cata_id"`
-	CataName     string `json:"cata_name"`
-	LevelID      int    `json:"level_id"`
-	ParentCataID string `json:"parent_cata_id"`
+type ResultGridCataList struct {
+	CategoryList []*GridCategory `json:"category_list"`
 }
 
-type ResultGridCataList struct {
-	CataList []*GridCata `json:"cata_list"`
+type GridCategory struct {
+	CategoryID       string `json:"category_id"`
+	CategoryName     string `json:"category_name"`
+	Level            int    `json:"level"`
+	ParentCategoryID string `json:"parent_category_id"`
 }
 
 func ListGridCata(result *ResultGridCataList) wx.Action {

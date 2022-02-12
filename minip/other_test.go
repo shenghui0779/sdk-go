@@ -8,10 +8,11 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestInvokeService(t *testing.T) {
@@ -79,15 +80,9 @@ func TestSoterVerify(t *testing.T) {
 	mp := New("APPID", "APPSECRET")
 	mp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsSoterVerify{
-		OpenID:        "$openid",
-		JSONString:    "$resultJSON",
-		JSONSignature: "$resultJSONSignature",
-	}
-
 	result := new(ResultSoterVerify)
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SoterVerify(params, result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SoterVerify("$openid", "$resultJSON", "$resultJSONSignature", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultSoterVerify{

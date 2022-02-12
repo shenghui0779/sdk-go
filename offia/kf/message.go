@@ -275,7 +275,7 @@ func SendMPNewsArticleMsg(openID string, article *MPNewsArticle, kfAccount ...st
 func SendMenuMsg(openID string, menu *Menu, kfAccount ...string) wx.Action {
 	params := &ParamsMsgSend{
 		ToUser:  openID,
-		MsgType: event.MsgMenu,
+		MsgType: event.MsgMsgMenu,
 		Menu:    menu,
 	}
 

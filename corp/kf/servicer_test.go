@@ -47,14 +47,11 @@ func TestAddServicer(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsServicerAdd{
-		OpenKFID:   "kfxxxxxxxxxxxxxx",
-		UserIDList: []string{"zhangsan", "lisi"},
-	}
+	userIDs := []string{"zhangsan", "lisi"}
 
 	result := new(ResultServicerAdd)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", AddServicer(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", AddServicer("kfxxxxxxxxxxxxxx", userIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultServicerAdd{
@@ -105,14 +102,11 @@ func TestDeleteServicer(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsServicerDelete{
-		OpenKFID:   "kfxxxxxxxxxxxxxx",
-		UserIDList: []string{"zhangsan", "lisi"},
-	}
+	userIDs := []string{"zhangsan", "lisi"}
 
 	result := new(ResultServicerDelete)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteServicer(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteServicer("kfxxxxxxxxxxxxxx", userIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultServicerDelete{
@@ -201,17 +195,12 @@ func TestGetServiceState(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsServiceStateGet{
-		OpenKFID:       "wkxxxxxxxxxxxxxxxxxx",
-		ExternalUserID: "wmxxxxxxxxxxxxxxxxxx",
-	}
+	result := new(ResultServiceState)
 
-	result := new(ResultServiceStateGet)
-
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetServiceState(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetServiceState("wkxxxxxxxxxxxxxxxxxx", "wmxxxxxxxxxxxxxxxxxx", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultServiceStateGet{
+	assert.Equal(t, &ResultServiceState{
 		ServiceState:   3,
 		ServicerUserID: "zhangsan",
 	}, result)

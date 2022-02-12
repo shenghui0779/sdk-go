@@ -196,14 +196,9 @@ func TestListProductAlbum(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsProductAlbumList{
-		Limit:  50,
-		Cursor: "CURSOR",
-	}
-
 	result := new(ResultProductAlbumList)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListProductAlbum(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListProductAlbum("CURSOR", 50, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultProductAlbumList{

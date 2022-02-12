@@ -8,9 +8,10 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestGetUser(t *testing.T) {
@@ -47,13 +48,9 @@ func TestGetUser(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsUserGet{
-		OpenID: "OPENID",
-		Lang:   "zh_CN",
-	}
 	result := new(UserInfo)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUser(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUser("OPENID", "zh_CN", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &UserInfo{
@@ -121,21 +118,20 @@ func TestBatchGetUser(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsUserBatchGet{
-		UserList: []*ParamsUserGet{
-			{
-				OpenID: "otvxTs4dckWG7imySrJd6jSi0CWE",
-				Lang:   "zh_CN",
-			},
-			{
-				OpenID: "otvxTs_JZ6SEiP0imdhpi50fuSZg",
-				Lang:   "zh_CN",
-			},
+	users := []*ParamsUserGet{
+		{
+			OpenID: "otvxTs4dckWG7imySrJd6jSi0CWE",
+			Lang:   "zh_CN",
+		},
+		{
+			OpenID: "otvxTs_JZ6SEiP0imdhpi50fuSZg",
+			Lang:   "zh_CN",
 		},
 	}
+
 	result := new(ResultUserBatchGet)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetUser(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetUser(users, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultUserBatchGet{

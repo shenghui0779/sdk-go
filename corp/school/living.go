@@ -18,7 +18,13 @@ type ResultUserAllLivingID struct {
 	LivingIDList []string `json:"livingid_list"`
 }
 
-func GetUserAllLivingID(params *ParamsUserAllLivingID, result *ResultUserAllLivingID) wx.Action {
+func GetUserAllLivingID(userID, cursor string, limit int, result *ResultUserAllLivingID) wx.Action {
+	params := &ParamsUserAllLivingID{
+		UserID: userID,
+		Cursor: cursor,
+		Limit:  limit,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetUserAllLivingID,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -84,7 +90,7 @@ type LivingWatchStatInfo struct {
 
 type ParamsLivingWatchStat struct {
 	LivingID string `json:"livingid"`
-	NextKey  string `json:"next_key"`
+	NextKey  string `json:"next_key,omitempty"`
 }
 
 type ResultLivingWatchStat struct {
@@ -93,7 +99,12 @@ type ResultLivingWatchStat struct {
 	StatInfoes *LivingWatchStatInfo `json:"stat_infoes"`
 }
 
-func GetLivingWatchStat(params *ParamsLivingWatchStat, result *ResultLivingWatchStat) wx.Action {
+func GetLivingWatchStat(livingID, nextKey string, result *ResultLivingWatchStat) wx.Action {
+	params := &ParamsLivingWatchStat{
+		LivingID: livingID,
+		NextKey:  nextKey,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetLivingWatchStat,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -116,7 +127,7 @@ type LivingUnwatchStatInfo struct {
 
 type ParamsLivingUnwatchStat struct {
 	LivingID string `json:"livingid"`
-	NextKey  string `json:"next_key"`
+	NextKey  string `json:"next_key,omitempty"`
 }
 
 type ResultLivingUnwatchStat struct {
@@ -125,7 +136,12 @@ type ResultLivingUnwatchStat struct {
 	StatInfo *LivingUnwatchStatInfo `json:"stat_info"`
 }
 
-func GetLivingUnwatchStat(params *ParamsLivingUnwatchStat, result *ResultLivingUnwatchStat) wx.Action {
+func GetLivingUnwatchStat(livingID, nextKey string, result *ResultLivingUnwatchStat) wx.Action {
+	params := &ParamsLivingUnwatchStat{
+		LivingID: livingID,
+		NextKey:  nextKey,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetLivingUnwatchStat,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

@@ -96,7 +96,12 @@ type ResultProductAlbumList struct {
 	ProductList []*ProductAlbum `json:"product_list"`
 }
 
-func ListProductAlbum(params *ParamsProductAlbumList, result *ResultProductAlbumList) wx.Action {
+func ListProductAlbum(cursor string, limit int, result *ResultProductAlbumList) wx.Action {
+	params := &ParamsProductAlbumList{
+		Limit:  limit,
+		Cursor: cursor,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactProductAlbumList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

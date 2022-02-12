@@ -154,7 +154,14 @@ type ResultPatrolOrderList struct {
 	OrderList  []*PatrolOrder `json:"order_list"`
 }
 
-func ListPatrolOrder(params *ParamsPatrolOrderList, result *ResultPatrolOrderList) wx.Action {
+func ListPatrolOrder(beginCreateTime, beginModifyTime int64, cursor string, limit int, result *ResultPatrolOrderList) wx.Action {
+	params := &ParamsPatrolOrderList{
+		BeginCreateTime: beginCreateTime,
+		BeginModifyTime: beginModifyTime,
+		Cursor:          cursor,
+		Limit:           limit,
+	}
+
 	return wx.NewPostAction(urls.CorpReportGetPatrolOrderList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

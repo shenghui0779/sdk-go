@@ -106,10 +106,14 @@ type JobType string
 
 // 微信支持的任务类型
 const (
-	JobSyncUser     JobType = "sync_user"     // 增量更新成员
-	JobReplaceUser  JobType = "replace_user"  // 全量覆盖成员
-	JobInviteUser   JobType = "invite_user"   // 邀请成员关注
-	JobReplaceParty JobType = "replace_party" // 全量覆盖部门
+	JobSyncUser         JobType = "sync_user"          // 增量更新成员
+	JobReplaceUser      JobType = "replace_user"       // 全量覆盖成员
+	JobInviteUser       JobType = "invite_user"        // 邀请成员关注
+	JobReplaceParty     JobType = "replace_party"      // 全量覆盖部门
+	JobExportUser       JobType = "export_user"        // 导出成员详情
+	JobExportSimpleUser JobType = "export_simple_user" // 导出成员
+	JobExportDepartment JobType = "export_department"  // 导出部门
+	JobExportTagUser    JobType = "export_taguser"     // 导出标签成员
 )
 
 // CorpCardType 企业微信模板卡片消息类型

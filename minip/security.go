@@ -21,12 +21,12 @@ var (
 )
 
 // ImageSecCheck 校验一张图片是否含有违法违规内容
-func ImageSecCheck(path string) wx.Action {
-	_, filename := filepath.Split(path)
+func ImageSecCheck(imgPath string) wx.Action {
+	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.MinipImageSecCheck,
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			path, err := filepath.Abs(filepath.Clean(path))
+			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
 				return nil, err
@@ -56,7 +56,12 @@ type ResultMediaCheckAsync struct {
 }
 
 // MediaCheckAsync 异步校验图片/音频是否含有违法违规内容
-func MediaCheckAsync(params *ParamsMediaCheckAsync, result *ResultMediaCheckAsync) wx.Action {
+func MediaCheckAsync(mediaType SecMediaType, mediaURL string, result *ResultMediaCheckAsync) wx.Action {
+	params := &ParamsMediaCheckAsync{
+		MediaType: mediaType,
+		MediaURL:  mediaURL,
+	}
+
 	return wx.NewPostAction(urls.MinipMediaCheckAsync,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

@@ -18,6 +18,7 @@ type ParamsDepartmentCreate struct {
 	Name             string                   `json:"name,omitempty"`
 	ParentID         int64                    `json:"parentid"`
 	ID               int64                    `json:"id,omitempty"`
+	Type             int                      `json:"type"`
 	RegisterYear     int                      `json:"register_year,omitempty"`
 	StandardGrade    int                      `json:"standard_grade,omitempty"`
 	Order            int                      `json:"order,omitempty"`
@@ -53,6 +54,7 @@ type ParamsDepartmentUpdate struct {
 	RegisterYear     int                      `json:"register_year,omitempty"`
 	StandardGrade    int                      `json:"standard_grade,omitempty"`
 	Order            int                      `json:"order,omitempty"`
+	NewID            int64                    `json:"new_id,omitempty"`
 	DepartmentAdmins []*DepartmentAdminUpdate `json:"department_admins,omitempty"`
 }
 
@@ -77,16 +79,17 @@ type DepartmentAdmin struct {
 }
 
 type Department struct {
-	Name             string             `json:"name,omitempty"`
+	Name             string             `json:"name"`
 	ParentID         int64              `json:"parentid"`
-	ID               int64              `json:"id,omitempty"`
-	RegisterYear     int                `json:"register_year,omitempty"`
-	StandardGrade    int                `json:"standard_grade,omitempty"`
-	Order            int                `json:"order,omitempty"`
+	ID               int64              `json:"id"`
+	Type             int                `json:"type"`
+	RegisterYear     int                `json:"register_year"`
+	StandardGrade    int                `json:"standard_grade"`
+	Order            int                `json:"order"`
 	IsGraduated      int                `json:"is_graduated"`
 	OpenGroupChat    int                `json:"open_group_chat"`
 	GroupChatID      string             `json:"group_chat_id"`
-	DepartmentAdmins []*DepartmentAdmin `json:"department_admins,omitempty"`
+	DepartmentAdmins []*DepartmentAdmin `json:"department_admins"`
 }
 
 type ResultDepartmentList struct {
@@ -116,7 +119,12 @@ type ResultUpgradeInfoSet struct {
 	NextUpgradeTime int64 `json:"next_upgrade_time"`
 }
 
-func SetUpgradeInfo(params *ParamsUpgradeInfoSet, result *ResultUpgradeInfoSet) wx.Action {
+func SetUpgradeInfo(upgradeTime int64, upgradeSwitch int, result *ResultUpgradeInfoSet) wx.Action {
+	params := &ParamsUpgradeInfoSet{
+		UpgradeTime:   upgradeTime,
+		UpgradeSwitch: upgradeSwitch,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolSetUpgradeInfo,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

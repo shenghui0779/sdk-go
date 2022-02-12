@@ -8,10 +8,10 @@ import (
 )
 
 type PaymentInfo struct {
-	StudentUserID string `json:"student_userid"`
-	TradeState    int    `json:"trade_state"`
-	TradeNO       string `json:"trade_no"`
-	PayerParentID string `json:"payer_parentid"`
+	StudentUserID     string `json:"student_userid"`
+	TradeState        int    `json:"trade_state"`
+	TradeNO           string `json:"trade_no"`
+	PayerParentUserID string `json:"payer_parent_userid"`
 }
 
 type ParamsPaymentGet struct {
@@ -24,7 +24,11 @@ type ResultPaymentGet struct {
 	PaymentResult []*PaymentInfo `json:"payment_result"`
 }
 
-func GetPaymentResult(params *ParamsPaymentGet, result *ResultPaymentGet) wx.Action {
+func GetPaymentResult(paymentID string, result *ResultPaymentGet) wx.Action {
+	params := &ParamsPaymentGet{
+		PaymentID: paymentID,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetPaymentResult,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -45,7 +49,12 @@ type ResultTradeGet struct {
 	PayTime       int64  `json:"pay_time"`
 }
 
-func GetTrade(params *ParamsTradeGet, result *ResultTradeGet) wx.Action {
+func GetTrade(paymentID, tradeNO string, result *ResultTradeGet) wx.Action {
+	params := &ParamsTradeGet{
+		PaymentID: paymentID,
+		TradeNO:   tradeNO,
+	}
+
 	return wx.NewPostAction(urls.CorpSchoolGetTrade,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

@@ -105,7 +105,7 @@ func TestGetUser(t *testing.T) {
 	}, result)
 }
 
-func TestListUserSimple(t *testing.T) {
+func TestListSimpleUser(t *testing.T) {
 	body := []byte(`{"department_id":"LINKEDID/DEPARTMENTID","fetch_child":true}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -144,24 +144,24 @@ func TestListUserSimple(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultUserSimpleList)
+	result := new(ResultSimpleUserList)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListUserSimple("LINKEDID", "DEPARTMENTID", true, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListSimpleUser("LINKEDID", "DEPARTMENTID", true, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultUserSimpleList{
-		UserList: []*UserSimpleListData{
+	assert.Equal(t, &ResultSimpleUserList{
+		UserList: []*SimpleUser{
 			{
-				UserID:    "zhangsan",
-				Name:      "张三",
-				Deparment: []string{"LINKEDID/1", "LINKEDID/2"},
-				CorpID:    "xxxxxx",
+				UserID:     "zhangsan",
+				Name:       "张三",
+				Department: []string{"LINKEDID/1", "LINKEDID/2"},
+				CorpID:     "xxxxxx",
 			},
 			{
-				UserID:    "lisi",
-				Name:      "李四",
-				Deparment: []string{"LINKEDID/1"},
-				CorpID:    "xxxxxx",
+				UserID:     "lisi",
+				Name:       "李四",
+				Department: []string{"LINKEDID/1"},
+				CorpID:     "xxxxxx",
 			},
 		},
 	}, result)
@@ -250,8 +250,8 @@ func TestListUser(t *testing.T) {
 							Name: "自定义属性(网页)",
 							Type: 1,
 							Web: &AttrWeb{
-								Title: "https://work.weixin.qq.com/",
-								URL:   "官网",
+								Title: "官网",
+								URL:   "https://work.weixin.qq.com/",
 							},
 						},
 					},

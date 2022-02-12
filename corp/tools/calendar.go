@@ -10,7 +10,7 @@ import (
 type Calendar struct {
 	CalID       string           `json:"cal_id"`
 	Organizer   string           `json:"organizer"`
-	ReadOnly    int              `json:"readonly"`
+	ReadOnly    *int             `json:"readonly"`
 	Summary     string           `json:"summary"`
 	Color       string           `json:"color"`
 	Description string           `json:"description"`
@@ -19,7 +19,7 @@ type Calendar struct {
 
 type CalendarShare struct {
 	UserID   string `json:"userid"`
-	ReadOnly int    `json:"readonly,omitempty"`
+	ReadOnly *int   `json:"readonly,omitempty"`
 }
 
 type ParamsCalendarAdd struct {
@@ -28,13 +28,13 @@ type ParamsCalendarAdd struct {
 }
 
 type CalendarAddData struct {
-	Organizer   string           `json:"organizer"`
-	ReadOnly    int              `json:"readonly,omitempty"`
-	SetAsDfault int              `json:"set_as_dfault"`
-	Summary     string           `json:"summary"`
-	Color       string           `json:"color"`
-	Description string           `json:"description,omitempty"`
-	Shares      []*CalendarShare `json:"shares,omitempty"`
+	Organizer    string           `json:"organizer"`
+	ReadOnly     *int             `json:"readonly,omitempty"`
+	SetAsDefault int              `json:"set_as_default,omitempty"`
+	Summary      string           `json:"summary"`
+	Color        string           `json:"color"`
+	Description  string           `json:"description,omitempty"`
+	Shares       []*CalendarShare `json:"shares,omitempty"`
 }
 
 type ResultCalendarAdd struct {
@@ -58,11 +58,11 @@ type ParamsCalendarUpdate struct {
 
 type CalendarUpdateData struct {
 	CalID       string           `json:"cal_id"`
-	ReadOnly    int              `json:"read_only"`
+	ReadOnly    *int             `json:"readonly,omitempty"`
 	Summary     string           `json:"summary"`
 	Color       string           `json:"color"`
-	Description string           `json:"description"`
-	Shares      []*CalendarShare `json:"shares"`
+	Description string           `json:"description,omitempty"`
+	Shares      []*CalendarShare `json:"shares,omitempty"`
 }
 
 func UpdateCalendar(params *ParamsCalendarUpdate) wx.Action {
@@ -81,7 +81,11 @@ type ResultCalendarGet struct {
 	CalendarList []*Calendar `json:"calendar_list"`
 }
 
-func GetCalendar(params *ParamsCalendarGet, result *ResultCalendarGet) wx.Action {
+func GetCalendar(calIDs []string, result *ResultCalendarGet) wx.Action {
+	params := ParamsCalendarGet{
+		CalIDList: calIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpToolsCalendarGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -96,7 +100,11 @@ type ParamsCalendarDelete struct {
 	CalID string `json:"cal_id"`
 }
 
-func DeleteCalendar(params *ParamsCalendarDelete) wx.Action {
+func DeleteCalendar(calID string) wx.Action {
+	params := &ParamsCalendarDelete{
+		CalID: calID,
+	}
+
 	return wx.NewPostAction(urls.CorpToolsCalendarDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

@@ -60,14 +60,12 @@ func TestListCorpTag(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCorpTagList{
-		TagID:   []string{"etXXXXXXXXXX", "etYYYYYYYYYY"},
-		GroupID: []string{"etZZZZZZZZZZZZZ", "etYYYYYYYYYYYYY"},
-	}
+	tagIDs := []string{"etXXXXXXXXXX", "etYYYYYYYYYY"}
+	groupIDs := []string{"etZZZZZZZZZZZZZ", "etYYYYYYYYYYYYY"}
 
 	result := new(ResultCorpTagList)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListCorpTag(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListCorpTag(tagIDs, groupIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCorpTagList{
@@ -237,13 +235,10 @@ func TestDeleteCorpTag(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCorpTagDelete{
-		TagID:   []string{"TAG_ID_1", "TAG_ID_2"},
-		GroupID: []string{"GROUP_ID_1", "GROUP_ID_2"},
-		AgentID: 1000014,
-	}
+	tagIDs := []string{"TAG_ID_1", "TAG_ID_2"}
+	groupIDs := []string{"GROUP_ID_1", "GROUP_ID_2"}
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteCorpTag(params))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteCorpTag(tagIDs, groupIDs, 1000014))
 
 	assert.Nil(t, err)
 }
@@ -291,15 +286,12 @@ func TestListStrategyTag(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsStrategyTagList{
-		StrategyID: 1,
-		TagID:      []string{"etXXXXXXXXXX", "etYYYYYYYYYY"},
-		GroupID:    []string{"etZZZZZZZZZZZZZ", "etYYYYYYYYYYYYY"},
-	}
+	tagIDs := []string{"etXXXXXXXXXX", "etYYYYYYYYYY"}
+	groupIDs := []string{"etZZZZZZZZZZZZZ", "etYYYYYYYYYYYYY"}
 
 	result := new(ResultStrategyTagList)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListStrategyTag(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListStrategyTag(1, tagIDs, groupIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultStrategyTagList{
@@ -466,12 +458,10 @@ func TestDeleteStrategyTag(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsStrategyTagDelete{
-		TagID:   []string{"TAG_ID_1", "TAG_ID_2"},
-		GroupID: []string{"GROUP_ID_1", "GROUP_ID_2"},
-	}
+	tagIDs := []string{"TAG_ID_1", "TAG_ID_2"}
+	groupIDs := []string{"GROUP_ID_1", "GROUP_ID_2"}
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteStrategyTag(params))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteStrategyTag(tagIDs, groupIDs))
 
 	assert.Nil(t, err)
 }

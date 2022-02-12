@@ -90,26 +90,24 @@ func TestCheckSingleAgree(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsSingleAgreeCheck{
-		Info: []*SingleCheckInfo{
-			{
-				UserID:         "XuJinSheng",
-				ExternalOpenID: "wmeDKaCQAAGd9oGiQWxVsAKwV2HxNAAA",
-			},
-			{
-				UserID:         "XuJinSheng",
-				ExternalOpenID: "wmeDKaCQAAIQ_p7ACn_jpLVBJSGocAAA",
-			},
-			{
-				UserID:         "XuJinSheng",
-				ExternalOpenID: "wmeDKaCQAAPE_p7ABnxkpLBBJSGocAAA",
-			},
+	agrees := []*ParamsSingleAgree{
+		{
+			UserID:         "XuJinSheng",
+			ExternalOpenID: "wmeDKaCQAAGd9oGiQWxVsAKwV2HxNAAA",
+		},
+		{
+			UserID:         "XuJinSheng",
+			ExternalOpenID: "wmeDKaCQAAIQ_p7ACn_jpLVBJSGocAAA",
+		},
+		{
+			UserID:         "XuJinSheng",
+			ExternalOpenID: "wmeDKaCQAAPE_p7ABnxkpLBBJSGocAAA",
 		},
 	}
 
 	result := new(ResultSingleAgreeCheck)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", CheckSingleAgree(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", CheckSingleAgree(agrees, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultSingleAgreeCheck{
@@ -233,12 +231,12 @@ func TestGetGroupChat(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultGroupChatGet)
+	result := new(ResultGroupChat)
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetGroupChat("wrNplhCgAAIVZohLe57zKnvIV7xBKrig", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultGroupChatGet{
+	assert.Equal(t, &ResultGroupChat{
 		RoomName:       "蓦然回首",
 		Creator:        "ZhangWenChao",
 		RoomCreateTime: 1592361604,

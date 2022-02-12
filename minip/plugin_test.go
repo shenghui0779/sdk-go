@@ -8,10 +8,11 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestApplyPlugin(t *testing.T) {
@@ -159,12 +160,7 @@ func TestSetDevPluginApplyStatus(t *testing.T) {
 	mp := New("APPID", "APPSECRET")
 	mp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsDevPluginApplyStatus{
-		Action: PluginDevAgree,
-		AppID:  "APPID",
-	}
-
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SetDevPluginApplyStatus(params))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SetDevPluginApplyStatus(PluginDevAgree, "APPID", ""))
 
 	assert.Nil(t, err)
 }

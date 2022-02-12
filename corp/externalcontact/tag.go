@@ -20,7 +20,7 @@ type CorpTagGroup struct {
 	GroupID    string     `json:"group_id"`
 	GroupName  string     `json:"group_name"`
 	CreateTime int64      `json:"create_time"`
-	Order      uint32     `json:"order"`
+	Order      int        `json:"order"`
 	Deleted    bool       `json:"deleted"`
 	Tag        []*CorpTag `json:"tag"`
 }
@@ -29,11 +29,16 @@ type CorpTag struct {
 	ID         string `json:"id"`
 	Name       string `json:"name"`
 	CreateTime int64  `json:"create_time"`
-	Order      uint32 `json:"order"`
+	Order      int    `json:"order"`
 	Deleted    bool   `json:"deleted"`
 }
 
-func ListCorpTag(params *ParamsCorpTagList, result *ResultCorpTagList) wx.Action {
+func ListCorpTag(tagIDs, groupIDs []string, result *ResultCorpTagList) wx.Action {
+	params := &ParamsCorpTagList{
+		TagID:   tagIDs,
+		GroupID: groupIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactCorpTagList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -46,13 +51,13 @@ func ListCorpTag(params *ParamsCorpTagList, result *ResultCorpTagList) wx.Action
 
 type ParamsCorpTag struct {
 	Name  string `json:"name"`
-	Order uint32 `json:"order,omitempty"`
+	Order int    `json:"order,omitempty"`
 }
 
 type ParamsCorpTagAdd struct {
 	GroupID   string           `json:"group_id,omitempty"`
 	GroupName string           `json:"group_name,omitempty"`
-	Order     uint32           `json:"order,omitempty"`
+	Order     int              `json:"order,omitempty"`
 	Tag       []*ParamsCorpTag `json:"tag"`
 	AgentID   int64            `json:"agentid,omitempty"`
 }
@@ -75,7 +80,7 @@ func AddCorpTag(params *ParamsCorpTagAdd, result *ResultCorpTagAdd) wx.Action {
 type ParamsCorpTagEdit struct {
 	ID      string `json:"id"`
 	Name    string `json:"name,omitempty"`
-	Order   uint32 `json:"order,omitempty"`
+	Order   int    `json:"order,omitempty"`
 	AgentID int64  `json:"agentid,omitempty"`
 }
 
@@ -93,7 +98,13 @@ type ParamsCorpTagDelete struct {
 	AgentID int64    `json:"agentid"`
 }
 
-func DeleteCorpTag(params *ParamsCorpTagDelete) wx.Action {
+func DeleteCorpTag(tagIDs, groupIDs []string, agentID int64) wx.Action {
+	params := &ParamsCorpTagDelete{
+		TagID:   tagIDs,
+		GroupID: groupIDs,
+		AgentID: agentID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactCorpTagDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -127,7 +138,13 @@ type StrategyTag struct {
 	Order      uint32 `json:"order"`
 }
 
-func ListStrategyTag(params *ParamsStrategyTagList, result *ResultStrategyTagList) wx.Action {
+func ListStrategyTag(strategyID int64, tagIDs, groupIDs []string, result *ResultStrategyTagList) wx.Action {
+	params := &ParamsStrategyTagList{
+		StrategyID: strategyID,
+		TagID:      tagIDs,
+		GroupID:    groupIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactStrategyTagList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -185,7 +202,12 @@ type ParamsStrategyTagDelete struct {
 	GroupID []string `json:"group_id,omitempty"`
 }
 
-func DeleteStrategyTag(params *ParamsStrategyTagDelete) wx.Action {
+func DeleteStrategyTag(tagIDs, groupIDs []string) wx.Action {
+	params := &ParamsStrategyTagDelete{
+		TagID:   tagIDs,
+		GroupID: groupIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactStrategyTagDelete,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

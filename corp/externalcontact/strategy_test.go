@@ -44,14 +44,9 @@ func TestListCustomerStrategy(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCustomerStrategyList{
-		Cursor: "CURSOR",
-		Limit:  1000,
-	}
-
 	result := new(ResultCustomerStrategyList)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListCustomerStrategy(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListCustomerStrategy("CURSOR", 1000, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCustomerStrategyList{
@@ -259,15 +254,9 @@ func TestGetCustomerStrategyRange(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCustomerStrategyRange{
-		StrategyID: 1,
-		Cursor:     "CURSOR",
-		Limit:      1000,
-	}
-
 	result := new(ResultCustomerStrategyRange)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCustomerStrategyRange(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetCustomerStrategyRange(1, "CURSOR", 1000, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCustomerStrategyRange{
@@ -412,14 +401,9 @@ func TestListMomentStrategy(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMomentStrategyList{
-		Cursor: "CURSOR",
-		Limit:  1000,
-	}
-
 	result := new(ResultMomentStrategyList)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListMomentStrategy(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListMomentStrategy("CURSOR", 1000, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMomentStrategyList{
@@ -522,15 +506,9 @@ func TestGetMomentStrategyRange(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMomentStrategyRange{
-		StrategyID: 1,
-		Cursor:     "CURSOR",
-		Limit:      1000,
-	}
-
 	result := new(ResultMomentStrategyRange)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentStrategyRange(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentStrategyRange(1, "CURSOR", 1000, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMomentStrategyRange{

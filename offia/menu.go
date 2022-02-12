@@ -135,7 +135,7 @@ type ParamsConditionalMenuDelete struct {
 	MenuID string `json:"menuid"`
 }
 
-// DeleteConditional 删除个性化菜单
+// DeleteConditionalMenu 删除个性化菜单
 func DeleteConditionalMenu(menuID string) wx.Action {
 	params := &ParamsConditionalMenuDelete{
 		MenuID: menuID,

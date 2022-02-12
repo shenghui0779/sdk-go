@@ -8,12 +8,17 @@ import (
 )
 
 type ParamsSessionCreate struct {
-	Account string `json:"kf_account"` // 完整客服帐号，格式为：帐号前缀@公众号微信号
-	OpenID  string `json:"openid"`     // 粉丝的openid
+	KFAccount string `json:"kf_account"` // 完整客服帐号，格式为：帐号前缀@公众号微信号
+	OpenID    string `json:"openid"`     // 粉丝的openid
 }
 
 // CreateSession 创建会话
-func CreateSession(params *ParamsSessionCreate) wx.Action {
+func CreateSession(account, openid string) wx.Action {
+	params := &ParamsSessionCreate{
+		KFAccount: account,
+		OpenID:    openid,
+	}
+
 	return wx.NewPostAction(urls.OffiaKFSessionCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -22,12 +27,17 @@ func CreateSession(params *ParamsSessionCreate) wx.Action {
 }
 
 type ParamsSessionClose struct {
-	Account string `json:"kf_account"` // 完整客服帐号，格式为：帐号前缀@公众号微信号
-	OpenID  string `json:"openid"`     // 粉丝的openid
+	KFAccount string `json:"kf_account"` // 完整客服帐号，格式为：帐号前缀@公众号微信号
+	OpenID    string `json:"openid"`     // 粉丝的openid
 }
 
 // CloseSession 关闭会话
-func CloseSession(params *ParamsSessionClose) wx.Action {
+func CloseSession(account, openid string) wx.Action {
+	params := &ParamsSessionClose{
+		KFAccount: account,
+		OpenID:    openid,
+	}
+
 	return wx.NewPostAction(urls.OffiaKFSessionClose,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -37,7 +47,7 @@ func CloseSession(params *ParamsSessionClose) wx.Action {
 
 // Session 客服会话
 type Session struct {
-	Account    string `json:"kf_account"`  // 正在接待的客服，为空表示没有人在接待
+	KFAccount  string `json:"kf_account"`  // 正在接待的客服，为空表示没有人在接待
 	OpenID     string `json:"openid"`      // 粉丝的openid
 	CreateTime int64  `json:"createtime"`  // 会话接入的时间
 	LatestTime int64  `json:"latest_time"` // 粉丝的最后一条消息的时间
@@ -109,7 +119,14 @@ type ResultMsgRecordList struct {
 
 // GetMsgRecordList 获取聊天记录（每次查询时段不能超过24小时）
 // 聊天记录中，对于图片、语音、视频，分别展示成文本格式的[image]、[voice]、[video]。
-func GetMsgRecordList(params *ParamsMsgRecordList, result *ResultMsgRecordList) wx.Action {
+func GetMsgRecordList(msgID, starttime, endtime int64, number int, result *ResultMsgRecordList) wx.Action {
+	params := &ParamsMsgRecordList{
+		MsgID:     msgID,
+		StartTime: starttime,
+		EndTime:   endtime,
+		Number:    number,
+	}
+
 	return wx.NewPostAction(urls.OffiaKFMsgRecordList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

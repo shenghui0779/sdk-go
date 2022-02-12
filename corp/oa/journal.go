@@ -138,7 +138,13 @@ type JournalReportItem struct {
 	Flag        int    `json:"flag"`
 }
 
-func ListJournalStat(params *ParamsJournalStatList, result *ResultJournalStatList) wx.Action {
+func ListJournalStat(templateID string, starttime, endtime int64, result *ResultJournalStatList) wx.Action {
+	params := &ParamsJournalStatList{
+		TemplateID: templateID,
+		StartTime:  starttime,
+		EndTime:    endtime,
+	}
+
 	return wx.NewPostAction(urls.CorpOAGetJournalStatList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

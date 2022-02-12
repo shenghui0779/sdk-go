@@ -47,13 +47,11 @@ func TestBatchGetCustomer(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsCustomerBatchGet{
-		ExternalUseridList: []string{"wmxxxxxxxxxxxxxxxxxxxxxx", "zhangsan"},
-	}
+	externalUserIDs := []string{"wmxxxxxxxxxxxxxxxxxxxxxx", "zhangsan"}
 
 	result := new(ResultCustomerBatchGet)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchGetCustomer(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchGetCustomer(externalUserIDs, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCustomerBatchGet{

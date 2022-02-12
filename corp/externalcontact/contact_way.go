@@ -206,7 +206,12 @@ type ParamsTempChatClose struct {
 	ExternalUserID string `json:"external_userid"`
 }
 
-func CloseTempChat(params *ParamsTempChatClose) wx.Action {
+func CloseTempChat(userID, externalUserID string) wx.Action {
+	params := &ParamsTempChatClose{
+		UserID:         userID,
+		ExternalUserID: externalUserID,
+	}
+
 	return wx.NewPostAction(urls.CorpExternalContactCloseTempChat,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

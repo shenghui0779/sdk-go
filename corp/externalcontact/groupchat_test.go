@@ -131,14 +131,9 @@ func TestGetGroupChat(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsGroupChatGet{
-		ChatID:   "wrOgQhDgAAMYQiS5ol9G7gK9JVAAAA",
-		NeedName: 1,
-	}
-
 	result := new(ResultGroupChatGet)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetGroupChat(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetGroupChat("wrOgQhDgAAMYQiS5ol9G7gK9JVAAAA", 1, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultGroupChatGet{

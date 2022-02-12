@@ -245,8 +245,8 @@ func TestGetContactWay(t *testing.T) {
 	assert.Equal(t, &ResultContactWayGet{
 		ContactWay: &ContactWay{
 			ConfigID:      "42b34949e138eb6e027c123cba77fAAA",
-			Type:          1,
-			Scene:         1,
+			Type:          ContactSingle,
+			Scene:         ContactMinip,
 			Style:         2,
 			Remark:        "test remark",
 			SkipVerify:    true,
@@ -381,12 +381,7 @@ func TestCloseTempChat(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsTempChatClose{
-		UserID:         "zhangyisheng",
-		ExternalUserID: "woAJ2GCAAAXtWyujaWJHDDGi0mACHAAA",
-	}
-
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", CloseTempChat(params))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", CloseTempChat("zhangyisheng", "woAJ2GCAAAXtWyujaWJHDDGi0mACHAAA"))
 
 	assert.Nil(t, err)
 }

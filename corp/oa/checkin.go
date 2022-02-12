@@ -215,7 +215,12 @@ type ResultCheckinOption struct {
 	Info []*CheckinOption `json:"info"`
 }
 
-func GetCheckinOption(params *ParamsCheckinOption, result *ResultCheckinOption) wx.Action {
+func GetCheckinOption(datetime int64, userIDs []string, result *ResultCheckinOption) wx.Action {
+	params := &ParamsCheckinOption{
+		DateTime:   datetime,
+		UserIDList: userIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpOAGetCheckinOption,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -258,7 +263,14 @@ type ResultCheckinData struct {
 	CheckinData []*CheckinData `json:"checkindata"`
 }
 
-func GetCheckinData(params *ParamsCheckinData, result *ResultCheckinData) wx.Action {
+func GetCheckinData(dataType int, starttime, endtime int64, userIDs []string, result *ResultCheckinData) wx.Action {
+	params := &ParamsCheckinData{
+		OpenCheckinDataType: dataType,
+		StartTime:           starttime,
+		EndTime:             endtime,
+		UserIDList:          userIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpOAGetCheckinData,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -379,7 +391,13 @@ type ResultCheckinDayData struct {
 	Datas []*CheckinDayData `json:"datas"`
 }
 
-func GetCheckinDayData(params *ParamsCheckinDayData, result *ResultCheckinDayData) wx.Action {
+func GetCheckinDayData(starttime, endtime int64, userIDs []string, result *ResultCheckinDayData) wx.Action {
+	params := &ParamsCheckinDayData{
+		StartTime:  starttime,
+		EndTime:    endtime,
+		UserIDList: userIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpOAGetCheckinDayData,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -400,7 +418,13 @@ type ResultCheckinMonthData struct {
 	Datas []*CheckinMonthData `json:"datas"`
 }
 
-func GetCheckinMonthData(params *ParamsCheckinMonthData, result *ResultCheckinMonthData) wx.Action {
+func GetCheckinMonthData(starttime, endtime int64, userIDs []string, result *ResultCheckinMonthData) wx.Action {
+	params := &ParamsCheckinMonthData{
+		StartTime:  starttime,
+		EndTime:    endtime,
+		UserIDList: userIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpOAGetCheckinMonthData,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -452,7 +476,13 @@ type ScheduleTimeSection struct {
 	RemindOffWorkSec int   `json:"remind_off_work_sec"`
 }
 
-func GetCheckinScheduleList(params *ParamsCheckinScheduleListGet, result *ResultCheckinScheduleListGet) wx.Action {
+func GetCheckinScheduleList(starttime, endtime int64, userIDs []string, result *ResultCheckinScheduleListGet) wx.Action {
+	params := &ParamsCheckinScheduleListGet{
+		StartTime:  starttime,
+		EndTime:    endtime,
+		UserIDList: userIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpOAGetCheckinScheduleList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -464,18 +494,24 @@ func GetCheckinScheduleList(params *ParamsCheckinScheduleListGet, result *Result
 }
 
 type ParamsCheckinScheduleListSet struct {
-	GroupID   int64           `json:"groupid"`
-	YearMonth int             `json:"yearmonth"`
-	Items     []*ScheduleItem `json:"items"`
+	GroupID   int64               `json:"groupid"`
+	YearMonth int                 `json:"yearmonth"`
+	Items     []*ScheduleListItem `json:"items"`
 }
 
-type ScheduleItem struct {
+type ScheduleListItem struct {
 	UserID     string `json:"userid"`
 	Day        int    `json:"day"`
 	ScheduleID int64  `json:"schedule_id"`
 }
 
-func SetCheckinScheduleList(params *ParamsCheckinScheduleListSet) wx.Action {
+func SetCheckinScheduleList(groupID int64, yearmonth int, items ...*ScheduleListItem) wx.Action {
+	params := &ParamsCheckinScheduleListSet{
+		GroupID:   groupID,
+		YearMonth: yearmonth,
+		Items:     items,
+	}
+
 	return wx.NewPostAction(urls.CorpOASetCheckinScheduleList,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -519,7 +555,14 @@ type HardwareCheckinData struct {
 	DeviceName  string `json:"device_name"`
 }
 
-func GetHardwareCheckinData(params *ParamsHardwareCheckinData, result *ResultHardwareCheckinData) wx.Action {
+func GetHardwareCheckinData(filterType int, starttime, endtime int64, userIDs []string, result *ResultHardwareCheckinData) wx.Action {
+	params := &ParamsHardwareCheckinData{
+		FilterType: filterType,
+		StartTime:  starttime,
+		EndTime:    endtime,
+		UserIDList: userIDs,
+	}
+
 	return wx.NewPostAction(urls.CorpOAGetHardwareCheckinData,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)

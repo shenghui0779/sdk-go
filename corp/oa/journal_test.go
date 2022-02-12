@@ -331,14 +331,9 @@ func TestListJournalStat(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsJournalStatList{
-		TemplateID: "3TmALk1ogfgKiQE3e3jRwnTUhMTh8vca1N8zUVNUx",
-		StartTime:  1604160000,
-		EndTime:    1606363092,
-	}
 	result := new(ResultJournalStatList)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListJournalStat(params, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListJournalStat("3TmALk1ogfgKiQE3e3jRwnTUhMTh8vca1N8zUVNUx", 1604160000, 1606363092, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultJournalStatList{
