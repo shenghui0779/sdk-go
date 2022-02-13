@@ -45,8 +45,12 @@ type ParamsMenuCreate struct {
 	Button []*MenuButton `json:"button"`
 }
 
-// CreateMenu 创建自定义菜单
-func CreateMenu(params *ParamsMenuCreate) wx.Action {
+// CreateMenu 自定义菜单 - 创建自定义菜单
+func CreateMenu(buttons ...*MenuButton) wx.Action {
+	params := &ParamsMenuCreate{
+		Button: buttons,
+	}
+
 	return wx.NewPostAction(urls.OffiaMenuCreate,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -61,12 +65,17 @@ type MenuMatchRule struct {
 }
 
 type ParamsConditionalMenuCreate struct {
-	Button    []*MenuButton `json:"button"`
-	MatchRule MenuMatchRule `json:"matchrule"`
+	Button    []*MenuButton  `json:"button"`
+	MatchRule *MenuMatchRule `json:"matchrule"`
 }
 
-// CreateConditionalMenu 创建个性化菜单
-func CreateConditionalMenu(params *ParamsConditionalMenuCreate) wx.Action {
+// CreateConditionalMenu 自定义菜单 - 创建个性化菜单
+func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.Action {
+	params := &ParamsConditionalMenuCreate{
+		Button:    buttons,
+		MatchRule: matchRule,
+	}
+
 	return wx.NewPostAction(urls.OffiaMenuAddConditional,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
@@ -82,8 +91,7 @@ type ResultMenuMatch struct {
 	Button []*MenuButton `json:"button"`
 }
 
-// TryMatchMenu 测试匹配个性化菜单
-// user_id可以是粉丝的OpenID，也可以是粉丝的微信号。
+// TryMatchMenu 自定义菜单 - 测试匹配个性化菜单（user_id可以是粉丝的OpenID，也可以是粉丝的微信号）
 func TryMatchMenu(userID string, result *ResultMenuMatch) wx.Action {
 	params := &ParamsMenuMatch{
 		UserID: userID,
@@ -117,7 +125,7 @@ type ResultMenuGet struct {
 	ConditionalMenu []*ConditionalMenu `json:"conditionalmenu"` // 个性化菜单
 }
 
-// GetMenu 获取自定义菜单配置
+// GetMenu 自定义菜单 - 获取自定义菜单配置
 func GetMenu(result *ResultMenuGet) wx.Action {
 	return wx.NewGetAction(urls.OffiaMenuGet,
 		wx.WithDecode(func(resp []byte) error {
@@ -126,7 +134,7 @@ func GetMenu(result *ResultMenuGet) wx.Action {
 	)
 }
 
-// DeleteMenu 删除自定义菜单
+// DeleteMenu 自定义菜单 - 删除自定义菜单
 func DeleteMenu() wx.Action {
 	return wx.NewGetAction(urls.OffiaMenuDelete)
 }
@@ -135,7 +143,7 @@ type ParamsConditionalMenuDelete struct {
 	MenuID string `json:"menuid"`
 }
 
-// DeleteConditionalMenu 删除个性化菜单
+// DeleteConditionalMenu 自定义菜单 - 删除个性化菜单
 func DeleteConditionalMenu(menuID string) wx.Action {
 	params := &ParamsConditionalMenuDelete{
 		MenuID: menuID,

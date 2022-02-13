@@ -31,7 +31,7 @@ type ResultMediaUpload struct {
 	CreatedAt int64  `json:"created_at"`
 }
 
-// UploadMedia 上传临时素材
+// UploadMedia 素材管理 - 上传临时素材
 func UploadMedia(mediaType MediaType, mediaPath string, result *ResultMediaUpload) wx.Action {
 	_, filename := filepath.Split(mediaPath)
 
@@ -60,13 +60,7 @@ func UploadMedia(mediaType MediaType, mediaPath string, result *ResultMediaUploa
 	)
 }
 
-type ParamsMediaUploadByURL struct {
-	MediaType MediaType
-	Filename  string
-	URL       string
-}
-
-// UploadMediaByURL 上传临时素材
+// UploadMediaByURL 素材管理 - 上传临时素材
 func UploadMediaByURL(mediaType MediaType, filename, url string, result *ResultMediaUpload) wx.Action {
 	return wx.NewPostAction(urls.OffiaMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
@@ -101,7 +95,7 @@ type ResultMaterialAdd struct {
 	URL     string `json:"url"`
 }
 
-// AddMaterial 新增其他类型永久素材（支持图片、音频、缩略图）
+// AddMaterial 素材管理 - 新增其他类型永久素材（支持图片、音频、缩略图）
 func AddMaterial(mediaType MediaType, mediaPath string, result *ResultMaterialAdd) wx.Action {
 	_, filename := filepath.Split(mediaPath)
 
@@ -130,7 +124,7 @@ func AddMaterial(mediaType MediaType, mediaPath string, result *ResultMaterialAd
 	)
 }
 
-// AddMaterialByURL 新增其他类型永久素材（支持图片、音频、缩略图）
+// AddMaterialByURL 素材管理 - 新增其他类型永久素材（支持图片、音频、缩略图）
 func AddMaterialByURL(mediaType MediaType, filename, url string, result *ResultMaterialAdd) wx.Action {
 	return wx.NewPostAction(urls.OffiaMaterialAdd,
 		wx.WithQuery("type", string(mediaType)),
@@ -178,7 +172,7 @@ type MaterialNewsItem struct {
 	ContentSourceURL string `json:"content_source_url"`
 }
 
-// GetNewsMaterial 获取永久素材 - 图文
+// GetNewsMaterial 素材管理 - 获取永久素材（图文）
 func GetNewsMaterial(mediaID string, result *ResultNewsMaterialGet) wx.Action {
 	params := &ParamsMaterialGet{
 		MediaID: mediaID,
@@ -200,7 +194,7 @@ type ResultVideoMaterialGet struct {
 	DownURL     string `json:"down_url"`
 }
 
-// GetVideoMaterial 获取永久素材 - 视频消息
+// GetVideoMaterial 素材管理 - 获取永久素材（视频消息）
 func GetVideoMaterial(mediaID string, result *ResultVideoMaterialGet) wx.Action {
 	params := &ParamsMaterialGet{
 		MediaID: mediaID,
@@ -220,7 +214,7 @@ type ResultOtherMaterialGet struct {
 	Buffer []byte
 }
 
-// GetOtherMaterial 获取永久素材 - 其他类型的素材消息（返回的直接为素材的内容）
+// GetOtherMaterial 素材管理 - 获取永久素材（其他类型的素材消息，返回的直接为素材的内容）
 func GetOtherMaterial(mediaID string, result *ResultOtherMaterialGet) wx.Action {
 	params := &ParamsMaterialGet{
 		MediaID: mediaID,
@@ -239,7 +233,7 @@ func GetOtherMaterial(mediaID string, result *ResultOtherMaterialGet) wx.Action 
 	)
 }
 
-// DeleteMaterial 删除永久素材
+// DeleteMaterial 素材管理 - 删除永久素材
 func DeleteMaterial(mediaID string) wx.Action {
 	return wx.NewPostAction(urls.OffiaMaterialDelete,
 		wx.WithBody(func() ([]byte, error) {
@@ -248,7 +242,7 @@ func DeleteMaterial(mediaID string) wx.Action {
 	)
 }
 
-// UploadImg 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
+// UploadImg 素材管理 - 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
 func UploadImg(imgPath string, result *ResultMaterialAdd) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -276,7 +270,7 @@ func UploadImg(imgPath string, result *ResultMaterialAdd) wx.Action {
 	)
 }
 
-// UploadImgByURL 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
+// UploadImgByURL 素材管理 - 上传图文消息内的图片（不受公众号的素材库中图片数量的100000个的限制，图片仅支持jpg/png格式，大小必须在1MB以下）
 func UploadImgByURL(filename, url string, result *ResultMaterialAdd) wx.Action {
 	return wx.NewPostAction(urls.OffiaNewsImgUpload,
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
@@ -304,7 +298,7 @@ func UploadImgByURL(filename, url string, result *ResultMaterialAdd) wx.Action {
 	)
 }
 
-// UploadVideo 上传视频永久素材
+// UploadVideo 素材管理 - 上传视频永久素材
 func UploadVideo(videoPath, title, description string, result *ResultMaterialAdd) wx.Action {
 	_, filename := filepath.Split(videoPath)
 
@@ -334,7 +328,7 @@ func UploadVideo(videoPath, title, description string, result *ResultMaterialAdd
 	)
 }
 
-// UploadVideoByURL 上传视频永久素材
+// UploadVideoByURL 素材管理 - 上传视频永久素材
 func UploadVideoByURL(filename, videoURL, title, description string, result *ResultMaterialAdd) wx.Action {
 	return wx.NewPostAction(urls.OffiaMaterialAdd,
 		wx.WithQuery("type", string(MediaVideo)),
@@ -381,7 +375,7 @@ type ParamsNewsAdd struct {
 	Articles []*NewsArticle `json:"articles"`
 }
 
-// AddNews 新增永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
+// AddNews 素材管理 - 新增永久图文素材（公众号的素材库保存总数量有上限：图文消息素材、图片素材上限为100000，其他类型为1000）
 func AddNews(articles []*NewsArticle, result *ResultMaterialAdd) wx.Action {
 	params := &ParamsNewsAdd{
 		Articles: articles,
@@ -403,7 +397,7 @@ type ParamsNewsUpdate struct {
 	Articles *NewsArticle `json:"articles"`
 }
 
-// UpdateNews 编辑图文素材
+// UpdateNews 素材管理 - 编辑永久图文素材
 func UpdateNews(mediaID, index string, article *NewsArticle) wx.Action {
 	params := &ParamsNewsUpdate{
 		MediaID:  mediaID,
@@ -425,6 +419,7 @@ type ResultMaterialCount struct {
 	NewsCount  int `json:"news_count"`
 }
 
+// GetMaterialCount 素材管理 - 获取素材总数
 func GetMaterialCount(result *ResultMaterialCount) wx.Action {
 	return wx.NewGetAction(urls.OffiaMaterialCountGet,
 		wx.WithDecode(func(resp []byte) error {
@@ -452,6 +447,7 @@ type MaterialListItem struct {
 	URL        string `json:"url"`
 }
 
+// ListMatertial 素材管理 - 获取素材列表（其他类型：图片、语音、视频）
 func ListMatertial(mediaType MediaType, offset, count int, result *ResultMaterialList) wx.Action {
 	params := &ParamsMaterialList{
 		Type:   mediaType,
@@ -485,6 +481,7 @@ type MaterialNewsListContent struct {
 	NewsItem []*MaterialNewsItem `json:"news_item"`
 }
 
+// ListMaterialNews 素材管理 - 获取素材列表（永久图文消息）
 func ListMaterialNews(offset, count int, result *ResultMaterialNewsList) wx.Action {
 	params := &ParamsMaterialList{
 		Type:   MediaType("news"),

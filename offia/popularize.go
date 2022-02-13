@@ -37,7 +37,7 @@ type ResultQRCodeCreate struct {
 	URL           string `json:"url"`
 }
 
-// CreateQRCode 创建临时二维码（expireSeconds：二维码有效时间，最大不超过2592000秒（即30天），不填，则默认有效期为30秒。）
+// CreateQRCode 帐号管理 - 生成带参数的二维码（expireSeconds：二维码有效时间，最大不超过2592000秒（即30天），不填，则默认有效期为30秒。）
 func CreateQRCode(params *ParamsQRCodeCreate, result *ResultQRCodeCreate) wx.Action {
 	return wx.NewPostAction(urls.OffiaQRCodeCreate,
 		wx.WithBody(func() ([]byte, error) {
@@ -59,7 +59,7 @@ type ResultShortURL struct {
 	ShortURL string `json:"short_url"`
 }
 
-// ShortURL 长链接转短链接（长链接支持http://、https://、weixin://wxpay格式的url）
+// ShortURL 帐号管理 - 长链接转短链接（长链接支持http://、https://、weixin://wxpay格式的url）
 func ShortURL(longURL string, result *ResultShortURL) wx.Action {
 	params := &ParamsShortURL{
 		Action:  "long2short",

@@ -14,7 +14,284 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-func TestGetUser(t *testing.T) {
+func TestCreateTag(t *testing.T) {
+	body := []byte(`{"tag":{"name":"广东"}}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+    "tag": {
+        "id": 134,
+        "name": "广东"
+    }
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/tags/create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultTagCreate)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateTag("广东", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultTagCreate{
+		Tag: &Tag{
+			ID:   134,
+			Name: "广东",
+		},
+	}, result)
+}
+
+func TestUpdateTag(t *testing.T) {
+	body := []byte(`{"tag":{"id":134,"name":"广东人"}}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/tags/update?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UpdateTag(134, "广东人"))
+
+	assert.Nil(t, err)
+}
+
+func TestGetTags(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+    "tags": [
+        {
+            "id": 1,
+            "name": "每天一罐可乐星人",
+            "count": 0
+        },
+        {
+            "id": 2,
+            "name": "星标组",
+            "count": 0
+        },
+        {
+            "id": 127,
+            "name": "广东",
+            "count": 5
+        }
+    ]
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/tags/get?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultTagsGet)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetTags(result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultTagsGet{
+		Tags: []*Tag{
+			{
+				ID:    1,
+				Name:  "每天一罐可乐星人",
+				Count: 0,
+			},
+			{
+				ID:    2,
+				Name:  "星标组",
+				Count: 0,
+			},
+			{
+				ID:    127,
+				Name:  "广东",
+				Count: 5,
+			},
+		},
+	}, result)
+}
+
+func TestDeleteTag(t *testing.T) {
+	body := []byte(`{"tag":{"id":134}}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/tags/delete?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteTag(134))
+
+	assert.Nil(t, err)
+}
+
+func TestGetTagUsers(t *testing.T) {
+	body := []byte(`{"tagid":134,"next_openid":""}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+    "count": 2,
+    "data": {
+        "openid": [
+            "ocYxcuAEy30bX0NXmGn4ypqx3tI0",
+            "ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"
+        ]
+    },
+    "next_openid": "ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/user/tag/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultTagUsers)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetTagUsers(134, "", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultTagUsers{
+		Count: 2,
+		Data: &TagUserData{
+			OpenID: []string{"ocYxcuAEy30bX0NXmGn4ypqx3tI0", "ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"},
+		},
+		NextOpenID: "ocYxcuBt0mRugKZ7tGAHPnUaOW7Y",
+	}, result)
+}
+
+func TestBatchTagging(t *testing.T) {
+	body := []byte(`{"tagid":134,"openid_list":["ocYxcuAEy30bX0NXmGn4ypqx3tI0","ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"]}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchTagging(134, "ocYxcuAEy30bX0NXmGn4ypqx3tI0", "ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"))
+
+	assert.Nil(t, err)
+}
+
+func TestBatchUnTagging(t *testing.T) {
+	body := []byte(`{"tagid":134,"openid_list":["ocYxcuAEy30bX0NXmGn4ypqx3tI0","ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"]}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchUnTagging(134, "ocYxcuAEy30bX0NXmGn4ypqx3tI0", "ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"))
+
+	assert.Nil(t, err)
+}
+
+func TestGetUserTags(t *testing.T) {
+	body := []byte(`{"openid":"ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+    "tagid_list": [
+        134,
+        2
+    ]
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/tags/getidlist?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultUserTags)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUserTags("ocYxcuBt0mRugKZ7tGAHPnUaOW7Y", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultUserTags{
+		TagIDList: []int64{134, 2},
+	}, result)
+}
+
+func TestSetUserRemark(t *testing.T) {
+	body := []byte(`{"openid":"oDF3iY9ffA-hqb2vVvbr7qxf6A0Q","remark":"pangzi"}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetUserRemark("oDF3iY9ffA-hqb2vVvbr7qxf6A0Q", "pangzi"))
+
+	assert.Nil(t, err)
+}
+
+func TestGetUserInfo(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -50,7 +327,7 @@ func TestGetUser(t *testing.T) {
 
 	result := new(UserInfo)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUser("OPENID", "zh_CN", result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUserInfo("OPENID", "zh_CN", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &UserInfo{
@@ -74,7 +351,7 @@ func TestGetUser(t *testing.T) {
 	}, result)
 }
 
-func TestBatchGetUser(t *testing.T) {
+func TestBatchGetUserInfo(t *testing.T) {
 	body := []byte(`{"user_list":[{"openid":"otvxTs4dckWG7imySrJd6jSi0CWE","lang":"zh_CN"},{"openid":"otvxTs_JZ6SEiP0imdhpi50fuSZg","lang":"zh_CN"}]}`)
 
 	resp := &http.Response{
@@ -118,7 +395,7 @@ func TestBatchGetUser(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	users := []*ParamsUserGet{
+	users := []*ParamsUserInfo{
 		{
 			OpenID: "otvxTs4dckWG7imySrJd6jSi0CWE",
 			Lang:   "zh_CN",
@@ -129,12 +406,12 @@ func TestBatchGetUser(t *testing.T) {
 		},
 	}
 
-	result := new(ResultUserBatchGet)
+	result := new(ResultBatchUserInfo)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetUser(users, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchGetUserInfo(users, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultUserBatchGet{
+	assert.Equal(t, &ResultBatchUserInfo{
 		UserInfoList: []*UserInfo{
 			{
 				Subscribe:      1,
@@ -287,28 +564,6 @@ func TestUnBlackUsers(t *testing.T) {
 	oa.SetClient(wx.WithHTTPClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UnBlackUsers("OPENID1", "OPENID2"))
-
-	assert.Nil(t, err)
-}
-
-func TestSetUserRemark(t *testing.T) {
-	body := []byte(`{"openid":"oDF3iY9ffA-hqb2vVvbr7qxf6A0Q","remark":"pangzi"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := mock.NewMockHTTPClient(ctrl)
-
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=ACCESS_TOKEN", body).Return(resp, nil)
-
-	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetUserRemark("oDF3iY9ffA-hqb2vVvbr7qxf6A0Q", "pangzi"))
 
 	assert.Nil(t, err)
 }

@@ -31,8 +31,16 @@ const (
 	OffiaSnsUserInfo           = "https://api.weixin.qq.com/sns/userinfo"
 )
 
-// subscriber
+// user
 const (
+	OffiaTagCreate        = "https://api.weixin.qq.com/cgi-bin/tags/create"
+	OffiaTagUpdate        = "https://api.weixin.qq.com/cgi-bin/tags/update"
+	OffiaTagGet           = "https://api.weixin.qq.com/cgi-bin/tags/get"
+	OffiaTagDelete        = "https://api.weixin.qq.com/cgi-bin/tags/delete"
+	OffiaTagUserGet       = "https://api.weixin.qq.com/cgi-bin/user/tag/get"
+	OffiaBatchTagging     = "https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging"
+	OffiaBatchUnTagging   = "https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging"
+	OffiaTagGetIDList     = "https://api.weixin.qq.com/cgi-bin/tags/getidlist"
 	OffiaUserGet          = "https://api.weixin.qq.com/cgi-bin/user/info"
 	OffiaUserBatchGet     = "https://api.weixin.qq.com/cgi-bin/user/info/batchget"
 	OffiaUserList         = "https://api.weixin.qq.com/cgi-bin/user/get"

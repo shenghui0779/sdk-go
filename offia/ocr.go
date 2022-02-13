@@ -34,7 +34,7 @@ type ResultIDCardFrontOCR struct {
 	Nationality string `json:"nationality"`
 }
 
-// OCRIDCardFront 身份证前面识别
+// OCRIDCardFront 智能接口 - 身份证前面识别
 func OCRIDCardFront(mode OCRMode, imgPath string, result *ResultIDCardFrontOCR) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -63,7 +63,7 @@ func OCRIDCardFront(mode OCRMode, imgPath string, result *ResultIDCardFrontOCR) 
 	)
 }
 
-// OCRIDCardFrontByURL 身份证前面识别
+// OCRIDCardFrontByURL 智能接口 - 身份证前面识别
 func OCRIDCardFrontByURL(mode OCRMode, imgURL string, result *ResultIDCardFrontOCR) wx.Action {
 	return wx.NewPostAction(urls.OffiaOCRIDCard,
 		wx.WithQuery("type", string(mode)),
@@ -79,7 +79,7 @@ type ResultIDCardBackOCR struct {
 	ValidDate string `json:"valid_date"`
 }
 
-// OCRIDCardBack 身份证背面识别
+// OCRIDCardBack 智能接口 - 身份证背面识别
 func OCRIDCardBack(mode OCRMode, imgPath string, result *ResultIDCardBackOCR) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -108,7 +108,7 @@ func OCRIDCardBack(mode OCRMode, imgPath string, result *ResultIDCardBackOCR) wx
 	)
 }
 
-// OCRIDCardBackByURL 身份证背面识别
+// OCRIDCardBackByURL 智能接口 - 身份证背面识别
 func OCRIDCardBackByURL(mode OCRMode, imgURL string, result *ResultIDCardBackOCR) wx.Action {
 	return wx.NewPostAction(urls.OffiaOCRIDCard,
 		wx.WithQuery("type", string(mode)),
@@ -124,7 +124,7 @@ type ResultBankCardOCR struct {
 	Number string `json:"number"`
 }
 
-// OCRBankCard 银行卡识别
+// OCRBankCard 智能接口 - 银行卡识别
 func OCRBankCard(mode OCRMode, imgPath string, result *ResultBankCardOCR) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -153,7 +153,7 @@ func OCRBankCard(mode OCRMode, imgPath string, result *ResultBankCardOCR) wx.Act
 	)
 }
 
-// OCRBankCardByURL 银行卡识别
+// OCRBankCardByURL 智能接口 - 银行卡识别
 func OCRBankCardByURL(mode OCRMode, imgURL string, result *ResultBankCardOCR) wx.Action {
 	return wx.NewPostAction(urls.OffiaOCRBankCard,
 		wx.WithQuery("type", string(mode)),
@@ -169,7 +169,7 @@ type ResultPlateNumberOCR struct {
 	Number string `json:"number"`
 }
 
-// OCRPlateNumber 车牌号识别
+// OCRPlateNumber 智能接口 - 车牌号识别
 func OCRPlateNumber(mode OCRMode, imgPath string, result *ResultPlateNumberOCR) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -198,7 +198,7 @@ func OCRPlateNumber(mode OCRMode, imgPath string, result *ResultPlateNumberOCR) 
 	)
 }
 
-// OCRPlateNumberByURL 车牌号识别
+// OCRPlateNumberByURL 智能接口 - 车牌号识别
 func OCRPlateNumberByURL(mode OCRMode, imgURL string, result *ResultPlateNumberOCR) wx.Action {
 	return wx.NewPostAction(urls.OffiaOCRPlateNumber,
 		wx.WithQuery("type", string(mode)),
@@ -224,7 +224,7 @@ type ResultDriverLicenseOCR struct {
 	OfficialSeal string `json:"official_seal"` // 印章文字
 }
 
-// OCRDriverLicense 驾照识别
+// OCRDriverLicense 智能接口 - 驾照识别
 func OCRDriverLicense(mode OCRMode, imgPath string, result *ResultDriverLicenseOCR) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -253,7 +253,7 @@ func OCRDriverLicense(mode OCRMode, imgPath string, result *ResultDriverLicenseO
 	)
 }
 
-// OCRDriverLicenseByURL 驾照识别
+// OCRDriverLicenseByURL 智能接口 - 驾照识别
 func OCRDriverLicenseByURL(mode OCRMode, imgURL string, result *ResultDriverLicenseOCR) wx.Action {
 	return wx.NewPostAction(urls.OffiaOCRDriverLicense,
 		wx.WithQuery("type", string(mode)),
@@ -286,7 +286,7 @@ type ResultVehicleLicenseOCR struct {
 	CardPositionBack  OCRPosition `json:"card_position_back"`  // 卡片反面位置（检测到卡片反面才会返回）
 }
 
-// OCRVehicleLicense 行驶证识别
+// OCRVehicleLicense 智能接口 - 行驶证识别
 func OCRVehicleLicense(mode OCRMode, imgPath string, result *ResultVehicleLicenseOCR) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -315,7 +315,7 @@ func OCRVehicleLicense(mode OCRMode, imgPath string, result *ResultVehicleLicens
 	)
 }
 
-// OCRVehicleLicenseByURL 行驶证识别
+// OCRVehicleLicenseByURL 智能接口 - 行驶证识别
 func OCRVehicleLicenseByURL(mode OCRMode, imgURL string, result *ResultVehicleLicenseOCR) wx.Action {
 	return wx.NewPostAction(urls.OffiaOCRVehicleLicense,
 		wx.WithQuery("type", string(mode)),
@@ -344,7 +344,7 @@ type ResultBusinessLicenseOCR struct {
 	ImgSize             ImageSize   `json:"img_size"`             // 图片大小
 }
 
-// OCRBusinessLicense 营业执照识别
+// OCRBusinessLicense 智能接口 - 营业执照识别
 func OCRBusinessLicense(mode OCRMode, imgPath string, result *ResultBusinessLicenseOCR) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -373,7 +373,7 @@ func OCRBusinessLicense(mode OCRMode, imgPath string, result *ResultBusinessLice
 	)
 }
 
-// OCRBusinessLicenseByURL 营业执照识别
+// OCRBusinessLicenseByURL 智能接口 - 营业执照识别
 func OCRBusinessLicenseByURL(mode OCRMode, imgURL string, result *ResultBusinessLicenseOCR) wx.Action {
 	return wx.NewPostAction(urls.OffiaOCRBusinessLicense,
 		wx.WithQuery("type", string(mode)),
@@ -396,7 +396,7 @@ type ResultCommOCR struct {
 	ImgSize ImageSize      `json:"img_size"`
 }
 
-// OCRComm 通用印刷体识别
+// OCRComm 智能接口 - 通用印刷体识别
 func OCRComm(mode OCRMode, imgPath string, result *ResultCommOCR) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -425,7 +425,7 @@ func OCRComm(mode OCRMode, imgPath string, result *ResultCommOCR) wx.Action {
 	)
 }
 
-// OCRCommByURL 通用印刷体识别
+// OCRCommByURL 智能接口 - 通用印刷体识别
 func OCRCommByURL(mode OCRMode, imgURL string, result *ResultCommOCR) wx.Action {
 	return wx.NewPostAction(urls.OffiaOCRComm,
 		wx.WithQuery("type", string(mode)),

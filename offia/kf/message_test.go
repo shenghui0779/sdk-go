@@ -33,11 +33,7 @@ func TestSendTextMsg(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	text := &Text{
-		Content: "Hello World",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendTextMsg("OPENID", text, "test1@kftest"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendTextMsg("OPENID", "Hello World", "test1@kftest"))
 
 	assert.Nil(t, err)
 }
@@ -60,11 +56,7 @@ func TestSendImageMsg(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	media := &Media{
-		MediaID: "MEDIA_ID",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendImageMsg("OPENID", media, "test1@kftest"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendImageMsg("OPENID", "MEDIA_ID", "test1@kftest"))
 
 	assert.Nil(t, err)
 }
@@ -87,11 +79,7 @@ func TestSendVoiceMsg(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	media := &Media{
-		MediaID: "MEDIA_ID",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendVoiceMsg("OPENID", media, "test1@kftest"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendVoiceMsg("OPENID", "MEDIA_ID", "test1@kftest"))
 
 	assert.Nil(t, err)
 }
@@ -114,7 +102,7 @@ func TestSendVideoMsg(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	video := &Video{
+	video := &MsgVideo{
 		MediaID:      "MEDIA_ID",
 		ThumbMediaID: "THUMB_MEDIA_ID",
 		Title:        "TITLE",
@@ -144,7 +132,7 @@ func TestSendMusicMsg(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	music := &Music{
+	music := &MsgMusic{
 		Title:        "MUSIC_TITLE",
 		Description:  "MUSIC_DESCRIPTION",
 		MusicURL:     "MUSIC_URL",
@@ -175,18 +163,16 @@ func TestSendNewsMsg(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	news := &News{
-		Articles: []*Article{
-			{
-				Title:       "Happy Day",
-				Description: "Is Really A Happy Day",
-				URL:         "URL",
-				PicURL:      "PIC_URL",
-			},
+	articles := []*MsgArticle{
+		{
+			Title:       "Happy Day",
+			Description: "Is Really A Happy Day",
+			URL:         "URL",
+			PicURL:      "PIC_URL",
 		},
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendNewsMsg("OPENID", news, "test1@kftest"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendNewsMsg("OPENID", articles, "test1@kftest"))
 
 	assert.Nil(t, err)
 }
@@ -209,11 +195,7 @@ func TestSendMPNewsMsg(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	media := &Media{
-		MediaID: "MEDIA_ID",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendMPNewsMsg("OPENID", media, "test1@kftest"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendMPNewsMsg("OPENID", "MEDIA_ID", "test1@kftest"))
 
 	assert.Nil(t, err)
 }
@@ -236,7 +218,7 @@ func TestSendMenuMsg(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	menu := &Menu{
+	menu := &MsgMenu{
 		HeadContent: "您对本次服务是否满意呢? ",
 		TailContent: "欢迎再次光临",
 		List: []*MenuOption{
@@ -274,11 +256,7 @@ func TestSendCardMsg(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	card := &Card{
-		CardID: "123dsdajkasd231jhksad",
-	}
-
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendCardMsg("OPENID", card, "test1@kftest"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendWXCardMsg("OPENID", "123dsdajkasd231jhksad", "test1@kftest"))
 
 	assert.Nil(t, err)
 }
@@ -301,14 +279,14 @@ func TestSendMinipMsg(t *testing.T) {
 	oa := offia.New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	msg := &MinipPage{
+	msg := &MsgMinipPage{
 		Title:        "title",
 		AppID:        "appid",
 		Pagepath:     "pagepath",
 		ThumbMediaID: "thumb_media_id",
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendMinipMsg("OPENID", msg))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendMinipPageMsg("OPENID", msg))
 
 	assert.Nil(t, err)
 }

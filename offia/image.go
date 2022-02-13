@@ -45,7 +45,7 @@ type ResultAICrop struct {
 	ImgSize ImageSize       `json:"img_size"`
 }
 
-// AICrop 图片智能裁切
+// AICrop 智能接口 - 图片智能裁切
 func AICrop(imgPath string, result *ResultAICrop) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -73,7 +73,7 @@ func AICrop(imgPath string, result *ResultAICrop) wx.Action {
 	)
 }
 
-// AICropByURL 图片智能裁切
+// AICropByURL 智能接口 - 图片智能裁切
 func AICropByURL(imgURL string, result *ResultAICrop) wx.Action {
 	return wx.NewPostAction(urls.OffiaAICrop,
 		wx.WithQuery("img_url", imgURL),
@@ -96,7 +96,7 @@ type ResultQRCodeScan struct {
 	ImgSize     ImageSize         `json:"img_size"`
 }
 
-// ScanQRCode 条码/二维码识别
+// ScanQRCode 智能接口 - 条码/二维码识别
 func ScanQRCode(imgPath string, result *ResultQRCodeScan) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -124,7 +124,7 @@ func ScanQRCode(imgPath string, result *ResultQRCodeScan) wx.Action {
 	)
 }
 
-// ScanQRCodeByURL 条码/二维码识别
+// ScanQRCodeByURL 智能接口 - 条码/二维码识别
 func ScanQRCodeByURL(imgURL string, result *ResultQRCodeScan) wx.Action {
 	return wx.NewPostAction(urls.OffiaScanQRCode,
 		wx.WithQuery("img_url", imgURL),
@@ -139,7 +139,7 @@ type ResultSuperreSolution struct {
 	MediaID string `json:"media_id"`
 }
 
-// SuperreSolution 图片高清化
+// SuperreSolution 智能接口 - 图片高清化
 func SuperreSolution(imgPath string, result *ResultSuperreSolution) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
@@ -167,7 +167,7 @@ func SuperreSolution(imgPath string, result *ResultSuperreSolution) wx.Action {
 	)
 }
 
-// SuperreSolutionByURL 图片高清化
+// SuperreSolutionByURL 智能接口 - 图片高清化
 func SuperreSolutionByURL(imgURL string, result *ResultSuperreSolution) wx.Action {
 	return wx.NewPostAction(urls.OffiaSuperreSolution,
 		wx.WithQuery("img_url", imgURL),

@@ -32,18 +32,16 @@ func TestCreateMenu(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsMenuCreate{
-		Button: []*MenuButton{
-			ClickButton("今日歌曲", "V1001_TODAY_MUSIC"),
-			GroupButton("菜单",
-				ViewButton("搜索", "http://www.soso.com/"),
-				MinipButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"),
-				ClickButton("赞一下我们", "V1001_GOOD"),
-			),
-		},
+	buttons := []*MenuButton{
+		ClickButton("今日歌曲", "V1001_TODAY_MUSIC"),
+		GroupButton("菜单",
+			ViewButton("搜索", "http://www.soso.com/"),
+			MinipButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"),
+			ClickButton("赞一下我们", "V1001_GOOD"),
+		),
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateMenu(params))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateMenu(buttons...))
 
 	assert.Nil(t, err)
 }
@@ -66,22 +64,20 @@ func TestCreateConditionalMenu(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsConditionalMenuCreate{
-		Button: []*MenuButton{
-			ClickButton("今日歌曲", "V1001_TODAY_MUSIC"),
-			GroupButton("菜单",
-				ViewButton("搜索", "http://www.soso.com/"),
-				MinipButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"),
-				ClickButton("赞一下我们", "V1001_GOOD"),
-			),
-		},
-		MatchRule: MenuMatchRule{
-			TagID:              "2",
-			ClientPlatformType: "2",
-		},
+	rule := &MenuMatchRule{
+		TagID:              "2",
+		ClientPlatformType: "2",
+	}
+	buttons := []*MenuButton{
+		ClickButton("今日歌曲", "V1001_TODAY_MUSIC"),
+		GroupButton("菜单",
+			ViewButton("搜索", "http://www.soso.com/"),
+			MinipButton("wxa", "wx286b93c14bbf93aa", "pages/lunar/index", "http://mp.weixin.qq.com"),
+			ClickButton("赞一下我们", "V1001_GOOD"),
+		),
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateConditionalMenu(params))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateConditionalMenu(rule, buttons...))
 
 	assert.Nil(t, err)
 }
