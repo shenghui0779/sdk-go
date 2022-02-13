@@ -22,7 +22,7 @@ type ResultServiceInvoke struct {
 	Data string `json:"data"`
 }
 
-// InvokeService 调用服务平台提供的服务
+// InvokeService 服务市场 - 调用服务平台提供的服务
 func InvokeService(params *ParamsServiceInvoke, result *ResultServiceInvoke) wx.Action {
 	return wx.NewPostAction(urls.MinipInvokeService,
 		wx.WithBody(func() ([]byte, error) {
@@ -46,7 +46,7 @@ type ResultSoterVerify struct {
 	IsOK bool `json:"is_ok"`
 }
 
-// SoterVerify 生物认证秘钥签名验证
+// SoterVerify 生物认证 - 生物认证秘钥签名验证
 func SoterVerify(openID, jsonStr, jsonSign string, result *ResultSoterVerify) wx.Action {
 	params := &ParamsSoterVerify{
 		OpenID:        openID,
@@ -55,6 +55,34 @@ func SoterVerify(openID, jsonStr, jsonSign string, result *ResultSoterVerify) wx
 	}
 
 	return wx.NewPostAction(urls.MinipSoterVerify,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsShortLink struct {
+	PageURL     string `json:"page_url"`
+	PageTitle   string `json:"page_title"`
+	ISPermanent bool   `json:"is_permanent"`
+}
+
+type ResultShortLink struct {
+	Link string `json:"link"`
+}
+
+// GenerateShortLink Short Link - 获取小程序 Short Link，适用于微信内拉起小程序的业务场景。目前只开放给电商类目(具体包含以下一级类目：电商平台、商家自营、跨境电商)。
+func GenerateShortLink(pageURL, pageTitle string, isPermanent bool, result *ResultShortLink) wx.Action {
+	params := &ParamsShortLink{
+		PageURL:     pageURL,
+		PageTitle:   pageTitle,
+		ISPermanent: isPermanent,
+	}
+
+	return wx.NewPostAction(urls.MinipShortLink,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
 		}),
@@ -90,7 +118,7 @@ type ResultUserRisk struct {
 	RiskRank int `json:"risk_rank"`
 }
 
-// GetUserRiskRank 获取用户的安全等级（无需用户授权）
+// GetUserRiskRank 安全风控 - 获取用户的安全等级（无需用户授权）
 func GetUserRiskRank(params *ParamsUserRisk, result *ResultUserRisk) wx.Action {
 	return wx.NewPostAction(urls.MinipUserRiskRank,
 		wx.WithBody(func() ([]byte, error) {

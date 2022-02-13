@@ -38,7 +38,7 @@ func TestApplyPlugin(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetPluginDevApplyList(t *testing.T) {
+func TestListPluginDevApply(t *testing.T) {
 	body := []byte(`{"action":"dev_apply_list","page":1,"num":10}`)
 
 	resp := &http.Response{
@@ -74,7 +74,7 @@ func TestGetPluginDevApplyList(t *testing.T) {
 
 	result := new(ResultPluginDevApplyList)
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetPluginDevApplyList(1, 10, result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", ListPluginDevApply(1, 10, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultPluginDevApplyList{
@@ -98,7 +98,7 @@ func TestGetPluginDevApplyList(t *testing.T) {
 	}, result)
 }
 
-func TestGetPluginList(t *testing.T) {
+func TestListPlugin(t *testing.T) {
 	body := []byte(`{"action":"list"}`)
 
 	resp := &http.Response{
@@ -127,7 +127,7 @@ func TestGetPluginList(t *testing.T) {
 
 	result := new(ResultPluginList)
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetPluginList(result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", ListPlugin(result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultPluginList{

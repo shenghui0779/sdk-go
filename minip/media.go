@@ -25,8 +25,8 @@ type ResultMediaUpload struct {
 	CreatedAt int64     `json:"created_at"`
 }
 
-// UploadMedia 上传临时素材到微信服务器
-func UploadMedia(mediaType MediaType, mediaPath string, result *ResultMediaUpload) wx.Action {
+// UploadTempMedia 客服消息 - 上传临时素材到微信服务器
+func UploadTempMedia(mediaType MediaType, mediaPath string, result *ResultMediaUpload) wx.Action {
 	_, filename := filepath.Split(mediaPath)
 
 	return wx.NewPostAction(urls.MinipMediaUpload,
@@ -54,8 +54,8 @@ func UploadMedia(mediaType MediaType, mediaPath string, result *ResultMediaUploa
 	)
 }
 
-// UploadMediaByURL 上传临时素材到微信服务器
-func UploadMediaByURL(mediaType MediaType, filename, url string, result *ResultMediaUpload) wx.Action {
+// UploadTempMediaByURL 客服消息 - 上传临时素材到微信服务器
+func UploadTempMediaByURL(mediaType MediaType, filename, url string, result *ResultMediaUpload) wx.Action {
 	return wx.NewPostAction(urls.MinipMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (yiigo.UploadForm, error) {
@@ -88,8 +88,8 @@ type Media struct {
 	Buffer []byte
 }
 
-// GetMedia 获取客服消息内的临时素材
-func GetMedia(mediaID string, media *Media) wx.Action {
+// GetTempMedia 客服消息 - 获取客服消息内的临时素材
+func GetTempMedia(mediaID string, media *Media) wx.Action {
 	return wx.NewGetAction(urls.MinipMediaGet,
 		wx.WithQuery("media_id", mediaID),
 		wx.WithDecode(func(resp []byte) error {

@@ -90,6 +90,37 @@ func TestSoterVerify(t *testing.T) {
 	}, result)
 }
 
+func TestGenerateShortLink(t *testing.T) {
+	body := []byte(`{"page_url":"/pages/publishHomework/publishHomework?query1=q1","page_title":"Homework title","is_permanent":false}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+    "errcode": 0,
+    "errmsg": "ok",
+    "link": "Short Link"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/genwxashortlink?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultShortLink)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GenerateShortLink("/pages/publishHomework/publishHomework?query1=q1", "Homework title", false, result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultShortLink{
+		Link: "Short Link",
+	}, result)
+}
+
 func TestGetUserRiskRank(t *testing.T) {
 	body := []byte(`{"appid":"APPID","openid":"OPENID","scene":1,"mobile_no":"12345678","client_ip":"******","email_address":"****@qq.com"}`)
 

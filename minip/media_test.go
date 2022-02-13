@@ -39,7 +39,7 @@ func TestUploadMedia(t *testing.T) {
 
 	result := new(ResultMediaUpload)
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", UploadMedia(MediaImage, "../mock/test.jpg", result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", UploadTempMedia(MediaImage, "../mock/test.jpg", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMediaUpload{
@@ -73,7 +73,7 @@ func TestUploadMediaByURL(t *testing.T) {
 
 	result := new(ResultMediaUpload)
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", UploadMediaByURL(MediaImage, "test.png", "https://golang.google.cn/doc/gopher/pkg.png", result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", UploadTempMediaByURL(MediaImage, "test.png", "https://golang.google.cn/doc/gopher/pkg.png", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMediaUpload{
@@ -101,7 +101,7 @@ func TestGetMedia(t *testing.T) {
 
 	result := new(Media)
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetMedia("MEDIA_ID", result))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetTempMedia("MEDIA_ID", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "BUFFER", string(result.Buffer))

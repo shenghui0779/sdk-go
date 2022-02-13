@@ -32,42 +32,39 @@ func TestSendUniformMessage(t *testing.T) {
 	mp := New("APPID", "APPSECRET")
 	mp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsUniformMsg{
-		ToUser: "OPENID",
-		MPTemplateMsg: &TemplateMsg{
-			AppID:      "APPID",
-			TemplateID: "TEMPLATE_ID",
-			URL:        "http://weixin.qq.com/download",
-			Minip: &MsgMinip{
-				AppID:    "xiaochengxuappid12345",
-				Pagepath: "index?foo=bar",
+	msg := &TemplateMsg{
+		AppID:      "APPID",
+		TemplateID: "TEMPLATE_ID",
+		URL:        "http://weixin.qq.com/download",
+		Minip: &MsgMinip{
+			AppID:    "xiaochengxuappid12345",
+			Pagepath: "index?foo=bar",
+		},
+		Data: MsgTemplData{
+			"first": {
+				Value: "恭喜你购买成功！",
+				Color: "#173177",
 			},
-			Data: MsgTemplData{
-				"first": {
-					Value: "恭喜你购买成功！",
-					Color: "#173177",
-				},
-				"keyword1": {
-					Value: "巧克力",
-					Color: "#173177",
-				},
-				"keyword2": {
-					Value: "39.8元",
-					Color: "#173177",
-				},
-				"keyword3": {
-					Value: "2014年9月22日",
-					Color: "#173177",
-				},
-				"remark": {
-					Value: "欢迎再次购买！",
-					Color: "#173177",
-				},
+			"keyword1": {
+				Value: "巧克力",
+				Color: "#173177",
+			},
+			"keyword2": {
+				Value: "39.8元",
+				Color: "#173177",
+			},
+			"keyword3": {
+				Value: "2014年9月22日",
+				Color: "#173177",
+			},
+			"remark": {
+				Value: "欢迎再次购买！",
+				Color: "#173177",
 			},
 		},
 	}
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendUniformMsg(params))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendUniformMsg("OPENID", msg))
 
 	assert.Nil(t, err)
 }
@@ -135,7 +132,7 @@ func TestSendKFTextMessage(t *testing.T) {
 	mp := New("APPID", "APPSECRET")
 	mp.SetClient(wx.WithHTTPClient(client))
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFTextMsg("OPENID", &KFText{Content: "Hello World"}))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFTextMsg("OPENID", "Hello World"))
 
 	assert.Nil(t, err)
 }
@@ -158,7 +155,7 @@ func TestSendKFImageMessage(t *testing.T) {
 	mp := New("APPID", "APPSECRET")
 	mp.SetClient(wx.WithHTTPClient(client))
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFImageMsg("OPENID", &KFMedia{MediaID: "MEDIA_ID"}))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFImageMsg("OPENID", "MEDIA_ID"))
 
 	assert.Nil(t, err)
 }

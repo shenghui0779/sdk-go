@@ -34,6 +34,12 @@ type AuthInfo interface {
 	AppID() string
 }
 
+// WaterMark 水印
+type WaterMark struct {
+	Timestamp int64  `json:"timestamp"`
+	AppID     string `json:"appid"`
+}
+
 // UserInfo 用户信息
 type UserInfo struct {
 	OpenID    string    `json:"openId"`
@@ -64,10 +70,29 @@ func (p *PhoneInfo) AppID() string {
 	return p.WaterMark.AppID
 }
 
-// WaterMark 水印
-type WaterMark struct {
-	Timestamp int64  `json:"timestamp"`
-	AppID     string `json:"appid"`
+type ParamsEncryptedDataCheck struct {
+	EncryptedMsgHash string `json:"encrypted_msg_hash"` // 加密数据的sha256，通过Hex（Base16）编码后的字符串
+}
+
+type ResultEncryptedDataCheck struct {
+	Valid      bool  `json:"valid"`       // 是否是合法的数据
+	CreateTime int64 `json:"create_time"` // 加密数据生成的时间戳
+}
+
+// CheckEncryptedData 用户信息 - 检查加密信息是否由微信生成（当前只支持手机号加密数据），只能检测最近3天生成的加密数据
+func CheckEncryptedData(encryptedHash string, result *ResultEncryptedDataCheck) wx.Action {
+	params := &ParamsEncryptedDataCheck{
+		EncryptedMsgHash: encryptedHash,
+	}
+
+	return wx.NewPostAction(urls.MinipEncryptedDataCheck,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
 }
 
 // ResultPaidUnionID 支付用户unionid
@@ -75,7 +100,7 @@ type ResultPaidUnionID struct {
 	UnionID string `json:"unionid"`
 }
 
-// GetPaidUnionIDByTransactionID 用户支付完成后，获取该用户的 UnionId，无需用户授权
+// GetPaidUnionIDByTransactionID 用户信息 - 用户支付完成后，获取该用户的 UnionId，无需用户授权
 func GetPaidUnionIDByTransactionID(openid, transactionID string, result *ResultPaidUnionID) wx.Action {
 	return wx.NewGetAction(urls.MinipPaidUnion,
 		wx.WithQuery("openid", openid),
@@ -86,7 +111,7 @@ func GetPaidUnionIDByTransactionID(openid, transactionID string, result *ResultP
 	)
 }
 
-// GetPaidUnionIDByOutTradeNO 用户支付完成后，获取该用户的 UnionId，无需用户授权
+// GetPaidUnionIDByOutTradeNO 用户信息 - 用户支付完成后，获取该用户的 UnionId，无需用户授权
 func GetPaidUnionIDByOutTradeNO(openid, mchid, outTradeNO string, result *ResultPaidUnionID) wx.Action {
 	return wx.NewGetAction(urls.MinipPaidUnion,
 		wx.WithQuery("openid", openid),

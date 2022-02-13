@@ -66,8 +66,8 @@ type ResultPluginDevApplyList struct {
 	ApplyList []*PluginDevApplyInfo `json:"apply_list"`
 }
 
-// GetPluginDevApplyList 获取当前所有插件使用方（供插件开发者调用）
-func GetPluginDevApplyList(page, num int, result *ResultPluginDevApplyList) wx.Action {
+// ListPluginDevApply 获取当前所有插件使用方（供插件开发者调用）
+func ListPluginDevApply(page, num int, result *ResultPluginDevApplyList) wx.Action {
 	params := &ParamsPluginDevApplyList{
 		Action: PluginDevApplyList,
 		Page:   page,
@@ -100,8 +100,8 @@ type ResultPluginList struct {
 	PluginList []*PluginInfo `json:"plugin_list"`
 }
 
-// GetPluginList 查询已添加的插件
-func GetPluginList(result *ResultPluginList) wx.Action {
+// ListPlugin 查询已添加的插件
+func ListPlugin(result *ResultPluginList) wx.Action {
 	params := &ParamsPluginList{Action: PluginList}
 
 	return wx.NewPostAction(urls.MinipPluginManage,
