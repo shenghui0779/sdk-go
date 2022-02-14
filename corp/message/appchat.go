@@ -3,6 +3,7 @@ package message
 import (
 	"encoding/json"
 
+	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -65,25 +66,157 @@ func GetAppchat(chatID string, result *ResultAppchatGet) wx.Action {
 	)
 }
 
-type ParamsAppchatSend struct {
-	ChatID   string           `json:"chatid"`
-	MsgType  string           `json:"msgtype"`
-	Text     *TextMessage     `json:"text,omitempty"`
-	Image    *ImageMessage    `json:"image,omitempty"`
-	Voice    *VoiceMessage    `json:"voice,omitempty"`
-	Video    *VideoMessage    `json:"video,omitempty"`
-	File     *FileMessage     `json:"file,omitempty"`
-	TextCard *TextCardMessage `json:"textcard,omitempty"`
-	News     *NewsMessage     `json:"news,omitempty"`
-	MPNews   *MPNewsMessage   `json:"mpnews,omitempty"`
-	Markdown *MarkdownMessage `json:"markdown,omitempty"`
-	Safe     int              `json:"safe"`
+type AppchatMsg struct {
+	ChatID   string        `json:"chatid"`
+	MsgType  event.MsgType `json:"msgtype"`
+	Text     *Text         `json:"text,omitempty"`
+	Image    *Media        `json:"image,omitempty"`
+	Voice    *Media        `json:"voice,omitempty"`
+	Video    *Video        `json:"video,omitempty"`
+	File     *Media        `json:"file,omitempty"`
+	TextCard *TextCard     `json:"textcard,omitempty"`
+	News     *News         `json:"news,omitempty"`
+	MPNews   *MPNews       `json:"mpnews,omitempty"`
+	Markdown *Text         `json:"markdown,omitempty"`
+	Safe     int           `json:"safe"`
 }
 
-func SendAppchat(params *ParamsAppchatSend) wx.Action {
+func SendAppchatText(chatID string, content string, safe int) wx.Action {
+	msg := &AppchatMsg{
+		ChatID:  chatID,
+		MsgType: event.MsgText,
+		Text: &Text{
+			Content: content,
+		},
+		Safe: safe,
+	}
 	return wx.NewPostAction(urls.CorpAppchatSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return json.Marshal(msg)
+		}),
+	)
+}
+
+func SendAppchatImage(chatID string, mediaID string, safe int) wx.Action {
+	msg := &AppchatMsg{
+		ChatID:  chatID,
+		MsgType: event.MsgImage,
+		Image: &Media{
+			MediaID: mediaID,
+		},
+		Safe: safe,
+	}
+	return wx.NewPostAction(urls.CorpAppchatSend,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(msg)
+		}),
+	)
+}
+
+func SendAppchatVoice(chatID string, mediaID string, safe int) wx.Action {
+	msg := &AppchatMsg{
+		ChatID:  chatID,
+		MsgType: event.MsgVoice,
+		Voice: &Media{
+			MediaID: mediaID,
+		},
+		Safe: safe,
+	}
+	return wx.NewPostAction(urls.CorpAppchatSend,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(msg)
+		}),
+	)
+}
+
+func SendAppchatVideo(chatID string, video *Video, safe int) wx.Action {
+	msg := &AppchatMsg{
+		ChatID:  chatID,
+		MsgType: event.MsgVideo,
+		Video:   video,
+		Safe:    safe,
+	}
+	return wx.NewPostAction(urls.CorpAppchatSend,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(msg)
+		}),
+	)
+}
+
+func SendAppchatFile(chatID string, mediaID string, safe int) wx.Action {
+	msg := &AppchatMsg{
+		ChatID:  chatID,
+		MsgType: event.MsgFile,
+		File: &Media{
+			MediaID: mediaID,
+		},
+		Safe: safe,
+	}
+	return wx.NewPostAction(urls.CorpAppchatSend,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(msg)
+		}),
+	)
+}
+
+func SendAppchatTextCard(chatID string, card *TextCard, safe int) wx.Action {
+	msg := &AppchatMsg{
+		ChatID:   chatID,
+		MsgType:  event.MsgTextCard,
+		TextCard: card,
+		Safe:     safe,
+	}
+	return wx.NewPostAction(urls.CorpAppchatSend,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(msg)
+		}),
+	)
+}
+
+func SendAppchatNews(chatID string, articles []*NewsArticle, safe int) wx.Action {
+	msg := &AppchatMsg{
+		ChatID:  chatID,
+		MsgType: event.MsgNews,
+		News: &News{
+			Articles: articles,
+		},
+		Safe: safe,
+	}
+	return wx.NewPostAction(urls.CorpAppchatSend,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(msg)
+		}),
+	)
+}
+
+func SendAppchatMPNews(chatID string, articles []*MPNewsArticle, safe int) wx.Action {
+	msg := &AppchatMsg{
+		ChatID:  chatID,
+		MsgType: event.MsgMPNews,
+		MPNews: &MPNews{
+			Articles: articles,
+		},
+		Safe: safe,
+	}
+	return wx.NewPostAction(urls.CorpAppchatSend,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(msg)
+		}),
+	)
+}
+
+func SendAppchatMarkdown(chatID string, content string, safe int) wx.Action {
+	msg := &AppchatMsg{
+		ChatID:  chatID,
+		MsgType: event.MsgMarkdown,
+		Markdown: &Text{
+			Content: content,
+		},
+		Safe: safe,
+	}
+	return wx.NewPostAction(urls.CorpAppchatSend,
+		wx.WithBody(func() ([]byte, error) {
+			return json.Marshal(msg)
 		}),
 	)
 }

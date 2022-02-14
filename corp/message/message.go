@@ -7,36 +7,28 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type TextMessage struct {
+type Text struct {
 	Content string `json:"content"`
 }
 
-type ImageMessage struct {
+type Media struct {
 	MediaID string `json:"media_id"`
 }
 
-type VoiceMessage struct {
-	MediaID string `json:"media_id"`
-}
-
-type VideoMessage struct {
+type Video struct {
 	MediaID     string `json:"media_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
-type FileMessage struct {
-	MediaID string `json:"media_id"`
-}
-
-type TextCardMessage struct {
+type TextCard struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	URL         string `json:"url"`
 	BtnTxt      string `json:"btntxt"`
 }
 
-type NewsMessage struct {
+type News struct {
 	Articles []*NewsArticle `json:"articles"`
 }
 
@@ -49,7 +41,7 @@ type NewsArticle struct {
 	PagePath    string `json:"pagepath"`
 }
 
-type MPNewsMessage struct {
+type MPNews struct {
 	Articles []*MPNewsArticle `json:"articles"`
 }
 
@@ -62,34 +54,39 @@ type MPNewsArticle struct {
 	Digest           string `json:"digest"`
 }
 
-type MarkdownMessage struct {
-	Content string `json:"content"`
+type MinipNotice struct {
+	AppID             string   `json:"appid"`
+	Page              string   `json:"page"`
+	Title             string   `json:"title"`
+	Description       string   `json:"description"`
+	EmphasisFirstItem bool     `json:"emphasis_first_item"`
+	ContentItem       []*MsgKV `json:"content_item"`
 }
 
-type MinipNoticeMessage struct {
-	AppID             string            `json:"appid"`
-	Page              string            `json:"page"`
-	Title             string            `json:"title"`
-	Description       string            `json:"description"`
-	EmphasisFirstItem bool              `json:"emphasis_first_item"`
-	ContentItem       map[string]string `json:"content_item"`
+type MsgKV struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
-type ParamsMessageStatics struct {
+type ParamsMsgStatics struct {
 	TimeType int `json:"time_type"`
 }
 
-type ResultMessageStatics struct {
-	Statics *MessageStatic `json:"statics"`
+type ResultMsgStatics struct {
+	Statics *MsgStatic `json:"statics"`
 }
 
-type MessageStatic struct {
+type MsgStatic struct {
 	AgentID int64  `json:"agentid"`
 	AppName string `json:"app_name"`
 	Count   int64  `json:"count"`
 }
 
-func GetMessageStatics(params *ParamsMessageStatics, result *ResultMessageStatics) wx.Action {
+func GetMessageStatics(timeType int, result *ResultMsgStatics) wx.Action {
+	params := &ParamsMsgStatics{
+		TimeType: timeType,
+	}
+
 	return wx.NewPostAction(urls.CorpMessageStaticsGet,
 		wx.WithBody(func() ([]byte, error) {
 			return json.Marshal(params)
