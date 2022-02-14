@@ -113,7 +113,7 @@ type KFMinipPage struct {
 	ThumbMediaID string `json:"thumb_media_id"` // 小程序消息卡片的封面， image 类型的 media_id，通过 新增素材接口 上传图片文件获得，建议大小为 520*416
 }
 
-type ParamsKFMsg struct {
+type KFMsg struct {
 	ToUser    string        `json:"touser"`
 	MsgType   event.MsgType `json:"msgtype"`
 	Text      *KFText       `json:"text,omitempty"`
@@ -124,7 +124,7 @@ type ParamsKFMsg struct {
 
 // SendKFTextMsg 客服消息 - 发送客服文本消息（支持插入跳小程序的文字链）
 func SendKFTextMsg(openid, content string) wx.Action {
-	params := &ParamsKFMsg{
+	msg := &KFMsg{
 		ToUser:  openid,
 		MsgType: event.MsgText,
 		Text: &KFText{
@@ -134,14 +134,14 @@ func SendKFTextMsg(openid, content string) wx.Action {
 
 	return wx.NewPostAction(urls.MinipKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return json.Marshal(msg)
 		}),
 	)
 }
 
 // SendKFImageMsg 客服消息 - 发送客服图片消息（媒体ID，通过素材接口上传获得）
 func SendKFImageMsg(openid, mediaID string) wx.Action {
-	params := &ParamsKFMsg{
+	msg := &KFMsg{
 		ToUser:  openid,
 		MsgType: event.MsgImage,
 		Image: &KFMedia{
@@ -151,14 +151,14 @@ func SendKFImageMsg(openid, mediaID string) wx.Action {
 
 	return wx.NewPostAction(urls.MinipKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return json.Marshal(msg)
 		}),
 	)
 }
 
 // SendKFLinkMsg 客服消息 - 发送客服图文链接消息
 func SendKFLinkMsg(openid string, link *KFLink) wx.Action {
-	params := &ParamsKFMsg{
+	msg := &KFMsg{
 		ToUser:  openid,
 		MsgType: event.MsgLink,
 		Link:    link,
@@ -166,14 +166,14 @@ func SendKFLinkMsg(openid string, link *KFLink) wx.Action {
 
 	return wx.NewPostAction(urls.MinipKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return json.Marshal(msg)
 		}),
 	)
 }
 
 // SendKFMinipMsg 客服消息 - 发送客服小程序卡片消息
 func SendKFMinipMsg(openid string, minipPage *KFMinipPage) wx.Action {
-	params := &ParamsKFMsg{
+	msg := &KFMsg{
 		ToUser:    openid,
 		MsgType:   event.MsgMinipPage,
 		MinipPage: minipPage,
@@ -181,26 +181,26 @@ func SendKFMinipMsg(openid string, minipPage *KFMinipPage) wx.Action {
 
 	return wx.NewPostAction(urls.MinipKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return json.Marshal(msg)
 		}),
 	)
 }
 
-type ParamsKFTyping struct {
+type KFTyping struct {
 	ToUser  string    `json:"touser"`
 	Command TypingCmd `json:"command"`
 }
 
 // SendKFTyping 客服消息 - 下发当前输入状态（仅支持客服消息）
 func SendKFTyping(openid string, cmd TypingCmd) wx.Action {
-	params := &ParamsKFTyping{
+	typing := &KFTyping{
 		ToUser:  openid,
 		Command: cmd,
 	}
 
 	return wx.NewPostAction(urls.MinipKFTypingSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return json.Marshal(typing)
 		}),
 	)
 }
