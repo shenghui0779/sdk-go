@@ -87,7 +87,7 @@ func TestSendSubscribeMessage(t *testing.T) {
 	mp := New("APPID", "APPSECRET")
 	mp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsSubscribeMsg{
+	msg := &SubscribeMsg{
 		ToUser:     "OPENID",
 		TemplateID: "TEMPLATE_ID",
 		Page:       "index",
@@ -109,7 +109,7 @@ func TestSendSubscribeMessage(t *testing.T) {
 		},
 	}
 
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMsg(params))
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeMsg(msg))
 
 	assert.Nil(t, err)
 }
