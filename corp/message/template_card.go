@@ -11,8 +11,25 @@ const (
 )
 
 type TemplateCard struct {
-	CardType CardType
-	Source   *CardSource
+	CardType              CardType             `json:"card_type"`
+	Source                *CardSource          `json:"source"`
+	ActionMenu            *ActionMenu          `json:"action_menu,omitempty"`
+	MainTitle             *MainTitle           `json:"main_title"`
+	QuoteArea             *QuoteArea           `json:"quote_area,omitempty"`
+	EmphasisContent       *EmphasisContent     `json:"emphasis_content,omitempty"`
+	SubTitleText          string               `json:"sub_title_text,omitempty"`
+	ImageTextArea         *ImageTextArea       `json:"image_text_area,omitempty"`
+	CardImage             *CardImage           `json:"card_image,omitempty"`
+	VerticalContentList   []*VerticalContent   `json:"vertical_content_list,omitempty"`
+	HorizontalContentList []*HorizontalContent `json:"horizontal_content_list,omitempty"`
+	JumpList              []*CardJump          `json:"jump_list,omitempty"`
+	CardAction            *CardAction          `json:"card_action,omitempty"`
+	ButtonSelection       *ButtonSelection     `json:"button_selection,omitempty"`
+	SelectList            []*ButtonSelection   `json:"select_list,omitempty"`
+	ButtonList            []*CardButton        `json:"button_list,omitempty"`
+	CheckBox              *CheckBox            `json:"check_box,omitempty"`
+	SubmitButton          *SubmitButton        `json:"submit_button,omitempty"`
+	ReplaceText           string               `json:"replace_text,omitempty"`
 }
 
 type CardSource struct {
@@ -123,4 +140,109 @@ type CardButton struct {
 	Text  string `json:"text"`
 	Style int    `json:"style"`
 	Key   string `json:"key"`
+}
+
+type TextNoticeCard struct {
+	Source                *CardSource
+	ActionMenu            *ActionMenu
+	MainTitle             *MainTitle
+	QuoteArea             *QuoteArea
+	EmphasisContent       *EmphasisContent
+	SubTitleText          string
+	ImageTextArea         *ImageTextArea
+	CardImage             *CardImage
+	VerticalContentList   []*VerticalContent
+	HorizontalContentList []*HorizontalContent
+	JumpList              []*CardJump
+	CardAction            *CardAction
+	ButtonSelection       *ButtonSelection
+	SelectList            []*ButtonSelection
+	ButtonList            []*CardButton
+	CheckBox              *CheckBox
+	SubmitButton          *SubmitButton
+	ReplaceText           string
+}
+
+type TemplateCard struct {
+	Source                *CardSource          `json:"source"`
+	ActionMenu            *ActionMenu          `json:"action_menu,omitempty"`
+	MainTitle             *MainTitle           `json:"main_title"`
+	QuoteArea             *QuoteArea           `json:"quote_area,omitempty"`
+	EmphasisContent       *EmphasisContent     `json:"emphasis_content,omitempty"`
+	SubTitleText          string               `json:"sub_title_text,omitempty"`
+	ImageTextArea         *ImageTextArea       `json:"image_text_area,omitempty"`
+	CardImage             *CardImage           `json:"card_image,omitempty"`
+	VerticalContentList   []*VerticalContent   `json:"vertical_content_list,omitempty"`
+	HorizontalContentList []*HorizontalContent `json:"horizontal_content_list,omitempty"`
+	JumpList              []*CardJump          `json:"jump_list,omitempty"`
+	CardAction            *CardAction          `json:"card_action,omitempty"`
+	ButtonSelection       *ButtonSelection     `json:"button_selection,omitempty"`
+	SelectList            []*ButtonSelection   `json:"select_list,omitempty"`
+	ButtonList            []*CardButton        `json:"button_list,omitempty"`
+	CheckBox              *CheckBox            `json:"check_box,omitempty"`
+	SubmitButton          *SubmitButton        `json:"submit_button,omitempty"`
+	ReplaceText           string               `json:"replace_text,omitempty"`
+}
+
+type TemplateCard struct {
+	Source                *CardSource          `json:"source"`
+	ActionMenu            *ActionMenu          `json:"action_menu,omitempty"`
+	MainTitle             *MainTitle           `json:"main_title"`
+	QuoteArea             *QuoteArea           `json:"quote_area,omitempty"`
+	EmphasisContent       *EmphasisContent     `json:"emphasis_content,omitempty"`
+	SubTitleText          string               `json:"sub_title_text,omitempty"`
+	ImageTextArea         *ImageTextArea       `json:"image_text_area,omitempty"`
+	CardImage             *CardImage           `json:"card_image,omitempty"`
+	VerticalContentList   []*VerticalContent   `json:"vertical_content_list,omitempty"`
+	HorizontalContentList []*HorizontalContent `json:"horizontal_content_list,omitempty"`
+	JumpList              []*CardJump          `json:"jump_list,omitempty"`
+	CardAction            *CardAction          `json:"card_action,omitempty"`
+	ButtonSelection       *ButtonSelection     `json:"button_selection,omitempty"`
+	SelectList            []*ButtonSelection   `json:"select_list,omitempty"`
+	ButtonList            []*CardButton        `json:"button_list,omitempty"`
+	CheckBox              *CheckBox            `json:"check_box,omitempty"`
+	SubmitButton          *SubmitButton        `json:"submit_button,omitempty"`
+	ReplaceText           string               `json:"replace_text,omitempty"`
+}
+
+type TemplateCard struct {
+	Source                *CardSource          `json:"source"`
+	ActionMenu            *ActionMenu          `json:"action_menu,omitempty"`
+	MainTitle             *MainTitle           `json:"main_title"`
+	QuoteArea             *QuoteArea           `json:"quote_area,omitempty"`
+	EmphasisContent       *EmphasisContent     `json:"emphasis_content,omitempty"`
+	SubTitleText          string               `json:"sub_title_text,omitempty"`
+	ImageTextArea         *ImageTextArea       `json:"image_text_area,omitempty"`
+	CardImage             *CardImage           `json:"card_image,omitempty"`
+	VerticalContentList   []*VerticalContent   `json:"vertical_content_list,omitempty"`
+	HorizontalContentList []*HorizontalContent `json:"horizontal_content_list,omitempty"`
+	JumpList              []*CardJump          `json:"jump_list,omitempty"`
+	CardAction            *CardAction          `json:"card_action,omitempty"`
+	ButtonSelection       *ButtonSelection     `json:"button_selection,omitempty"`
+	SelectList            []*ButtonSelection   `json:"select_list,omitempty"`
+	ButtonList            []*CardButton        `json:"button_list,omitempty"`
+	CheckBox              *CheckBox            `json:"check_box,omitempty"`
+	SubmitButton          *SubmitButton        `json:"submit_button,omitempty"`
+	ReplaceText           string               `json:"replace_text,omitempty"`
+}
+
+type TemplateCard struct {
+	Source                *CardSource          `json:"source"`
+	ActionMenu            *ActionMenu          `json:"action_menu,omitempty"`
+	MainTitle             *MainTitle           `json:"main_title"`
+	QuoteArea             *QuoteArea           `json:"quote_area,omitempty"`
+	EmphasisContent       *EmphasisContent     `json:"emphasis_content,omitempty"`
+	SubTitleText          string               `json:"sub_title_text,omitempty"`
+	ImageTextArea         *ImageTextArea       `json:"image_text_area,omitempty"`
+	CardImage             *CardImage           `json:"card_image,omitempty"`
+	VerticalContentList   []*VerticalContent   `json:"vertical_content_list,omitempty"`
+	HorizontalContentList []*HorizontalContent `json:"horizontal_content_list,omitempty"`
+	JumpList              []*CardJump          `json:"jump_list,omitempty"`
+	CardAction            *CardAction          `json:"card_action,omitempty"`
+	ButtonSelection       *ButtonSelection     `json:"button_selection,omitempty"`
+	SelectList            []*ButtonSelection   `json:"select_list,omitempty"`
+	ButtonList            []*CardButton        `json:"button_list,omitempty"`
+	CheckBox              *CheckBox            `json:"check_box,omitempty"`
+	SubmitButton          *SubmitButton        `json:"submit_button,omitempty"`
+	ReplaceText           string               `json:"replace_text,omitempty"`
 }
