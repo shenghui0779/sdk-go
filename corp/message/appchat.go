@@ -9,8 +9,8 @@ import (
 )
 
 type ParamsAppchatCreate struct {
-	Name     string   `json:"name"`
-	Owner    string   `json:"owner"`
+	Name     string   `json:"name,omitempty"`
+	Owner    string   `json:"owner,omitempty"`
 	UserList []string `json:"userlist"`
 	ChatID   string   `json:"chatid,omitempty"`
 }

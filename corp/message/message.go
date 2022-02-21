@@ -18,15 +18,15 @@ type Media struct {
 
 type Video struct {
 	MediaID     string `json:"media_id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 type TextCard struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	URL         string `json:"url"`
-	BtnTxt      string `json:"btntxt"`
+	BtnTxt      string `json:"btntxt,omitempty"`
 }
 
 type News struct {
@@ -35,11 +35,12 @@ type News struct {
 
 type NewsArticle struct {
 	Title       string `json:"title"`
-	Description string `json:"description"`
-	URL         string `json:"url"`
-	PicURL      string `json:"picurl"`
-	AppID       string `json:"appid"`
-	PagePath    string `json:"pagepath"`
+	Description string `json:"description,omitempty"`
+	URL         string `json:"url,omitempty"`
+	PicURL      string `json:"picurl,omitempty"`
+	AppID       string `json:"appid,omitempty"`
+	Pagepath    string `json:"pagepath,omitempty"`
+	BtnTxt      string `json:"btntxt,omitempty"`
 }
 
 type MPNews struct {
@@ -49,18 +50,25 @@ type MPNews struct {
 type MPNewsArticle struct {
 	Title            string `json:"title"`
 	ThumbMediaID     string `json:"thumb_media_id"`
-	Author           string `json:"author"`
-	ContentSourceURL string `json:"content_source_url"`
+	Author           string `json:"author,omitempty"`
+	ContentSourceURL string `json:"content_source_url,omitempty"`
 	Content          string `json:"content"`
-	Digest           string `json:"digest"`
+	Digest           string `json:"digest,omitempty"`
+}
+
+type Miniprogram struct {
+	AppID        string `json:"appid"`
+	Title        string `json:"title,omitempty"`
+	ThumbMediaID string `json:"thumb_media_id"`
+	Pagepath     string `json:"pagepath"`
 }
 
 type MinipNotice struct {
 	AppID             string   `json:"appid"`
-	Page              string   `json:"page"`
+	Page              string   `json:"page,omitempty"`
 	Title             string   `json:"title"`
-	Description       string   `json:"description"`
-	EmphasisFirstItem bool     `json:"emphasis_first_item"`
+	Description       string   `json:"description,omitempty"`
+	EmphasisFirstItem bool     `json:"emphasis_first_item,omitempty"`
 	ContentItem       []*MsgKV `json:"content_item"`
 }
 

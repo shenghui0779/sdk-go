@@ -270,13 +270,11 @@ func SendLinkedcorpMarkdown(agentID int64, content string, extra *LinkedcorpExtr
 	)
 }
 
-func SendLinkedcorpMinipNotice(agentID int64, content string, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
+func SendLinkedcorpMinipNotice(agentID int64, notice *MinipNotice, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
 	msg := &LinkedcorpMsg{
-		AgentID: agentID,
-		MsgType: event.MsgMinipNotice,
-		Text: &Text{
-			Content: content,
-		},
+		AgentID:     agentID,
+		MsgType:     event.MsgMinipNotice,
+		MinipNotice: notice,
 	}
 
 	if extra != nil {

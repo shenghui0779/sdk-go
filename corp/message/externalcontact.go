@@ -35,8 +35,7 @@ type ExternalContactMsg struct {
 	TextCard               *TextCard     `json:"textcard,omitempty"`
 	News                   *News         `json:"news,omitempty"`
 	MPNews                 *MPNews       `json:"mpnews,omitempty"`
-	Markdown               *Text         `json:"markdown,omitempty"`
-	MinipNotice            *MinipNotice  `json:"miniprogram_notice,omitempty"`
+	Miniprogram            *Miniprogram  `json:"miniprogram,omitempty"`
 	EnableIDTrans          int           `json:"enable_id_trans,omitempty"`
 	EnableDuplicateCheck   int           `json:"enable_duplicate_check,omitempty"`
 	DuplicateCheckInterval int           `json:"duplicate_check_interval,omitempty"`
@@ -197,34 +196,6 @@ func SendExternalContactFile(agentID int64, mediaID string, extra *ExternalConta
 	)
 }
 
-func SendExternalContactTextCard(agentID int64, card *TextCard, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
-	msg := &ExternalContactMsg{
-		AgentID:  agentID,
-		MsgType:  event.MsgTextCard,
-		TextCard: card,
-	}
-
-	if extra != nil {
-		msg.ToExternalUser = extra.ToExternalUser
-		msg.ToParentUserID = extra.ToParentUserID
-		msg.ToStudentUserID = extra.ToStudentUserID
-		msg.ToParty = extra.ToParty
-		msg.ToAll = extra.ToAll
-		msg.EnableIDTrans = extra.EnableIDTrans
-		msg.EnableDuplicateCheck = extra.EnableDuplicateCheck
-		msg.DuplicateCheckInterval = extra.DuplicateCheckInterval
-	}
-
-	return wx.NewPostAction(urls.CorpExternalContactMessageSend,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
-		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
-		}),
-	)
-}
-
 func SendExternalContactNews(agentID int64, articles []*NewsArticle, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
 		AgentID: agentID,
@@ -285,41 +256,11 @@ func SendExternalContactMPNews(agentID int64, articles []*MPNewsArticle, extra *
 	)
 }
 
-func SendExternalContactMarkdown(agentID int64, content string, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
-	msg := &ExternalContactMsg{
-		AgentID: agentID,
-		MsgType: event.MsgMarkdown,
-		Markdown: &Text{
-			Content: content,
-		},
-	}
-
-	if extra != nil {
-		msg.ToExternalUser = extra.ToExternalUser
-		msg.ToParentUserID = extra.ToParentUserID
-		msg.ToStudentUserID = extra.ToStudentUserID
-		msg.ToParty = extra.ToParty
-		msg.ToAll = extra.ToAll
-		msg.EnableIDTrans = extra.EnableIDTrans
-		msg.EnableDuplicateCheck = extra.EnableDuplicateCheck
-		msg.DuplicateCheckInterval = extra.DuplicateCheckInterval
-	}
-
-	return wx.NewPostAction(urls.CorpExternalContactMessageSend,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
-		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
-		}),
-	)
-}
-
-func SendExternalContactMinipNotice(agentID int64, minipNotice *MinipNotice, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
+func SendExternalContactMiniprogram(agentID int64, minip *Miniprogram, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
 		AgentID:     agentID,
 		MsgType:     event.MsgMinipNotice,
-		MinipNotice: minipNotice,
+		Miniprogram: minip,
 	}
 
 	if extra != nil {
