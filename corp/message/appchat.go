@@ -78,7 +78,7 @@ type AppchatMsg struct {
 	News     *News         `json:"news,omitempty"`
 	MPNews   *MPNews       `json:"mpnews,omitempty"`
 	Markdown *Text         `json:"markdown,omitempty"`
-	Safe     int           `json:"safe"`
+	Safe     int           `json:"safe,omitempty"`
 }
 
 func SendAppchatText(chatID string, content string, safe int) wx.Action {

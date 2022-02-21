@@ -8,6 +8,17 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
+type ExternalContactExtra struct {
+	ToExternalUser         []string
+	ToParentUserID         []string
+	ToStudentUserID        []string
+	ToParty                []string
+	ToAll                  int
+	EnableIDTrans          int
+	EnableDuplicateCheck   int
+	DuplicateCheckInterval int
+}
+
 type ExternalContactMsg struct {
 	ToExternalUser         []string      `json:"to_external_user,omitempty"`
 	ToParentUserID         []string      `json:"to_parent_userid,omitempty"`
@@ -29,17 +40,6 @@ type ExternalContactMsg struct {
 	EnableIDTrans          int           `json:"enable_id_trans,omitempty"`
 	EnableDuplicateCheck   int           `json:"enable_duplicate_check,omitempty"`
 	DuplicateCheckInterval int           `json:"duplicate_check_interval,omitempty"`
-}
-
-type ExternalContactExtra struct {
-	ToExternalUser         []string
-	ToParentUserID         []string
-	ToStudentUserID        []string
-	ToParty                []string
-	ToAll                  int
-	EnableIDTrans          int
-	EnableDuplicateCheck   int
-	DuplicateCheckInterval int
 }
 
 type ResultExternalContactSend struct {
@@ -315,13 +315,11 @@ func SendExternalContactMarkdown(agentID int64, content string, extra *ExternalC
 	)
 }
 
-func SendExternalContactMinipNotice(agentID int64, content string, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
+func SendExternalContactMinipNotice(agentID int64, minipNotice *MinipNotice, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
-		AgentID: agentID,
-		MsgType: event.MsgMinipNotice,
-		Text: &Text{
-			Content: content,
-		},
+		AgentID:     agentID,
+		MsgType:     event.MsgMinipNotice,
+		MinipNotice: minipNotice,
 	}
 
 	if extra != nil {

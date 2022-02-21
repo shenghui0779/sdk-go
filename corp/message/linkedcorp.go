@@ -8,6 +8,13 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
+type LinkedcorpExtra struct {
+	ToUser  []string
+	ToParty []string
+	ToTag   []string
+	ToAll   int
+}
+
 type LinkedcorpMsg struct {
 	ToUser      []string      `json:"touser,omitempty"`
 	ToParty     []string      `json:"toparty,omitempty"`
@@ -25,13 +32,6 @@ type LinkedcorpMsg struct {
 	MPNews      *MPNews       `json:"mpnews,omitempty"`
 	Markdown    *Text         `json:"markdown,omitempty"`
 	MinipNotice *MinipNotice  `json:"miniprogram_notice,omitempty"`
-}
-
-type LinkedcorpExtra struct {
-	ToUser  []string
-	ToParty []string
-	ToTag   []string
-	ToAll   int
 }
 
 type ResultLinkedcorpSend struct {
