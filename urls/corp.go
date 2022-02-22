@@ -6,6 +6,7 @@ const QRCodeAuthorize = "https://open.work.weixin.qq.com/wwopen/sso/qrConnect"
 const (
 	CorpCgiBinAccessToken  = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
 	CorpCgiBinAPIDomainIP  = "https://qyapi.weixin.qq.com/cgi-bin/get_api_domain_ip"
+	CorpCgiBinCallbackIP   = "https://qyapi.weixin.qq.com/cgi-bin/getcallbackip"
 	CorpCgiBinUserInfo     = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo"
 	CorpCgiBinUserAuthSucc = "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc"
 	CorpCginBinCallbackIP  = "https://qyapi.weixin.qq.com/cgi-bin/getcallbackip"

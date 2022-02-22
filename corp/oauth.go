@@ -21,12 +21,20 @@ type AccessToken struct {
 	ExpiresIn int64  `json:"expires_in"`
 }
 
-type APIDomainIP struct {
+type ResultIP struct {
 	IPList []string `json:"ip_list"`
 }
 
-func GetAPIDomainIP(result *APIDomainIP) wx.Action {
+func GetAPIDomainIP(result *ResultIP) wx.Action {
 	return wx.NewGetAction(urls.CorpCgiBinAPIDomainIP,
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+func GetCallbackIP(result *ResultIP) wx.Action {
+	return wx.NewGetAction(urls.CorpCgiBinCallbackIP,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),

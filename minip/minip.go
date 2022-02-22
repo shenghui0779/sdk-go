@@ -184,7 +184,7 @@ func (mp *Minip) Do(ctx context.Context, accessToken string, action wx.Action, o
 }
 
 // VerifyEventSign 验证事件消息签名
-// 验证消息来自微信服务器，使用：signature、timestamp、nonce；若验证成功，请原样返回echostr参数内容
+// 验证消息来自微信服务器，使用：signature、timestamp、nonce（若验证成功，请原样返回echostr参数内容）
 // 验证事件消息签名，使用：msg_signature、timestamp、nonce、msg_encrypt
 // [参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
 func (mp *Minip) VerifyEventSign(signature string, items ...string) bool {

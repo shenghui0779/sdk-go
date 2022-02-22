@@ -9,6 +9,7 @@ import (
 	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
+	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -119,4 +120,25 @@ func (corp *Corp) Do(ctx context.Context, accessToken string, action wx.Action, 
 	}
 
 	return action.Decode(resp)
+}
+
+// VerifyEventSign 验证事件消息签名
+// 验证消息来自微信服务器，使用：msg_signature、timestamp、nonce、echostr（若验证成功，解密echostr后返回msg字段内容）
+// 验证事件消息签名，使用：msg_signature、timestamp、nonce、msg_encrypt
+// [参考](https://developer.work.weixin.qq.com/document/path/90930)
+func (corp *Corp) VerifyEventSign(signature string, items ...string) bool {
+	signStr := event.SignWithSHA1(corp.token, items...)
+
+	return signStr == signature
+}
+
+// DecryptEventMessage 事件消息解密
+func (corp *Corp) DecryptEventMessage(encrypt string) (wx.WXML, error) {
+	b, err := event.Decrypt(corp.corpid, corp.encodingAESKey, encrypt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return wx.ParseXML2Map(b)
 }
