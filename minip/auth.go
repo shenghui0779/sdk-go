@@ -87,7 +87,7 @@ func CheckEncryptedData(encryptedHash string, result *ResultEncryptedDataCheck) 
 
 	return wx.NewPostAction(urls.MinipEncryptedDataCheck,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

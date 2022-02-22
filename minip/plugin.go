@@ -39,7 +39,7 @@ func ApplyPlugin(pluginAppID, reason string) wx.Action {
 
 	return wx.NewPostAction(urls.MinipPluginManage,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -76,7 +76,7 @@ func ListPluginDevApply(page, num int, result *ResultPluginDevApplyList) wx.Acti
 
 	return wx.NewPostAction(urls.MinipPluginDevManage,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -106,7 +106,7 @@ func ListPlugin(result *ResultPluginList) wx.Action {
 
 	return wx.NewPostAction(urls.MinipPluginManage,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -130,7 +130,7 @@ func SetDevPluginApplyStatus(action PluginAction, appid string, reason string) w
 
 	return wx.NewPostAction(urls.MinipPluginDevManage,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -149,7 +149,7 @@ func UnbindPlugin(pluginAppID string) wx.Action {
 
 	return wx.NewPostAction(urls.MinipPluginManage,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

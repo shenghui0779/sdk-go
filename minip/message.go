@@ -1,8 +1,6 @@
 package minip
 
 import (
-	"encoding/json"
-
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -64,7 +62,7 @@ func SendUniformMsg(touser string, msg *TemplateMsg) wx.Action {
 
 	return wx.NewPostAction(urls.MinipUniformMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -83,7 +81,7 @@ type SubscribeMsg struct {
 func SendSubscribeMsg(msg *SubscribeMsg) wx.Action {
 	return wx.NewPostAction(urls.MinipSubscribeMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -134,7 +132,7 @@ func SendKFTextMsg(openid, content string) wx.Action {
 
 	return wx.NewPostAction(urls.MinipKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -151,7 +149,7 @@ func SendKFImageMsg(openid, mediaID string) wx.Action {
 
 	return wx.NewPostAction(urls.MinipKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -166,7 +164,7 @@ func SendKFLinkMsg(openid string, link *KFLink) wx.Action {
 
 	return wx.NewPostAction(urls.MinipKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -181,7 +179,7 @@ func SendKFMinipMsg(openid string, minipPage *KFMinipPage) wx.Action {
 
 	return wx.NewPostAction(urls.MinipKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -200,7 +198,7 @@ func SendKFTyping(openid string, cmd TypingCmd) wx.Action {
 
 	return wx.NewPostAction(urls.MinipKFTypingSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(typing)
+			return wx.MarshalNoEscapeHTML(typing)
 		}),
 	)
 }

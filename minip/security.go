@@ -64,7 +64,7 @@ func MediaCheckAsync(mediaType SecMediaType, mediaURL string, result *ResultMedi
 
 	return wx.NewPostAction(urls.MinipMediaCheckAsync,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -76,7 +76,7 @@ func MediaCheckAsync(mediaType SecMediaType, mediaURL string, result *ResultMedi
 func MsgSecCheck(content string) wx.Action {
 	return wx.NewPostAction(urls.MinipMsgSecCheck,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{
+			return wx.MarshalNoEscapeHTML(yiigo.X{
 				"content": content,
 			})
 		}),

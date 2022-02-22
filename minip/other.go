@@ -26,7 +26,7 @@ type ResultServiceInvoke struct {
 func InvokeService(params *ParamsServiceInvoke, result *ResultServiceInvoke) wx.Action {
 	return wx.NewPostAction(urls.MinipInvokeService,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -56,7 +56,7 @@ func SoterVerify(openID, jsonStr, jsonSign string, result *ResultSoterVerify) wx
 
 	return wx.NewPostAction(urls.MinipSoterVerify,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -84,7 +84,7 @@ func GenerateShortLink(pageURL, pageTitle string, isPermanent bool, result *Resu
 
 	return wx.NewPostAction(urls.MinipShortLink,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -122,7 +122,7 @@ type ResultUserRisk struct {
 func GetUserRiskRank(params *ParamsUserRisk, result *ResultUserRisk) wx.Action {
 	return wx.NewPostAction(urls.MinipUserRiskRank,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
