@@ -53,7 +53,7 @@ func CreateMenu(buttons ...*MenuButton) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaMenuCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -78,7 +78,7 @@ func CreateConditionalMenu(matchRule *MenuMatchRule, buttons ...*MenuButton) wx.
 
 	return wx.NewPostAction(urls.OffiaMenuAddConditional,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -99,7 +99,7 @@ func TryMatchMenu(userID string, result *ResultMenuMatch) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaMenuTryMatch,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -151,7 +151,7 @@ func DeleteConditionalMenu(menuID string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaMenuDeleteConditional,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

@@ -21,7 +21,7 @@ func CreateSession(account, openid string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaKFSessionCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -40,7 +40,7 @@ func CloseSession(account, openid string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaKFSessionClose,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -129,7 +129,7 @@ func GetMsgRecordList(msgID, starttime, endtime int64, number int, result *Resul
 
 	return wx.NewPostAction(urls.OffiaKFMsgRecordList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

@@ -81,7 +81,7 @@ func AddAccount(account, nickname string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaKFAccountAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -100,7 +100,7 @@ func UpdateAccount(account, nickname string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaKFAccountUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -122,7 +122,7 @@ func InviteWorker(account, inviteWX string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaKFInvite,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

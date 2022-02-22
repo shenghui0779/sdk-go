@@ -55,7 +55,7 @@ func CreateTag(name string, result *ResultTagCreate) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaTagCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -74,7 +74,7 @@ func UpdateTag(id int64, name string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaTagUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -102,7 +102,7 @@ func DeleteTag(id int64) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaTagDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -131,7 +131,7 @@ func GetTagUsers(tagID int64, nextOpenID string, result *ResultTagUsers) wx.Acti
 
 	return wx.NewPostAction(urls.OffiaTagUserGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -153,7 +153,7 @@ func BatchTagging(tagID int64, openids ...string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaBatchTagging,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -172,7 +172,7 @@ func BatchUnTagging(tagID int64, openids ...string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaBatchUnTagging,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -193,7 +193,7 @@ func GetUserTags(openid string, result *ResultUserTags) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaTagGetIDList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -215,7 +215,7 @@ func SetUserRemark(openid, remark string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaUserRemarkSet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -283,7 +283,7 @@ func BatchGetUserInfo(users []*ParamsUserInfo, result *ResultBatchUserInfo) wx.A
 
 	return wx.NewPostAction(urls.OffiaUserBatchGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -336,7 +336,7 @@ func GetBlackList(beginOpenID string, result *ResultBlackList) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaBlackListGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -356,7 +356,7 @@ func BlackUsers(openids ...string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaBatchBlackList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -373,7 +373,7 @@ func UnBlackUsers(openids ...string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaBatchUnBlackList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

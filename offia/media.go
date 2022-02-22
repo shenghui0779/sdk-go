@@ -180,7 +180,7 @@ func GetNewsMaterial(mediaID string, result *ResultNewsMaterialGet) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaMaterialGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -202,7 +202,7 @@ func GetVideoMaterial(mediaID string, result *ResultVideoMaterialGet) wx.Action 
 
 	return wx.NewPostAction(urls.OffiaMaterialGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -222,7 +222,7 @@ func GetOtherMaterial(mediaID string, result *ResultOtherMaterialGet) wx.Action 
 
 	return wx.NewPostAction(urls.OffiaMaterialGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			result.Buffer = make([]byte, len(resp))
@@ -237,7 +237,7 @@ func GetOtherMaterial(mediaID string, result *ResultOtherMaterialGet) wx.Action 
 func DeleteMaterial(mediaID string) wx.Action {
 	return wx.NewPostAction(urls.OffiaMaterialDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(yiigo.X{"media_id": mediaID})
+			return wx.MarshalNoEscapeHTML(yiigo.X{"media_id": mediaID})
 		}),
 	)
 }
@@ -383,7 +383,7 @@ func AddNews(articles []*NewsArticle, result *ResultMaterialAdd) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaNewsAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -407,7 +407,7 @@ func UpdateNews(mediaID, index string, article *NewsArticle) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaNewsUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -457,7 +457,7 @@ func ListMatertial(mediaType MediaType, offset, count int, result *ResultMateria
 
 	return wx.NewPostAction(urls.OffiaMaterialBatchGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -491,7 +491,7 @@ func ListMaterialNews(offset, count int, result *ResultMaterialNewsList) wx.Acti
 
 	return wx.NewPostAction(urls.OffiaMaterialBatchGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

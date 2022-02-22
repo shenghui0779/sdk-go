@@ -21,7 +21,7 @@ func SetIndustry(id1, id2 string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaSetIndustry,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -61,7 +61,7 @@ func AddTemplate(templIDShort string, result *ResultTemplAdd) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaTemplateAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -104,7 +104,7 @@ func DelPrivateTemplate(templID string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaDelPrivateTemplate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -135,7 +135,7 @@ type TemplateMsg struct {
 func SendTemplateMsg(msg *TemplateMsg) wx.Action {
 	return wx.NewPostAction(urls.OffiaTemplateMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -154,7 +154,7 @@ type TemplateSubscribeMsg struct {
 func SendSubscribeTemplateMsg(msg *TemplateSubscribeMsg) wx.Action {
 	return wx.NewPostAction(urls.OffiaSubscribeTemplateMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }

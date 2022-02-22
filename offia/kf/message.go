@@ -1,8 +1,6 @@
 package kf
 
 import (
-	"encoding/json"
-
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -120,7 +118,7 @@ func SendTextMsg(openID, content string, kfAccount ...string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -143,7 +141,7 @@ func SendImageMsg(openID, mediaID string, kfAccount ...string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -166,7 +164,7 @@ func SendVoiceMsg(openID, mediaID string, kfAccount ...string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -187,7 +185,7 @@ func SendVideoMsg(openID string, video *MsgVideo, kfAccount ...string) wx.Action
 
 	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -208,7 +206,7 @@ func SendMusicMsg(openID string, music *MsgMusic, kfAccount ...string) wx.Action
 
 	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -231,7 +229,7 @@ func SendNewsMsg(openID string, articles []*MsgArticle, kfAccount ...string) wx.
 
 	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -254,7 +252,7 @@ func SendMPNewsMsg(openID, mediaID string, kfAccount ...string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -278,7 +276,7 @@ func SendMPNewsArticleMsg(openID, articleID string, kfAccount ...string) wx.Acti
 
 	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -299,7 +297,7 @@ func SendMenuMsg(openID string, menu *MsgMenu, kfAccount ...string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -322,7 +320,7 @@ func SendWXCardMsg(openID, cardID string, kfAccount ...string) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -343,7 +341,7 @@ func SendMinipPageMsg(openID string, minipPage *MsgMinipPage, kfAccount ...strin
 
 	return wx.NewPostAction(urls.OffiaKFMsgSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -371,7 +369,7 @@ func SendTyping(openID string, cmd TypeCmd) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaSetTyping,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

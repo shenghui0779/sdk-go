@@ -41,7 +41,7 @@ type ResultQRCodeCreate struct {
 func CreateQRCode(params *ParamsQRCodeCreate, result *ResultQRCodeCreate) wx.Action {
 	return wx.NewPostAction(urls.OffiaQRCodeCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
