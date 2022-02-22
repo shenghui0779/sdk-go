@@ -44,7 +44,7 @@ type ResultCalendarAdd struct {
 func AddCalendar(params *ParamsCalendarAdd, result *ResultCalendarAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsCalendarAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -68,7 +68,7 @@ type CalendarUpdateData struct {
 func UpdateCalendar(params *ParamsCalendarUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsCalendarUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -88,7 +88,7 @@ func GetCalendar(calIDs []string, result *ResultCalendarGet) wx.Action {
 
 	return wx.NewPostAction(urls.CorpToolsCalendarGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -107,7 +107,7 @@ func DeleteCalendar(calID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpToolsCalendarDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

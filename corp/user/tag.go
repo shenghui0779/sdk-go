@@ -24,7 +24,7 @@ func CreateTag(name string, result *ResultTagCreate) wx.Action {
 
 	return wx.NewPostAction(urls.CorpUserTagCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -45,7 +45,7 @@ func UpdateTag(tagID int64, tagName string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpUserTagUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -96,7 +96,7 @@ func AddTagUser(tagID int64, userIDs []string, partyIDs []int64, result *ResultT
 
 	return wx.NewPostAction(urls.CorpUserTagAddUser,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -124,7 +124,7 @@ func DeleteTagUser(tagID int64, userIDs []string, partyIDs []int64, result *Resu
 
 	return wx.NewPostAction(urls.CorpUserTagDeleteUser,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

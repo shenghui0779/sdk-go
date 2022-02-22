@@ -223,7 +223,7 @@ func GetCheckinOption(datetime int64, userIDs []string, result *ResultCheckinOpt
 
 	return wx.NewPostAction(urls.CorpOAGetCheckinOption,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -273,7 +273,7 @@ func GetCheckinData(dataType int, starttime, endtime int64, userIDs []string, re
 
 	return wx.NewPostAction(urls.CorpOAGetCheckinData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -400,7 +400,7 @@ func GetCheckinDayData(starttime, endtime int64, userIDs []string, result *Resul
 
 	return wx.NewPostAction(urls.CorpOAGetCheckinDayData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -427,7 +427,7 @@ func GetCheckinMonthData(starttime, endtime int64, userIDs []string, result *Res
 
 	return wx.NewPostAction(urls.CorpOAGetCheckinMonthData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -485,7 +485,7 @@ func GetCheckinScheduleList(starttime, endtime int64, userIDs []string, result *
 
 	return wx.NewPostAction(urls.CorpOAGetCheckinScheduleList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -514,7 +514,7 @@ func SetCheckinScheduleList(groupID int64, yearmonth int, items ...*ScheduleList
 
 	return wx.NewPostAction(urls.CorpOASetCheckinScheduleList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -532,7 +532,7 @@ func AddCheckinUserFace(userID, userFace string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpOAAddCheckinUserFace,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -565,7 +565,7 @@ func GetHardwareCheckinData(filterType int, starttime, endtime int64, userIDs []
 
 	return wx.NewPostAction(urls.CorpOAGetHardwareCheckinData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

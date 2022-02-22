@@ -26,7 +26,7 @@ type ResultCustomerTransfer struct {
 func TransferCustomer(params *ParamsCustomerTranster, result *ResultCustomerTransfer) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactTransferCustomer,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -60,7 +60,7 @@ func GetTransferResult(handoverUserID, takeoverUserID, cursor string, result *Re
 
 	return wx.NewPostAction(urls.CorpExternalContactTransferResult,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -95,7 +95,7 @@ func ListUnassigned(pageID, pageSize int, cursor string, result *ResultUnassigne
 
 	return wx.NewPostAction(urls.CorpExternalContactGetUnassignedList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -122,7 +122,7 @@ func TransferResignedCustomer(handoverUserID, takeoverUserID string, externalUse
 
 	return wx.NewPostAction(urls.CorpExternalContactTransferResignedCustomer,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -156,7 +156,7 @@ func GetResignedTransferResult(handoverUserID, takeoverUserID, cursor string, re
 
 	return wx.NewPostAction(urls.CorpExternalContactResignedTransferResult,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -187,7 +187,7 @@ func TransferGroupChat(chatIDs []string, newOwner string, result *ResultGroupCha
 
 	return wx.NewPostAction(urls.CorpExternalContactGroupChatTranster,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

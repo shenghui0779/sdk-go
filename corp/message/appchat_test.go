@@ -73,7 +73,7 @@ func TestUpdateAppchat(t *testing.T) {
 	cp.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsAppchatUpdate{
-		ChartID:     "CHATID",
+		ChatID:      "CHATID",
 		Name:        "NAME",
 		Owner:       "userid2",
 		AddUserList: []string{"userid1", "userid2", "userid3"},
@@ -109,7 +109,7 @@ func TestGetAppchat(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/appchat/get?access_token=ACCESS_TOKEN&chatid=CHATID", nil).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/appchat/get?access_token=ACCESS_TOKEN&chatid=CHATID", nil).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
@@ -205,7 +205,7 @@ func TestSendAppchatVoice(t *testing.T) {
 }
 
 func TestSendAppchatVideo(t *testing.T) {
-	body := []byte(`{"chatid":"CHATID","msgtype":"video","video":{"media_id":"MEDIA_ID","description":"Description","title":"Title"}}`)
+	body := []byte(`{"chatid":"CHATID","msgtype":"video","video":{"media_id":"MEDIA_ID","title":"Title","description":"Description"}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -226,8 +226,8 @@ func TestSendAppchatVideo(t *testing.T) {
 
 	video := &Video{
 		MediaID:     "MEDIA_ID",
-		Title:       "Description",
-		Description: "Title",
+		Title:       "Title",
+		Description: "Description",
 	}
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendAppchatVideo("CHATID", video, 0))
@@ -261,7 +261,7 @@ func TestSendAppchatFile(t *testing.T) {
 }
 
 func TestSendAppchatTextCard(t *testing.T) {
-	body := []byte(`{"chatid":"CHATID","msgtype":"textcard","textcard":{"title":"领奖通知","description":"<div class=\\\"gray\\\">2016年9月26日</div> <div class=\\\"normal\\\"> 恭喜你抽中iPhone 7一台，领奖码:520258</div><div class=\\\"highlight\\\">请于2016年10月10日前联系行 政同事领取</div>","url":"https://work.weixin.qq.com/","btntxt":"更多"}}`)
+	body := []byte(`{"chatid":"CHATID","msgtype":"textcard","textcard":{"title":"领奖通知","description":"<div class=\"gray\">2016年9月26日</div> <div class=\"normal\"> 恭喜你抽中iPhone 7一台，领奖码:520258</div><div class=\"highlight\">请于2016年10月10日前联系行 政同事领取</div>","url":"https://work.weixin.qq.com/","btntxt":"更多"}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

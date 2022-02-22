@@ -22,7 +22,7 @@ func ListPermitUser(listType int, result *ResultPermitUserList) wx.Action {
 
 	return wx.NewPostAction(urls.CorpMsgAuditGetPermitUserList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -57,7 +57,7 @@ func CheckSingleAgree(agrees []*ParamsSingleAgree, result *ResultSingleAgreeChec
 
 	return wx.NewPostAction(urls.CorpMsgAuditCheckSingleAgree,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -86,7 +86,7 @@ func CheckRoomAgree(roomID string, result *ResultRoomAgreeCheck) wx.Action {
 
 	return wx.NewPostAction(urls.CorpMsgAuditCheckRoomAgree,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -118,7 +118,7 @@ func GetGroupChat(roomID string, result *ResultGroupChat) wx.Action {
 
 	return wx.NewPostAction(urls.CorpMsgAuditGroupChatGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

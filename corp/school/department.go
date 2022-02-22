@@ -32,7 +32,7 @@ type ResultDepartmentCreate struct {
 func CreateDepartment(params *ParamsDepartmentCreate, result *ResultDepartmentCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolDepartmentCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -61,7 +61,7 @@ type ParamsDepartmentUpdate struct {
 func UpdateDeparment(params *ParamsDepartmentUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolDepartmentUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -127,7 +127,7 @@ func SetUpgradeInfo(upgradeTime int64, upgradeSwitch int, result *ResultUpgradeI
 
 	return wx.NewPostAction(urls.CorpSchoolSetUpgradeInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

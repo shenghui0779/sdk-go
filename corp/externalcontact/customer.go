@@ -146,7 +146,7 @@ func BatchGetCustomerByUser(userIDs []string, cursor string, limit int, result *
 
 	return wx.NewPostAction(urls.CorpExternalContactBatchGetByUser,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -167,7 +167,7 @@ type ParamsRemark struct {
 func Remark(params *ParamsRemark) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactRemark,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

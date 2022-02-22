@@ -22,7 +22,7 @@ type ResultGridAdd struct {
 func AddGrid(params *ParamsGridAdd, result *ResultGridAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGridAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -45,7 +45,7 @@ type ResultGridUpdate struct {
 func UpdateGrid(params *ParamsGridUpdate, result *ResultGridUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGridUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -64,7 +64,7 @@ func DeleteGrid(gridID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpReportGridDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -92,7 +92,7 @@ func ListGrid(gridID string, result *ResultGridList) wx.Action {
 
 	return wx.NewPostAction(urls.CorpReportGridList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -121,7 +121,7 @@ func GetUserGridInfo(userID string, result *ResultUserGridInfo) wx.Action {
 
 	return wx.NewPostAction(urls.CorpReportGetUserGridInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

@@ -62,7 +62,7 @@ func GetPatrolCorpStatus(gridID string, result *ResultPatrolCorpStatus) wx.Actio
 
 	return wx.NewPostAction(urls.CorpReportGetPatrolCorpStatus,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -87,7 +87,7 @@ func GetPatrolUserStatus(userID string, result *ResultPatrolUserStatus) wx.Actio
 
 	return wx.NewPostAction(urls.CorpReportGetPatrolUserStatus,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -119,7 +119,7 @@ func GetPatrolCategoryStatistic(categoryID string, result *ResultPatrolCategoryS
 
 	return wx.NewPostAction(urls.CorpReportPatrolCategoryStatistic,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -164,7 +164,7 @@ func ListPatrolOrder(beginCreateTime, beginModifyTime int64, cursor string, limi
 
 	return wx.NewPostAction(urls.CorpReportGetPatrolOrderList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -187,7 +187,7 @@ func GetPatrolOrderInfo(orderID string, result *ResultPatrolOrderInfo) wx.Action
 
 	return wx.NewPostAction(urls.CorpReportGetPatrolOrderInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

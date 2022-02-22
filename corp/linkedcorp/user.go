@@ -62,7 +62,7 @@ func GetUser(corpID, userID string, result *ResultUserGet) wx.Action {
 
 	return wx.NewPostAction(urls.CorpLinkedcorpUserGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -94,7 +94,7 @@ func ListSimpleUser(linkedID, departmentID string, fetchChild bool, result *Resu
 
 	return wx.NewPostAction(urls.CorpLinkedcorpUserSimpleList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -119,7 +119,7 @@ func ListUser(linkedID, departmentID string, fetchChild bool, result *ResultUser
 
 	return wx.NewPostAction(urls.CorpLinkedcorpUserList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

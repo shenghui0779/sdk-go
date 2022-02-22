@@ -70,7 +70,7 @@ func SetWorkbenchKeyDataTemplate(agentID int64, keydata *WorkbenchKeyData, repla
 
 	return wx.NewPostAction(urls.CorpSetWorkbenchTemplate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -85,7 +85,7 @@ func SetWorkbenchImageTemplate(agentID int64, image *WorkbenchImage, replaceUser
 
 	return wx.NewPostAction(urls.CorpSetWorkbenchTemplate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -99,7 +99,7 @@ func SetWorkbenchListTemplate(agentID int64, list *WorkbenchList, replaceUserDat
 	}
 	return wx.NewPostAction(urls.CorpSetWorkbenchTemplate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -113,7 +113,7 @@ func SetWorkbenchWebViewTemplate(agentID int64, webview *WorkbenchWebView, repla
 	}
 	return wx.NewPostAction(urls.CorpSetWorkbenchTemplate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -138,7 +138,7 @@ func GetWorkbenchTemplate(agentID int64, result *ResultWorkbenchTemplateGet) wx.
 
 	return wx.NewPostAction(urls.CorpGetWorkbenchTemplate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -166,7 +166,7 @@ func SetWorkbenchKeyData(agentID int64, userID string, keydata *WorkbenchKeyData
 
 	return wx.NewPostAction(urls.CorpSetWorkbenchData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -181,7 +181,7 @@ func SetWorkbenchImageData(agentID int64, userID string, image *WorkbenchImage) 
 
 	return wx.NewPostAction(urls.CorpSetWorkbenchData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -196,7 +196,7 @@ func SetWorkbenchListData(agentID int64, userID string, list *WorkbenchList) wx.
 
 	return wx.NewPostAction(urls.CorpSetWorkbenchData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -211,7 +211,7 @@ func SetWorkbenchWebViewData(agentID int64, userID string, webview *WorkbenchWeb
 
 	return wx.NewPostAction(urls.CorpSetWorkbenchData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

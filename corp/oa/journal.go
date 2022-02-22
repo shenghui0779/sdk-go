@@ -24,7 +24,7 @@ type ResultJournalRecordList struct {
 func ListJouralRecord(params *ParamsJournalRecordList, result *ResultJournalRecordList) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetJournalRecordList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -66,7 +66,7 @@ func GetJournalRecordDetail(journaluuid string, result *ResultJournalRecordDetai
 
 	return wx.NewPostAction(urls.CorpOAGetJournalRecordDetail,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -147,7 +147,7 @@ func ListJournalStat(templateID string, starttime, endtime int64, result *Result
 
 	return wx.NewPostAction(urls.CorpOAGetJournalStatList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

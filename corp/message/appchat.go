@@ -22,7 +22,7 @@ type ResultAppchartCreate struct {
 func CreateAppchat(params *ParamsAppchatCreate, result *ResultAppchartCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpAppchatCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -31,7 +31,7 @@ func CreateAppchat(params *ParamsAppchatCreate, result *ResultAppchartCreate) wx
 }
 
 type ParamsAppchatUpdate struct {
-	ChartID     string   `json:"chartid"`
+	ChatID      string   `json:"chatid"`
 	Name        string   `json:"name,omitempty"`
 	Owner       string   `json:"owner,omitempty"`
 	AddUserList []string `json:"add_user_list,omitempty"`
@@ -41,7 +41,7 @@ type ParamsAppchatUpdate struct {
 func UpdateAppchat(params *ParamsAppchatUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpAppchatUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -92,7 +92,7 @@ func SendAppchatText(chatID string, content string, safe int) wx.Action {
 	}
 	return wx.NewPostAction(urls.CorpAppchatSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -108,7 +108,7 @@ func SendAppchatImage(chatID string, mediaID string, safe int) wx.Action {
 	}
 	return wx.NewPostAction(urls.CorpAppchatSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -124,7 +124,7 @@ func SendAppchatVoice(chatID string, mediaID string, safe int) wx.Action {
 	}
 	return wx.NewPostAction(urls.CorpAppchatSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -138,7 +138,7 @@ func SendAppchatVideo(chatID string, video *Video, safe int) wx.Action {
 	}
 	return wx.NewPostAction(urls.CorpAppchatSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -154,7 +154,7 @@ func SendAppchatFile(chatID string, mediaID string, safe int) wx.Action {
 	}
 	return wx.NewPostAction(urls.CorpAppchatSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -168,7 +168,7 @@ func SendAppchatTextCard(chatID string, card *TextCard, safe int) wx.Action {
 	}
 	return wx.NewPostAction(urls.CorpAppchatSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -184,7 +184,7 @@ func SendAppchatNews(chatID string, articles []*NewsArticle, safe int) wx.Action
 	}
 	return wx.NewPostAction(urls.CorpAppchatSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -200,7 +200,7 @@ func SendAppchatMPNews(chatID string, articles []*MPNewsArticle, safe int) wx.Ac
 	}
 	return wx.NewPostAction(urls.CorpAppchatSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }
@@ -216,7 +216,7 @@ func SendAppchatMarkdown(chatID string, content string, safe int) wx.Action {
 	}
 	return wx.NewPostAction(urls.CorpAppchatSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 	)
 }

@@ -81,7 +81,7 @@ type ParamsAgentSet struct {
 func SetAgent(params *ParamsAgentSet) wx.Action {
 	return wx.NewPostAction(urls.CorpAgentSet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

@@ -29,7 +29,7 @@ func ListCustomerStrategy(cursor string, limit int, result *ResultCustomerStrate
 
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -85,7 +85,7 @@ func GetCustomerStrategy(strategyID int64, result *ResultCustomerStrategyGet) wx
 
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -118,7 +118,7 @@ func GetCustomerStrategyRange(strategyID int64, cursor string, limit int, result
 
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyGetRange,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -141,7 +141,7 @@ type ResultCustomerStrategyCreate struct {
 func CreateCustomerStrategy(params *ParamsCustomerStrategyCreate, result *ResultCustomerStrategyCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -161,7 +161,7 @@ type ParamsCustomerStrategyEdit struct {
 func EditCustomerStrategy(params *ParamsCustomerStrategyEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyEdit,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -177,7 +177,7 @@ func DeleteCustomerStrategy(strategyID int64) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -204,7 +204,7 @@ func ListMomentStrategy(cursor string, limit int, result *ResultMomentStrategyLi
 
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -242,7 +242,7 @@ func GetMomentStrategy(strategyID int64, result *ResultMomentStrategyGet) wx.Act
 
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -275,7 +275,7 @@ func GetMomentStrategyRange(strategyID int64, cursor string, limit int, result *
 
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyGetRange,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -298,7 +298,7 @@ type ResultMomentStrategyCreate struct {
 func CreateMomentStrategy(params *ParamsMomentStrategyCreate, result *ResultMomentStrategyCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -318,7 +318,7 @@ type ParamsMomentStrategyEdit struct {
 func EditMomentStrategy(params *ParamsMomentStrategyEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyEdit,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -334,7 +334,7 @@ func DeleteMomentStrategy(strategyID int64) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

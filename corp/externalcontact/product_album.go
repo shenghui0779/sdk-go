@@ -30,7 +30,7 @@ type ResultProductAlbumAdd struct {
 func AddProductAlbum(params *ParamsProductAlbumAdd, result *ResultProductAlbumAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactProductAlbumAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -49,7 +49,7 @@ type ParamsProductAlbumUpdate struct {
 func UpdateProductAlbum(params *ParamsProductAlbumUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactProductAlbumUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -78,7 +78,7 @@ func GetProductAlbum(productID string, result *ResultProductAlbumGet) wx.Action 
 
 	return wx.NewPostAction(urls.CorpExternalContactProductAlbumGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -104,7 +104,7 @@ func ListProductAlbum(cursor string, limit int, result *ResultProductAlbumList) 
 
 	return wx.NewPostAction(urls.CorpExternalContactProductAlbumList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -123,7 +123,7 @@ func DeleteProductAlbum(productID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactProductAlbumDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

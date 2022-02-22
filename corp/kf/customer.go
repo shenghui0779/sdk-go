@@ -31,7 +31,7 @@ func BatchGetCustomer(externalUserIDs []string, result *ResultCustomerBatchGet) 
 
 	return wx.NewPostAction(urls.CorpKFCustomerBatchGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -89,7 +89,7 @@ func UpgradeMemberService(openKFID, externalUserID string, member *Member) wx.Ac
 
 	return wx.NewPostAction(urls.CorpKFUpgradeService,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -104,7 +104,7 @@ func UpgradeGroupChatService(openKFID, externalUserID string, groupChat *GroupCh
 
 	return wx.NewPostAction(urls.CorpKFUpgradeService,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -122,7 +122,7 @@ func CancelUpgradeService(openKFID, externalUserID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpKFCancelUpgradeService,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

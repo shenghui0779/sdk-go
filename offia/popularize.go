@@ -68,7 +68,7 @@ func ShortURL(longURL string, result *ResultShortURL) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaShortURLGenerate,
 		wx.WithBody(func() ([]byte, error) {
-			return wx.MarshalWithNoEscapeHTML(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

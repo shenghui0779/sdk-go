@@ -413,7 +413,7 @@ func TestSendExternalContactMPNews(t *testing.T) {
 }
 
 func TestSendExternalContactMiniprogram(t *testing.T) {
-	body := []byte(`{"to_external_user":["external_userid1","external_userid2"],"to_parent_userid":["parent_userid1","parent_userid2"],"to_student_userid":["student_userid1","student_userid2"],"to_party":["partyid1","partyid2"],"agentid":1,"msgtype":"miniprogram","miniprogram":{"appid":"APPID","title":"欢迎报名夏令营","thumb_media_id":"MEDIA_ID","pagepath":"PAGE_PATH"},"duplicate_check_interval":1800}`)
+	body := []byte(`{"to_external_user":["external_userid1","external_userid2"],"to_parent_userid":["parent_userid1","parent_userid2"],"to_student_userid":["student_userid1","student_userid2"],"to_party":["partyid1","partyid2"],"msgtype":"miniprogram","agentid":1,"miniprogram":{"appid":"APPID","title":"欢迎报名夏令营","thumb_media_id":"MEDIA_ID","pagepath":"PAGE_PATH"},"duplicate_check_interval":1800}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{

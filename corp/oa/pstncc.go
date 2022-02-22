@@ -28,7 +28,7 @@ func CallPstncc(calleeUserIDs []string, result *ResultPstnccCall) wx.Action {
 
 	return wx.NewPostAction(urls.CorpOACallPstncc,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -56,7 +56,7 @@ func GetPstnccStates(calleeUserID, callID string, result *ResultPstnccStates) wx
 
 	return wx.NewPostAction(urls.CorpOAGetPstnccStates,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

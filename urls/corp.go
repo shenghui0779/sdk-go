@@ -179,7 +179,6 @@ const (
 	CorpAppchatSend                = "https://qyapi.weixin.qq.com/cgi-bin/appchat/send"
 	CorpLinkedcorpMessageSend      = "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send"
 	CorpExternalContactMessageSend = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send"
-	CorpMessageStaticsGet          = "https://qyapi.weixin.qq.com/cgi-bin/message/get_statistics"
 )
 
 // media

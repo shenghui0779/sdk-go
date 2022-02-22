@@ -44,7 +44,7 @@ func CreateMenu(agentID int64, params *ParamsMenuCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpMenuCreate,
 		wx.WithQuery("agentid", strconv.FormatInt(agentID, 10)),
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

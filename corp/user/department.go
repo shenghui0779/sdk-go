@@ -23,7 +23,7 @@ type ResultDepartmentCreate struct {
 func CreateDepartment(params *ParamsDepartmentCreate, result *ResultDepartmentCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpUserDepartmentCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -43,7 +43,7 @@ type ParamsDepartmentUpdate struct {
 func UpdateDepartment(params *ParamsDepartmentUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpUserDepartmentUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

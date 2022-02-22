@@ -70,7 +70,7 @@ func SetArchSyncMode(mode int) wx.Action {
 
 	return wx.NewPostAction(urls.CorpSchoolSetArchSyncMode,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

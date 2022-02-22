@@ -48,7 +48,7 @@ type ResultScheduleAdd struct {
 func AddSchedule(params *ParamsScheduleAdd, result *ResultScheduleAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsScheduleAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -76,7 +76,7 @@ type ScheduleUpdateData struct {
 func UpdateSchedule(params *ParamsScheduleUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsScheduleUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -134,7 +134,7 @@ func GetSchedule(scheduleIDs []string, result *ResultScheduleGet) wx.Action {
 
 	return wx.NewPostAction(urls.CorpToolsScheduleGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -153,7 +153,7 @@ func DeleteSchedule(scheduleID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpToolsScheduleDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -177,7 +177,7 @@ func GetScheduleByCalendar(calID string, offset, limit int, result *ResultSchedu
 
 	return wx.NewPostAction(urls.CorpToolsScheduleGetByCalendar,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -204,7 +204,7 @@ func AddScheduleAttendee(scheduleID string, userIDs ...string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpToolsScheduleAttendeeAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -223,7 +223,7 @@ func DeleteScheduleAttendee(scheduleID string, userIDs ...string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpToolsScheduleAttendeeDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

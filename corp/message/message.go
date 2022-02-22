@@ -92,7 +92,7 @@ type Messasge struct {
 	ToParty                string        `json:"toparty,omitempty"`
 	ToTag                  string        `json:"totag,omitempty"`
 	MsgType                event.MsgType `json:"msgtype"`
-	AgentID                int64         `json:"agentid"`
+	AgentID                int64         `json:"agentid,omitempty"`
 	Text                   *Text         `json:"text,omitempty"`
 	Image                  *Media        `json:"image,omitempty"`
 	Voice                  *Media        `json:"voice,omitempty"`
@@ -139,7 +139,7 @@ func SendText(agentidID int64, content string, extra *MsgExtra, result *ResultMs
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -168,7 +168,7 @@ func SendImage(agentidID int64, mediaID string, extra *MsgExtra, result *ResultM
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -197,7 +197,7 @@ func SendVoice(agentidID int64, mediaID string, extra *MsgExtra, result *ResultM
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -224,7 +224,7 @@ func SendVideo(agentidID int64, video *Video, extra *MsgExtra, result *ResultMsg
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -234,7 +234,7 @@ func SendVideo(agentidID int64, video *Video, extra *MsgExtra, result *ResultMsg
 
 func SendFile(agentidID int64, mediaID string, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
-		MsgType: event.MsgText,
+		MsgType: event.MsgFile,
 		AgentID: agentidID,
 		File: &Media{
 			MediaID: mediaID,
@@ -253,7 +253,7 @@ func SendFile(agentidID int64, mediaID string, extra *MsgExtra, result *ResultMs
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -280,7 +280,7 @@ func SendTextCard(agentidID int64, card *TextCard, extra *MsgExtra, result *Resu
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -309,7 +309,7 @@ func SendNews(agentidID int64, articles []*NewsArticle, extra *MsgExtra, result 
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -338,7 +338,7 @@ func SendMPNews(agentidID int64, articles []*MPNewsArticle, extra *MsgExtra, res
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -367,7 +367,7 @@ func SendMarkdown(agentidID int64, content string, extra *MsgExtra, result *Resu
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -375,11 +375,10 @@ func SendMarkdown(agentidID int64, content string, extra *MsgExtra, result *Resu
 	)
 }
 
-func SendMinipNotice(agentidID int64, minipNotice *MinipNotice, extra *MsgExtra, result *ResultMsgSend) wx.Action {
+func SendMinipNotice(notice *MinipNotice, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType:     event.MsgMinipNotice,
-		AgentID:     agentidID,
-		MinipNotice: minipNotice,
+		MinipNotice: notice,
 	}
 
 	if extra != nil {
@@ -394,7 +393,7 @@ func SendMinipNotice(agentidID int64, minipNotice *MinipNotice, extra *MsgExtra,
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -402,11 +401,12 @@ func SendMinipNotice(agentidID int64, minipNotice *MinipNotice, extra *MsgExtra,
 	)
 }
 
-func SendTextNoticeCard(agentidID int64, card *TextNoticeCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
+func SendTextNoticeCard(agentidID int64, taskID string, card *TextNoticeCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
-		MsgType: event.MsgMinipNotice,
+		MsgType: event.MsgTemplateCard,
 		AgentID: agentidID,
 		TemplateCard: &TemplateCard{
+			TaskID:                taskID,
 			CardType:              CardTextNotice,
 			Source:                card.Source,
 			ActionMenu:            card.ActionMenu,
@@ -432,7 +432,7 @@ func SendTextNoticeCard(agentidID int64, card *TextNoticeCard, extra *MsgExtra, 
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -440,12 +440,13 @@ func SendTextNoticeCard(agentidID int64, card *TextNoticeCard, extra *MsgExtra, 
 	)
 }
 
-func SendNewsNoticeCard(agentidID int64, card *NewsNoticeCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
+func SendNewsNoticeCard(agentidID int64, taskID string, card *NewsNoticeCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
-		MsgType: event.MsgMinipNotice,
+		MsgType: event.MsgTemplateCard,
 		AgentID: agentidID,
 		TemplateCard: &TemplateCard{
 			CardType:              CardNewsNotice,
+			TaskID:                taskID,
 			Source:                card.Source,
 			ActionMenu:            card.ActionMenu,
 			MainTitle:             card.MainTitle,
@@ -471,7 +472,7 @@ func SendNewsNoticeCard(agentidID int64, card *NewsNoticeCard, extra *MsgExtra, 
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -479,12 +480,13 @@ func SendNewsNoticeCard(agentidID int64, card *NewsNoticeCard, extra *MsgExtra, 
 	)
 }
 
-func SendButtonInteractionCard(agentidID int64, card *ButtonInteractionCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
+func SendButtonInteractionCard(agentidID int64, taskID string, card *ButtonInteractionCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
-		MsgType: event.MsgMinipNotice,
+		MsgType: event.MsgTemplateCard,
 		AgentID: agentidID,
 		TemplateCard: &TemplateCard{
 			CardType:              CardButtonInteraction,
+			TaskID:                taskID,
 			Source:                card.Source,
 			ActionMenu:            card.ActionMenu,
 			MainTitle:             card.MainTitle,
@@ -510,7 +512,7 @@ func SendButtonInteractionCard(agentidID int64, card *ButtonInteractionCard, ext
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -518,12 +520,13 @@ func SendButtonInteractionCard(agentidID int64, card *ButtonInteractionCard, ext
 	)
 }
 
-func SendVoteInteractionCard(agentidID int64, card *VoteInteractionCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
+func SendVoteInteractionCard(agentidID int64, taskID string, card *VoteInteractionCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
-		MsgType: event.MsgMinipNotice,
+		MsgType: event.MsgTemplateCard,
 		AgentID: agentidID,
 		TemplateCard: &TemplateCard{
-			CardType:     CardButtonInteraction,
+			CardType:     CardVoteInteraction,
+			TaskID:       taskID,
 			Source:       card.Source,
 			ActionMenu:   card.ActionMenu,
 			MainTitle:    card.MainTitle,
@@ -545,7 +548,7 @@ func SendVoteInteractionCard(agentidID int64, card *VoteInteractionCard, extra *
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -553,12 +556,13 @@ func SendVoteInteractionCard(agentidID int64, card *VoteInteractionCard, extra *
 	)
 }
 
-func SendMultipleInteractionCard(agentidID int64, card *MultipleInteractionCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
+func SendMultipleInteractionCard(agentidID int64, taskID string, card *MultipleInteractionCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
-		MsgType: event.MsgMinipNotice,
+		MsgType: event.MsgTemplateCard,
 		AgentID: agentidID,
 		TemplateCard: &TemplateCard{
-			CardType:     CardButtonInteraction,
+			CardType:     CardMultipleInteraction,
+			TaskID:       taskID,
 			Source:       card.Source,
 			ActionMenu:   card.ActionMenu,
 			MainTitle:    card.MainTitle,
@@ -580,7 +584,7 @@ func SendMultipleInteractionCard(agentidID int64, card *MultipleInteractionCard,
 
 	return wx.NewPostAction(urls.CorpMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -599,36 +603,7 @@ func Recall(msgid string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpMessageRecall,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
-		}),
-	)
-}
-
-type ParamsMsgStatics struct {
-	TimeType int `json:"time_type"`
-}
-
-type ResultMsgStatics struct {
-	Statics *MsgStatic `json:"statics"`
-}
-
-type MsgStatic struct {
-	AgentID int64  `json:"agentid"`
-	AppName string `json:"app_name"`
-	Count   int64  `json:"count"`
-}
-
-func GetMessageStatics(timeType int, result *ResultMsgStatics) wx.Action {
-	params := &ParamsMsgStatics{
-		TimeType: timeType,
-	}
-
-	return wx.NewPostAction(urls.CorpMessageStaticsGet,
-		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
-		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

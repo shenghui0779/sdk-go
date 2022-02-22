@@ -32,7 +32,7 @@ type ResultUserBehaviorData struct {
 func GetUserBehaviorData(params *ParamsUserBehaviorData, result *ResultUserBehaviorData) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetUserBehaviorData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -75,7 +75,7 @@ type ResultGroupChatStatistic struct {
 func GetGroupChatStatistic(params *ParamsGroupChatStatistic, result *ResultGroupChatStatistic) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGroupChatStatistic,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -101,7 +101,7 @@ type ResultGroupChatStatisticByDay struct {
 func GetGroupChatStatisticByDay(params *ParamsGroupChatStatisticByDay, result *ResultGroupChatStatisticByDay) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGroupChatStatisticByDay,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

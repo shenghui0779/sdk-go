@@ -105,7 +105,7 @@ type ResultContactWayAdd struct {
 func AddContactWay(params *ParamsContactWayAdd, result *ResultContactWayAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactWayAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -130,7 +130,7 @@ type ParamsContactWayUpdate struct {
 func UpdateContactWay(params *ParamsContactWayUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactWayUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -150,7 +150,7 @@ func GetContactWay(configID string, result *ResultContactWayGet) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactWayGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -177,7 +177,7 @@ type ContactWayListData struct {
 func ListContactWay(params *ParamsContactWayList, result *ResultContactWayList) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactWayList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -196,7 +196,7 @@ func DeleteContactWay(configID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactWayDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -214,7 +214,7 @@ func CloseTempChat(userID, externalUserID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactCloseTempChat,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

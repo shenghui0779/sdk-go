@@ -482,7 +482,7 @@ func TestSendLinkedcorpMPNews(t *testing.T) {
 }
 
 func TestSendLinkedcorpMarkdown(t *testing.T) {
-	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"toall":0,"msgtype":"markdown","agentid":1,"markdown":{"content":"您的会议室已经预定，稍后会同步到邮箱\n>**事项详情**\n>事　项：<font color=\\\"info\\\">开会</font>\n>组织者：@miglioguan\n>参与者：@miglioguan、@kunliu、@jamdeezhou、@kanexiong、@kisonwang\n>\n>会议室：<font color=\\\"info\\\">广州TIT 1楼 301</font>\n>日　期：<font color=\\\"warning\\\">2018年5月18日</font>\n>时　间：<font color=\\\"comment\\\">上午9:00-11:00</font>\n>\n>请准时参加会议。\n>\n>如需修改会议信息，请点击：[修改会议信息](https://work.weixin.qq.com)"}}`)
+	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"msgtype":"markdown","agentid":1,"markdown":{"content":"您的会议室已经预定，稍后会同步到邮箱\n>**事项详情**\n>事　项：<font color=\"info\">开会</font>\n>组织者：@miglioguan\n>参与者：@miglioguan、@kunliu、@jamdeezhou、@kanexiong、@kisonwang\n>\n>会议室：<font color=\"info\">广州TIT 1楼 301</font>\n>日　期：<font color=\"warning\">2018年5月18日</font>\n>时　间：<font color=\"comment\">上午9:00-11:00</font>\n>\n>请准时参加会议。\n>\n>如需修改会议信息，请点击：[修改会议信息](https://work.weixin.qq.com)"}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -605,7 +605,7 @@ func TestSendLinkedcorpMinipNotice(t *testing.T) {
 
 	result := new(ResultLinkedcorpSend)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendLinkedcorpMinipNotice(1, notice, extra, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendLinkedcorpMinipNotice(notice, extra, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultLinkedcorpSend{

@@ -19,6 +19,7 @@ const (
 
 type TemplateCard struct {
 	CardType              CardType             `json:"card_type"`
+	TaskID                string               `json:"task_id,omitempty"`
 	Source                *CardSource          `json:"source"`
 	ActionMenu            *ActionMenu          `json:"action_menu,omitempty"`
 	MainTitle             *MainTitle           `json:"main_title"`
@@ -33,15 +34,15 @@ type TemplateCard struct {
 	CardAction            *CardAction          `json:"card_action,omitempty"`
 	ButtonSelection       *ButtonSelection     `json:"button_selection,omitempty"`
 	ButtonList            []*CardButton        `json:"button_list,omitempty"`
-	CheckBox              *CheckBox            `json:"check_box,omitempty"`
+	CheckBox              *CheckBox            `json:"checkbox,omitempty"`
 	SelectList            []*ButtonSelection   `json:"select_list,omitempty"`
 	SubmitButton          *SubmitButton        `json:"submit_button,omitempty"`
 	ReplaceText           string               `json:"replace_text,omitempty"`
 }
 
 type CardSource struct {
-	IconURL   string `json:"icon_url"`
-	Desc      string `json:"desc"`
+	IconURL   string `json:"icon_url,omitempty"`
+	Desc      string `json:"desc,omitempty"`
 	DescColor int    `json:"desc_color,omitempty"`
 }
 
@@ -57,7 +58,7 @@ type MenuAction struct {
 
 type MainTitle struct {
 	Title string `json:"title"`
-	Desc  string `json:"desc"`
+	Desc  string `json:"desc,omitempty"`
 }
 
 type QuoteArea struct {
@@ -89,7 +90,7 @@ type HorizontalContent struct {
 	Type    int    `json:"type,omitempty"`
 	Keyname string `json:"keyname"`
 	Value   string `json:"value"`
-	UserID  string `json:"user_id,omitempty"`
+	UserID  string `json:"userid,omitempty"`
 	MediaID string `json:"media_id,omitempty"`
 	URL     string `json:"url,omitempty"`
 }
@@ -98,14 +99,14 @@ type CardJump struct {
 	Type     int    `json:"type"`
 	Title    string `json:"title"`
 	URL      string `json:"url,omitempty"`
-	AppID    string `json:"app_id,omitempty"`
+	AppID    string `json:"appid,omitempty"`
 	Pagepath string `json:"pagepath,omitempty"`
 }
 
 type CardAction struct {
 	Type     int    `json:"type"`
 	URL      string `json:"url,omitempty"`
-	AppID    string `json:"app_id,omitempty"`
+	AppID    string `json:"appid,omitempty"`
 	Pagepath string `json:"pagepath,omitempty"`
 }
 
@@ -117,7 +118,8 @@ type EmphasisContent struct {
 type CheckBox struct {
 	QuestionKey string         `json:"question_key"`
 	OptionList  []*CheckOption `json:"option_list"`
-	Mode        int            `json:"mode"`
+	Disable     bool           `json:"disable,omitempty"`
+	Mode        int            `json:"mode,omitempty"`
 }
 
 type CheckOption struct {
@@ -133,9 +135,10 @@ type SubmitButton struct {
 
 type ButtonSelection struct {
 	QuestionKey string          `json:"question_key"`
-	Title       string          `json:"title"`
+	Title       string          `json:"title,omitempty"`
 	OptionList  []*SelectOption `json:"option_list"`
-	SelectID    string          `json:"select_id"`
+	SelectedID  string          `json:"selected_id,omitempty"`
+	Disable     bool            `json:"disable,omitempty"`
 }
 
 type SelectOption struct {
@@ -249,7 +252,7 @@ func UpdateCardButtonDisable(agentID int64, respCode, replaceName string, extra 
 
 	return wx.NewPostAction(urls.CorpMessageUpdateTemplateCard,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -284,7 +287,7 @@ func UpdateToTextNoticeCard(agentID int64, respCode string, card *TextNoticeCard
 
 	return wx.NewPostAction(urls.CorpMessageUpdateTemplateCard,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -297,7 +300,7 @@ func UpdateToNewsNoticeCard(agentID int64, respCode string, card *NewsNoticeCard
 		AgentID:      agentID,
 		ResponseCode: respCode,
 		TemplateCard: &TemplateCard{
-			CardType:              CardTextNotice,
+			CardType:              CardNewsNotice,
 			Source:                card.Source,
 			ActionMenu:            card.ActionMenu,
 			MainTitle:             card.MainTitle,
@@ -320,7 +323,7 @@ func UpdateToNewsNoticeCard(agentID int64, respCode string, card *NewsNoticeCard
 
 	return wx.NewPostAction(urls.CorpMessageUpdateTemplateCard,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -333,7 +336,7 @@ func UpdateToButtonInteractionCard(agentID int64, respCode string, card *ButtonI
 		AgentID:      agentID,
 		ResponseCode: respCode,
 		TemplateCard: &TemplateCard{
-			CardType:              CardTextNotice,
+			CardType:              CardButtonInteraction,
 			Source:                card.Source,
 			ActionMenu:            card.ActionMenu,
 			MainTitle:             card.MainTitle,
@@ -356,7 +359,7 @@ func UpdateToButtonInteractionCard(agentID int64, respCode string, card *ButtonI
 
 	return wx.NewPostAction(urls.CorpMessageUpdateTemplateCard,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -369,7 +372,7 @@ func UpdateToVoteInteractionCard(agentID int64, respCode string, card *VoteInter
 		AgentID:      agentID,
 		ResponseCode: respCode,
 		TemplateCard: &TemplateCard{
-			CardType:     CardTextNotice,
+			CardType:     CardVoteInteraction,
 			Source:       card.Source,
 			ActionMenu:   card.ActionMenu,
 			MainTitle:    card.MainTitle,
@@ -388,7 +391,7 @@ func UpdateToVoteInteractionCard(agentID int64, respCode string, card *VoteInter
 
 	return wx.NewPostAction(urls.CorpMessageUpdateTemplateCard,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -401,7 +404,7 @@ func UpdateToMultipleInteractionCard(agentID int64, respCode string, card *Multi
 		AgentID:      agentID,
 		ResponseCode: respCode,
 		TemplateCard: &TemplateCard{
-			CardType:     CardTextNotice,
+			CardType:     CardMultipleInteraction,
 			Source:       card.Source,
 			ActionMenu:   card.ActionMenu,
 			MainTitle:    card.MainTitle,
@@ -420,7 +423,7 @@ func UpdateToMultipleInteractionCard(agentID int64, respCode string, card *Multi
 
 	return wx.NewPostAction(urls.CorpMessageUpdateTemplateCard,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

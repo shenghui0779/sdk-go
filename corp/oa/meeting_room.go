@@ -41,7 +41,7 @@ type ResultMeetingRoomAdd struct {
 func AddMeetingRoom(params *ParamsMeetingRoomAdd, result *ResultMeetingRoomAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpOAMeetingRoomAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -63,7 +63,7 @@ type ResultMeetingRoomList struct {
 func ListMeetingRoom(params *ParamsMeetingRoomList, result *ResultMeetingRoomList) wx.Action {
 	return wx.NewPostAction(urls.CorpOAMeetingRoomList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -85,7 +85,7 @@ type ParamsMeetingRoomEdit struct {
 func EditMeetingRoom(params *ParamsMeetingRoomEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpOAMeetingRoomEdit,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -101,7 +101,7 @@ func DeleteMeetingRoom(meetingRoomID int64) wx.Action {
 
 	return wx.NewPostAction(urls.CorpOAMeetingRoomDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -135,7 +135,7 @@ type MeetingRoomBookingSchedule struct {
 func GetMeetingRoomBookingInfo(params *ParamsMeetingRoomBookingInfo, result *ResultMeetingRoomBookingInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetMeetingRoomBookingInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -160,7 +160,7 @@ type ResultMeetingRoomBook struct {
 func BookMeetingRoom(params *ParamsMeetingRoomBook, result *ResultMeetingRoomBook) wx.Action {
 	return wx.NewPostAction(urls.CorpOAMeetingRoomBook,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -181,7 +181,7 @@ func CancelBookMeetingRoom(meetingID string, keepSchedule int) wx.Action {
 
 	return wx.NewPostAction(urls.CorpOAMeetingRoomCancelBook,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -199,7 +199,7 @@ func GetMeetingRoomBookingInfoByMeetingID(meetingRoomID int64, meetingID string,
 
 	return wx.NewPostAction(urls.CorpOAGetMeetingRoomBookingInfoByMeetingID,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

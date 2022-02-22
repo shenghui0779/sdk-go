@@ -34,8 +34,8 @@ func TestUint32Bytes(t *testing.T) {
 	assert.Equal(t, i, DecodeBytesToUint32(b))
 }
 
-func TestMarshalWithNoEscapeHTML(t *testing.T) {
-	b, err := MarshalWithNoEscapeHTML(yiigo.X{
+func TestMarshalNoEscapeHTML(t *testing.T) {
+	b, err := MarshalNoEscapeHTML(yiigo.X{
 		"action":   "long2short",
 		"long_url": "http://wap.koudaitong.com/v2/showcase/goods?alias=128wi9shh&spm=h56083&redirect_count=1",
 	})

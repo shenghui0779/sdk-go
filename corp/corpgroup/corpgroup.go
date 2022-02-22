@@ -30,7 +30,7 @@ type ResultAppShareInfoList struct {
 func ListAppShareInfo(params *ParamsAppShareInfoList, result *ResultAppShareInfoList) wx.Action {
 	return wx.NewPostAction(urls.CorpGroupListAppShareInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -52,7 +52,7 @@ type ResultCorpAccessToken struct {
 func GetCorpAccessToken(params *ParamsCorpAccessToken, result *ResultCorpAccessToken) wx.Action {
 	return wx.NewPostAction(urls.CorpGroupGetAccessToken,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -73,7 +73,7 @@ type ResultMinipSessionTransfer struct {
 func TransferMinipSession(params *ParamsMinipSessionTransfer, result *ResultMinipSessionTransfer) wx.Action {
 	return wx.NewPostAction(urls.CorpGroupMinipTransferSession,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

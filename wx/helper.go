@@ -167,8 +167,8 @@ func DecodeBytesToUint32(b []byte) uint32 {
 	return uint32(b[0])<<24 | uint32(b[1])<<16 | uint32(b[2])<<8 | uint32(b[3])
 }
 
-// MarshalWithNoEscapeHTML marshal with no escape HTML
-func MarshalWithNoEscapeHTML(v interface{}) ([]byte, error) {
+// MarshalNoEscapeHTML marshal with no escape HTML
+func MarshalNoEscapeHTML(v interface{}) ([]byte, error) {
 	var buf bytes.Buffer
 
 	jsonEncoder := json.NewEncoder(&buf)

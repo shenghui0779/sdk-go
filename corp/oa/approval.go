@@ -32,7 +32,7 @@ func GetTemplateDetail(templateID string, result *ResultTemplateDetail) wx.Actio
 
 	return wx.NewPostAction(urls.CorpOAGetTemplateDetail,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -68,7 +68,7 @@ type ResultApplyEvent struct {
 func ApplyEvent(params *ParamsApplyEvent, result *ResultApplyEvent) wx.Action {
 	return wx.NewPostAction(urls.CorpOAApplyEvent,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -91,7 +91,7 @@ type ResultApprovalInfo struct {
 func GetApprovalInfo(params *ParamsApprovalInfo, result *ResultApprovalInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetApprovalInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -154,7 +154,7 @@ func GetApprovalDetail(spno string, result *ResultApprovalDetail) wx.Action {
 
 	return wx.NewPostAction(urls.CorpOAGetApprovalDetail,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -229,7 +229,7 @@ func GetOpenApprovalData(thirdNO string, result *ResultOpenApprovalData) wx.Acti
 
 	return wx.NewPostAction(urls.CorpOAGetOpenApprovalData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

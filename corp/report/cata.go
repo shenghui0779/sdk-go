@@ -20,7 +20,7 @@ type ResultGridCataAdd struct {
 func AddGridCata(params *ParamsGridCataAdd, result *ResultGridCataAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGridCataAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -38,7 +38,7 @@ type ParamsGridCataUpdate struct {
 func UpdateGridCata(params *ParamsGridCataUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGridCataUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -54,7 +54,7 @@ func DeleteGridCata(categoryID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpReportGridCataDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

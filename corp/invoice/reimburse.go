@@ -74,7 +74,7 @@ func GetInvoiceInfo(cardID, encryptCode string, result *ResultInvoiceInfo) wx.Ac
 
 	return wx.NewPostAction(urls.CorpInvoiceGetInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -97,7 +97,7 @@ func UpdateInvoiceStatus(cardID, encryptCode string, status ReimburseStatus) wx.
 
 	return wx.NewPostAction(urls.CorpInvoiceUpdateStatus,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -117,7 +117,7 @@ func BatchGetInvoiceInfo(invoices []*ParamsInvoice, result *ResultInvoiceBatchIn
 
 	return wx.NewPostAction(urls.CorpInvoiceBatchGetInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -140,7 +140,7 @@ func BatchUpdateInvoiceStatus(openID string, status ReimburseStatus, invoices ..
 
 	return wx.NewPostAction(urls.CorpInvoiceBatchUpdateStatus,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

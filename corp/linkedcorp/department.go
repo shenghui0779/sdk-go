@@ -30,7 +30,7 @@ func ListDeparment(linkedID, departmentID string, result *ResultDepartmentList) 
 
 	return wx.NewPostAction(urls.CorpLinkedcorpDepartmentList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

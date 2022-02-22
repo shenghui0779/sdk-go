@@ -27,7 +27,7 @@ type ResultWedriveSpaceCreate struct {
 func CreateWedriveSpace(params *ParamsWedriveSpaceCreate, result *ResultWedriveSpaceCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsWedriveSpaceCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -50,7 +50,7 @@ func RenameWedriveSpace(userID, spaceID, spaceName string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpToolsWedriveSpaceRename,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -68,7 +68,7 @@ func DismissWedriveSpace(userID, spaceID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpToolsWedriveSpaceDismiss,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -101,7 +101,7 @@ func GetWedriveSpaceInfo(userID, spaceID string, result *ResultWedriveSpaceInfo)
 
 	return wx.NewPostAction(urls.CorpToolsWedriveSpaceInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -124,7 +124,7 @@ func AddWedriveSpaceAcl(userID, spaceID string, acls ...*WedriveAuthInfo) wx.Act
 
 	return wx.NewPostAction(urls.CorpToolsWedriveSpaceAclAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -138,7 +138,7 @@ func DeleteWedriveSpaceAcl(userID, spaceID string, acls ...*WedriveAuthInfo) wx.
 
 	return wx.NewPostAction(urls.CorpToolsWedriveSpaceAclDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -156,7 +156,7 @@ type ParamsWedriveSpaceSetting struct {
 func SetWedriveSpace(params *ParamsWedriveSpaceSetting) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsWedriveSpaceSetting,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -178,7 +178,7 @@ func ShareWedriveSpace(userID, spaceID string, result *ResultWedriveSpaceShare) 
 
 	return wx.NewPostAction(urls.CorpToolsWedriveSpaceShare,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -225,7 +225,7 @@ type ResultWedriveFileList struct {
 func ListWedriveFile(params *ParamsWedriveFileList, result *ResultWedriveFileList) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsWedriveFileList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -248,7 +248,7 @@ type ResultWedriveFileUpload struct {
 func UploadWedriveFile(params *ParamsWedriveFileUpload, result *ResultWedriveFileUpload) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsWedriveFileUpload,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -275,7 +275,7 @@ func DownloadWedriveFile(userID, fileID string, result *ResultWedriveFileDownloa
 
 	return wx.NewPostAction(urls.CorpToolsWedriveFileDownload,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -299,7 +299,7 @@ type ResultWedriveFileCreate struct {
 func CreateWedriveFile(params *ParamsWedriveFileCreate, result *ResultWedriveFileCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsWedriveFileCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -326,7 +326,7 @@ func RenameWedriveFile(userID, fileID, filename string, result *ResultWedriveFil
 
 	return wx.NewPostAction(urls.CorpToolsWedriveFileRename,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -348,7 +348,7 @@ type ResultWedriveFileMove struct {
 func MoveWedriveFile(params *ParamsWedriveFileMove, result *ResultWedriveFileMove) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsWedriveFileMove,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -369,7 +369,7 @@ func DeleteWedriveFile(userID string, fileIDs ...string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpToolsWedriveFileDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -391,7 +391,7 @@ func GetWedriveFileInfo(userID, fileID string, result *ResultWedriveFileInfo) wx
 
 	return wx.NewPostAction(urls.CorpToolsWedriveFileInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -414,7 +414,7 @@ func AddWedriveFileAcl(userID, fileID string, acls ...*WedriveAuthInfo) wx.Actio
 
 	return wx.NewPostAction(urls.CorpToolsWedriveFileAclAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -428,7 +428,7 @@ func DeleteWedriveFileAcl(userID, fileID string, acls ...*WedriveAuthInfo) wx.Ac
 
 	return wx.NewPostAction(urls.CorpToolsWedriveFileAclDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -443,7 +443,7 @@ type ParamsWedriveFileSetting struct {
 func SetWedriveFile(params *ParamsWedriveFileSetting) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsWedriveFileSetting,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -465,7 +465,7 @@ func ShareWedriveFile(userID, fileID string, result *ResultWedriveFileShare) wx.
 
 	return wx.NewPostAction(urls.CorpToolsWedriveFileShare,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

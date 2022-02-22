@@ -16,7 +16,7 @@ type ParamsStudentCreate struct {
 func CreateStudent(params *ParamsStudentCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolStudentCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -31,7 +31,7 @@ type ParamsStudentUpdate struct {
 func UpdateStudent(params *ParamsStudentUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolStudentUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -59,7 +59,7 @@ type ResultStudentBatchCreate struct {
 func BatchCreateStudent(params *ParamsStudentBatchCreate, result *ResultStudentBatchCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolStudentBatchCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -78,7 +78,7 @@ type ResultStudentBatchUpdate struct {
 func BatchUpdateStudent(params *ParamsStudentBatchUpdate, result *ResultStudentBatchUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolStudentBatchUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -101,7 +101,7 @@ func BatchDeleteStudent(userIDs []string, result *ResultStudentBatchDelete) wx.A
 
 	return wx.NewPostAction(urls.CorpSchoolStudentBatchDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

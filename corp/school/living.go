@@ -27,7 +27,7 @@ func GetUserAllLivingID(userID, cursor string, limit int, result *ResultUserAllL
 
 	return wx.NewPostAction(urls.CorpSchoolGetUserAllLivingID,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -107,7 +107,7 @@ func GetLivingWatchStat(livingID, nextKey string, result *ResultLivingWatchStat)
 
 	return wx.NewPostAction(urls.CorpSchoolGetLivingWatchStat,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -144,7 +144,7 @@ func GetLivingUnwatchStat(livingID, nextKey string, result *ResultLivingUnwatchS
 
 	return wx.NewPostAction(urls.CorpSchoolGetLivingUnwatchStat,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -163,7 +163,7 @@ func DeleteLivingReplayData(livingID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpSchoolDeleteLivingReplayData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

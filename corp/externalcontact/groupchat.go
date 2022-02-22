@@ -31,7 +31,7 @@ type ResultGroupChatList struct {
 func ListGroupChat(params *ParamsGroupChatList, result *ResultGroupChatList) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGroupChatList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -85,7 +85,7 @@ func GetGroupChat(chatID string, needName int, result *ResultGroupChatGet) wx.Ac
 
 	return wx.NewPostAction(urls.CorpExternalContactGroupChatGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -108,7 +108,7 @@ func OpenGIDToChatID(opengid string, result *ResultOpenGIDToChatID) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactOpenGIDToChatID,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

@@ -23,7 +23,7 @@ func GetHealthReportStat(date string, result *ResultHealthReportStat) wx.Action 
 
 	return wx.NewPostAction(urls.CorpSchoolGetHealthReportStat,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -49,7 +49,7 @@ func GetHealthReportJobIDs(offset, limit int, result *ResultHealthReportJobIDs) 
 
 	return wx.NewPostAction(urls.CorpSchoolGetHealthReportJobIDs,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -108,7 +108,7 @@ func GetHealthReportJobInfo(jobID, date string, result *ResultHealthReportJobInf
 
 	return wx.NewPostAction(urls.CorpSchoolGetHealthReportJobInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -154,7 +154,7 @@ func GetHealthReportAnswer(jobID, date string, offset, limit int, result *Result
 
 	return wx.NewPostAction(urls.CorpSchoolGetHealthReportAnswer,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -207,7 +207,7 @@ func GetTeacherHealthInfo(date, nextKey string, limit int, result *ResultCustomi
 
 	return wx.NewPostAction(urls.CorpSchoolGetTeacherHealthInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -224,7 +224,7 @@ func GetStudentHealthInfo(date, nextKey string, limit int, result *ResultCustomi
 
 	return wx.NewPostAction(urls.CorpSchoolGetStudentHealthInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -256,7 +256,7 @@ func GetHealthQRCode(objType int, userIDs []string, result *ResultHealthQRCode) 
 
 	return wx.NewPostAction(urls.CorpSchoolGetHealthQRCode,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

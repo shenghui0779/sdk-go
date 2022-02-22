@@ -146,7 +146,7 @@ type MsgListData struct {
 func SyncMsg(params *ParamsMsgSync, result *ResultMsgSync) wx.Action {
 	return wx.NewPostAction(urls.CorpKFSyncMsg,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -185,7 +185,7 @@ func SendTextMsg(toUser, openKFID, msgID string, text *Text, result *ResultMsgSe
 
 	return wx.NewPostAction(urls.CorpKFSendMsg,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -204,7 +204,7 @@ func SendImageMsg(toUser, openKFID, msgID string, image *Image, result *ResultMs
 
 	return wx.NewPostAction(urls.CorpKFSendMsg,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -223,7 +223,7 @@ func SendVoiceMsg(toUser, openKFID, msgID string, voice *Voice, result *ResultMs
 
 	return wx.NewPostAction(urls.CorpKFSendMsg,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -242,7 +242,7 @@ func SendVideoMsg(toUser, openKFID, msgID string, video *Video, result *ResultMs
 
 	return wx.NewPostAction(urls.CorpKFSendMsg,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -261,7 +261,7 @@ func SendFileMsg(toUser, openKFID, msgID string, file *File, result *ResultMsgSe
 
 	return wx.NewPostAction(urls.CorpKFSendMsg,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -280,7 +280,7 @@ func SendLinkMsg(toUser, openKFID, msgID string, link *Link, result *ResultMsgSe
 
 	return wx.NewPostAction(urls.CorpKFSendMsg,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -299,7 +299,7 @@ func SendMinipMsg(toUser, openKFID, msgID string, minip *Minip, result *ResultMs
 
 	return wx.NewPostAction(urls.CorpKFSendMsg,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -318,7 +318,7 @@ func SendMenuMsg(toUser, openKFID, msgID string, menu *Menu, result *ResultMsgSe
 
 	return wx.NewPostAction(urls.CorpKFSendMsg,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -337,7 +337,7 @@ func SendLocationMsg(toUser, openKFID, msgID string, location *Location, result 
 
 	return wx.NewPostAction(urls.CorpKFSendMsg,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

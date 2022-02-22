@@ -32,7 +32,7 @@ func SetSubscribeMode(mode int) wx.Action {
 
 	return wx.NewPostAction(urls.CorpSchoolSetSubscribeMode,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -146,7 +146,7 @@ func ConvertToOpenID(userID string, result *ResultOpenIDConvert) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactConvertToOpenID,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

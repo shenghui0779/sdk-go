@@ -31,7 +31,7 @@ func GetPaymentResult(paymentID string, result *ResultPaymentGet) wx.Action {
 
 	return wx.NewPostAction(urls.CorpSchoolGetPaymentResult,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -57,7 +57,7 @@ func GetTrade(paymentID, tradeNO string, result *ResultTradeGet) wx.Action {
 
 	return wx.NewPostAction(urls.CorpSchoolGetTrade,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

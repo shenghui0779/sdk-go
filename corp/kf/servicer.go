@@ -30,7 +30,7 @@ func AddServicer(openKFID string, userIDs []string, result *ResultServicerAdd) w
 
 	return wx.NewPostAction(urls.CorpKFServicerAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -55,7 +55,7 @@ func DeleteServicer(openKFID string, userIDs []string, result *ResultServicerDel
 
 	return wx.NewPostAction(urls.CorpKFServicerDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -99,7 +99,7 @@ func GetServiceState(openKFID, externalUserID string, result *ResultServiceState
 
 	return wx.NewPostAction(urls.CorpKFServiceStateGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -121,7 +121,7 @@ type ResultServiceStateTransfer struct {
 func TransferServiceState(params *ParamsServiceStateTransfer, result *ResultServiceStateTransfer) wx.Action {
 	return wx.NewPostAction(urls.CorpKFServiceStateTransfer,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

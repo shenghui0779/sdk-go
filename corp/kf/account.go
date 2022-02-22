@@ -24,7 +24,7 @@ func AddAccount(name, mediaID string, result *ResultAccountAdd) wx.Action {
 
 	return wx.NewPostAction(urls.CorpKFAccountAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -43,7 +43,7 @@ func DeleteAccount(openKFID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpKFAccountDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -63,7 +63,7 @@ func UpdateAccount(openKFID, name, mediaID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpKFAccountUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -103,7 +103,7 @@ func AddContactWay(openKFID, scene string, result *ResultContactWayAdd) wx.Actio
 
 	return wx.NewPostAction(urls.CorpKFAddContactWay,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

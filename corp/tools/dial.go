@@ -47,7 +47,7 @@ func GetDialRecord(starttime, endtime int64, offset, limit int, result *ResultDi
 
 	return wx.NewPostAction(urls.CorpToolsDialRecordGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

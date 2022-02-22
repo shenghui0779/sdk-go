@@ -41,7 +41,7 @@ func ListCorpTag(tagIDs, groupIDs []string, result *ResultCorpTagList) wx.Action
 
 	return wx.NewPostAction(urls.CorpExternalContactCorpTagList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -69,7 +69,7 @@ type ResultCorpTagAdd struct {
 func AddCorpTag(params *ParamsCorpTagAdd, result *ResultCorpTagAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactCorpTagAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -87,7 +87,7 @@ type ParamsCorpTagEdit struct {
 func EditCorpTag(params *ParamsCorpTagEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactCorpTagEdit,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -107,7 +107,7 @@ func DeleteCorpTag(tagIDs, groupIDs []string, agentID int64) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactCorpTagDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -147,7 +147,7 @@ func ListStrategyTag(strategyID int64, tagIDs, groupIDs []string, result *Result
 
 	return wx.NewPostAction(urls.CorpExternalContactStrategyTagList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -175,7 +175,7 @@ type ResultStrategyTagAdd struct {
 func AddStrategyTag(params *ParamsStrategyTagAdd, result *ResultStrategyTagAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactStrategyTagAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -192,7 +192,7 @@ type ParamsStrategyTagEdit struct {
 func EditStrategyTag(params *ParamsStrategyTagEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactStrategyTagEdit,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -210,7 +210,7 @@ func DeleteStrategyTag(tagIDs, groupIDs []string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactStrategyTagDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -225,7 +225,7 @@ type ParamsTagMark struct {
 func MarkTag(params *ParamsTagMark) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactMarkTag,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

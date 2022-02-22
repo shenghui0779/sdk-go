@@ -71,7 +71,7 @@ type ResultMsgTemplateAdd struct {
 func AddMsgTemplate(params *ParamsMsgTemplateAdd, result *ResultMsgTemplateAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactAddMsgTemplate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -106,7 +106,7 @@ type ResultGroupMsgList struct {
 func ListGroupMsg(params *ParamsGroupMsgList, result *ResultGroupMsgList) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetGroupMsgList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -134,7 +134,7 @@ type GroupMsgTask struct {
 func GetGroupMsgTask(params *ParamsGroupMsgTask, result *ResultGroupMsgTask) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetGroupMsgTask,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -165,7 +165,7 @@ type GroupMsgSendResult struct {
 func GetGroupMsgSendResult(params *ParamsGroupMsgSendResult, result *ResultGroupMsgSendResult) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetGroupMsgSendResult,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -182,7 +182,7 @@ type ParamsWelcomeMsgSend struct {
 func SendWelcomeMsg(params *ParamsWelcomeMsgSend) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactSendWelcomeMsg,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -205,7 +205,7 @@ type ResultGroupWelcomeTemplateAdd struct {
 func AddGroupWelcomeTemplate(params *ParamsGroupWelcomeTemplateAdd, result *ResultGroupWelcomeTemplateAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGroupWelcomeTemplateAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -227,7 +227,7 @@ type ParamsGroupWelcomeTemplateEdit struct {
 func EditGroupWelcomeTemplate(params *ParamsGroupWelcomeTemplateEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGroupWelcomeTemplateEdit,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -252,7 +252,7 @@ func GetGroupWelcomeTemplate(templateID string, result *ResultGroupWelcomeTempla
 
 	return wx.NewPostAction(urls.CorpExternalContactGroupWelcomeTemplateGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -273,7 +273,7 @@ func DeleteGroupWelcomeTemplate(templateID string, agentID int64) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactGroupWelcomeTemplateDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

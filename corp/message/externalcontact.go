@@ -25,8 +25,8 @@ type ExternalContactMsg struct {
 	ToStudentUserID        []string      `json:"to_student_userid,omitempty"`
 	ToParty                []string      `json:"to_party,omitempty"`
 	ToAll                  int           `json:"toall,omitempty"`
-	AgentID                int64         `json:"agentid"`
 	MsgType                event.MsgType `json:"msgtype"`
+	AgentID                int64         `json:"agentid,omitempty"`
 	Text                   *Text         `json:"text,omitempty"`
 	Image                  *Media        `json:"image,omitempty"`
 	Voice                  *Media        `json:"voice,omitempty"`
@@ -50,8 +50,8 @@ type ResultExternalContactSend struct {
 
 func SendExternalContactText(agentID int64, content string, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
-		AgentID: agentID,
 		MsgType: event.MsgText,
+		AgentID: agentID,
 		Text: &Text{
 			Content: content,
 		},
@@ -70,7 +70,7 @@ func SendExternalContactText(agentID int64, content string, extra *ExternalConta
 
 	return wx.NewPostAction(urls.CorpExternalContactMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -80,8 +80,8 @@ func SendExternalContactText(agentID int64, content string, extra *ExternalConta
 
 func SendExternalContactImage(agentID int64, mediaID string, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
-		AgentID: agentID,
 		MsgType: event.MsgImage,
+		AgentID: agentID,
 		Image: &Media{
 			MediaID: mediaID,
 		},
@@ -100,7 +100,7 @@ func SendExternalContactImage(agentID int64, mediaID string, extra *ExternalCont
 
 	return wx.NewPostAction(urls.CorpExternalContactMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -110,8 +110,8 @@ func SendExternalContactImage(agentID int64, mediaID string, extra *ExternalCont
 
 func SendExternalContactVoice(agentID int64, mediaID string, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
-		AgentID: agentID,
 		MsgType: event.MsgVoice,
+		AgentID: agentID,
 		Voice: &Media{
 			MediaID: mediaID,
 		},
@@ -130,7 +130,7 @@ func SendExternalContactVoice(agentID int64, mediaID string, extra *ExternalCont
 
 	return wx.NewPostAction(urls.CorpExternalContactMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -140,8 +140,8 @@ func SendExternalContactVoice(agentID int64, mediaID string, extra *ExternalCont
 
 func SendExternalContactVideo(agentID int64, video *Video, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
-		AgentID: agentID,
 		MsgType: event.MsgVideo,
+		AgentID: agentID,
 		Video:   video,
 	}
 
@@ -158,7 +158,7 @@ func SendExternalContactVideo(agentID int64, video *Video, extra *ExternalContac
 
 	return wx.NewPostAction(urls.CorpExternalContactMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -168,8 +168,8 @@ func SendExternalContactVideo(agentID int64, video *Video, extra *ExternalContac
 
 func SendExternalContactFile(agentID int64, mediaID string, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
-		AgentID: agentID,
 		MsgType: event.MsgFile,
+		AgentID: agentID,
 		File: &Media{
 			MediaID: mediaID,
 		},
@@ -188,7 +188,7 @@ func SendExternalContactFile(agentID int64, mediaID string, extra *ExternalConta
 
 	return wx.NewPostAction(urls.CorpExternalContactMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -198,8 +198,8 @@ func SendExternalContactFile(agentID int64, mediaID string, extra *ExternalConta
 
 func SendExternalContactNews(agentID int64, articles []*NewsArticle, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
-		AgentID: agentID,
 		MsgType: event.MsgNews,
+		AgentID: agentID,
 		News: &News{
 			Articles: articles,
 		},
@@ -218,7 +218,7 @@ func SendExternalContactNews(agentID int64, articles []*NewsArticle, extra *Exte
 
 	return wx.NewPostAction(urls.CorpExternalContactMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -228,8 +228,8 @@ func SendExternalContactNews(agentID int64, articles []*NewsArticle, extra *Exte
 
 func SendExternalContactMPNews(agentID int64, articles []*MPNewsArticle, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
-		AgentID: agentID,
 		MsgType: event.MsgMPNews,
+		AgentID: agentID,
 		MPNews: &MPNews{
 			Articles: articles,
 		},
@@ -248,7 +248,7 @@ func SendExternalContactMPNews(agentID int64, articles []*MPNewsArticle, extra *
 
 	return wx.NewPostAction(urls.CorpExternalContactMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -258,8 +258,8 @@ func SendExternalContactMPNews(agentID int64, articles []*MPNewsArticle, extra *
 
 func SendExternalContactMiniprogram(agentID int64, minip *Miniprogram, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
+		MsgType:     event.MsgMinip,
 		AgentID:     agentID,
-		MsgType:     event.MsgMinipNotice,
 		Miniprogram: minip,
 	}
 
@@ -276,7 +276,7 @@ func SendExternalContactMiniprogram(agentID int64, minip *Miniprogram, extra *Ex
 
 	return wx.NewPostAction(urls.CorpExternalContactMessageSend,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(msg)
+			return wx.MarshalNoEscapeHTML(msg)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

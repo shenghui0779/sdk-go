@@ -40,7 +40,7 @@ type ResultInterceptRuleAdd struct {
 func AddInterceptRule(params *ParamsInterceptRuleAdd, result *ResultInterceptRuleAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactInterceptRuleAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -61,7 +61,7 @@ type ParamsInterceptRuleUpdate struct {
 func UpdateInterceptRule(params *ParamsInterceptRuleUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactInterceptRuleUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -99,7 +99,7 @@ func GetInterceptRule(ruleID string, result *ResultInterceptRuleGet) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactInterceptRuleGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -118,7 +118,7 @@ func DeleteInterceptRule(ruleID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpExternalContactInterceptRuleDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

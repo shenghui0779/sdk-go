@@ -46,7 +46,7 @@ func GetResidentCorpStatus(gridID string, result *ResultResidentCorpStatus) wx.A
 
 	return wx.NewPostAction(urls.CorpReportGetResidentCorpStatus,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -72,7 +72,7 @@ func GetResidentUserStatus(userID string, result *ResultResidentUserStatus) wx.A
 
 	return wx.NewPostAction(urls.CorpReportGetResidentUserStatus,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -104,7 +104,7 @@ func GetResidentCategoryStatistic(categoryID string, result *ResultResidentCateg
 
 	return wx.NewPostAction(urls.CorpReportResidentCategoryStatistic,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -152,7 +152,7 @@ func ListResidentOrder(beginCreateTime, beginModifyTime int64, cursor string, li
 
 	return wx.NewPostAction(urls.CorpReportGetResidentOrderList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -175,7 +175,7 @@ func GetResidentOrderInfo(orderID string, result *ResultResidentOrderInfo) wx.Ac
 
 	return wx.NewPostAction(urls.CorpReportGetResidentOrderInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

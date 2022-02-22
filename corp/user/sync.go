@@ -40,7 +40,7 @@ func BatchSyncUser(mediaID string, toInvite bool, callback *BatchCallback, resul
 
 	return wx.NewPostAction(urls.CorpUserBatchSyncUser,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -63,7 +63,7 @@ func BatchReplaceUser(mediaID string, toInvite bool, callback *BatchCallback, re
 
 	return wx.NewPostAction(urls.CorpUserBatchReplaceUser,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -84,7 +84,7 @@ func BatchReplaceParty(mediaID string, callback *BatchCallback, result *ResultBa
 
 	return wx.NewPostAction(urls.CorpUserBatchReplaceParty,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

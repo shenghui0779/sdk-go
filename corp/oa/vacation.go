@@ -57,7 +57,7 @@ func GetUserVacationQuota(userID string, result *ResultUserVacationQuota) wx.Act
 
 	return wx.NewPostAction(urls.CorpOAGetUserVacationQuota,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -76,7 +76,7 @@ type ParamsOneUserQuotaSet struct {
 func SetOneUserQuota(params *ParamsOneUserQuotaSet) wx.Action {
 	return wx.NewPostAction(urls.CorpOASetOneUserVacationQuota,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

@@ -67,7 +67,7 @@ type ResultMomentTaskAdd struct {
 func AddMomentTask(params *ParamsMomentTaskAdd, result *ResultMomentTaskAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactAddMomentTask,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -137,7 +137,7 @@ type ResultMomentList struct {
 func ListMoment(params *ParamsMomentList, result *ResultMomentList) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -170,7 +170,7 @@ func GetMomentTask(momentID, cursor string, limit int, result *ResultMomentTaskG
 
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentTask,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -205,7 +205,7 @@ func ListMomentCustomer(momentID, userID, cursor string, limit int, result *Resu
 
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentCustomerList,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -235,7 +235,7 @@ func GetMomentSendResult(momentID, userID, cursor string, limit int, result *Res
 
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentSentResult,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -277,7 +277,7 @@ func GetMomentComments(momentID, userID, cursor string, limit int, result *Resul
 
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentComments,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

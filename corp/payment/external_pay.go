@@ -20,7 +20,7 @@ func AddMerchant(mchID, mchName string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpPaymentMerchantAdd,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -49,7 +49,7 @@ func GetMerchant(mchID string, result *ResultMerchantGet) wx.Action {
 
 	return wx.NewPostAction(urls.CorpPaymentMerchantGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -68,7 +68,7 @@ func DeleteMerchant(mchID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpPaymentMerchantDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -86,7 +86,7 @@ func SetMchUseScope(mchID string, scope *AllowUseScope) wx.Action {
 
 	return wx.NewPostAction(urls.CorpPaymentMchUseScopeSet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -144,7 +144,7 @@ type ResultBillList struct {
 func GetBillList(params *ParamsBillList, result *ResultBillList) wx.Action {
 	return wx.NewPostAction(urls.CorpPaymentBillListGet,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

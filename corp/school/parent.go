@@ -22,7 +22,7 @@ type ParamsParentCreate struct {
 func CreateParent(params *ParamsParentCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolParentCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -37,7 +37,7 @@ type ParamsParentUpdate struct {
 func UpdateParent(params *ParamsParentUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolParentUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -65,7 +65,7 @@ type ResultParentBatchCreate struct {
 func BatchCreateParent(params *ParamsParentBatchCreate, result *ResultParentBatchCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolParentBatchCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -84,7 +84,7 @@ type ResultParentBatchUpdate struct {
 func BatchUpdateParent(params *ParamsParentBatchUpdate, result *ResultParentBatchUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolParentBatchUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -107,7 +107,7 @@ func BatchDeleteParent(userIDs []string, result *ResultParentBatchDelete) wx.Act
 
 	return wx.NewPostAction(urls.CorpSchoolParentBatchDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

@@ -33,7 +33,7 @@ type ResultLivingCreate struct {
 func CreateLiving(params *ParamsLivingCreate, result *ResultLivingCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsLivingCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -54,7 +54,7 @@ type ParamsLivingModify struct {
 func ModifyLiving(params *ParamsLivingModify) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsLivingModify,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -70,7 +70,7 @@ func CancelLiving(livingID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpToolsLivingCancel,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -86,7 +86,7 @@ func DeleteLivingReplayData(livingID string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpToolsLivingDeleteReplayData,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -108,7 +108,7 @@ func GetLivingCode(livingID, openID string, result *ResultLivingCode) wx.Action 
 
 	return wx.NewPostAction(urls.CorpToolsLivingGetCode,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -136,7 +136,7 @@ func GetUserAllLivingID(userID, cursor string, limit int, result *ResultUserAllL
 
 	return wx.NewPostAction(urls.CorpToolsLivingGetUserAllLivingID,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -218,7 +218,7 @@ func GetLivingWatchStat(livingID, nextKey string, result *ResultLivingWatchStat)
 
 	return wx.NewPostAction(urls.CorpToolsLivingGetWatchStat,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -245,7 +245,7 @@ func GetLivingShareInfo(wwshareCode string, result *ResultLivingShareInfo) wx.Ac
 
 	return wx.NewPostAction(urls.CorpToolsLivingGetShareInfo,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

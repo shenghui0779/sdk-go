@@ -74,7 +74,7 @@ type ParamsUserCreate struct {
 func CreateUser(params *ParamsUserCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpUserCreate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -106,7 +106,7 @@ type ParamsUserUpdate struct {
 func UpdateUser(params *ParamsUserUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpUserUpdate,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -166,7 +166,7 @@ func BatchDeleteUser(userIDs ...string) wx.Action {
 
 	return wx.NewPostAction(urls.CorpUserBatchDelete,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
@@ -224,7 +224,7 @@ func ConvertToOpenID(userID string, result *ResultOpenIDConvert) wx.Action {
 
 	return wx.NewPostAction(urls.CorpUserConvertToOpenID,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -248,7 +248,7 @@ func ConvertToUserID(openid string, result *ResultUserIDConvert) wx.Action {
 
 	return wx.NewPostAction(urls.CorpUserConvertToUserID,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -278,7 +278,7 @@ func BatchInvite(userIDs []string, partyIDs, tagIDs []int64, result *ResultBatch
 
 	return wx.NewPostAction(urls.CorpUserBatchInvite,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -326,7 +326,7 @@ func GetActiveStat(date string, result *ResultActiveStat) wx.Action {
 
 	return wx.NewPostAction(urls.CorpUserActiveStat,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -349,7 +349,7 @@ func GetUserID(mobile string, result *ResultUserID) wx.Action {
 
 	return wx.NewPostAction(urls.CorpUserGetUserID,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)

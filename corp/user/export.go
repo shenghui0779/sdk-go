@@ -25,7 +25,7 @@ func ExportSimpleUser(encodingAESKey string, blockSize int64, result *ResultExpo
 
 	return wx.NewPostAction(urls.CorpUserExportSimpleUser,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -41,7 +41,7 @@ func ExportUser(encodingAESKey string, blockSize int64, result *ResultExport) wx
 
 	return wx.NewPostAction(urls.CorpUserExportUser,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -57,7 +57,7 @@ func ExportDepartment(encodingAESKey string, blockSize int64, result *ResultExpo
 
 	return wx.NewPostAction(urls.CorpUserExportDepartment,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -74,7 +74,7 @@ func ExportTagUser(tagID int64, encodingAESKey string, blockSize int64, result *
 
 	return wx.NewPostAction(urls.CorpUserExportTagUser,
 		wx.WithBody(func() ([]byte, error) {
-			return json.Marshal(params)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
