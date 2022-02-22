@@ -143,6 +143,7 @@ type MsgListData struct {
 	Event          *Event        `json:"event"`
 }
 
+// SyncMsg 读取消息
 func SyncMsg(params *ParamsMsgSync, result *ResultMsgSync) wx.Action {
 	return wx.NewPostAction(urls.CorpKFSyncMsg,
 		wx.WithBody(func() ([]byte, error) {
@@ -174,6 +175,7 @@ type ResultMsgSend struct {
 	MsgID string `json:"msgid"`
 }
 
+// SendTextMsg 发送文本消息
 func SendTextMsg(toUser, openKFID, msgID string, text *Text, result *ResultMsgSend) wx.Action {
 	params := &ParamsMsgSend{
 		ToUser:   toUser,
@@ -193,6 +195,7 @@ func SendTextMsg(toUser, openKFID, msgID string, text *Text, result *ResultMsgSe
 	)
 }
 
+// SendImageMsg 发送图片消息
 func SendImageMsg(toUser, openKFID, msgID string, image *Image, result *ResultMsgSend) wx.Action {
 	params := &ParamsMsgSend{
 		ToUser:   toUser,
@@ -212,6 +215,7 @@ func SendImageMsg(toUser, openKFID, msgID string, image *Image, result *ResultMs
 	)
 }
 
+// SendVoiceMsg 发送语音消息
 func SendVoiceMsg(toUser, openKFID, msgID string, voice *Voice, result *ResultMsgSend) wx.Action {
 	params := &ParamsMsgSend{
 		ToUser:   toUser,
@@ -231,6 +235,7 @@ func SendVoiceMsg(toUser, openKFID, msgID string, voice *Voice, result *ResultMs
 	)
 }
 
+// SendVideoMsg 发送视频消息
 func SendVideoMsg(toUser, openKFID, msgID string, video *Video, result *ResultMsgSend) wx.Action {
 	params := &ParamsMsgSend{
 		ToUser:   toUser,
@@ -250,6 +255,7 @@ func SendVideoMsg(toUser, openKFID, msgID string, video *Video, result *ResultMs
 	)
 }
 
+// SendFileMsg 发送文件消息
 func SendFileMsg(toUser, openKFID, msgID string, file *File, result *ResultMsgSend) wx.Action {
 	params := &ParamsMsgSend{
 		ToUser:   toUser,
@@ -269,6 +275,7 @@ func SendFileMsg(toUser, openKFID, msgID string, file *File, result *ResultMsgSe
 	)
 }
 
+// SendLinkMsg 发送图文链接消息
 func SendLinkMsg(toUser, openKFID, msgID string, link *Link, result *ResultMsgSend) wx.Action {
 	params := &ParamsMsgSend{
 		ToUser:   toUser,
@@ -288,6 +295,7 @@ func SendLinkMsg(toUser, openKFID, msgID string, link *Link, result *ResultMsgSe
 	)
 }
 
+// SendMinipMsg 发送小程序消息
 func SendMinipMsg(toUser, openKFID, msgID string, minip *Minip, result *ResultMsgSend) wx.Action {
 	params := &ParamsMsgSend{
 		ToUser:   toUser,
@@ -307,6 +315,7 @@ func SendMinipMsg(toUser, openKFID, msgID string, minip *Minip, result *ResultMs
 	)
 }
 
+// SendMenuMsg 发送菜单消息
 func SendMenuMsg(toUser, openKFID, msgID string, menu *Menu, result *ResultMsgSend) wx.Action {
 	params := &ParamsMsgSend{
 		ToUser:   toUser,
@@ -326,6 +335,7 @@ func SendMenuMsg(toUser, openKFID, msgID string, menu *Menu, result *ResultMsgSe
 	)
 }
 
+// SendLocationMsg 发送地理位置消息
 func SendLocationMsg(toUser, openKFID, msgID string, location *Location, result *ResultMsgSend) wx.Action {
 	params := &ParamsMsgSend{
 		ToUser:   toUser,
@@ -343,4 +353,12 @@ func SendLocationMsg(toUser, openKFID, msgID string, location *Location, result 
 			return json.Unmarshal(resp, result)
 		}),
 	)
+}
+
+func SendTextMsgOnEvent() wx.Action {
+
+}
+
+func SendMenuMsgOnEvent() wx.Action {
+
 }

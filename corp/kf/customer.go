@@ -24,6 +24,7 @@ type Customer struct {
 	UnionID        string `json:"unionid"`
 }
 
+// BatchGetCustomer 获取客户基础信息
 func BatchGetCustomer(externalUserIDs []string, result *ResultCustomerBatchGet) wx.Action {
 	params := &ParamsCustomerBatchGet{
 		ExternalUseridList: externalUserIDs,
@@ -53,6 +54,7 @@ type GroupChatRange struct {
 	ChatIDList []string `json:"chat_id_list"`
 }
 
+// GetUpgradeServiceConfig 获取配置的专员与客户群
 func GetUpgradeServiceConfig(result *ResultServiceUpgradeConfig) wx.Action {
 	return wx.NewGetAction(urls.CorpKFGetUpgradeServiceConfig,
 		wx.WithDecode(func(resp []byte) error {
@@ -79,6 +81,7 @@ type GroupChat struct {
 	Wording string `json:"wording"`
 }
 
+// UpgradeMemberService 为客户升级为专员服务
 func UpgradeMemberService(openKFID, externalUserID string, member *Member) wx.Action {
 	params := &ParamsServiceUpgrade{
 		OpenKFID:       openKFID,
@@ -94,6 +97,7 @@ func UpgradeMemberService(openKFID, externalUserID string, member *Member) wx.Ac
 	)
 }
 
+// UpgradeGroupChatService 为客户升级为客户群服务
 func UpgradeGroupChatService(openKFID, externalUserID string, groupChat *GroupChat) wx.Action {
 	params := &ParamsServiceUpgrade{
 		OpenKFID:       openKFID,
@@ -114,6 +118,7 @@ type ParamsServiceUpgradeCancel struct {
 	ExternalUserID string `json:"external_userid"`
 }
 
+// CancelUpgradeService 为客户取消推荐
 func CancelUpgradeService(openKFID, externalUserID string) wx.Action {
 	params := &ParamsServiceUpgradeCancel{
 		OpenKFID:       openKFID,

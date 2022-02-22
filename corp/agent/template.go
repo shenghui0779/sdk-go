@@ -60,6 +60,22 @@ type ParamsWorkbenchTemplateSet struct {
 	ReplaceUserData bool              `json:"replace_user_data"`
 }
 
+// SetWorkbenchNormalTemplate 设置应用在工作台展示的模版（从自定义模式切换为普通宫格或者列表展示模式）
+func SetWorkbenchNormalTemplate(agentID int64, replaceUserData bool) wx.Action {
+	params := &ParamsWorkbenchTemplateSet{
+		AgentID:         agentID,
+		Type:            TplNormal,
+		ReplaceUserData: replaceUserData,
+	}
+
+	return wx.NewPostAction(urls.CorpSetWorkbenchTemplate,
+		wx.WithBody(func() ([]byte, error) {
+			return wx.MarshalNoEscapeHTML(params)
+		}),
+	)
+}
+
+// SetWorkbenchKeyDataTemplate 设置应用在工作台展示的模版（关键数据型）
 func SetWorkbenchKeyDataTemplate(agentID int64, keydata *WorkbenchKeyData, replaceUserData bool) wx.Action {
 	params := &ParamsWorkbenchTemplateSet{
 		AgentID:         agentID,
@@ -75,6 +91,7 @@ func SetWorkbenchKeyDataTemplate(agentID int64, keydata *WorkbenchKeyData, repla
 	)
 }
 
+// SetWorkbenchImageTemplate 设置应用在工作台展示的模版（图片型）
 func SetWorkbenchImageTemplate(agentID int64, image *WorkbenchImage, replaceUserData bool) wx.Action {
 	params := &ParamsWorkbenchTemplateSet{
 		AgentID:         agentID,
@@ -90,6 +107,7 @@ func SetWorkbenchImageTemplate(agentID int64, image *WorkbenchImage, replaceUser
 	)
 }
 
+// SetWorkbenchListTemplate 设置应用在工作台展示的模版（列表型）
 func SetWorkbenchListTemplate(agentID int64, list *WorkbenchList, replaceUserData bool) wx.Action {
 	params := &ParamsWorkbenchTemplateSet{
 		AgentID:         agentID,
@@ -104,6 +122,7 @@ func SetWorkbenchListTemplate(agentID int64, list *WorkbenchList, replaceUserDat
 	)
 }
 
+// SetWorkbenchWebViewTemplate 设置应用在工作台展示的模版（webview型）
 func SetWorkbenchWebViewTemplate(agentID int64, webview *WorkbenchWebView, replaceUserData bool) wx.Action {
 	params := &ParamsWorkbenchTemplateSet{
 		AgentID:         agentID,
@@ -131,6 +150,7 @@ type ResultWorkbenchTemplateGet struct {
 	ReplaceUserData bool              `json:"replace_user_data"`
 }
 
+// GetWorkbenchTemplate 获取应用在工作台展示的模版
 func GetWorkbenchTemplate(agentID int64, result *ResultWorkbenchTemplateGet) wx.Action {
 	params := &ParamsWorkbenchTemplateGet{
 		AgentID: agentID,
@@ -156,6 +176,7 @@ type ParamsWorkbenchDataSet struct {
 	WebView *WorkbenchWebView `json:"webview,omitempty"`
 }
 
+// SetWorkbenchKeyData 设置应用在用户工作台展示的数据（关键数据型）
 func SetWorkbenchKeyData(agentID int64, userID string, keydata *WorkbenchKeyData) wx.Action {
 	params := &ParamsWorkbenchDataSet{
 		AgentID: agentID,
@@ -171,6 +192,7 @@ func SetWorkbenchKeyData(agentID int64, userID string, keydata *WorkbenchKeyData
 	)
 }
 
+// SetWorkbenchImageData 设置应用在用户工作台展示的数据（图片型）
 func SetWorkbenchImageData(agentID int64, userID string, image *WorkbenchImage) wx.Action {
 	params := &ParamsWorkbenchDataSet{
 		AgentID: agentID,
@@ -186,6 +208,7 @@ func SetWorkbenchImageData(agentID int64, userID string, image *WorkbenchImage) 
 	)
 }
 
+// SetWorkbenchListData 设置应用在用户工作台展示的数据（列表型）
 func SetWorkbenchListData(agentID int64, userID string, list *WorkbenchList) wx.Action {
 	params := &ParamsWorkbenchDataSet{
 		AgentID: agentID,
@@ -201,6 +224,7 @@ func SetWorkbenchListData(agentID int64, userID string, list *WorkbenchList) wx.
 	)
 }
 
+// SetWorkbenchWebViewData 设置应用在用户工作台展示的数据（webview型）
 func SetWorkbenchWebViewData(agentID int64, userID string, webview *WorkbenchWebView) wx.Action {
 	params := &ParamsWorkbenchDataSet{
 		AgentID: agentID,

@@ -66,6 +66,7 @@ type ResultInvoiceInfo struct {
 	UserInfo  *InvoiceUserInfo `json:"user_info"`
 }
 
+// GetInvoiceInfo 查询电子发票
 func GetInvoiceInfo(cardID, encryptCode string, result *ResultInvoiceInfo) wx.Action {
 	params := &ParamsInvoice{
 		CardID:      cardID,
@@ -88,6 +89,7 @@ type ParamsInvoiceStatusUpdate struct {
 	ReimburseStatus ReimburseStatus `json:"reimburse_status"`
 }
 
+// UpdateInvoiceStatus 更新发票状态
 func UpdateInvoiceStatus(cardID, encryptCode string, status ReimburseStatus) wx.Action {
 	params := &ParamsInvoiceStatusUpdate{
 		CardID:          cardID,
@@ -110,6 +112,7 @@ type ResultInvoiceBatchInfo struct {
 	ItemList []*ResultInvoiceInfo `json:"item_list"`
 }
 
+// BatchGetInvoiceInfo 批量查询电子发票
 func BatchGetInvoiceInfo(invoices []*ParamsInvoice, result *ResultInvoiceBatchInfo) wx.Action {
 	params := &ParamsInvoiceBatchInfo{
 		ItemList: invoices,
@@ -131,6 +134,7 @@ type ParamsInvoiceStatusBatchUpdate struct {
 	InvoiceList     []*ParamsInvoice `json:"invoice_list"`
 }
 
+// BatchUpdateInvoiceStatus 批量更新发票状态
 func BatchUpdateInvoiceStatus(openID string, status ReimburseStatus, invoices ...*ParamsInvoice) wx.Action {
 	params := &ParamsInvoiceStatusBatchUpdate{
 		OpenID:          openID,

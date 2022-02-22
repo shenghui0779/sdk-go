@@ -40,6 +40,7 @@ type AllowTags struct {
 	TagID []int64 `json:"tagid"`
 }
 
+// GetAgent 获取指定的应用详情
 func GetAgent(agentID int64, result *ResultAgentGet) wx.Action {
 	return wx.NewGetAction(urls.CorpAgentGet,
 		wx.WithQuery("agentid", strconv.FormatInt(agentID, 10)),
@@ -59,6 +60,7 @@ type AgentListData struct {
 	SquareLogoURL string `json:"square_logo_url"`
 }
 
+// ListAgent 获取access_token对应的应用列表
 func ListAgent(result *ResultAgentList) wx.Action {
 	return wx.NewGetAction(urls.CorpAgentList,
 		wx.WithDecode(func(resp []byte) error {
@@ -78,6 +80,7 @@ type ParamsAgentSet struct {
 	HomeURL            string `json:"home_url"`
 }
 
+// SetAgent 设置应用
 func SetAgent(params *ParamsAgentSet) wx.Action {
 	return wx.NewPostAction(urls.CorpAgentSet,
 		wx.WithBody(func() ([]byte, error) {

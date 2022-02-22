@@ -37,6 +37,7 @@ type ResultInterceptRuleAdd struct {
 	RuleID string `json:"rule_id"`
 }
 
+// AddInterceptRule 新建敏感词规则
 func AddInterceptRule(params *ParamsInterceptRuleAdd, result *ResultInterceptRuleAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactInterceptRuleAdd,
 		wx.WithBody(func() ([]byte, error) {
@@ -58,6 +59,7 @@ type ParamsInterceptRuleUpdate struct {
 	RemoveApplicableRange *RuleApplicableRange `json:"remove_applicable_range,omitempty"`
 }
 
+// UpdateInterceptRule 修改敏感词规则
 func UpdateInterceptRule(params *ParamsInterceptRuleUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactInterceptRuleUpdate,
 		wx.WithBody(func() ([]byte, error) {
@@ -76,6 +78,7 @@ type ResultInterceptRuleList struct {
 	RuleList []*RuleListData `json:"rule_list"`
 }
 
+// ListInterceptRule 获取敏感词规则列表
 func ListInterceptRule(result *ResultInterceptRuleList) wx.Action {
 	return wx.NewGetAction(urls.CorpExternalContactInterceptRuleList,
 		wx.WithDecode(func(resp []byte) error {
@@ -92,6 +95,7 @@ type ResultInterceptRuleGet struct {
 	Rule *InterceptRule `json:"rule"`
 }
 
+// GetInterceptRule 获取敏感词规则详情
 func GetInterceptRule(ruleID string, result *ResultInterceptRuleGet) wx.Action {
 	params := &ParamsInterceptRuleGet{
 		RuleID: ruleID,
@@ -111,6 +115,7 @@ type ParamsInterceptRuleDelete struct {
 	RuleID string `json:"rule_id"`
 }
 
+// DeleteInterceptRule 删除敏感词规则
 func DeleteInterceptRule(ruleID string) wx.Action {
 	params := &ParamsInterceptRuleDelete{
 		RuleID: ruleID,

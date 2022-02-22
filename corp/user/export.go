@@ -17,6 +17,7 @@ type ResultExport struct {
 	JobID string `json:"jobid"`
 }
 
+// ExportSimpleUser 导出成员
 func ExportSimpleUser(encodingAESKey string, blockSize int64, result *ResultExport) wx.Action {
 	params := &ParamsExport{
 		EncodingAESKey: encodingAESKey,
@@ -33,6 +34,7 @@ func ExportSimpleUser(encodingAESKey string, blockSize int64, result *ResultExpo
 	)
 }
 
+// ExportUser 导出成员详情
 func ExportUser(encodingAESKey string, blockSize int64, result *ResultExport) wx.Action {
 	params := &ParamsExport{
 		EncodingAESKey: encodingAESKey,
@@ -49,6 +51,7 @@ func ExportUser(encodingAESKey string, blockSize int64, result *ResultExport) wx
 	)
 }
 
+// ExportDepartment 导出部门
 func ExportDepartment(encodingAESKey string, blockSize int64, result *ResultExport) wx.Action {
 	params := &ParamsExport{
 		EncodingAESKey: encodingAESKey,
@@ -65,6 +68,7 @@ func ExportDepartment(encodingAESKey string, blockSize int64, result *ResultExpo
 	)
 }
 
+// ExportTagUser 导出标签成员
 func ExportTagUser(tagID int64, encodingAESKey string, blockSize int64, result *ResultExport) wx.Action {
 	params := &ParamsExport{
 		TagID:          tagID,
@@ -93,6 +97,7 @@ type ExportData struct {
 	MD5  string `json:"md5"`
 }
 
+// GetExportResult 获取导出结果
 func GetExportResult(jobID string, result *ResultExportResult) wx.Action {
 	return wx.NewGetAction(urls.CorpUserGetExportResult,
 		wx.WithQuery("jobid", jobID),

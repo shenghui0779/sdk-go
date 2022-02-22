@@ -25,6 +25,7 @@ type ResultFollowUserList struct {
 	FollowUser []string `json:"follow_user"`
 }
 
+// ListFollowUser 获取配置了客户联系功能的成员列表
 func ListFollowUser(result *ResultFollowUserList) wx.Action {
 	return wx.NewGetAction(urls.CorpExternalContactFollowUserList,
 		wx.WithDecode(func(resp []byte) error {
@@ -102,6 +103,7 @@ type ResultContactWayAdd struct {
 	QRCode   string `json:"qr_code"`
 }
 
+// AddContactWay 配置客户联系「联系我」方式
 func AddContactWay(params *ParamsContactWayAdd, result *ResultContactWayAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactWayAdd,
 		wx.WithBody(func() ([]byte, error) {
@@ -127,6 +129,7 @@ type ParamsContactWayUpdate struct {
 	Conclusions   *Conclusions `json:"conclusions,omitempty"`
 }
 
+// UpdateContactWay 更新企业已配置的「联系我」方式
 func UpdateContactWay(params *ParamsContactWayUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactWayUpdate,
 		wx.WithBody(func() ([]byte, error) {
@@ -143,6 +146,7 @@ type ResultContactWayGet struct {
 	ContactWay *ContactWay `json:"contact_way"`
 }
 
+// GetContactWay 获取企业已配置的「联系我」方式
 func GetContactWay(configID string, result *ResultContactWayGet) wx.Action {
 	params := &ParamsContactWayGet{
 		ConfigID: configID,
@@ -174,6 +178,7 @@ type ContactWayListData struct {
 	ConfigID string `json:"config_id"`
 }
 
+// ListContactWay 获取企业已配置的「联系我」列表
 func ListContactWay(params *ParamsContactWayList, result *ResultContactWayList) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactWayList,
 		wx.WithBody(func() ([]byte, error) {
@@ -189,6 +194,7 @@ type ParamsContactWayDelete struct {
 	ConfigID string `json:"config_id"`
 }
 
+// DeleteContactWay 删除企业已配置的「联系我」方式
 func DeleteContactWay(configID string) wx.Action {
 	params := &ParamsContactWayDelete{
 		ConfigID: configID,
@@ -206,6 +212,7 @@ type ParamsTempChatClose struct {
 	ExternalUserID string `json:"external_userid"`
 }
 
+// CloseTempChat 结束临时会话
 func CloseTempChat(userID, externalUserID string) wx.Action {
 	params := &ParamsTempChatClose{
 		UserID:         userID,

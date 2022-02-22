@@ -342,6 +342,7 @@ type ResultUserID struct {
 	UserID string `json:"userid"`
 }
 
+// GetUserID 通过手机号获取其所对应的userid
 func GetUserID(mobile string, result *ResultUserID) wx.Action {
 	params := &ParamsUserID{
 		Mobile: mobile,

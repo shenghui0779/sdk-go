@@ -64,6 +64,7 @@ type ResultMomentTaskAdd struct {
 	JobID string `json:"jobid"`
 }
 
+// AddMomentTask 创建客户朋友圈的发表任务
 func AddMomentTask(params *ParamsMomentTaskAdd, result *ResultMomentTaskAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactAddMomentTask,
 		wx.WithBody(func() ([]byte, error) {
@@ -98,6 +99,7 @@ type ResultMomentTaskResult struct {
 	Result *MomentTaskResult `json:"result"`
 }
 
+// GetMomentTaskResult 获取客户朋友圈的任务创建结果
 func GetMomentTaskResult(jobID string, result *ResultMomentTaskResult) wx.Action {
 	return wx.NewGetAction(urls.CorpExternalContactGetMomentTaskResult,
 		wx.WithQuery("jobid", jobID),
@@ -134,6 +136,7 @@ type ResultMomentList struct {
 	MomentList []*MomentListData `json:"moment_list"`
 }
 
+// ListMoment 获取企业全部的发表列表
 func ListMoment(params *ParamsMomentList, result *ResultMomentList) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetMomentList,
 		wx.WithBody(func() ([]byte, error) {
@@ -161,6 +164,7 @@ type ResultMomentTaskGet struct {
 	TaskList   []*MomentTask `json:"task_list"`
 }
 
+// GetMomentTask 获取客户朋友圈企业发表的列表
 func GetMomentTask(momentID, cursor string, limit int, result *ResultMomentTaskGet) wx.Action {
 	params := &ParamsMomentTaskGet{
 		MomentID: momentID,
@@ -195,6 +199,7 @@ type ResultMomentCustomerList struct {
 	CustomerList []*MomentCustomer `json:"customer_list"`
 }
 
+// ListMomentCustomer 获取客户朋友圈发表时选择的可见范围
 func ListMomentCustomer(momentID, userID, cursor string, limit int, result *ResultMomentCustomerList) wx.Action {
 	params := &ParamsMomentCustomerList{
 		MomentID: momentID,
@@ -225,6 +230,7 @@ type ResultMomentSendResult struct {
 	CustomerList []*MomentCustomer `json:"customer_list"`
 }
 
+// GetMomentSendResult 获取客户朋友圈发表后的可见客户列表
 func GetMomentSendResult(momentID, userID, cursor string, limit int, result *ResultMomentSendResult) wx.Action {
 	params := &ParamsMomentSendResult{
 		MomentID: momentID,
@@ -267,6 +273,7 @@ type ResultMomentComments struct {
 	LikeList    []*MomentLikeData    `json:"like_list"`
 }
 
+// GetMomentComments 获取客户朋友圈的互动数据
 func GetMomentComments(momentID, userID, cursor string, limit int, result *ResultMomentComments) wx.Action {
 	params := &ParamsMomentComments{
 		MomentID: momentID,

@@ -29,6 +29,7 @@ type ResultUserBehaviorData struct {
 	BehaviorData []*UserBehaviorData `json:"behavior_data"`
 }
 
+// GetUserBehaviorData 获取「联系客户统计」数据
 func GetUserBehaviorData(params *ParamsUserBehaviorData, result *ResultUserBehaviorData) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetUserBehaviorData,
 		wx.WithBody(func() ([]byte, error) {
@@ -72,6 +73,7 @@ type ResultGroupChatStatistic struct {
 	Items      []*GroupChatStatisticItem `json:"items"`
 }
 
+// GetGroupChatStatistic 获取「群聊数据统计」数据（注意，企业微信仅存储180天的数据）
 func GetGroupChatStatistic(params *ParamsGroupChatStatistic, result *ResultGroupChatStatistic) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGroupChatStatistic,
 		wx.WithBody(func() ([]byte, error) {

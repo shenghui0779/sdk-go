@@ -22,6 +22,7 @@ type ResultServicerAdd struct {
 	ResultList []*ErrServicer `json:"result_list"`
 }
 
+// AddServicer 添加接待人员
 func AddServicer(openKFID string, userIDs []string, result *ResultServicerAdd) wx.Action {
 	params := &ParamsServicerAdd{
 		OpenKFID:   openKFID,
@@ -47,6 +48,7 @@ type ResultServicerDelete struct {
 	ResultList []*ErrServicer `json:"result_list"`
 }
 
+// DeleteServicer 删除接待人员
 func DeleteServicer(openKFID string, userIDs []string, result *ResultServicerDelete) wx.Action {
 	params := &ParamsServicerDelete{
 		OpenKFID:   openKFID,
@@ -72,6 +74,7 @@ type ResultServicerList struct {
 	ServicerList []*ServicerListData `json:"servicer_list"`
 }
 
+// ListServicer 获取接待人员列表
 func ListServicer(openKFID string, result *ResultServicerList) wx.Action {
 	return wx.NewGetAction(urls.CorpKFServicerList,
 		wx.WithQuery("open_kfid", openKFID),

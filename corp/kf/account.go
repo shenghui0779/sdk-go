@@ -16,6 +16,7 @@ type ResultAccountAdd struct {
 	OpenKFID string `json:"open_kfid"`
 }
 
+// AddAccount 添加客服帐号
 func AddAccount(name, mediaID string, result *ResultAccountAdd) wx.Action {
 	params := &ParamsAccountAdd{
 		Name:    name,
@@ -36,6 +37,7 @@ type ParamsAccountDelete struct {
 	OpenKFID string `json:"open_kfid"`
 }
 
+// DeleteAccount 删除客服帐号
 func DeleteAccount(openKFID string) wx.Action {
 	params := &ParamsAccountDelete{
 		OpenKFID: openKFID,
@@ -54,6 +56,7 @@ type ParamsAccountUpdate struct {
 	MediaID  string `json:"media_id"`
 }
 
+// UpdateAccount 修改客服帐号
 func UpdateAccount(openKFID, name, mediaID string) wx.Action {
 	params := &ParamsAccountUpdate{
 		OpenKFID: openKFID,
@@ -78,6 +81,7 @@ type AccountListData struct {
 	Avatar   string `json:"avatar"`
 }
 
+// ListAccount 获取客服帐号列表
 func ListAccount(result *ResultAccountList) wx.Action {
 	return wx.NewGetAction(urls.CorpKFAccountList,
 		wx.WithDecode(func(resp []byte) error {
@@ -95,6 +99,7 @@ type ResultContactWayAdd struct {
 	URL string `json:"url"`
 }
 
+// AddContactWay 获取客服帐号链接
 func AddContactWay(openKFID, scene string, result *ResultContactWayAdd) wx.Action {
 	params := &ParamsContactWayAdd{
 		OpenKFID: openKFID,

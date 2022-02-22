@@ -27,6 +27,7 @@ type ResultAppShareInfoList struct {
 	NextCursor string      `json:"next_cursor"`
 }
 
+// ListAppShareInfo 获取应用共享信息
 func ListAppShareInfo(params *ParamsAppShareInfoList, result *ResultAppShareInfoList) wx.Action {
 	return wx.NewPostAction(urls.CorpGroupListAppShareInfo,
 		wx.WithBody(func() ([]byte, error) {
@@ -49,6 +50,7 @@ type ResultCorpAccessToken struct {
 	ExpiresIn   int    `json:"expires_in"`
 }
 
+// GetCorpAccessToken 获取下级/下游企业的access_token
 func GetCorpAccessToken(params *ParamsCorpAccessToken, result *ResultCorpAccessToken) wx.Action {
 	return wx.NewPostAction(urls.CorpGroupGetAccessToken,
 		wx.WithBody(func() ([]byte, error) {
@@ -70,6 +72,7 @@ type ResultMinipSessionTransfer struct {
 	SessionKey string `json:"session_key"`
 }
 
+// TransferMinipSession 获取下级/下游企业小程序session
 func TransferMinipSession(params *ParamsMinipSessionTransfer, result *ResultMinipSessionTransfer) wx.Action {
 	return wx.NewPostAction(urls.CorpGroupMinipTransferSession,
 		wx.WithBody(func() ([]byte, error) {

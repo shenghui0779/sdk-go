@@ -28,6 +28,7 @@ type ResultGroupChatList struct {
 	NextCursor    string               `json:"next_cursor"`
 }
 
+// ListGroupChat 获取客户群列表
 func ListGroupChat(params *ParamsGroupChatList, result *ResultGroupChatList) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGroupChatList,
 		wx.WithBody(func() ([]byte, error) {
@@ -77,6 +78,7 @@ type ResultGroupChatGet struct {
 	GroupChat *GroupChat `json:"group_chat"`
 }
 
+// GetGroupChat 获取客户群详情
 func GetGroupChat(chatID string, needName int, result *ResultGroupChatGet) wx.Action {
 	params := &ParamsGroupChatGet{
 		ChatID:   chatID,
@@ -101,6 +103,7 @@ type ResultOpenGIDToChatID struct {
 	ChatID string `json:"chat_id"`
 }
 
+// OpenGIDToChatID 客户群opengid转换
 func OpenGIDToChatID(opengid string, result *ResultOpenGIDToChatID) wx.Action {
 	params := &ParamsOpenGIDToChatID{
 		OpenGID: opengid,

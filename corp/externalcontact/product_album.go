@@ -27,6 +27,7 @@ type ResultProductAlbumAdd struct {
 	ProductID string `json:"product_id"`
 }
 
+// AddProductAlbum 创建商品图册
 func AddProductAlbum(params *ParamsProductAlbumAdd, result *ResultProductAlbumAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactProductAlbumAdd,
 		wx.WithBody(func() ([]byte, error) {
@@ -46,6 +47,7 @@ type ParamsProductAlbumUpdate struct {
 	Attachments []*ProductAlbumAttachment `json:"attachments,omitempty"`
 }
 
+// UpdateProductAlbum 编辑商品图册
 func UpdateProductAlbum(params *ParamsProductAlbumUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactProductAlbumUpdate,
 		wx.WithBody(func() ([]byte, error) {
@@ -71,6 +73,7 @@ type ResultProductAlbumGet struct {
 	Product *ProductAlbum `json:"product"`
 }
 
+// GetProductAlbum 获取商品图册
 func GetProductAlbum(productID string, result *ResultProductAlbumGet) wx.Action {
 	params := &ParamsProductAlbumGet{
 		ProductID: productID,
@@ -96,6 +99,7 @@ type ResultProductAlbumList struct {
 	ProductList []*ProductAlbum `json:"product_list"`
 }
 
+// ListProductAlbum 获取商品图册列表
 func ListProductAlbum(cursor string, limit int, result *ResultProductAlbumList) wx.Action {
 	params := &ParamsProductAlbumList{
 		Limit:  limit,
@@ -116,6 +120,7 @@ type ParamsProductAlbumDelete struct {
 	ProductID string `json:"product_id"`
 }
 
+// DeleteProductAlbum 删除商品图册
 func DeleteProductAlbum(productID string) wx.Action {
 	params := &ParamsProductAlbumDelete{
 		ProductID: productID,

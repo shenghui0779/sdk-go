@@ -93,6 +93,7 @@ type ResultSimpleDepartmentList struct {
 	DepartmentID []*SimpleDepartment `json:"department_id"`
 }
 
+// ListSimpleDepartment 获取子部门ID列表
 func ListSimpleDepartment(id int64, result *ResultSimpleDepartmentList) wx.Action {
 	options := []wx.ActionOption{
 		wx.WithDecode(func(resp []byte) error {
@@ -111,6 +112,7 @@ type ResultDepartmentGet struct {
 	Department *Department `json:"department"`
 }
 
+// GetDepartment 获取单个部门详情
 func GetDepartment(id int64, result *ResultDepartmentGet) wx.Action {
 	options := []wx.ActionOption{
 		wx.WithDecode(func(resp []byte) error {

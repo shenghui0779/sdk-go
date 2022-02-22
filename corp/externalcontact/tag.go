@@ -33,6 +33,7 @@ type CorpTag struct {
 	Deleted    bool   `json:"deleted"`
 }
 
+// ListCorpTag 获取企业标签库
 func ListCorpTag(tagIDs, groupIDs []string, result *ResultCorpTagList) wx.Action {
 	params := &ParamsCorpTagList{
 		TagID:   tagIDs,
@@ -66,6 +67,7 @@ type ResultCorpTagAdd struct {
 	TagGroup *CorpTagGroup `json:"tag_group"`
 }
 
+// AddCorpTag 添加企业客户标签
 func AddCorpTag(params *ParamsCorpTagAdd, result *ResultCorpTagAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactCorpTagAdd,
 		wx.WithBody(func() ([]byte, error) {
@@ -84,6 +86,7 @@ type ParamsCorpTagEdit struct {
 	AgentID int64  `json:"agentid,omitempty"`
 }
 
+// EditCorpTag 编辑企业客户标签
 func EditCorpTag(params *ParamsCorpTagEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactCorpTagEdit,
 		wx.WithBody(func() ([]byte, error) {
@@ -98,6 +101,7 @@ type ParamsCorpTagDelete struct {
 	AgentID int64    `json:"agentid"`
 }
 
+// DeleteCorpTag 删除企业客户标签
 func DeleteCorpTag(tagIDs, groupIDs []string, agentID int64) wx.Action {
 	params := &ParamsCorpTagDelete{
 		TagID:   tagIDs,
@@ -138,6 +142,7 @@ type StrategyTag struct {
 	Order      uint32 `json:"order"`
 }
 
+// ListStrategyTag 获取指定规则组下的企业客户标签
 func ListStrategyTag(strategyID int64, tagIDs, groupIDs []string, result *ResultStrategyTagList) wx.Action {
 	params := &ParamsStrategyTagList{
 		StrategyID: strategyID,
@@ -172,6 +177,7 @@ type ResultStrategyTagAdd struct {
 	TagGroup *StrategyTagGroup `json:"tag_group"`
 }
 
+// AddStrategyTag 为指定规则组创建企业客户标签
 func AddStrategyTag(params *ParamsStrategyTagAdd, result *ResultStrategyTagAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactStrategyTagAdd,
 		wx.WithBody(func() ([]byte, error) {
@@ -189,6 +195,7 @@ type ParamsStrategyTagEdit struct {
 	Order uint32 `json:"order,omitempty"`
 }
 
+// EditStrategyTag 编辑指定规则组下的企业客户标签
 func EditStrategyTag(params *ParamsStrategyTagEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactStrategyTagEdit,
 		wx.WithBody(func() ([]byte, error) {
@@ -202,6 +209,7 @@ type ParamsStrategyTagDelete struct {
 	GroupID []string `json:"group_id,omitempty"`
 }
 
+// DeleteStrategyTag 删除指定规则组下的企业客户标签
 func DeleteStrategyTag(tagIDs, groupIDs []string) wx.Action {
 	params := &ParamsStrategyTagDelete{
 		TagID:   tagIDs,
@@ -222,6 +230,7 @@ type ParamsTagMark struct {
 	RemoveTag      []string `json:"remove_tag,omitempty"`
 }
 
+// MarkTag 编辑客户企业标签
 func MarkTag(params *ParamsTagMark) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactMarkTag,
 		wx.WithBody(func() ([]byte, error) {

@@ -352,7 +352,7 @@ func TestBatchGetByUser(t *testing.T) {
 
 	result := new(ResultBatchGetByUser)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchGetCustomerByUser(userIDs, "", 100, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", BatchGetByUser(userIDs, "", 100, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultBatchGetByUser{

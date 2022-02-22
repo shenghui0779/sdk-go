@@ -21,6 +21,7 @@ type CustomerStrategyListData struct {
 	StrategyID int64 `json:"strategy_id"`
 }
 
+// ListCustomerStrategy 获取客户联系规则组列表
 func ListCustomerStrategy(cursor string, limit int, result *ResultCustomerStrategyList) wx.Action {
 	params := &ParamsCustomerStrategyList{
 		Cursor: cursor,
@@ -78,6 +79,7 @@ type ResultCustomerStrategyGet struct {
 	Strategy *CustomerStrategy `json:"strategy"`
 }
 
+// GetCustomerStrategy 获取客户联系规则组详情
 func GetCustomerStrategy(strategyID int64, result *ResultCustomerStrategyGet) wx.Action {
 	params := &ParamsCustomerStrategyGet{
 		StrategyID: strategyID,
@@ -109,6 +111,7 @@ type ResultCustomerStrategyRange struct {
 	Range []*CustomerStrategyRange `json:"range"`
 }
 
+// GetCustomerStrategyRange 获取客户联系规则组管理范围
 func GetCustomerStrategyRange(strategyID int64, cursor string, limit int, result *ResultCustomerStrategyRange) wx.Action {
 	params := &ParamsCustomerStrategyRange{
 		StrategyID: strategyID,
@@ -138,6 +141,7 @@ type ResultCustomerStrategyCreate struct {
 	StrategyID int64 `json:"strategy_id"`
 }
 
+// CreateCustomerStrategy 创建新的客户联系规则组
 func CreateCustomerStrategy(params *ParamsCustomerStrategyCreate, result *ResultCustomerStrategyCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyCreate,
 		wx.WithBody(func() ([]byte, error) {
@@ -158,6 +162,7 @@ type ParamsCustomerStrategyEdit struct {
 	RangeDel     []*CustomerStrategyRange   `json:"range_del,omitempty"`
 }
 
+// EditCustomerStrategy 编辑客户联系规则组及其管理范围
 func EditCustomerStrategy(params *ParamsCustomerStrategyEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactCustomerStrategyEdit,
 		wx.WithBody(func() ([]byte, error) {
@@ -170,6 +175,7 @@ type ParamsCustomerStrategyDelete struct {
 	StrategyID int64 `json:"strategy_id"`
 }
 
+// DeleteCustomerStrategy 删除客户联系规则组
 func DeleteCustomerStrategy(strategyID int64) wx.Action {
 	params := &ParamsCustomerStrategyDelete{
 		StrategyID: strategyID,
@@ -196,6 +202,7 @@ type ResultMomentStrategyList struct {
 	NextCursor string                    `json:"next_cursor"`
 }
 
+// ListMomentStrategy 获取客户朋友圈规则组列表
 func ListMomentStrategy(cursor string, limit int, result *ResultMomentStrategyList) wx.Action {
 	params := &ParamsMomentStrategyList{
 		Cursor: cursor,
@@ -235,6 +242,7 @@ type ResultMomentStrategyGet struct {
 	Strategy *MomentStrategy `json:"strategy"`
 }
 
+// GetMomentStrategy 获取客户朋友圈规则组详情
 func GetMomentStrategy(strategyID int64, result *ResultMomentStrategyGet) wx.Action {
 	params := &ParamsMomentStrategyGet{
 		StrategyID: strategyID,
@@ -266,6 +274,7 @@ type ResultMomentStrategyRange struct {
 	Range []*MomentStrategyRange `json:"range"`
 }
 
+// GetMomentStrategyRange 获取客户朋友圈规则组管理范围
 func GetMomentStrategyRange(strategyID int64, cursor string, limit int, result *ResultMomentStrategyRange) wx.Action {
 	params := &ParamsMomentStrategyRange{
 		StrategyID: strategyID,
@@ -295,6 +304,7 @@ type ResultMomentStrategyCreate struct {
 	StrategyID int64 `json:"strategy_id"`
 }
 
+// CreateMomentStrategy 创建新的客户朋友圈规则组
 func CreateMomentStrategy(params *ParamsMomentStrategyCreate, result *ResultMomentStrategyCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyCreate,
 		wx.WithBody(func() ([]byte, error) {
@@ -315,6 +325,7 @@ type ParamsMomentStrategyEdit struct {
 	RangeDel     []*MomentStrategyRange   `json:"range_del,omitempty"`
 }
 
+// EditMomentStrategy 编辑客户朋友圈规则组及其管理范围
 func EditMomentStrategy(params *ParamsMomentStrategyEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactMomentStrategyEdit,
 		wx.WithBody(func() ([]byte, error) {
@@ -327,6 +338,7 @@ type ParamsMomentStrategyDelete struct {
 	StrategyID int64 `json:"strategy_id"`
 }
 
+// DeleteMomentStrategy 删除客户朋友圈规则组
 func DeleteMomentStrategy(strategyID int64) wx.Action {
 	params := &ParamsMomentStrategyDelete{
 		StrategyID: strategyID,

@@ -34,6 +34,7 @@ type ResultAttachmentUpload struct {
 	CreatedAt int64     `json:"created_at"`
 }
 
+// UploadAttachment 上传附件资源
 func UploadAttachment(mediaType MediaType, attachmentType AttachmentType, attachmentPath string, result *ResultAttachmentUpload) wx.Action {
 	_, filename := filepath.Split(attachmentPath)
 

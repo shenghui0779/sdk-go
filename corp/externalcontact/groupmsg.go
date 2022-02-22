@@ -8,11 +8,12 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
+// ChatType 群发任务的类型
 type ChatType string
 
 const (
-	ChatSingle ChatType = "single"
-	ChatGroup  ChatType = "group"
+	ChatSingle ChatType = "single" // 发送给客户
+	ChatGroup  ChatType = "group"  // 发送给客户群
 )
 
 type GroupText struct {
@@ -68,6 +69,7 @@ type ResultMsgTemplateAdd struct {
 	MsgID    string   `json:"msgid"`
 }
 
+// AddMsgTemplate 创建企业群发
 func AddMsgTemplate(params *ParamsMsgTemplateAdd, result *ResultMsgTemplateAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactAddMsgTemplate,
 		wx.WithBody(func() ([]byte, error) {
@@ -103,6 +105,7 @@ type ResultGroupMsgList struct {
 	GroupMsgList []*GroupMsg `json:"group_msg_list"`
 }
 
+// ListGroupMsg 获取群发记录列表
 func ListGroupMsg(params *ParamsGroupMsgList, result *ResultGroupMsgList) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetGroupMsgList,
 		wx.WithBody(func() ([]byte, error) {
@@ -131,6 +134,7 @@ type GroupMsgTask struct {
 	SendTime int64  `json:"send_time"`
 }
 
+// GetGroupMsgTask 获取群发成员发送任务列表
 func GetGroupMsgTask(params *ParamsGroupMsgTask, result *ResultGroupMsgTask) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetGroupMsgTask,
 		wx.WithBody(func() ([]byte, error) {
@@ -162,6 +166,7 @@ type GroupMsgSendResult struct {
 	SendTime       int64  `json:"send_time"`
 }
 
+// GetGroupMsgSendResult 获取企业群发成员执行结果
 func GetGroupMsgSendResult(params *ParamsGroupMsgSendResult, result *ResultGroupMsgSendResult) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetGroupMsgSendResult,
 		wx.WithBody(func() ([]byte, error) {
@@ -179,6 +184,7 @@ type ParamsWelcomeMsgSend struct {
 	Attachments []*MsgAttachment `json:"attachments,omitempty"`
 }
 
+// SendWelcomeMsg 发送新客户欢迎语
 func SendWelcomeMsg(params *ParamsWelcomeMsgSend) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactSendWelcomeMsg,
 		wx.WithBody(func() ([]byte, error) {
@@ -202,6 +208,7 @@ type ResultGroupWelcomeTemplateAdd struct {
 	TemplateID string `json:"template_id"`
 }
 
+// AddGroupWelcomeTemplate 添加入群欢迎语素材
 func AddGroupWelcomeTemplate(params *ParamsGroupWelcomeTemplateAdd, result *ResultGroupWelcomeTemplateAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGroupWelcomeTemplateAdd,
 		wx.WithBody(func() ([]byte, error) {
@@ -224,6 +231,7 @@ type ParamsGroupWelcomeTemplateEdit struct {
 	AgentID    int64       `json:"agentid,omitempty"`
 }
 
+// EditGroupWelcomeTemplate 编辑入群欢迎语素材
 func EditGroupWelcomeTemplate(params *ParamsGroupWelcomeTemplateEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGroupWelcomeTemplateEdit,
 		wx.WithBody(func() ([]byte, error) {
@@ -245,6 +253,7 @@ type ResultGroupWelcomeTemplateGet struct {
 	Video *GroupVideo `json:"video"`
 }
 
+// GetGroupWelcomeTemplate 获取入群欢迎语素材
 func GetGroupWelcomeTemplate(templateID string, result *ResultGroupWelcomeTemplateGet) wx.Action {
 	params := &ParamsGroupWelcomeTemplateGet{
 		TemplateID: templateID,
@@ -265,6 +274,7 @@ type ParamsGroupWelcomeTemplateDelete struct {
 	AgentID    int64  `json:"agentid,omitempty"`
 }
 
+// DeleteGroupWelcomeTemplate 删除入群欢迎语素材
 func DeleteGroupWelcomeTemplate(templateID string, agentID int64) wx.Action {
 	params := &ParamsGroupWelcomeTemplateDelete{
 		TemplateID: templateID,

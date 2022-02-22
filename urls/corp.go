@@ -150,6 +150,7 @@ const (
 	CorpKFServiceStateTransfer    = "https://qyapi.weixin.qq.com/cgi-bin/kf/service_state/trans"
 	CorpKFSyncMsg                 = "https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg"
 	CorpKFSendMsg                 = "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg"
+	CorpKFSendMsgOnEvent          = "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg_on_event"
 	CorpKFCustomerBatchGet        = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/batchget"
 	CorpKFGetUpgradeServiceConfig = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/get_upgrade_service_config"
 	CorpKFUpgradeService          = "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/upgrade_service"

@@ -23,6 +23,7 @@ type ResultCustomerTransfer struct {
 	Customer []*ErrCustomerTransfer `json:"customer"`
 }
 
+// TransferCustomer 分配在职成员的客户
 func TransferCustomer(params *ParamsCustomerTranster, result *ResultCustomerTransfer) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactTransferCustomer,
 		wx.WithBody(func() ([]byte, error) {
@@ -51,6 +52,7 @@ type TransferResult struct {
 	TakeoverTime   int64  `json:"takeover_time"`
 }
 
+// GetTransferResult 查询客户接替状态
 func GetTransferResult(handoverUserID, takeoverUserID, cursor string, result *ResultTransferResult) wx.Action {
 	params := &ParamsTransferResult{
 		HandoverUserID: handoverUserID,
@@ -86,6 +88,7 @@ type ResultUnassignedList struct {
 	NextCursor string            `json:"next_cursor"`
 }
 
+// ListUnassigned 获取待分配的离职成员列表
 func ListUnassigned(pageID, pageSize int, cursor string, result *ResultUnassignedList) wx.Action {
 	params := &ParamsUnassignedList{
 		PageID:   pageID,
@@ -113,6 +116,7 @@ type ResultResignedCustomerTransfer struct {
 	Customer []*ErrCustomerTransfer `json:"customer"`
 }
 
+// TransferResignedCustomer 分配离职成员的客户
 func TransferResignedCustomer(handoverUserID, takeoverUserID string, externalUserIDs []string, result *ResultResignedCustomerTransfer) wx.Action {
 	params := &ParamsResignedCustomerTransfer{
 		HandoverUserID: handoverUserID,
@@ -147,6 +151,7 @@ type ResignedTransferResult struct {
 	TakeoverTime   int64  `json:"takeover_time"`
 }
 
+// GetResignedTransferResult 查询客户接替状态
 func GetResignedTransferResult(handoverUserID, takeoverUserID, cursor string, result *ResultResignedTransferResult) wx.Action {
 	params := &ParamsResignedTransferResult{
 		HandoverUserID: handoverUserID,
@@ -179,6 +184,7 @@ type ResultGroupChatTransfer struct {
 	FailedChatList []*ErrGroupChatTransfer `json:"failed_chat_list"`
 }
 
+// TransferGroupChat 分配离职成员的客户群
 func TransferGroupChat(chatIDs []string, newOwner string, result *ResultGroupChatTransfer) wx.Action {
 	params := &ParamsGroupChatTransfer{
 		ChatIDList: chatIDs,

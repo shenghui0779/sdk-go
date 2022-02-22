@@ -91,6 +91,7 @@ type ResultList struct {
 	ExternalUserID []string `json:"external_userid"`
 }
 
+// List 获取客户列表
 func List(userID string, result *ResultList) wx.Action {
 	return wx.NewGetAction(urls.CorpExternalContactList,
 		wx.WithQuery("userid", userID),
@@ -106,6 +107,7 @@ type ResultGet struct {
 	NextCursor      string           `json:"next_cursor"`
 }
 
+// Get 获取客户详情
 func Get(externalUserID, cursor string, result *ResultGet) wx.Action {
 	options := []wx.ActionOption{
 		wx.WithQuery("external_userid", externalUserID),
@@ -137,7 +139,8 @@ type CustomerBatchGetData struct {
 	FollowInfo      *FollowInfo      `json:"follow_info"`
 }
 
-func BatchGetCustomerByUser(userIDs []string, cursor string, limit int, result *ResultBatchGetByUser) wx.Action {
+// BatchGetByUser 批量获取客户详情
+func BatchGetByUser(userIDs []string, cursor string, limit int, result *ResultBatchGetByUser) wx.Action {
 	params := &ParamsBatchGetByUser{
 		UserIDList: userIDs,
 		Cursor:     cursor,
@@ -164,6 +167,7 @@ type ParamsRemark struct {
 	RemarkPicMediaID string   `json:"remark_pic_mediaid"`
 }
 
+// Remark 修改客户备注信息
 func Remark(params *ParamsRemark) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactRemark,
 		wx.WithBody(func() ([]byte, error) {

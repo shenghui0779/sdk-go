@@ -31,6 +31,7 @@ type ParamsUserBatchSync struct {
 	Callback *BatchCallback `json:"callback,omitempty"`
 }
 
+// BatchSyncUser 增量更新成员
 func BatchSyncUser(mediaID string, toInvite bool, callback *BatchCallback, result *ResultBatch) wx.Action {
 	params := &ParamsUserBatchSync{
 		MediaID:  mediaID,
@@ -54,6 +55,7 @@ type ParamsUserBatchReplace struct {
 	Callback *BatchCallback `json:"callback,omitempty"`
 }
 
+// BatchReplaceUser 全量覆盖成员
 func BatchReplaceUser(mediaID string, toInvite bool, callback *BatchCallback, result *ResultBatch) wx.Action {
 	params := &ParamsUserBatchReplace{
 		MediaID:  mediaID,
@@ -76,6 +78,7 @@ type ParamsPartyBatchReplace struct {
 	Callback *BatchCallback `json:"callback,omitempty"`
 }
 
+// BatchReplaceParty 全量覆盖部门
 func BatchReplaceParty(mediaID string, callback *BatchCallback, result *ResultBatch) wx.Action {
 	params := &ParamsPartyBatchReplace{
 		MediaID:  mediaID,
@@ -108,6 +111,7 @@ type BatchResult struct {
 	ErrMsg  string `json:"errmsg"`
 }
 
+// GetBatchResult 获取异步任务结果
 func GetBatchResult(jobID string, result *ResultBatchResult) wx.Action {
 	return wx.NewGetAction(urls.CorpUserGetBatchResult,
 		wx.WithQuery("jobid", jobID),
