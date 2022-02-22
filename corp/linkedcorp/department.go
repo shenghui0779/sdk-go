@@ -23,6 +23,7 @@ type ResultDepartmentList struct {
 	DepartmentList []*DepartmentListData `json:"department_list"`
 }
 
+// ListDeparment 获取互联企业部门列表
 func ListDeparment(linkedID, departmentID string, result *ResultDepartmentList) wx.Action {
 	params := &ParamsDepartmentList{
 		DepartmentID: fmt.Sprintf("%s/%s", linkedID, departmentID),

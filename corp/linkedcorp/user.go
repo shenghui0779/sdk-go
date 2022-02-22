@@ -55,6 +55,7 @@ type ResultUserGet struct {
 	UserInfo *UserInfo `json:"user_info"`
 }
 
+// GetUser 获取互联企业成员详细信息
 func GetUser(corpID, userID string, result *ResultUserGet) wx.Action {
 	params := &ParamsUserGet{
 		UserID: fmt.Sprintf("%s/%s", corpID, userID),
@@ -86,6 +87,7 @@ type ResultSimpleUserList struct {
 	UserList []*SimpleUser `json:"userlist"`
 }
 
+// ListSimpleUser 获取互联企业部门成员
 func ListSimpleUser(linkedID, departmentID string, fetchChild bool, result *ResultSimpleUserList) wx.Action {
 	params := &ParamsSimpleUserList{
 		DepartmentID: fmt.Sprintf("%s/%s", linkedID, departmentID),
@@ -111,6 +113,7 @@ type ResultUserList struct {
 	UserList []*UserInfo `json:"userlist"`
 }
 
+// ListUser 获取互联企业部门成员详情
 func ListUser(linkedID, departmentID string, fetchChild bool, result *ResultUserList) wx.Action {
 	params := &ParamsUserList{
 		DepartmentID: fmt.Sprintf("%s/%s", linkedID, departmentID),

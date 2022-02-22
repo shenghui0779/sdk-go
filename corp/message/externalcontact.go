@@ -48,6 +48,7 @@ type ResultExternalContactSend struct {
 	InvalidParty         []string `json:"invalid_party"`
 }
 
+// SendExternalContactText 发送「学校通知」（文本消息）
 func SendExternalContactText(agentID int64, content string, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
 		MsgType: event.MsgText,
@@ -78,6 +79,7 @@ func SendExternalContactText(agentID int64, content string, extra *ExternalConta
 	)
 }
 
+// SendExternalContactImage 发送「学校通知」（图片消息）
 func SendExternalContactImage(agentID int64, mediaID string, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
 		MsgType: event.MsgImage,
@@ -108,6 +110,7 @@ func SendExternalContactImage(agentID int64, mediaID string, extra *ExternalCont
 	)
 }
 
+// SendExternalContactVoice 发送「学校通知」（语音消息）
 func SendExternalContactVoice(agentID int64, mediaID string, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
 		MsgType: event.MsgVoice,
@@ -138,6 +141,7 @@ func SendExternalContactVoice(agentID int64, mediaID string, extra *ExternalCont
 	)
 }
 
+// SendExternalContactVideo 发送「学校通知」（视频消息）
 func SendExternalContactVideo(agentID int64, video *Video, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
 		MsgType: event.MsgVideo,
@@ -166,6 +170,7 @@ func SendExternalContactVideo(agentID int64, video *Video, extra *ExternalContac
 	)
 }
 
+// SendExternalContactFile 发送「学校通知」（文件消息）
 func SendExternalContactFile(agentID int64, mediaID string, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
 		MsgType: event.MsgFile,
@@ -196,6 +201,7 @@ func SendExternalContactFile(agentID int64, mediaID string, extra *ExternalConta
 	)
 }
 
+// SendExternalContactNews 发送「学校通知」（图文消息）
 func SendExternalContactNews(agentID int64, articles []*NewsArticle, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
 		MsgType: event.MsgNews,
@@ -226,6 +232,7 @@ func SendExternalContactNews(agentID int64, articles []*NewsArticle, extra *Exte
 	)
 }
 
+// SendExternalContactMPNews 发送「学校通知」（图文消息 - mpnews）
 func SendExternalContactMPNews(agentID int64, articles []*MPNewsArticle, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
 		MsgType: event.MsgMPNews,
@@ -256,6 +263,7 @@ func SendExternalContactMPNews(agentID int64, articles []*MPNewsArticle, extra *
 	)
 }
 
+// SendExternalContactMiniprogram 发送「学校通知」（小程序消息）
 func SendExternalContactMiniprogram(agentID int64, minip *Miniprogram, extra *ExternalContactExtra, result *ResultExternalContactSend) wx.Action {
 	msg := &ExternalContactMsg{
 		MsgType:     event.MsgMinip,

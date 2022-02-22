@@ -40,6 +40,7 @@ type ResultLinkedcorpSend struct {
 	InvalidTag   []string `json:"invalidtag"`
 }
 
+// SendLinkedcorpText 发送企业互联消息（文本消息）
 func SendLinkedcorpText(agentID int64, content string, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
 	msg := &LinkedcorpMsg{
 		MsgType: event.MsgText,
@@ -66,6 +67,7 @@ func SendLinkedcorpText(agentID int64, content string, extra *LinkedcorpExtra, r
 	)
 }
 
+// SendLinkedcorpImage 发送企业互联消息（图片消息）
 func SendLinkedcorpImage(agentID int64, mediaID string, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
 	msg := &LinkedcorpMsg{
 		MsgType: event.MsgImage,
@@ -92,6 +94,7 @@ func SendLinkedcorpImage(agentID int64, mediaID string, extra *LinkedcorpExtra, 
 	)
 }
 
+// SendLinkedcorpVoice 发送企业互联消息（语音消息）
 func SendLinkedcorpVoice(agentID int64, mediaID string, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
 	msg := &LinkedcorpMsg{
 		MsgType: event.MsgVoice,
@@ -118,6 +121,7 @@ func SendLinkedcorpVoice(agentID int64, mediaID string, extra *LinkedcorpExtra, 
 	)
 }
 
+// SendLinkedcorpVideo 发送企业互联消息（视频消息）
 func SendLinkedcorpVideo(agentID int64, video *Video, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
 	msg := &LinkedcorpMsg{
 		MsgType: event.MsgVideo,
@@ -142,6 +146,7 @@ func SendLinkedcorpVideo(agentID int64, video *Video, extra *LinkedcorpExtra, re
 	)
 }
 
+// SendLinkedcorpFile 发送企业互联消息（文件消息）
 func SendLinkedcorpFile(agentID int64, mediaID string, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
 	msg := &LinkedcorpMsg{
 		MsgType: event.MsgFile,
@@ -168,6 +173,7 @@ func SendLinkedcorpFile(agentID int64, mediaID string, extra *LinkedcorpExtra, r
 	)
 }
 
+// SendLinkedcorpTextCard 发送企业互联消息（文本卡片消息）
 func SendLinkedcorpTextCard(agentID int64, card *TextCard, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
 	msg := &LinkedcorpMsg{
 		MsgType:  event.MsgTextCard,
@@ -192,6 +198,7 @@ func SendLinkedcorpTextCard(agentID int64, card *TextCard, extra *LinkedcorpExtr
 	)
 }
 
+// SendLinkedcorpNews 发送企业互联消息（图文消息）
 func SendLinkedcorpNews(agentID int64, articles []*NewsArticle, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
 	msg := &LinkedcorpMsg{
 		MsgType: event.MsgNews,
@@ -218,6 +225,7 @@ func SendLinkedcorpNews(agentID int64, articles []*NewsArticle, extra *Linkedcor
 	)
 }
 
+// SendLinkedcorpMPNews 发送企业互联消息（图文消息 - mpnews）
 func SendLinkedcorpMPNews(agentID int64, articles []*MPNewsArticle, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
 	msg := &LinkedcorpMsg{
 		MsgType: event.MsgMPNews,
@@ -244,6 +252,7 @@ func SendLinkedcorpMPNews(agentID int64, articles []*MPNewsArticle, extra *Linke
 	)
 }
 
+// SendLinkedcorpMarkdown 发送企业互联消息（markdown消息）
 func SendLinkedcorpMarkdown(agentID int64, content string, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
 	msg := &LinkedcorpMsg{
 		MsgType: event.MsgMarkdown,
@@ -270,6 +279,7 @@ func SendLinkedcorpMarkdown(agentID int64, content string, extra *LinkedcorpExtr
 	)
 }
 
+// SendLinkedcorpMinipNotice 发送企业互联消息（小程序通知消息）
 func SendLinkedcorpMinipNotice(notice *MinipNotice, extra *LinkedcorpExtra, result *ResultLinkedcorpSend) wx.Action {
 	msg := &LinkedcorpMsg{
 		MsgType:     event.MsgMinipNotice,

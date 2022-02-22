@@ -19,6 +19,7 @@ type ResultAppchartCreate struct {
 	ChatID string `json:"chatid"`
 }
 
+// CreateAppchat 创建群聊会话
 func CreateAppchat(params *ParamsAppchatCreate, result *ResultAppchartCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpAppchatCreate,
 		wx.WithBody(func() ([]byte, error) {
@@ -38,6 +39,7 @@ type ParamsAppchatUpdate struct {
 	DelUserList []string `json:"del_user_list,omitempty"`
 }
 
+// UpdateAppchat 修改群聊会话
 func UpdateAppchat(params *ParamsAppchatUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpAppchatUpdate,
 		wx.WithBody(func() ([]byte, error) {
@@ -57,6 +59,7 @@ type AppchatInfo struct {
 	UserList []string `json:"userlist"`
 }
 
+// GetAppchat 获取群聊会话
 func GetAppchat(chatID string, result *ResultAppchatGet) wx.Action {
 	return wx.NewGetAction(urls.CorpAppchatGet,
 		wx.WithQuery("chatid", chatID),
@@ -81,6 +84,7 @@ type AppchatMsg struct {
 	Safe     int           `json:"safe,omitempty"`
 }
 
+// SendAppchatText 发送消息到群聊会话（文本消息）
 func SendAppchatText(chatID string, content string, safe int) wx.Action {
 	msg := &AppchatMsg{
 		ChatID:  chatID,
@@ -97,6 +101,7 @@ func SendAppchatText(chatID string, content string, safe int) wx.Action {
 	)
 }
 
+// SendAppchatImage 发送消息到群聊会话（图片消息）
 func SendAppchatImage(chatID string, mediaID string, safe int) wx.Action {
 	msg := &AppchatMsg{
 		ChatID:  chatID,
@@ -113,6 +118,7 @@ func SendAppchatImage(chatID string, mediaID string, safe int) wx.Action {
 	)
 }
 
+// SendAppchatVoice 发送消息到群聊会话（语音消息）
 func SendAppchatVoice(chatID string, mediaID string, safe int) wx.Action {
 	msg := &AppchatMsg{
 		ChatID:  chatID,
@@ -129,6 +135,7 @@ func SendAppchatVoice(chatID string, mediaID string, safe int) wx.Action {
 	)
 }
 
+// SendAppchatVideo 发送消息到群聊会话（视频消息）
 func SendAppchatVideo(chatID string, video *Video, safe int) wx.Action {
 	msg := &AppchatMsg{
 		ChatID:  chatID,
@@ -143,6 +150,7 @@ func SendAppchatVideo(chatID string, video *Video, safe int) wx.Action {
 	)
 }
 
+// SendAppchatFile 发送消息到群聊会话（文件消息）
 func SendAppchatFile(chatID string, mediaID string, safe int) wx.Action {
 	msg := &AppchatMsg{
 		ChatID:  chatID,
@@ -159,6 +167,7 @@ func SendAppchatFile(chatID string, mediaID string, safe int) wx.Action {
 	)
 }
 
+// SendAppchatTextCard 发送消息到群聊会话（文本卡片消息）
 func SendAppchatTextCard(chatID string, card *TextCard, safe int) wx.Action {
 	msg := &AppchatMsg{
 		ChatID:   chatID,
@@ -173,6 +182,7 @@ func SendAppchatTextCard(chatID string, card *TextCard, safe int) wx.Action {
 	)
 }
 
+// SendAppchatNews 应用推送消息（图文消息）
 func SendAppchatNews(chatID string, articles []*NewsArticle, safe int) wx.Action {
 	msg := &AppchatMsg{
 		ChatID:  chatID,
@@ -189,6 +199,7 @@ func SendAppchatNews(chatID string, articles []*NewsArticle, safe int) wx.Action
 	)
 }
 
+// SendAppchatMPNews 发送消息到群聊会话（图文消息 - mpnews）
 func SendAppchatMPNews(chatID string, articles []*MPNewsArticle, safe int) wx.Action {
 	msg := &AppchatMsg{
 		ChatID:  chatID,
@@ -205,6 +216,7 @@ func SendAppchatMPNews(chatID string, articles []*MPNewsArticle, safe int) wx.Ac
 	)
 }
 
+// SendAppchatMarkdown 发送消息到群聊会话（markdown消息）
 func SendAppchatMarkdown(chatID string, content string, safe int) wx.Action {
 	msg := &AppchatMsg{
 		ChatID:  chatID,

@@ -12,6 +12,7 @@ type ResultAgentPermList struct {
 	DepartmentIDs []string `json:"department_ids"`
 }
 
+// ListAgentPerm 获取应用的可见范围
 func ListAgentPerm(result *ResultAgentPermList) wx.Action {
 	return wx.NewPostAction(urls.CorpLinkedcorpPermList,
 		wx.WithDecode(func(resp []byte) error {

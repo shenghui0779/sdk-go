@@ -27,6 +27,7 @@ type ResultUpload struct {
 	CreatedAt string    `json:"created_at"`
 }
 
+// Upload 上传临时素材
 func Upload(mediaType MediaType, mediaPath string, result *ResultUpload) wx.Action {
 	_, filename := filepath.Split(mediaPath)
 

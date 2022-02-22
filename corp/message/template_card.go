@@ -234,6 +234,7 @@ type ResultCardUpdate struct {
 	InvalidUser []string `json:"invaliduser"`
 }
 
+// UpdateCardButtonDisable 更新模版卡片消息（更新按钮为不可点击状态）
 func UpdateCardButtonDisable(agentID int64, respCode, replaceName string, extra *CardExtra, result *ResultCardUpdate) wx.Action {
 	params := &ParamsCardUpdate{
 		AgentID:      agentID,
@@ -260,6 +261,7 @@ func UpdateCardButtonDisable(agentID int64, respCode, replaceName string, extra 
 	)
 }
 
+// UpdateToTextNoticeCard 更新模版卡片消息（更新为新的卡片 - 文本通知型）
 func UpdateToTextNoticeCard(agentID int64, respCode string, card *TextNoticeCard, extra *CardExtra, result *ResultCardUpdate) wx.Action {
 	params := &ParamsCardUpdate{
 		AgentID:      agentID,
@@ -295,6 +297,7 @@ func UpdateToTextNoticeCard(agentID int64, respCode string, card *TextNoticeCard
 	)
 }
 
+// UpdateToNewsNoticeCard 更新模版卡片消息（更新为新的卡片 - 图文展示型）
 func UpdateToNewsNoticeCard(agentID int64, respCode string, card *NewsNoticeCard, extra *CardExtra, result *ResultCardUpdate) wx.Action {
 	params := &ParamsCardUpdate{
 		AgentID:      agentID,
@@ -331,6 +334,7 @@ func UpdateToNewsNoticeCard(agentID int64, respCode string, card *NewsNoticeCard
 	)
 }
 
+// UpdateToButtonInteractionCard 更新模版卡片消息（更新为新的卡片 - 按钮交互型）
 func UpdateToButtonInteractionCard(agentID int64, respCode string, card *ButtonInteractionCard, extra *CardExtra, result *ResultCardUpdate) wx.Action {
 	params := &ParamsCardUpdate{
 		AgentID:      agentID,
@@ -367,6 +371,7 @@ func UpdateToButtonInteractionCard(agentID int64, respCode string, card *ButtonI
 	)
 }
 
+// UpdateToVoteInteractionCard 更新模版卡片消息（更新为新的卡片 - 投票选择型）
 func UpdateToVoteInteractionCard(agentID int64, respCode string, card *VoteInteractionCard, extra *CardExtra, result *ResultCardUpdate) wx.Action {
 	params := &ParamsCardUpdate{
 		AgentID:      agentID,
@@ -399,6 +404,7 @@ func UpdateToVoteInteractionCard(agentID int64, respCode string, card *VoteInter
 	)
 }
 
+// UpdateToMultipleInteractionCard 更新模版卡片消息（更新为新的卡片 - 多项选择型）
 func UpdateToMultipleInteractionCard(agentID int64, respCode string, card *MultipleInteractionCard, extra *CardExtra, result *ResultCardUpdate) wx.Action {
 	params := &ParamsCardUpdate{
 		AgentID:      agentID,

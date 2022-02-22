@@ -118,6 +118,7 @@ type ResultMsgSend struct {
 	ResponseCode string `json:"response_code"`
 }
 
+// SendText 发送应用消息（文本消息）
 func SendText(agentidID int64, content string, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgText,
@@ -147,6 +148,7 @@ func SendText(agentidID int64, content string, extra *MsgExtra, result *ResultMs
 	)
 }
 
+// SendImage 发送应用消息（图片消息）
 func SendImage(agentidID int64, mediaID string, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgImage,
@@ -176,6 +178,7 @@ func SendImage(agentidID int64, mediaID string, extra *MsgExtra, result *ResultM
 	)
 }
 
+// SendVoice 发送应用消息（语音消息）
 func SendVoice(agentidID int64, mediaID string, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgVoice,
@@ -205,6 +208,7 @@ func SendVoice(agentidID int64, mediaID string, extra *MsgExtra, result *ResultM
 	)
 }
 
+// SendVideo 发送应用消息（视频消息）
 func SendVideo(agentidID int64, video *Video, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgVideo,
@@ -232,6 +236,7 @@ func SendVideo(agentidID int64, video *Video, extra *MsgExtra, result *ResultMsg
 	)
 }
 
+// SendFile 发送应用消息（文件消息）
 func SendFile(agentidID int64, mediaID string, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgFile,
@@ -261,6 +266,7 @@ func SendFile(agentidID int64, mediaID string, extra *MsgExtra, result *ResultMs
 	)
 }
 
+// SendTextCard 发送应用消息（文本卡片消息）
 func SendTextCard(agentidID int64, card *TextCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType:  event.MsgTextCard,
@@ -288,6 +294,7 @@ func SendTextCard(agentidID int64, card *TextCard, extra *MsgExtra, result *Resu
 	)
 }
 
+// SendNews 发送应用消息（图文消息）
 func SendNews(agentidID int64, articles []*NewsArticle, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgNews,
@@ -317,6 +324,7 @@ func SendNews(agentidID int64, articles []*NewsArticle, extra *MsgExtra, result 
 	)
 }
 
+// SendMPNews 发送应用消息（图文消息 - mpnews）
 func SendMPNews(agentidID int64, articles []*MPNewsArticle, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgMPNews,
@@ -346,6 +354,7 @@ func SendMPNews(agentidID int64, articles []*MPNewsArticle, extra *MsgExtra, res
 	)
 }
 
+// SendMarkdown 发送应用消息（markdown消息）
 func SendMarkdown(agentidID int64, content string, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgMarkdown,
@@ -375,6 +384,7 @@ func SendMarkdown(agentidID int64, content string, extra *MsgExtra, result *Resu
 	)
 }
 
+// SendMinipNotice 发送应用消息（小程序通知消息）
 func SendMinipNotice(notice *MinipNotice, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType:     event.MsgMinipNotice,
@@ -401,6 +411,7 @@ func SendMinipNotice(notice *MinipNotice, extra *MsgExtra, result *ResultMsgSend
 	)
 }
 
+// SendTextNoticeCard 发送应用消息（模板卡片消息 - 文本通知型）
 func SendTextNoticeCard(agentidID int64, taskID string, card *TextNoticeCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgTemplateCard,
@@ -440,6 +451,7 @@ func SendTextNoticeCard(agentidID int64, taskID string, card *TextNoticeCard, ex
 	)
 }
 
+// SendNewsNoticeCard 发送应用消息（模板卡片消息 - 图文展示型）
 func SendNewsNoticeCard(agentidID int64, taskID string, card *NewsNoticeCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgTemplateCard,
@@ -480,6 +492,7 @@ func SendNewsNoticeCard(agentidID int64, taskID string, card *NewsNoticeCard, ex
 	)
 }
 
+// SendButtonInteractionCard 发送应用消息（模板卡片消息 - 按钮交互型）
 func SendButtonInteractionCard(agentidID int64, taskID string, card *ButtonInteractionCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgTemplateCard,
@@ -520,6 +533,7 @@ func SendButtonInteractionCard(agentidID int64, taskID string, card *ButtonInter
 	)
 }
 
+// SendVoteInteractionCard 发送应用消息（模板卡片消息 - 投票选择型）
 func SendVoteInteractionCard(agentidID int64, taskID string, card *VoteInteractionCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgTemplateCard,
@@ -556,6 +570,7 @@ func SendVoteInteractionCard(agentidID int64, taskID string, card *VoteInteracti
 	)
 }
 
+// SendMultipleInteractionCard 发送应用消息（模板卡片消息 - 多项选择型）
 func SendMultipleInteractionCard(agentidID int64, taskID string, card *MultipleInteractionCard, extra *MsgExtra, result *ResultMsgSend) wx.Action {
 	msg := &Messasge{
 		MsgType: event.MsgTemplateCard,
@@ -596,6 +611,7 @@ type ParamsMsgRecall struct {
 	MsgID string `json:"msgid"`
 }
 
+// Recall 撤回应用消息
 func Recall(msgid string) wx.Action {
 	params := &ParamsMsgRecall{
 		MsgID: msgid,

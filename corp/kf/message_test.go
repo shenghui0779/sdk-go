@@ -304,7 +304,7 @@ func TestSyncMsg(t *testing.T) {
 				Origin:         3,
 				ServicerUserID: "Zhangsan",
 				MsgType:        event.MsgImage,
-				Image: &Image{
+				Image: &Media{
 					MediaID: "2iSLeVyqzk4eX0IB5kTi9Ljfa2rt9dwfq5WKRQ4Nvvgw",
 				},
 			},
@@ -316,7 +316,7 @@ func TestSyncMsg(t *testing.T) {
 				Origin:         3,
 				ServicerUserID: "Zhangsan",
 				MsgType:        event.MsgVoice,
-				Voice: &Voice{
+				Voice: &Media{
 					MediaID: "2iSLeVyqzk4eX0IB5kTi9Ljfa2rt9dwfq5WKRQ4Nvvgw",
 				},
 			},
@@ -328,7 +328,7 @@ func TestSyncMsg(t *testing.T) {
 				Origin:         3,
 				ServicerUserID: "Zhangsan",
 				MsgType:        event.MsgVideo,
-				Video: &Video{
+				Video: &Media{
 					MediaID: "2iSLeVyqzk4eX0IB5kTi9Ljfa2rt9dwfq5WKRQ4Nvvgw",
 				},
 			},
@@ -340,7 +340,7 @@ func TestSyncMsg(t *testing.T) {
 				Origin:         3,
 				ServicerUserID: "Zhangsan",
 				MsgType:        event.MsgFile,
-				File: &File{
+				File: &Media{
 					MediaID: "2iSLeVyqzk4eX0IB5kTi9Ljfa2rt9dwfq5WKRQ4Nvvgw",
 				},
 			},
@@ -516,7 +516,7 @@ func TestSyncMsg(t *testing.T) {
 }
 
 func TestSendTextMsg(t *testing.T) {
-	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgid":"MSGID","msgtype":"text","text":{"content":"你购买的物品已发货，可点击链接查看物流状态http://work.weixin.qq.com/xxxxxx"}}`)
+	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"text","text":{"content":"你购买的物品已发货，可点击链接查看物流状态http://work.weixin.qq.com/xxxxxx"}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -536,13 +536,9 @@ func TestSendTextMsg(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	text := &Text{
-		Content: "你购买的物品已发货，可点击链接查看物流状态http://work.weixin.qq.com/xxxxxx",
-	}
-
 	result := new(ResultMsgSend)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendTextMsg("EXTERNAL_USERID", "OPEN_KFID", "MSGID", text, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendTextMsg("EXTERNAL_USERID", "OPEN_KFID", "你购买的物品已发货，可点击链接查看物流状态http://work.weixin.qq.com/xxxxxx", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMsgSend{
@@ -551,7 +547,7 @@ func TestSendTextMsg(t *testing.T) {
 }
 
 func TestSendImageMsg(t *testing.T) {
-	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgid":"MSGID","msgtype":"image","image":{"media_id":"MEDIA_ID"}}`)
+	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"image","image":{"media_id":"MEDIA_ID"}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -571,13 +567,9 @@ func TestSendImageMsg(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	image := &Image{
-		MediaID: "MEDIA_ID",
-	}
-
 	result := new(ResultMsgSend)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendImageMsg("EXTERNAL_USERID", "OPEN_KFID", "MSGID", image, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendImageMsg("EXTERNAL_USERID", "OPEN_KFID", "MEDIA_ID", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMsgSend{
@@ -586,7 +578,7 @@ func TestSendImageMsg(t *testing.T) {
 }
 
 func TestSendVoiceMsg(t *testing.T) {
-	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgid":"MSGID","msgtype":"voice","voice":{"media_id":"MEDIA_ID"}}`)
+	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"voice","voice":{"media_id":"MEDIA_ID"}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -606,13 +598,9 @@ func TestSendVoiceMsg(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	voice := &Voice{
-		MediaID: "MEDIA_ID",
-	}
-
 	result := new(ResultMsgSend)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendVoiceMsg("EXTERNAL_USERID", "OPEN_KFID", "MSGID", voice, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendVoiceMsg("EXTERNAL_USERID", "OPEN_KFID", "MEDIA_ID", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMsgSend{
@@ -621,7 +609,7 @@ func TestSendVoiceMsg(t *testing.T) {
 }
 
 func TestSendVideoMsg(t *testing.T) {
-	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgid":"MSGID","msgtype":"video","video":{"media_id":"MEDIA_ID"}}`)
+	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"video","video":{"media_id":"MEDIA_ID"}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -641,13 +629,9 @@ func TestSendVideoMsg(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	video := &Video{
-		MediaID: "MEDIA_ID",
-	}
-
 	result := new(ResultMsgSend)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendVideoMsg("EXTERNAL_USERID", "OPEN_KFID", "MSGID", video, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendVideoMsg("EXTERNAL_USERID", "OPEN_KFID", "MEDIA_ID", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMsgSend{
@@ -656,7 +640,7 @@ func TestSendVideoMsg(t *testing.T) {
 }
 
 func TestSendFileMsg(t *testing.T) {
-	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgid":"MSGID","msgtype":"file","file":{"media_id":"1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o"}}`)
+	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"file","file":{"media_id":"1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o"}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -676,13 +660,9 @@ func TestSendFileMsg(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	file := &File{
-		MediaID: "1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o",
-	}
-
 	result := new(ResultMsgSend)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendFileMsg("EXTERNAL_USERID", "OPEN_KFID", "MSGID", file, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendFileMsg("EXTERNAL_USERID", "OPEN_KFID", "1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMsgSend{
@@ -691,7 +671,7 @@ func TestSendFileMsg(t *testing.T) {
 }
 
 func TestSendLinkMsg(t *testing.T) {
-	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgid":"MSGID","msgtype":"link","link":{"title":"企业如何增长？企业微信给出3个答案","desc":"今年中秋节公司有豪礼相送","url":"URL","thumb_media_id":"MEDIA_ID"}}`)
+	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"link","link":{"title":"企业如何增长？企业微信给出3个答案","desc":"今年中秋节公司有豪礼相送","url":"URL","thumb_media_id":"MEDIA_ID"}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -720,7 +700,7 @@ func TestSendLinkMsg(t *testing.T) {
 
 	result := new(ResultMsgSend)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendLinkMsg("EXTERNAL_USERID", "OPEN_KFID", "MSGID", link, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendLinkMsg("EXTERNAL_USERID", "OPEN_KFID", link, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMsgSend{
@@ -729,7 +709,7 @@ func TestSendLinkMsg(t *testing.T) {
 }
 
 func TestSendMinipMsg(t *testing.T) {
-	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgid":"MSGID","msgtype":"miniprogram","miniprogram":{"title":"欢迎报名夏令营","appid":"APPID","pagepath":"PAGE_PATH","thumb_media_id":"MEDIA_ID"}}`)
+	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"miniprogram","miniprogram":{"title":"欢迎报名夏令营","appid":"APPID","pagepath":"PAGE_PATH","thumb_media_id":"MEDIA_ID"}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -758,7 +738,7 @@ func TestSendMinipMsg(t *testing.T) {
 
 	result := new(ResultMsgSend)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendMinipMsg("EXTERNAL_USERID", "OPEN_KFID", "MSGID", minip, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendMinipMsg("EXTERNAL_USERID", "OPEN_KFID", minip, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMsgSend{
@@ -767,7 +747,7 @@ func TestSendMinipMsg(t *testing.T) {
 }
 
 func TestSendMenuMsg(t *testing.T) {
-	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgid":"MSGID","msgtype":"msgmenu","msgmenu":{"head_content":"您对本次服务是否满意呢？","tail_content":"欢迎再次光临","list":[{"type":"click","click":{"id":"101","content":"满意"}},{"type":"click","click":{"id":"102","content":"不满意"}},{"type":"view","view":{"url":"https://work.weixin.qq.com","content":"点击跳转到自助查询页面"}},{"type":"miniprogram","miniprogram":{"appid":"wx123123123123123","pagepath":"pages/index?userid=zhangsan","content":"点击打开小程序查询更多"}}]}}`)
+	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"msgmenu","msgmenu":{"head_content":"您对本次服务是否满意呢？","tail_content":"欢迎再次光临","list":[{"type":"click","click":{"id":"101","content":"满意"}},{"type":"click","click":{"id":"102","content":"不满意"}},{"type":"view","view":{"url":"https://work.weixin.qq.com","content":"点击跳转到自助查询页面"}},{"type":"miniprogram","miniprogram":{"appid":"wx123123123123123","pagepath":"pages/index?userid=zhangsan","content":"点击打开小程序查询更多"}}]}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -825,7 +805,7 @@ func TestSendMenuMsg(t *testing.T) {
 
 	result := new(ResultMsgSend)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendMenuMsg("EXTERNAL_USERID", "OPEN_KFID", "MSGID", menu, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendMenuMsg("EXTERNAL_USERID", "OPEN_KFID", menu, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMsgSend{
@@ -834,7 +814,7 @@ func TestSendMenuMsg(t *testing.T) {
 }
 
 func TestSendLocationMsg(t *testing.T) {
-	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgid":"MSGID","msgtype":"location","location":{"name":"测试小区","address":"实例小区，不真实存在，经纬度无意义","latitude":0,"longitude":0}}`)
+	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"location","location":{"name":"测试小区","address":"实例小区，不真实存在，经纬度无意义","latitude":0,"longitude":0}}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -863,7 +843,105 @@ func TestSendLocationMsg(t *testing.T) {
 
 	result := new(ResultMsgSend)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendLocationMsg("EXTERNAL_USERID", "OPEN_KFID", "MSGID", location, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendLocationMsg("EXTERNAL_USERID", "OPEN_KFID", location, result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultMsgSend{
+		MsgID: "MSG_ID",
+	}, result)
+}
+
+func TestSendTextMsgOnEvent(t *testing.T) {
+	body := []byte(`{"code":"CODE","msgtype":"text","text":{"content":"欢迎咨询"}}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+    "errcode": 0,
+    "errmsg": "ok",
+    "msgid": "MSG_ID"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg_on_event?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultMsgSend)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendTextMsgOnEvent("CODE", "欢迎咨询", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultMsgSend{
+		MsgID: "MSG_ID",
+	}, result)
+}
+
+func TestSendMenuMsgOnEvent(t *testing.T) {
+	body := []byte(`{"code":"CODE","msgtype":"msgmenu","msgmenu":{"head_content":"欢迎咨询","tail_content":"如有问题，随时转人工服务","list":[{"type":"click","click":{"id":"101","content":"接入人工"}},{"type":"click","click":{"id":"102","content":"继续跟机器人聊天"}},{"type":"view","view":{"url":"https://work.weixin.qq.com","content":"点击跳转到自助查询页面"}},{"type":"miniprogram","miniprogram":{"appid":"wx123123123123123","pagepath":"pages/index?userid=zhangsan&orderid=123123123","content":"点击打开小程序查询更多"}}]}}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+    "errcode": 0,
+    "errmsg": "ok",
+    "msgid": "MSG_ID"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg_on_event?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
+
+	menu := &Menu{
+		HeadContent: "欢迎咨询",
+		TailContent: "如有问题，随时转人工服务",
+		List: []*MenuItem{
+			{
+				Type: MenuClick,
+				Click: &ClickMenu{
+					ID:      "101",
+					Content: "接入人工",
+				},
+			},
+			{
+				Type: MenuClick,
+				Click: &ClickMenu{
+					ID:      "102",
+					Content: "继续跟机器人聊天",
+				},
+			},
+			{
+				Type: MenuView,
+				View: &ViewMenu{
+					URL:     "https://work.weixin.qq.com",
+					Content: "点击跳转到自助查询页面",
+				},
+			},
+			{
+				Type: MenuMinip,
+				Minip: &MinipMenu{
+					AppID:    "wx123123123123123",
+					PagePath: "pages/index?userid=zhangsan&orderid=123123123",
+					Content:  "点击打开小程序查询更多",
+				},
+			},
+		},
+	}
+
+	result := new(ResultMsgSend)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SendMenuMsgOnEvent("CODE", menu, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultMsgSend{
