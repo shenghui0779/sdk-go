@@ -200,7 +200,7 @@ func TestSendTemplateMsg(t *testing.T) {
 		URL:        "http://weixin.qq.com/download",
 		Minip: &MsgMinip{
 			AppID:    "xiaochengxuappid12345",
-			Pagepath: "index?foo=bar",
+			PagePath: "index?foo=bar",
 		},
 		Data: MsgTemplData{
 			"first": {
@@ -249,7 +249,7 @@ func TestSendSubscribeTemplateMsg(t *testing.T) {
 		URL:        "URL",
 		Minip: &MsgMinip{
 			AppID:    "xiaochengxuappid12345",
-			Pagepath: "index?foo=bar",
+			PagePath: "index?foo=bar",
 		},
 		Data: MsgTemplData{
 			"content": {

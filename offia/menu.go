@@ -35,7 +35,7 @@ type MenuButton struct {
 	Key       string         `json:"key,omitempty"`        // click等点击类型必须，菜单KEY值，用于消息接口推送，不超过128字节
 	URL       string         `json:"url,omitempty"`        // view、miniprogram类型必须，网页 链接，用户点击菜单可打开链接，不超过1024字节。 type为miniprogram时，不支持小程序的老版本客户端将打开本url。
 	AppID     string         `json:"appid,omitempty"`      // miniprogram类型必须，小程序的appid（仅认证公众号可配置）
-	Pagepath  string         `json:"pagepath,omitempty"`   // miniprogram类型必须，小程序的页面路径
+	PagePath  string         `json:"pagepath,omitempty"`   // miniprogram类型必须，小程序的页面路径
 	MediaID   string         `json:"media_id,omitempty"`   // media_id类型和view_limited类型必须，调用新增永久素材接口返回的合法media_id
 	ArticleID string         `json:"article_id,omitempty"` // article_id类型和article_view_limited类型必须
 	SubButton []*MenuButton  `json:"sub_button,omitempty"` // 二级菜单数组，个数应为1~5个
@@ -282,6 +282,6 @@ func MinipButton(name, appid, pagepath, redirectURL string) *MenuButton {
 		Name:     name,
 		URL:      redirectURL,
 		AppID:    appid,
-		Pagepath: pagepath,
+		PagePath: pagepath,
 	}
 }

@@ -208,7 +208,7 @@ func TestGetMenu(t *testing.T) {
 					Key:       "V1001_TODAY_MUSIC",
 					URL:       "",
 					AppID:     "",
-					Pagepath:  "",
+					PagePath:  "",
 					MediaID:   "",
 					SubButton: []*MenuButton{},
 				},

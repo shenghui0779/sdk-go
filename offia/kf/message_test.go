@@ -282,7 +282,7 @@ func TestSendMinipMsg(t *testing.T) {
 	msg := &MsgMinipPage{
 		Title:        "title",
 		AppID:        "appid",
-		Pagepath:     "pagepath",
+		PagePath:     "pagepath",
 		ThumbMediaID: "thumb_media_id",
 	}
 

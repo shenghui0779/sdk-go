@@ -73,7 +73,7 @@ type MsgCard struct {
 type MsgMinipPage struct {
 	Title        string `json:"title"`          // 消息标题
 	AppID        string `json:"appid"`          // 小程序的appid，要求小程序的appid需要与公众号有关联关系
-	Pagepath     string `json:"pagepath"`       // 小程序的页面路径，跟app.json对齐，支持参数，比如pages/index/index?foo=bar
+	PagePath     string `json:"pagepath"`       // 小程序的页面路径，跟app.json对齐，支持参数，比如pages/index/index?foo=bar
 	ThumbMediaID string `json:"thumb_media_id"` // 小程序卡片图片的媒体ID，小程序卡片图片建议大小为520*416
 }
 

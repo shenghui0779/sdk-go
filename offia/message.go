@@ -120,7 +120,7 @@ type MsgTemplData map[string]*MsgTemplValue
 // MsgMinip 跳转小程序
 type MsgMinip struct {
 	AppID    string `json:"appid"`              // 所需跳转到的小程序appid（该小程序appid必须与发模板消息的公众号是绑定关联关系，暂不支持小游戏）
-	Pagepath string `json:"pagepath,omitempty"` // 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar），要求该小程序已发布，暂不支持小游戏
+	PagePath string `json:"pagepath,omitempty"` // 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar），要求该小程序已发布，暂不支持小游戏
 }
 
 type TemplateMsg struct {

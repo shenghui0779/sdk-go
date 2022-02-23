@@ -13,32 +13,33 @@ type MsgType string
 
 // 微信支持的消息类型
 const (
-	MsgText                 MsgType = "text"                   // 文本消息
-	MsgImage                MsgType = "image"                  // 图片消息
-	MsgVoice                MsgType = "voice"                  // 语音消息
-	MsgVideo                MsgType = "video"                  // 视频消息
-	MsgShortVideo           MsgType = "shortvideo"             // 小视频消息
-	MsgLocation             MsgType = "location"               // 地理位置消息
-	MsgLink                 MsgType = "link"                   // 链接消息
-	MsgMusic                MsgType = "music"                  // 音乐消息
-	MsgNews                 MsgType = "news"                   // 图文消息
-	MsgCard                 MsgType = "wxcard"                 // 卡券，客服消息时使用
-	MsgFile                 MsgType = "file"                   // 文件消息
-	MsgMinip                MsgType = "miniprogram"            // 小程序消息
-	MsgMinipPage            MsgType = "miniprogrampage"        // 小程序卡片消息
-	MsgUserEnterTempSession MsgType = "user_enter_tempsession" // 进入会话事件
-	MsgMenu                 MsgType = "menu"                   // 菜单消息
-	MsgMsgMenu              MsgType = "msgmenu"                // 菜单消息
-	MsgBussinessCard        MsgType = "business_card"          // 企业名片消息
-	MsgTextCard             MsgType = "textcard"               // 文本卡片消息
-	MsgMPNews               MsgType = "mpnews"                 // 图文消息，跟普通的图文消息一致，唯一的差异是图文内容存储在企业微信
-	MsgMPNewsArticle        MsgType = "mpnewsarticle"          // 图文消息
-	MsgMarkdown             MsgType = "markdown"               // markdown消息
-	MsgMinipNotice          MsgType = "miniprogram_notice"     // 小程序通知消息
-	MsgTemplateCard         MsgType = "template_card"          // 模板卡片消息
-	MsgUpdateButton         MsgType = "update_button"          // 更新点击用户的按钮文案
-	MsgUpdateTemplateCard   MsgType = "update_template_card"   // 更新点击用户的整张卡片
-	MsgEvent                MsgType = "event"                  // 事件推送
+	MsgText                 MsgType = "text"                      // 文本消息
+	MsgImage                MsgType = "image"                     // 图片消息
+	MsgVoice                MsgType = "voice"                     // 语音消息
+	MsgVideo                MsgType = "video"                     // 视频消息
+	MsgShortVideo           MsgType = "shortvideo"                // 小视频消息
+	MsgLocation             MsgType = "location"                  // 地理位置消息
+	MsgLink                 MsgType = "link"                      // 链接消息
+	MsgMusic                MsgType = "music"                     // 音乐消息
+	MsgNews                 MsgType = "news"                      // 图文消息
+	MsgCard                 MsgType = "wxcard"                    // 卡券，客服消息时使用
+	MsgFile                 MsgType = "file"                      // 文件消息
+	MsgMinip                MsgType = "miniprogram"               // 小程序消息
+	MsgMinipPage            MsgType = "miniprogrampage"           // 小程序卡片消息
+	MsgUserEnterTempSession MsgType = "user_enter_tempsession"    // 进入会话事件
+	MsgTransferToKF         MsgType = "transfer_customer_service" // 消息转发到客服
+	MsgMenu                 MsgType = "menu"                      // 菜单消息
+	MsgMsgMenu              MsgType = "msgmenu"                   // 菜单消息
+	MsgBussinessCard        MsgType = "business_card"             // 企业名片消息
+	MsgTextCard             MsgType = "textcard"                  // 文本卡片消息
+	MsgMPNews               MsgType = "mpnews"                    // 图文消息，跟普通的图文消息一致，唯一的差异是图文内容存储在企业微信
+	MsgMPNewsArticle        MsgType = "mpnewsarticle"             // 图文消息
+	MsgMarkdown             MsgType = "markdown"                  // markdown消息
+	MsgMinipNotice          MsgType = "miniprogram_notice"        // 小程序通知消息
+	MsgTemplateCard         MsgType = "template_card"             // 模板卡片消息
+	MsgUpdateButton         MsgType = "update_button"             // 更新点击用户的按钮文案
+	MsgUpdateTemplateCard   MsgType = "update_template_card"      // 更新点击用户的整张卡片
+	MsgEvent                MsgType = "event"                     // 事件推送
 )
 
 // EventType 事件类型
