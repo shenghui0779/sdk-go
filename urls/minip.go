@@ -60,14 +60,6 @@ const (
 	MinipOCRComm            = "https://api.weixin.qq.com/cv/ocr/comm"
 )
 
-// other
-const (
-	MinipInvokeService = "https://api.weixin.qq.com/wxa/servicemarket"
-	MinipSoterVerify   = "https://api.weixin.qq.com/cgi-bin/soter/verify_signature"
-	MinipShortLink     = "https://api.weixin.qq.com/wxa/genwxashortlink"
-	MinipUserRiskRank  = "https://api.weixin.qq.com/wxa/getuserriskrank"
-)
-
 // subscribe
 const (
 	MinipAddTemplate                  = "https://api.weixin.qq.com/wxaapi/newtmpl/addtemplate"
@@ -76,4 +68,16 @@ const (
 	MinipGetetPubTemplateKeyWordsByID = "https://api.weixin.qq.com/wxaapi/newtmpl/getpubtemplatekeywords"
 	MinipGetPubTemplateTitleList      = "https://api.weixin.qq.com/wxaapi/newtmpl/getpubtemplatetitles"
 	MinipGetTemplateList              = "https://api.weixin.qq.com/wxaapi/newtmpl/gettemplate"
+)
+
+// other
+const (
+	MinipInvokeService   = "https://api.weixin.qq.com/wxa/servicemarket"
+	MinipSoterVerify     = "https://api.weixin.qq.com/cgi-bin/soter/verify_signature"
+	MinipShortLink       = "https://api.weixin.qq.com/wxa/genwxashortlink"
+	MinipUserRiskRank    = "https://api.weixin.qq.com/wxa/getuserriskrank"
+	MinipGenerateScheme  = "https://api.weixin.qq.com/wxa/generatescheme"
+	MinipQueryScheme     = "https://api.weixin.qq.com/wxa/queryscheme"
+	MinipGenerateURLLink = "https://api.weixin.qq.com/wxa/generate_urllink"
+	MinipQueryURLLink    = "https://api.weixin.qq.com/wxa/query_urllink"
 )

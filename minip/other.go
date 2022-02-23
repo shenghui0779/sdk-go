@@ -129,3 +129,147 @@ func GetUserRiskRank(params *ParamsUserRisk, result *ResultUserRisk) wx.Action {
 		}),
 	)
 }
+
+type ParamsSchemeGenerate struct {
+	JumpWxa        *SchemeJumpWxa `json:"jump_wxa,omitempty"`
+	IsExpire       bool           `json:"is_expire,omitempty"`
+	ExpireType     int            `json:"expire_type,omitempty"`
+	ExpireTime     int64          `json:"expire_time,omitempty"`
+	ExpireInterval int            `json:"expire_interval,omitempty"`
+}
+
+type SchemeJumpWxa struct {
+	Path       string     `json:"path,omitempty"`
+	Query      string     `json:"query,omitempty"`
+	EnvVersion EnvVersion `json:"env_version,omitempty"`
+}
+
+type ResultSchemeGenerate struct {
+	OpenLink string `json:"openlink"`
+}
+
+// GenerateScheme 获取小程序 scheme 码，适用于短信、邮件、外部网页、微信内等拉起小程序的业务场景。
+func GenerateScheme(params *ParamsSchemeGenerate, result *ResultSchemeGenerate) wx.Action {
+	return wx.NewPostAction(urls.MinipGenerateScheme,
+		wx.WithBody(func() ([]byte, error) {
+			return wx.MarshalNoEscapeHTML(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsSchemeQuery struct {
+	Scheme string `json:"scheme"`
+}
+
+type ResultSchemeQuery struct {
+	SchemeInfo  *SchemeInfo  `json:"scheme_info"`
+	SchemeQuota *SchemeQuota `json:"scheme_quota"`
+}
+
+type SchemeInfo struct {
+	AppID      string     `json:"appid"`
+	Path       string     `json:"path"`
+	Query      string     `json:"query"`
+	CreateTime int64      `json:"create_time"`
+	ExpireTime int64      `json:"expire_time"`
+	EnvVersion EnvVersion `json:"env_version"`
+}
+
+type SchemeQuota struct {
+	LongTimeUsed  int `json:"long_time_used"`
+	LongTimeLimit int `json:"long_time_limit"`
+}
+
+// QueryScheme 查询小程序 scheme 码，及长期有效 quota。
+func QueryScheme(scheme string, result *ResultSchemeQuery) wx.Action {
+	params := &ParamsSchemeQuery{
+		Scheme: scheme,
+	}
+
+	return wx.NewPostAction(urls.MinipQueryScheme,
+		wx.WithBody(func() ([]byte, error) {
+			return wx.MarshalNoEscapeHTML(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type CloudBase struct {
+	Env           string `json:"env"`
+	Domain        string `json:"domain,omitempty"`
+	Path          string `json:"path,omitempty"`
+	Query         string `json:"query,omitempty"`
+	ResourceAppID string `json:"resource_appid,omitempty"`
+}
+
+type ParamsURLLinkGenerate struct {
+	Path           string     `json:"path,omitempty"`
+	Query          string     `json:"query,omitempty"`
+	IsExpire       bool       `json:"is_expire,omitempty"`
+	ExpireType     int        `json:"expire_type,omitempty"`
+	ExpireTime     int64      `json:"expire_time,omitempty"`
+	ExpireInterval int        `json:"expire_interval,omitempty"`
+	EnvVersion     EnvVersion `json:"env_version,omitempty"`
+	CloudBase      *CloudBase `json:"cloud_base,omitempty"`
+}
+
+type ResultURLLinkGenerate struct {
+	URLLink string `json:"url_link"`
+}
+
+// GenerateURLLink 获取小程序 URL Link，适用于短信、邮件、网页、微信内等拉起小程序的业务场景。
+func GenerateURLLink(params *ParamsURLLinkGenerate, result *ResultURLLinkGenerate) wx.Action {
+	return wx.NewPostAction(urls.MinipGenerateURLLink,
+		wx.WithBody(func() ([]byte, error) {
+			return wx.MarshalNoEscapeHTML(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ParamsURLLinkQuery struct {
+	URLLink string `json:"url_link"`
+}
+
+type ResultURLLinkQuery struct {
+	URLLinkInfo  *URLLinkInfo  `json:"url_link_info"`
+	URLLinkQuota *URLLinkQuota `json:"url_link_quota"`
+}
+
+type URLLinkInfo struct {
+	AppID      string     `json:"appid"`
+	Path       string     `json:"path"`
+	Query      string     `json:"query"`
+	CreateTime int64      `json:"create_time"`
+	ExpireTime int64      `json:"expire_time"`
+	EnvVersion EnvVersion `json:"env_version"`
+	CloudBase  *CloudBase `json:"cloud_base"`
+}
+
+type URLLinkQuota struct {
+	LongTimeUsed  int `json:"long_time_used"`
+	LongTimeLimit int `json:"long_time_limit"`
+}
+
+// QueryURLLink 查询小程序 url_link 配置，及长期有效 quota。
+func QueryURLLink(urllink string, result *ResultURLLinkQuery) wx.Action {
+	params := &ParamsURLLinkQuery{
+		URLLink: urllink,
+	}
+
+	return wx.NewPostAction(urls.MinipQueryURLLink,
+		wx.WithBody(func() ([]byte, error) {
+			return wx.MarshalNoEscapeHTML(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}

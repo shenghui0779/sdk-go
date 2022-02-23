@@ -161,3 +161,205 @@ func TestGetUserRiskRank(t *testing.T) {
 		RiskRank: 0,
 	}, result)
 }
+
+func TestGenerateScheme(t *testing.T) {
+	body := []byte(`{"jump_wxa":{"path":"/pages/publishHomework/publishHomework"},"is_expire":true,"expire_time":1606737600}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"openlink": "Scheme"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/generatescheme?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	params := &ParamsSchemeGenerate{
+		JumpWxa: &SchemeJumpWxa{
+			Path: "/pages/publishHomework/publishHomework",
+		},
+		IsExpire:   true,
+		ExpireTime: 1606737600,
+	}
+	result := new(ResultSchemeGenerate)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GenerateScheme(params, result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultSchemeGenerate{
+		OpenLink: "Scheme",
+	}, result)
+}
+
+func TestQueryScheme(t *testing.T) {
+	body := []byte(`{"scheme":"weixin://dl/business/?t=XTSkBZlzqmn"}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"scheme_info": {
+		"appid": "appid",
+		"path": "",
+		"query": "",
+		"create_time": 611928113,
+		"expire_time": 0,
+		"env_version": "release"
+	},
+	"scheme_quota": {
+		"long_time_used": 100,
+		"long_time_limit": 100000
+	}
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/queryscheme?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultSchemeQuery)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", QueryScheme("weixin://dl/business/?t=XTSkBZlzqmn", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultSchemeQuery{
+		SchemeInfo: &SchemeInfo{
+			AppID:      "appid",
+			Path:       "",
+			Query:      "",
+			CreateTime: 611928113,
+			ExpireTime: 0,
+			EnvVersion: EnvRelease,
+		},
+		SchemeQuota: &SchemeQuota{
+			LongTimeUsed:  100,
+			LongTimeLimit: 100000,
+		},
+	}, result)
+}
+
+func TestGenerateURLLink(t *testing.T) {
+	body := []byte(`{"path":"/pages/publishHomework/publishHomework","is_expire":true,"expire_type":1,"expire_interval":1,"env_version":"release","cloud_base":{"env":"xxx","domain":"xxx.xx","path":"/jump-wxa.html","query":"a=1&b=2"}}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"url_link": "URL Link"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/generate_urllink?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	params := &ParamsURLLinkGenerate{
+		Path:           "/pages/publishHomework/publishHomework",
+		IsExpire:       true,
+		ExpireType:     1,
+		ExpireInterval: 1,
+		EnvVersion:     EnvRelease,
+		CloudBase: &CloudBase{
+			Env:    "xxx",
+			Domain: "xxx.xx",
+			Path:   "/jump-wxa.html",
+			Query:  "a=1&b=2",
+		},
+	}
+	result := new(ResultURLLinkGenerate)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GenerateURLLink(params, result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultURLLinkGenerate{
+		URLLink: "URL Link",
+	}, result)
+}
+
+func TestQueryURLLink(t *testing.T) {
+	body := []byte(`{"url_link":"https://wxaurl.cn/BQZRrcFCPvg"}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"url_link_info": {
+		"appid": "appid",
+		"path": "",
+		"query": "",
+		"create_time": 611928113,
+		"expire_time": 0,
+		"env_version": "release",
+		"cloud_base": {
+			"env": "",
+			"doamin": "",
+			"path": "",
+			"query": "",
+			"resource_appid": ""
+		}
+	},
+	"url_link_quota": {
+		"long_time_used": 100,
+		"long_time_limit": 100000
+	}
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/query_urllink?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	oa := New("APPID", "APPSECRET")
+	oa.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultURLLinkQuery)
+
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", QueryURLLink("https://wxaurl.cn/BQZRrcFCPvg", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultURLLinkQuery{
+		URLLinkInfo: &URLLinkInfo{
+			AppID:      "appid",
+			Path:       "",
+			Query:      "",
+			CreateTime: 611928113,
+			ExpireTime: 0,
+			EnvVersion: EnvRelease,
+			CloudBase: &CloudBase{
+				Env:           "",
+				Domain:        "",
+				Path:          "",
+				Query:         "",
+				ResourceAppID: "",
+			},
+		},
+		URLLinkQuota: &URLLinkQuota{
+			LongTimeUsed:  100,
+			LongTimeLimit: 100000,
+		},
+	}, result)
+}
