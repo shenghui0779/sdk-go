@@ -38,7 +38,7 @@ func TestSendUniformMessage(t *testing.T) {
 		URL:        "http://weixin.qq.com/download",
 		Minip: &MsgMinip{
 			AppID:    "xiaochengxuappid12345",
-			Pagepath: "index?foo=bar",
+			PagePath: "index?foo=bar",
 		},
 		Data: MsgTemplData{
 			"first": {
@@ -208,7 +208,7 @@ func TestSendKFMinipMessage(t *testing.T) {
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SendKFMinipMsg("OPENID", &KFMinipPage{
 		Title:        "title",
-		Pagepath:     "pagepath",
+		PagePath:     "pagepath",
 		ThumbMediaID: "thumb_media_id",
 	}))
 
