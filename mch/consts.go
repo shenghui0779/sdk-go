@@ -128,6 +128,11 @@ const (
 	RedpackSendTypeActivity = "ACTIVITY" // 通过活动方式发放
 )
 
+const (
+	WorkWXNormalMsg  = "NORMAL_MSG"   // 普通付款消息
+	WorkWXAprovalMsg = "APPROVAL_MSG" // 审批付款消息
+)
+
 // 账单类型
 const (
 	BillTypeAll            = "ALL"             // 当日所有订单信息（不含充值退款订单）

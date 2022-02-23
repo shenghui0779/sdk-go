@@ -7,8 +7,8 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-// Contract 微信纯签约协议
-type Contract struct {
+// ParamsContract 纯签约协议参数
+type ParamsContract struct {
 	// 必填字段
 	PlanID                 string // 协议模板id，设置路径见开发步骤
 	ContractCode           string // 商户侧的签约协议号，由商户生成
@@ -24,8 +24,8 @@ type Contract struct {
 	ReturnAPPID string // H5签约选填，商户具有指定返回app的权限时，签约成功将返回appid指定的app应用，如不填且签约发起时的浏览器UA可被微信识别，则跳转到浏览器，否则留在微信
 }
 
-// ContractOrder 支付并签约
-type ContractOrder struct {
+// ParamsContractInPay 支付中签约参数
+type ParamsContractInPay struct {
 	// 必填参数
 	OutTradeNO             string // 商户系统内部的订单号，32个字符内、可包含字母，其他说明见商户订单号
 	TotalFee               int    // 订单总金额，单位为分，详见支付金额
@@ -51,8 +51,8 @@ type ContractOrder struct {
 	OpenID     string // trade_type=JSAPI，此参数必传，用户在商户appid下的唯一标识
 }
 
-// PappayData 扣款数据
-type PappayData struct {
+// ParamsPappay 扣款参数
+type ParamsPappay struct {
 	// 必填参数
 	OutTradeNO     string // 商户系统内部的订单号，32个字符内、可包含字母，其他说明见商户订单号
 	TotalFee       int    // 订单总金额，单位为分，详见支付金额
@@ -69,23 +69,23 @@ type PappayData struct {
 }
 
 // APPEntrust APP纯签约
-func APPEntrust(c *Contract) wx.Action {
+func APPEntrust(appid string, params *ParamsContract) wx.Action {
 	return wx.NewPostAction(urls.MchPappayAPPEntrust,
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":                    appid,
 				"mch_id":                   mchid,
-				"plan_id":                  c.PlanID,
-				"contract_code":            c.ContractCode,
-				"request_serial":           strconv.FormatInt(c.RequestSerial, 10),
-				"contract_display_account": c.ContractDisplayAccount,
+				"plan_id":                  params.PlanID,
+				"contract_code":            params.ContractCode,
+				"request_serial":           strconv.FormatInt(params.RequestSerial, 10),
+				"contract_display_account": params.ContractDisplayAccount,
 				"version":                  "1.0",
-				"timestamp":                strconv.FormatInt(c.Timestamp, 10),
-				"notify_url":               c.NotifyURL,
+				"timestamp":                strconv.FormatInt(params.Timestamp, 10),
+				"notify_url":               params.NotifyURL,
 				"sign_type":                string(SignMD5),
 			}
 
-			if c.ReturnAPP {
+			if params.ReturnAPP {
 				body["return_app"] = "Y"
 			}
 
@@ -95,23 +95,23 @@ func APPEntrust(c *Contract) wx.Action {
 }
 
 // OAEntrust 公众号纯签约
-func OAEntrust(c *Contract) wx.Action {
+func OAEntrust(appid string, params *ParamsContract) wx.Action {
 	return wx.NewAction("", urls.MchPappayOAEntrust,
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":                    appid,
 				"mch_id":                   mchid,
-				"plan_id":                  c.PlanID,
-				"contract_code":            c.ContractCode,
-				"request_serial":           strconv.FormatInt(c.RequestSerial, 10),
-				"contract_display_account": c.ContractDisplayAccount,
+				"plan_id":                  params.PlanID,
+				"contract_code":            params.ContractCode,
+				"request_serial":           strconv.FormatInt(params.RequestSerial, 10),
+				"contract_display_account": params.ContractDisplayAccount,
 				"version":                  "1.0",
-				"timestamp":                strconv.FormatInt(c.Timestamp, 10),
-				"notify_url":               c.NotifyURL,
+				"timestamp":                strconv.FormatInt(params.Timestamp, 10),
+				"notify_url":               params.NotifyURL,
 				"sign_type":                string(SignMD5),
 			}
 
-			if c.ReturnWeb {
+			if params.ReturnWeb {
 				body["return_web"] = "1"
 			}
 
@@ -121,23 +121,23 @@ func OAEntrust(c *Contract) wx.Action {
 }
 
 // MPEntrust 小程序纯签约，返回小程序所需的 extraData 数据
-func MPEntrust(c *Contract) wx.Action {
+func MPEntrust(appid string, params *ParamsContract) wx.Action {
 	return wx.NewAction("", "",
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			extraData := wx.WXML{
 				"appid":                    appid,
 				"mch_id":                   mchid,
-				"plan_id":                  c.PlanID,
-				"contract_code":            c.ContractCode,
-				"request_serial":           strconv.FormatInt(c.RequestSerial, 10),
-				"contract_display_account": c.ContractDisplayAccount,
-				"timestamp":                strconv.FormatInt(c.Timestamp, 10),
-				"notify_url":               c.NotifyURL,
+				"plan_id":                  params.PlanID,
+				"contract_code":            params.ContractCode,
+				"request_serial":           strconv.FormatInt(params.RequestSerial, 10),
+				"contract_display_account": params.ContractDisplayAccount,
+				"timestamp":                strconv.FormatInt(params.Timestamp, 10),
+				"notify_url":               params.NotifyURL,
 				"sign_type":                string(SignMD5),
 			}
 
-			if c.OuterID != 0 {
-				extraData["outerid"] = strconv.FormatInt(c.OuterID, 10)
+			if params.OuterID != 0 {
+				extraData["outerid"] = strconv.FormatInt(params.OuterID, 10)
 			}
 
 			return extraData, nil
@@ -146,25 +146,25 @@ func MPEntrust(c *Contract) wx.Action {
 }
 
 // H5Entrust H5纯签约
-func H5Entrust(c *Contract) wx.Action {
+func H5Entrust(appid string, params *ParamsContract) wx.Action {
 	return wx.NewAction("", urls.MchPappayH5Entrust,
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":                    appid,
 				"mch_id":                   mchid,
-				"plan_id":                  c.PlanID,
-				"contract_code":            c.ContractCode,
-				"request_serial":           strconv.FormatInt(c.RequestSerial, 10),
-				"contract_display_account": c.ContractDisplayAccount,
+				"plan_id":                  params.PlanID,
+				"contract_code":            params.ContractCode,
+				"request_serial":           strconv.FormatInt(params.RequestSerial, 10),
+				"contract_display_account": params.ContractDisplayAccount,
 				"version":                  "1.0",
-				"timestamp":                strconv.FormatInt(c.Timestamp, 10),
-				"clientip":                 c.SpbillCreateIP,
-				"notify_url":               c.NotifyURL,
+				"timestamp":                strconv.FormatInt(params.Timestamp, 10),
+				"clientip":                 params.SpbillCreateIP,
+				"notify_url":               params.NotifyURL,
 				"sign_type":                string(SignHMacSHA256),
 			}
 
-			if c.ReturnAPPID != "" {
-				body["return_appid"] = c.ReturnAPPID
+			if params.ReturnAPPID != "" {
+				body["return_appid"] = params.ReturnAPPID
 			}
 
 			return body, nil
@@ -172,10 +172,10 @@ func H5Entrust(c *Contract) wx.Action {
 	)
 }
 
-// EntrustByOrder 支付中签约
-func EntrustByOrder(order *ContractOrder) wx.Action {
+// EntrustInPay 支付中签约
+func EntrustInPay(appid string, params *ParamsContractInPay) wx.Action {
 	return wx.NewPostAction(urls.MchPappayContractOrder,
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":                    appid,
 				"mch_id":                   mchid,
@@ -183,58 +183,58 @@ func EntrustByOrder(order *ContractOrder) wx.Action {
 				"contract_mchid":           mchid,
 				"nonce_str":                nonce,
 				"fee_type":                 "CNY",
-				"trade_type":               order.TradeType,
-				"body":                     order.Body,
-				"out_trade_no":             order.OutTradeNO,
-				"total_fee":                strconv.Itoa(order.TotalFee),
-				"spbill_create_ip":         order.SpbillCreateIP,
-				"plan_id":                  order.PlanID,
-				"contract_code":            order.ContractCode,
-				"request_serial":           strconv.FormatInt(order.RequestSerial, 10),
-				"contract_display_account": order.ContractDisplayAccount,
-				"notify_url":               order.PaymentNotifyURL,
-				"contract_notify_url":      order.ContractNotifyURL,
+				"trade_type":               params.TradeType,
+				"body":                     params.Body,
+				"out_trade_no":             params.OutTradeNO,
+				"total_fee":                strconv.Itoa(params.TotalFee),
+				"spbill_create_ip":         params.SpbillCreateIP,
+				"plan_id":                  params.PlanID,
+				"contract_code":            params.ContractCode,
+				"request_serial":           strconv.FormatInt(params.RequestSerial, 10),
+				"contract_display_account": params.ContractDisplayAccount,
+				"notify_url":               params.PaymentNotifyURL,
+				"contract_notify_url":      params.ContractNotifyURL,
 				"sign_type":                string(SignMD5),
 			}
 
-			if order.DeviceInfo != "" {
-				body["device_info"] = order.DeviceInfo
+			if params.DeviceInfo != "" {
+				body["device_info"] = params.DeviceInfo
 			}
 
-			if order.Detail != "" {
-				body["detail"] = order.Detail
+			if params.Detail != "" {
+				body["detail"] = params.Detail
 			}
 
-			if order.Attach != "" {
-				body["attach"] = order.Attach
+			if params.Attach != "" {
+				body["attach"] = params.Attach
 			}
 
-			if order.FeeType != "" {
-				body["fee_type"] = order.FeeType
+			if params.FeeType != "" {
+				body["fee_type"] = params.FeeType
 			}
 
-			if order.TimeStart != "" {
-				body["time_start"] = order.TimeStart
+			if params.TimeStart != "" {
+				body["time_start"] = params.TimeStart
 			}
 
-			if order.TimeExpire != "" {
-				body["time_expire"] = order.TimeExpire
+			if params.TimeExpire != "" {
+				body["time_expire"] = params.TimeExpire
 			}
 
-			if order.GoodsTag != "" {
-				body["goods_tag"] = order.GoodsTag
+			if params.GoodsTag != "" {
+				body["goods_tag"] = params.GoodsTag
 			}
 
-			if order.ProductID != "" {
-				body["product_id"] = order.ProductID
+			if params.ProductID != "" {
+				body["product_id"] = params.ProductID
 			}
 
-			if order.LimitPay != "" {
-				body["limit_pay"] = order.LimitPay
+			if params.LimitPay != "" {
+				body["limit_pay"] = params.LimitPay
 			}
 
-			if order.OpenID != "" {
-				body["openid"] = order.OpenID
+			if params.OpenID != "" {
+				body["openid"] = params.OpenID
 			}
 
 			return body, nil
@@ -243,9 +243,9 @@ func EntrustByOrder(order *ContractOrder) wx.Action {
 }
 
 // QueryContractByID 根据微信返回的委托代扣协议id查询签约关系
-func QueryContractByID(contractID string) wx.Action {
+func QueryContractByID(appid string, contractID string) wx.Action {
 	return wx.NewPostAction(urls.MchPappayContractQuery,
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":       appid,
 				"mch_id":      mchid,
@@ -258,9 +258,9 @@ func QueryContractByID(contractID string) wx.Action {
 }
 
 // QueryContractByCode 根据签约协议号查询签约关系，需要商户平台配置的代扣模版id
-func QueryContractByCode(planID, contractCode string) wx.Action {
+func QueryContractByCode(appid, planID, contractCode string) wx.Action {
 	return wx.NewPostAction(urls.MchPappayContractQuery,
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":         appid,
 				"mch_id":        mchid,
@@ -274,41 +274,41 @@ func QueryContractByCode(planID, contractCode string) wx.Action {
 }
 
 // PappayApply 申请扣款
-func PappayApply(data *PappayData) wx.Action {
+func PappayApply(appid string, params *ParamsPappay) wx.Action {
 	return wx.NewPostAction(urls.MchPappayApply,
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":            appid,
 				"mch_id":           mchid,
 				"nonce_str":        nonce,
 				"fee_type":         "CNY",
 				"trade_type":       TradePAP,
-				"notify_url":       data.NotifyURL,
-				"body":             data.Body,
-				"out_trade_no":     data.OutTradeNO,
-				"total_fee":        strconv.Itoa(data.TotalFee),
-				"contract_id":      data.ContractID,
-				"spbill_create_ip": data.SpbillCreateIP,
+				"notify_url":       params.NotifyURL,
+				"body":             params.Body,
+				"out_trade_no":     params.OutTradeNO,
+				"total_fee":        strconv.Itoa(params.TotalFee),
+				"contract_id":      params.ContractID,
+				"spbill_create_ip": params.SpbillCreateIP,
 				"sign_type":        string(SignMD5),
 			}
 
-			if len(data.Detail) != 0 {
-				body["detail"] = data.Detail
+			if len(params.Detail) != 0 {
+				body["detail"] = params.Detail
 			}
 
-			if len(data.Attach) != 0 {
-				body["attach"] = data.Attach
+			if len(params.Attach) != 0 {
+				body["attach"] = params.Attach
 			}
 
-			if len(data.FeeType) != 0 {
-				body["fee_type"] = data.FeeType
+			if len(params.FeeType) != 0 {
+				body["fee_type"] = params.FeeType
 			}
 
-			if len(data.GoodsTag) != 0 {
-				body["goods_tag"] = data.GoodsTag
+			if len(params.GoodsTag) != 0 {
+				body["goods_tag"] = params.GoodsTag
 			}
 
-			if data.Receipt {
+			if params.Receipt {
 				body["receipt"] = "Y"
 			}
 
@@ -318,9 +318,9 @@ func PappayApply(data *PappayData) wx.Action {
 }
 
 // DeleteContractByID 根据微信返回的委托代扣协议id解约
-func DeleteContractByID(contractID, remark string) wx.Action {
+func DeleteContractByID(appid, contractID, remark string) wx.Action {
 	return wx.NewPostAction(urls.MchPappayContractDelete,
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":                       appid,
 				"mch_id":                      mchid,
@@ -334,9 +334,9 @@ func DeleteContractByID(contractID, remark string) wx.Action {
 }
 
 // DeleteContractByCode 根据签约协议号解约，需要商户平台配置的代扣模版id
-func DeleteContractByCode(planID, contractCode, remark string) wx.Action {
+func DeleteContractByCode(appid, planID, contractCode, remark string) wx.Action {
 	return wx.NewPostAction(urls.MchPappayContractDelete,
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":                       appid,
 				"mch_id":                      mchid,
@@ -351,9 +351,9 @@ func DeleteContractByCode(planID, contractCode, remark string) wx.Action {
 }
 
 // QueryPappayByTransactionID 根据微信订单号查询扣款信息
-func QueryPappayByTransactionID(transactionID string) wx.Action {
+func QueryPappayByTransactionID(appid, transactionID string) wx.Action {
 	return wx.NewPostAction(urls.MchPappayOrderQuery,
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":          appid,
 				"mch_id":         mchid,
@@ -366,9 +366,9 @@ func QueryPappayByTransactionID(transactionID string) wx.Action {
 }
 
 // QueryPappayByOutTradeNO 根据商户订单号查询扣款信息
-func QueryPappayByOutTradeNO(outTradeNO string) wx.Action {
+func QueryPappayByOutTradeNO(appid, outTradeNO string) wx.Action {
 	return wx.NewPostAction(urls.MchPappayOrderQuery,
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":        appid,
 				"mch_id":       mchid,

@@ -10,8 +10,8 @@ import (
 	"github.com/shenghui0779/yiigo"
 )
 
-// WorkWXRedpackData 企业红包发放数据
-type WorkWXRedpackData struct {
+// ParamsWorkWXRedpack 企业红包参数
+type ParamsWorkWXRedpack struct {
 	// 必填参数
 	MchBillNO   string // 商户订单号（每个订单号必须唯一。取值范围：0~9，a~z，A~Z）接口根据商户订单号支持重入，如出现超时可再调用
 	ReOpenID    string // 接受红包的用户openid
@@ -20,51 +20,168 @@ type WorkWXRedpackData struct {
 	ActName     string // 活动名称
 	Remark      string // 备注信息
 	// 选填参数
-	AgentID             string // 以企业应用的名义发红包，企业应用id，整型，可在企业微信管理端应用的设置页面查看。与sender_name互斥，二者只能填一个
+	AgentID             int64  // 以企业应用的名义发红包，企业应用id，整型，可在企业微信管理端应用的设置页面查看。与sender_name互斥，二者只能填一个
 	SenderName          string // 以个人名义发红包，红包发送者名称(需要utf-8格式)。与agentid互斥，二者只能填一个
 	SenderHeaderMediaID string // 发送者头像素材id，通过企业微信开放上传素材接口获取
 	SceneID             string // 发放红包使用场景，红包金额大于200或者小于1元时必传
 }
 
+type ParamsWorkWXTransfer struct {
+	// 必填参数
+	PartnerTradeNO string
+	OpenID         string
+	CheckName      string
+	Amount         int
+	Desc           string
+	SpbillCreateIP string
+	WWMsgType      string
+	ActName        string
+	// 选填参数
+	AgentID        int64
+	ReUserName     string
+	ApprovalType   int
+	ApprovalNumber string
+	DeviceInfo     string
+}
+
 // SendWorkWXRedpack 发放企业红包
-func SendWorkWXRedpack(secret string, data *WorkWXRedpackData) wx.Action {
+func SendWorkWXRedpack(appid, secret string, params *ParamsWorkWXRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackWorkWX,
 		wx.WithTLS(),
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"wxappid":      appid,
 				"mch_id":       mchid,
 				"nonce_str":    nonce,
-				"mch_billno":   data.MchBillNO,
-				"re_openid":    data.ReOpenID,
-				"total_amount": strconv.Itoa(data.TotalAmount),
-				"wishing":      data.Wishing,
-				"act_name":     data.ActName,
-				"remark":       data.Remark,
+				"mch_billno":   params.MchBillNO,
+				"re_openid":    params.ReOpenID,
+				"total_amount": strconv.Itoa(params.TotalAmount),
+				"wishing":      params.Wishing,
+				"act_name":     params.ActName,
+				"remark":       params.Remark,
 				"sign_type":    string(SignMD5),
 			}
 
-			workwxSignStr := fmt.Sprintf("act_name=%s&mch_billno=%s&mch_id=%s&nonce_str=%s&re_openid=%s&total_amount=%d&wxappid=%s&secret=%s", data.ActName, data.MchBillNO, mchid, nonce, data.ReOpenID, data.TotalAmount, appid, secret)
+			signStr := fmt.Sprintf("act_name=%s&mch_billno=%s&mch_id=%s&nonce_str=%s&re_openid=%s&total_amount=%d&wxappid=%s&secret=%s",
+				params.ActName,
+				params.MchBillNO,
+				mchid, nonce,
+				params.ReOpenID,
+				params.TotalAmount,
+				appid,
+				secret,
+			)
 
-			body["workwx_sign"] = strings.ToUpper(yiigo.MD5(workwxSignStr))
+			body["workwx_sign"] = strings.ToUpper(yiigo.MD5(signStr))
 
-			if len(data.AgentID) != 0 {
-				body["agentid"] = data.AgentID
+			if params.AgentID != 0 {
+				body["agentid"] = strconv.FormatInt(params.AgentID, 10)
 			}
 
-			if len(data.SenderName) != 0 {
-				body["sender_name"] = data.SenderName
+			if len(params.SenderName) != 0 {
+				body["sender_name"] = params.SenderName
 			}
 
-			if len(data.SenderHeaderMediaID) != 0 {
-				body["sender_header_media_id"] = data.SenderHeaderMediaID
+			if len(params.SenderHeaderMediaID) != 0 {
+				body["sender_header_media_id"] = params.SenderHeaderMediaID
 			}
 
-			if len(data.SceneID) != 0 {
-				body["scene_id"] = data.SceneID
+			if len(params.SceneID) != 0 {
+				body["scene_id"] = params.SceneID
 			}
 
 			return body, nil
+		}),
+	)
+}
+
+// QueryWorkWXRedpack 查询企业红包记录
+func QueryWorkWXRedpack(appid, billNO string) wx.Action {
+	return wx.NewPostAction(urls.MchRedpackQuery,
+		wx.WithTLS(),
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
+			return wx.WXML{
+				"appid":      appid,
+				"mch_id":     mchid,
+				"mch_billno": billNO,
+				"nonce_str":  nonce,
+				"sign_type":  string(SignMD5),
+			}, nil
+		}),
+	)
+}
+
+// TransferToPocket 向员工付款
+func TransferToPocket(appid, secret string, params *ParamsWorkWXTransfer) wx.Action {
+	return wx.NewPostAction(urls.MchTransferToPocket,
+		wx.WithTLS(),
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
+			body := wx.WXML{
+				"appid":            appid,
+				"mch_id":           mchid,
+				"nonce_str":        nonce,
+				"partner_trade_no": params.PartnerTradeNO,
+				"openid":           params.OpenID,
+				"check_name":       params.CheckName,
+				"amount":           strconv.Itoa(params.Amount),
+				"desc":             params.Desc,
+				"spbill_create_ip": params.SpbillCreateIP,
+				"ww_msg_type":      params.WWMsgType,
+				"act_name":         params.ActName,
+				"sign_type":        string(SignMD5),
+			}
+
+			signStr := fmt.Sprintf("amount=%d&appid=%s&desc=%s&mch_id=%s&nonce_str=%s&openid=%s&partner_trade_no=%s&ww_msg_type=%s&secret=%s",
+				params.Amount,
+				appid,
+				params.Desc,
+				mchid,
+				nonce,
+				params.OpenID,
+				params.PartnerTradeNO,
+				params.WWMsgType,
+				secret,
+			)
+
+			body["workwx_sign"] = strings.ToUpper(yiigo.MD5(signStr))
+
+			if params.AgentID != 0 {
+				body["agentid"] = strconv.FormatInt(params.AgentID, 10)
+			}
+
+			if len(params.ReUserName) != 0 {
+				body["re_user_name"] = params.ReUserName
+			}
+
+			if params.ApprovalType != 0 {
+				body["approval_type"] = strconv.Itoa(params.ApprovalType)
+			}
+
+			if len(params.ApprovalNumber) != 0 {
+				body["approval_number"] = params.ApprovalNumber
+			}
+
+			if len(params.DeviceInfo) != 0 {
+				body["device_info"] = params.DeviceInfo
+			}
+
+			return body, nil
+		}),
+	)
+}
+
+// QueryTransferPocket 查询向员工付款结果
+func QueryTransferPocket(appid, partnerTradeNO string) wx.Action {
+	return wx.NewPostAction(urls.MchTransferPocketOrderQuery,
+		wx.WithTLS(),
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
+			return wx.WXML{
+				"appid":            appid,
+				"mch_id":           mchid,
+				"partner_trade_no": partnerTradeNO,
+				"nonce_str":        nonce,
+				"sign_type":        string(SignMD5),
+			}, nil
 		}),
 	)
 }

@@ -54,7 +54,7 @@ func TestRefundByTransactionID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/secapi/pay/refund", body).Return(resp, nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
@@ -62,7 +62,7 @@ func TestRefundByTransactionID(t *testing.T) {
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), RefundByTransactionID("4008450740201411110005820873", &RefundData{
+	r, err := mch.Do(context.TODO(), RefundByTransactionID("wx2421b1c4370ec43b", "4008450740201411110005820873", &ParamsRefund{
 		OutRefundNO: "1415701182",
 		TotalFee:    1,
 		RefundFee:   1,
@@ -125,7 +125,7 @@ func TestRefundByOutTradeNO(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/secapi/pay/refund", body).Return(resp, nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
@@ -133,7 +133,7 @@ func TestRefundByOutTradeNO(t *testing.T) {
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), RefundByOutTradeNO("1415757673", &RefundData{
+	r, err := mch.Do(context.TODO(), RefundByOutTradeNO("wx2421b1c4370ec43b", "1415757673", &ParamsRefund{
 		OutRefundNO: "1415701182",
 		TotalFee:    1,
 		RefundFee:   1,
@@ -195,7 +195,7 @@ func TestQueryRefundByRefundID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/refundquery", body).Return(resp, nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
@@ -203,7 +203,7 @@ func TestQueryRefundByRefundID(t *testing.T) {
 
 	mch.SetClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryRefundByRefundID("2008450740201411110000174436"))
+	r, err := mch.Do(context.TODO(), QueryRefundByRefundID("wx2421b1c4370ec43b", "2008450740201411110000174436"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
@@ -263,7 +263,7 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/refundquery", body).Return(resp, nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
@@ -271,7 +271,7 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 
 	mch.SetClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryRefundByOutRefundNO("1415701182"))
+	r, err := mch.Do(context.TODO(), QueryRefundByOutRefundNO("wx2421b1c4370ec43b", "1415701182"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
@@ -331,7 +331,7 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/refundquery", body).Return(resp, nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
@@ -339,7 +339,7 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 
 	mch.SetClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryRefundByTransactionID("1008450740201411110005820873"))
+	r, err := mch.Do(context.TODO(), QueryRefundByTransactionID("wx2421b1c4370ec43b", "1008450740201411110005820873"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
@@ -399,7 +399,7 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/refundquery", body).Return(resp, nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
@@ -407,7 +407,7 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 
 	mch.SetClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryRefundByOutTradeNO("1415757673"))
+	r, err := mch.Do(context.TODO(), QueryRefundByOutTradeNO("wx2421b1c4370ec43b", "1415757673"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{

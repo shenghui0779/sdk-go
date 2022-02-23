@@ -53,7 +53,7 @@ func TestTransferToBalance(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", body).Return(resp, nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS"
@@ -61,7 +61,7 @@ func TestTransferToBalance(t *testing.T) {
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), TransferToBalance(&TransferBalanceData{
+	r, err := mch.Do(context.TODO(), TransferToBalance("wx2421b1c4370ec43b", &ParamsTransferBalance{
 		PartnerTradeNO: "100000982014120919616",
 		OpenID:         "ohO4Gt7wVPxIT1A9GjFaMYMiZY1s",
 		CheckName:      "FORCE_CHECK",
@@ -84,7 +84,7 @@ func TestTransferToBalance(t *testing.T) {
 	}, r)
 }
 
-func TestQueryTransferBalanceOrder(t *testing.T) {
+func TestQueryTransferBalance(t *testing.T) {
 	body, err := wx.FormatMap2XML(wx.WXML{
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
@@ -121,7 +121,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo", body).Return(resp, nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
@@ -129,7 +129,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryTransferBalanceOrder("1000005901201407261446939628"))
+	r, err := mch.Do(context.TODO(), QueryTransferBalance("wx2421b1c4370ec43b", "1000005901201407261446939628"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
@@ -177,7 +177,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 		"cmms_amt":         "0",
 // 	}, nil)
 
-// 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+// 	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d")
 
 // 	mch.nonce = func() string {
 // 		return "50780e0cca98c8c8e814883e5caa672e"
@@ -185,7 +185,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 
 // 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-// 	r, err := mch.Do(context.TODO(), TransferToBankCard(&TransferBankCardData{
+// 	r, err := mch.Do(context.TODO(), TransferToBankCard("wx2421b1c4370ec43b", &ParamsTransferBankCard{
 // 		PartnerTradeNO: "1212121221278",
 // 		EncBankNO:      "6221882600114166800",
 // 		EncTrueName:    "张三",
@@ -207,7 +207,7 @@ func TestQueryTransferBalanceOrder(t *testing.T) {
 // 	}, r)
 // }
 
-func TestQueryTransferBankCardOrder(t *testing.T) {
+func TestQueryTransferBankCard(t *testing.T) {
 	body, err := wx.FormatMap2XML(wx.WXML{
 		"mch_id":           "10000100",
 		"partner_trade_no": "1212121221278",
@@ -243,7 +243,7 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank", body).Return(resp, nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
@@ -251,7 +251,7 @@ func TestQueryTransferBankCardOrder(t *testing.T) {
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryTransferBankCardOrder("1212121221278"))
+	r, err := mch.Do(context.TODO(), QueryTransferBankCard("wx2421b1c4370ec43b", "1212121221278"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
@@ -305,7 +305,7 @@ DQIDAQAB
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://fraud.mch.weixin.qq.com/risk/getpublickey", body).Return(resp, nil)
 
-	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"

@@ -7,8 +7,8 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-// RedpackData 红包发放数据
-type RedpackData struct {
+// ParamsRedpack 红包参数
+type ParamsRedpack struct {
 	// 必填参数
 	MchBillNO   string // 商户订单号（每个订单号必须唯一。取值范围：0~9，a~z，A~Z）接口根据商户订单号支持重入，如出现超时可再调用
 	SendName    string // 红包发送者名称；注意：敏感词会被转义成字符*
@@ -25,32 +25,32 @@ type RedpackData struct {
 }
 
 // SendNormalRedpack 发放普通红包
-func SendNormalRedpack(data *RedpackData) wx.Action {
+func SendNormalRedpack(appid string, params *ParamsRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackNormal,
 		wx.WithTLS(),
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"wxappid":      appid,
 				"mch_id":       mchid,
 				"nonce_str":    nonce,
-				"mch_billno":   data.MchBillNO,
-				"send_name":    data.SendName,
-				"re_openid":    data.ReOpenID,
-				"total_amount": strconv.Itoa(data.TotalAmount),
-				"total_num":    strconv.Itoa(data.TotalNum),
-				"wishing":      data.Wishing,
-				"client_ip":    data.ClientIP,
-				"act_name":     data.ActName,
-				"remark":       data.Remark,
+				"mch_billno":   params.MchBillNO,
+				"send_name":    params.SendName,
+				"re_openid":    params.ReOpenID,
+				"total_amount": strconv.Itoa(params.TotalAmount),
+				"total_num":    strconv.Itoa(params.TotalNum),
+				"wishing":      params.Wishing,
+				"client_ip":    params.ClientIP,
+				"act_name":     params.ActName,
+				"remark":       params.Remark,
 				"sign_type":    string(SignMD5),
 			}
 
-			if data.SceneID != "" {
-				body["scene_id"] = data.SceneID
+			if params.SceneID != "" {
+				body["scene_id"] = params.SceneID
 			}
 
-			if data.RiskInfo != "" {
-				body["risk_info"] = data.RiskInfo
+			if params.RiskInfo != "" {
+				body["risk_info"] = params.RiskInfo
 			}
 
 			return body, nil
@@ -59,32 +59,32 @@ func SendNormalRedpack(data *RedpackData) wx.Action {
 }
 
 // SendGroupRedpack 发放裂变红包
-func SendGroupRedpack(data *RedpackData) wx.Action {
+func SendGroupRedpack(appid string, params *ParamsRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackGroup,
 		wx.WithTLS(),
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"wxappid":      appid,
 				"mch_id":       mchid,
 				"nonce_str":    nonce,
-				"mch_billno":   data.MchBillNO,
-				"send_name":    data.SendName,
-				"re_openid":    data.ReOpenID,
-				"total_amount": strconv.Itoa(data.TotalAmount),
-				"total_num":    strconv.Itoa(data.TotalNum),
+				"mch_billno":   params.MchBillNO,
+				"send_name":    params.SendName,
+				"re_openid":    params.ReOpenID,
+				"total_amount": strconv.Itoa(params.TotalAmount),
+				"total_num":    strconv.Itoa(params.TotalNum),
 				"amt_type":     "ALL_RAND",
-				"wishing":      data.Wishing,
-				"act_name":     data.ActName,
-				"remark":       data.Remark,
+				"wishing":      params.Wishing,
+				"act_name":     params.ActName,
+				"remark":       params.Remark,
 				"sign_type":    string(SignMD5),
 			}
 
-			if data.SceneID != "" {
-				body["scene_id"] = data.SceneID
+			if params.SceneID != "" {
+				body["scene_id"] = params.SceneID
 			}
 
-			if data.RiskInfo != "" {
-				body["risk_info"] = data.RiskInfo
+			if params.RiskInfo != "" {
+				body["risk_info"] = params.RiskInfo
 			}
 
 			return body, nil
@@ -93,28 +93,28 @@ func SendGroupRedpack(data *RedpackData) wx.Action {
 }
 
 // SendMinipRedpack 发放小程序红包
-func SendMinipRedpack(data *RedpackData) wx.Action {
+func SendMinipRedpack(appid string, params *ParamsRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackMinip,
 		wx.WithTLS(),
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"wxappid":      appid,
 				"mch_id":       mchid,
 				"nonce_str":    nonce,
-				"mch_billno":   data.MchBillNO,
-				"send_name":    data.SendName,
-				"re_openid":    data.ReOpenID,
-				"total_amount": strconv.Itoa(data.TotalAmount),
-				"total_num":    strconv.Itoa(data.TotalNum),
-				"wishing":      data.Wishing,
-				"act_name":     data.ActName,
-				"remark":       data.Remark,
+				"mch_billno":   params.MchBillNO,
+				"send_name":    params.SendName,
+				"re_openid":    params.ReOpenID,
+				"total_amount": strconv.Itoa(params.TotalAmount),
+				"total_num":    strconv.Itoa(params.TotalNum),
+				"wishing":      params.Wishing,
+				"act_name":     params.ActName,
+				"remark":       params.Remark,
 				"notify_way":   "MINI_PROGRAM_JSAPI",
 				"sign_type":    string(SignMD5),
 			}
 
-			if data.SceneID != "" {
-				body["scene_id"] = data.SceneID
+			if params.SceneID != "" {
+				body["scene_id"] = params.SceneID
 			}
 
 			return body, nil
@@ -122,11 +122,11 @@ func SendMinipRedpack(data *RedpackData) wx.Action {
 	)
 }
 
-// QueryRedpackByBillNO 查询红包记录
-func QueryRedpackByBillNO(billNO string) wx.Action {
+// QueryRedpack 查询红包记录
+func QueryRedpack(appid, billNO string) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackQuery,
 		wx.WithTLS(),
-		wx.WithWXML(func(appid, mchid, nonce string) (wx.WXML, error) {
+		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
 				"appid":      appid,
 				"mch_id":     mchid,

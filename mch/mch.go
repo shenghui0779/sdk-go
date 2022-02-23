@@ -23,7 +23,6 @@ import (
 
 // Mch 微信支付
 type Mch struct {
-	appid  string
 	mchid  string
 	apikey string
 	nonce  func() string
@@ -33,9 +32,8 @@ type Mch struct {
 
 // New returns new wechat pay
 // [证书参考](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=4_3)
-func New(appid, mchid, apikey string, certs ...tls.Certificate) *Mch {
+func New(mchid, apikey string, certs ...tls.Certificate) *Mch {
 	return &Mch{
-		appid:  appid,
 		mchid:  mchid,
 		apikey: apikey,
 		nonce: func() string {
@@ -56,11 +54,6 @@ func (mch *Mch) SetTLSClient(options ...wx.ClientOption) {
 	mch.tlscli.Set(options...)
 }
 
-// AppID returns appid
-func (mch *Mch) AppID() string {
-	return mch.appid
-}
-
 // MchID returns mchid
 func (mch *Mch) MchID() string {
 	return mch.mchid
@@ -73,7 +66,7 @@ func (mch *Mch) ApiKey() string {
 
 // Do exec action
 func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPOption) (wx.WXML, error) {
-	m, err := action.WXML(mch.appid, mch.mchid, mch.nonce())
+	m, err := action.WXML(mch.mchid, mch.nonce())
 
 	if err != nil {
 		return nil, err
@@ -134,9 +127,9 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPO
 }
 
 // APPAPI 用于APP拉起支付
-func (mch *Mch) APPAPI(prepayID string) wx.WXML {
+func (mch *Mch) APPAPI(appid, prepayID string) wx.WXML {
 	m := wx.WXML{
-		"appid":     mch.appid,
+		"appid":     appid,
 		"partnerid": mch.mchid,
 		"prepayid":  prepayID,
 		"package":   "Sign=WXPay",
@@ -150,9 +143,9 @@ func (mch *Mch) APPAPI(prepayID string) wx.WXML {
 }
 
 // JSAPI 用于JS拉起支付
-func (mch *Mch) JSAPI(prepayID string) wx.WXML {
+func (mch *Mch) JSAPI(appid, prepayID string) wx.WXML {
 	m := wx.WXML{
-		"appId":     mch.appid,
+		"appId":     appid,
 		"nonceStr":  mch.nonce(),
 		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
 		"signType":  string(SignMD5),
@@ -165,7 +158,7 @@ func (mch *Mch) JSAPI(prepayID string) wx.WXML {
 }
 
 // MinipRedpackJSAPI 小程序领取红包
-func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
+func (mch *Mch) MinipRedpackJSAPI(appid, pkg string) wx.WXML {
 	m := wx.WXML{
 		"nonceStr":  mch.nonce(),
 		"package":   url.QueryEscape(pkg),
@@ -173,7 +166,7 @@ func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 		"signType":  string(SignMD5),
 	}
 
-	signStr := fmt.Sprintf("appId=%s&nonceStr=%s&package=%s&timeStamp=%s&key=%s", mch.appid, m["nonceStr"], m["package"], m["timeStamp"], mch.apikey)
+	signStr := fmt.Sprintf("appId=%s&nonceStr=%s&package=%s&timeStamp=%s&key=%s", appid, m["nonceStr"], m["package"], m["timeStamp"], mch.apikey)
 
 	m["paySign"] = yiigo.MD5(signStr)
 
@@ -182,9 +175,9 @@ func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 
 // DownloadBill 下载交易账单
 // 账单日期格式：20140603
-func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]byte, error) {
+func (mch *Mch) DownloadBill(ctx context.Context, appid, billDate, billType string) ([]byte, error) {
 	m := wx.WXML{
-		"appid":     mch.appid,
+		"appid":     appid,
 		"mch_id":    mch.mchid,
 		"bill_date": billDate,
 		"bill_type": billType,
@@ -221,9 +214,9 @@ func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]
 
 // DownloadFundFlow 下载资金账单
 // 账单日期格式：20140603
-func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType string) ([]byte, error) {
+func (mch *Mch) DownloadFundFlow(ctx context.Context, appid string, billDate, accountType string) ([]byte, error) {
 	m := wx.WXML{
-		"appid":        mch.appid,
+		"appid":        appid,
 		"mch_id":       mch.mchid,
 		"bill_date":    billDate,
 		"account_type": accountType,
@@ -261,9 +254,9 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType stri
 // BatchQueryComment 拉取订单评价数据
 // 时间格式：yyyyMMddHHmmss
 // 默认一次且最多拉取200条
-func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string, offset int, limit ...int) ([]byte, error) {
+func (mch *Mch) BatchQueryComment(ctx context.Context, appid, beginTime, endTime string, offset int, limit ...int) ([]byte, error) {
 	m := wx.WXML{
-		"appid":      mch.appid,
+		"appid":      appid,
 		"mch_id":     mch.mchid,
 		"begin_time": beginTime,
 		"end_time":   endTime,
@@ -332,12 +325,6 @@ func (mch *Mch) VerifyWXMLResult(m wx.WXML) error {
 
 		if signature := mch.Sign(t, m, true); wxsign != signature {
 			return fmt.Errorf("signature verified failed, want: %s, got: %s", signature, wxsign)
-		}
-	}
-
-	if appid, ok := m["appid"]; ok {
-		if appid != mch.appid {
-			return fmt.Errorf("appid mismatch, want: %s, got: %s", mch.appid, m["appid"])
 		}
 	}
 
