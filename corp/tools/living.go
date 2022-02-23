@@ -30,6 +30,7 @@ type ResultLivingCreate struct {
 	LivingID string `json:"livingid"`
 }
 
+// CreateLiving 创建预约直播
 func CreateLiving(params *ParamsLivingCreate, result *ResultLivingCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsLivingCreate,
 		wx.WithBody(func() ([]byte, error) {
@@ -51,6 +52,7 @@ type ParamsLivingModify struct {
 	RemindTime     int    `json:"remind_time,omitempty"`
 }
 
+// ModifyLiving 修改预约直播
 func ModifyLiving(params *ParamsLivingModify) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsLivingModify,
 		wx.WithBody(func() ([]byte, error) {
@@ -63,6 +65,7 @@ type ParamsLivingCancel struct {
 	LivingID string `json:"livingid"`
 }
 
+// CancelLiving 取消预约直播
 func CancelLiving(livingID string) wx.Action {
 	params := &ParamsLivingCancel{
 		LivingID: livingID,
@@ -79,6 +82,7 @@ type ParamsLivingReplayDataDelete struct {
 	LivingID string `json:"livingid"`
 }
 
+// DeleteLivingReplayData 删除直播回放
 func DeleteLivingReplayData(livingID string) wx.Action {
 	params := &ParamsLivingReplayDataDelete{
 		LivingID: livingID,
@@ -100,6 +104,7 @@ type ResultLivingCode struct {
 	LivingCode string `json:"living_code"`
 }
 
+// GetLivingCode 获取微信观看直播凭证
 func GetLivingCode(livingID, openID string, result *ResultLivingCode) wx.Action {
 	params := &ParamsLivingCode{
 		LivingID: livingID,
@@ -127,6 +132,7 @@ type ResultUserAllLivingID struct {
 	LivingIDList []string `json:"livingid_list"`
 }
 
+// GetUserAllLivingID 获取成员直播ID列表
 func GetUserAllLivingID(userID, cursor string, limit int, result *ResultUserAllLivingID) wx.Action {
 	params := &ParamsUserAllLivingID{
 		UserID: userID,
@@ -169,6 +175,7 @@ type ResultLivingInfo struct {
 	LivingInfo *LivingInfo `json:"living_info"`
 }
 
+// GetLivingInfo 获取直播详情
 func GetLivingInfo(livingID string, result *ResultLivingInfo) wx.Action {
 	return wx.NewGetAction(urls.CorpToolsLivingGetInfo,
 		wx.WithQuery("livingid", livingID),
@@ -210,6 +217,7 @@ type ResultLivingWatchStat struct {
 	StatInfo *LivingStatInfo `json:"stat_info"`
 }
 
+// GetLivingWatchStat 获取直播观看明细
 func GetLivingWatchStat(livingID, nextKey string, result *ResultLivingWatchStat) wx.Action {
 	params := &ParamsLivingWatchStat{
 		LivingID: livingID,
@@ -238,6 +246,7 @@ type ResultLivingShareInfo struct {
 	InvitorExternalUserID string `json:"Invitor_external_userid"`
 }
 
+// GetLivingShareInfo 获取跳转小程序商城的直播观众信息
 func GetLivingShareInfo(wwshareCode string, result *ResultLivingShareInfo) wx.Action {
 	params := &ParamsLivingShareInfo{
 		WWShareCode: wwshareCode,

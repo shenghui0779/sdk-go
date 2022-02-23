@@ -36,6 +36,7 @@ type ResultUserGet struct {
 	Parent   *Parent  `json:"parent"`
 }
 
+// GetUser 读取学生或家长
 func GetUser(userID string, result *ResultUserGet) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolUserGet,
 		wx.WithQuery("userid", userID),
@@ -49,6 +50,7 @@ type ResultUserList struct {
 	Students []*Student `json:"students"`
 }
 
+// ListUser 获取部门成员详情
 func ListUser(departmentID int64, fetchChild int, result *ResultUserList) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolUserList,
 		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),
@@ -63,6 +65,7 @@ type ParamsArchSyncModeSet struct {
 	ArchSyncMode int `json:"arch_sync_mode"`
 }
 
+// SetArchSyncMode 设置家校通讯录自动同步模式
 func SetArchSyncMode(mode int) wx.Action {
 	params := &ParamsArchSyncModeSet{
 		ArchSyncMode: mode,
@@ -79,6 +82,7 @@ type ResultParentList struct {
 	Parents []*Parent `json:"parents"`
 }
 
+// ListParent 获取部门家长详情
 func ListParent(departmentID int64, result *ResultParentList) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolParentList,
 		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),

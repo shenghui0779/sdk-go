@@ -15,6 +15,7 @@ type ResultPermitUserList struct {
 	IDs []string `json:"ids"`
 }
 
+// ListPermitUser 获取会话内容存档开启成员列表
 func ListPermitUser(listType int, result *ResultPermitUserList) wx.Action {
 	params := &ParamsPermitUserList{
 		Type: listType,
@@ -50,6 +51,7 @@ type SingleAgreeInfo struct {
 	AgreeStatus      string `json:"agree_status"`
 }
 
+// CheckSingleAgree 获取会话同意情况（单聊）
 func CheckSingleAgree(agrees []*ParamsSingleAgree, result *ResultSingleAgreeCheck) wx.Action {
 	params := &ParamsSingleAgreeCheck{
 		Info: agrees,
@@ -79,6 +81,7 @@ type RoomAgreeInfo struct {
 	AgreeStatus      string `json:"agree_status"`
 }
 
+// CheckRoomAgree 获取会话同意情况（群聊）
 func CheckRoomAgree(roomID string, result *ResultRoomAgreeCheck) wx.Action {
 	params := &ParamsRoomAgreeCheck{
 		RoomID: roomID,
@@ -111,6 +114,7 @@ type ResultGroupChat struct {
 	Members        []*GroupMember `json:"members"`
 }
 
+// GetGroupChat 获取会话内容存档内部群信息
 func GetGroupChat(roomID string, result *ResultGroupChat) wx.Action {
 	params := &ParamsGroupChat{
 		RoomID: roomID,

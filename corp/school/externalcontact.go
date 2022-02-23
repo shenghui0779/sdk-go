@@ -2,6 +2,7 @@ package school
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -13,6 +14,7 @@ type ResultSubscribeQRCode struct {
 	QRCodeThumb  string `json:"qrcode_thumb"`
 }
 
+// GetSubscribeQRCode 获取「学校通知」二维码
 func GetSubscribeQRCode(result *ResultSubscribeQRCode) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolGetSubscribeQRCode,
 		wx.WithDecode(func(resp []byte) error {
@@ -25,6 +27,7 @@ type ParamsSubscribeModeSet struct {
 	SubscribeMode int `json:"subscribe_mode"`
 }
 
+// SetSubscribeMode 设置关注「学校通知」的模式
 func SetSubscribeMode(mode int) wx.Action {
 	params := &ParamsSubscribeModeSet{
 		SubscribeMode: mode,
@@ -41,6 +44,7 @@ type ResultSubscribeModeGet struct {
 	SubscribeMode int `json:"subscribe_mode"`
 }
 
+// GetSubscribeMode 获取关注「学校通知」的模式
 func GetSubscribeMode(result *ResultSubscribeModeGet) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolGetSubscribeMode,
 		wx.WithDecode(func(resp []byte) error {
@@ -121,6 +125,7 @@ type ResultExternalContact struct {
 	FollowUser      []*FollowUser    `json:"follow_user"`
 }
 
+// GetExternalContact 获取外部联系人详情
 func GetExternalContact(externalUserID string, result *ResultExternalContact) wx.Action {
 	return wx.NewGetAction(urls.CorpExternalContactGet,
 		wx.WithQuery("external_userid", externalUserID),
@@ -148,6 +153,29 @@ func ConvertToOpenID(userID string, result *ResultOpenIDConvert) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
+}
+
+type ResultAgentAllowScope struct {
+	AllowScope *AgentAllowScope `json:"allow_scope"`
+}
+
+type AgentAllowScope struct {
+	Students    []*AgentAllowStudent `json:"students"`
+	Departments []int64              `json:"departments"`
+}
+
+type AgentAllowStudent struct {
+	UserID string `json:"userid"`
+}
+
+// GetAgentAllowScope 获取可使用的家长范围
+func GetAgentAllowScope(agentID int64, result *ResultAgentAllowScope) wx.Action {
+	return wx.NewGetAction(urls.CorpSchoolGetAgentAllowScope,
+		wx.WithQuery("agentid", strconv.FormatInt(agentID, 10)),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),

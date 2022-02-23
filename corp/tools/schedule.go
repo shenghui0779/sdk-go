@@ -45,6 +45,7 @@ type ResultScheduleAdd struct {
 	ScheduleID string `json:"schedule_id"`
 }
 
+// AddSchedule 创建日程
 func AddSchedule(params *ParamsScheduleAdd, result *ResultScheduleAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsScheduleAdd,
 		wx.WithBody(func() ([]byte, error) {
@@ -73,6 +74,7 @@ type ScheduleUpdateData struct {
 	SkipAttendees bool                      `json:"skip_attendees"`
 }
 
+// UpdateSchedule 更新日程
 func UpdateSchedule(params *ParamsScheduleUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsScheduleUpdate,
 		wx.WithBody(func() ([]byte, error) {
@@ -127,6 +129,7 @@ type ResultScheduleGet struct {
 	ScheduleList []*Schedule `json:"schedule_list"`
 }
 
+// GetSchedule 获取日程详情
 func GetSchedule(scheduleIDs []string, result *ResultScheduleGet) wx.Action {
 	params := &ParamsScheduleGet{
 		ScheduleIDList: scheduleIDs,
@@ -146,6 +149,7 @@ type ParamsScheduleDelete struct {
 	ScheduleID string `json:"schedule_id"`
 }
 
+// DeleteSchedule 取消日程
 func DeleteSchedule(scheduleID string) wx.Action {
 	params := &ParamsScheduleDelete{
 		ScheduleID: scheduleID,
@@ -168,6 +172,7 @@ type ResultScheduleGetByCalendar struct {
 	ScheduleList []*Schedule `json:"schedule_list"`
 }
 
+// GetScheduleByCalendar 获取日历下的日程列表
 func GetScheduleByCalendar(calID string, offset, limit int, result *ResultScheduleGetByCalendar) wx.Action {
 	params := &ParamsScheduleGetByCalendar{
 		CalID:  calID,
@@ -190,6 +195,7 @@ type ParamsScheduleAttendeeOpt struct {
 	Attendees  []*ParamsScheduleAttendee `json:"attendees"`
 }
 
+// AddScheduleAttendee 新增日程参与者
 func AddScheduleAttendee(scheduleID string, userIDs ...string) wx.Action {
 	params := &ParamsScheduleAttendeeOpt{
 		ScheduleID: scheduleID,
@@ -209,6 +215,7 @@ func AddScheduleAttendee(scheduleID string, userIDs ...string) wx.Action {
 	)
 }
 
+// DeleteScheduleAttendee 删除日程参与者
 func DeleteScheduleAttendee(scheduleID string, userIDs ...string) wx.Action {
 	params := &ParamsScheduleAttendeeOpt{
 		ScheduleID: scheduleID,

@@ -24,6 +24,7 @@ type ResultPaymentGet struct {
 	PaymentResult []*PaymentInfo `json:"payment_result"`
 }
 
+// GetPaymentResult 获取学生付款结果
 func GetPaymentResult(paymentID string, result *ResultPaymentGet) wx.Action {
 	params := &ParamsPaymentGet{
 		PaymentID: paymentID,
@@ -49,6 +50,7 @@ type ResultTradeGet struct {
 	PayTime       int64  `json:"pay_time"`
 }
 
+// GetTrade 获取订单详情
 func GetTrade(paymentID, tradeNO string, result *ResultTradeGet) wx.Action {
 	params := &ParamsTradeGet{
 		PaymentID: paymentID,

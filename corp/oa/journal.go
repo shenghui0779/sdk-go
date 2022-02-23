@@ -21,6 +21,7 @@ type ResultJournalRecordList struct {
 	EndFlag         int      `json:"endflag"`
 }
 
+// ListJouralRecord 批量获取汇报记录单号
 func ListJouralRecord(params *ParamsJournalRecordList, result *ResultJournalRecordList) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetJournalRecordList,
 		wx.WithBody(func() ([]byte, error) {
@@ -59,6 +60,7 @@ type JournalRecordComment struct {
 	CommentTime     int64   `json:"comment_time"`
 }
 
+// GetJournalRecordDetail 获取汇报记录详情
 func GetJournalRecordDetail(journaluuid string, result *ResultJournalRecordDetail) wx.Action {
 	params := &ParamsJournalRecordDetail{
 		JournalUUID: journaluuid,
@@ -138,6 +140,7 @@ type JournalReportItem struct {
 	Flag        int    `json:"flag"`
 }
 
+// ListJournalStat 获取汇报统计数据
 func ListJournalStat(templateID string, starttime, endtime int64, result *ResultJournalStatList) wx.Action {
 	params := &ParamsJournalStatList{
 		TemplateID: templateID,

@@ -34,6 +34,7 @@ type ResultPatrolGridInfo struct {
 	GridList []*PatrolGrid `json:"grid_list"`
 }
 
+// GetPatrolGridInfo 获取配置的网格及网格负责人
 func GetPatrolGridInfo(result *ResultPatrolGridInfo) wx.Action {
 	return wx.NewGetAction(urls.CorpReportGetPatrolGridInfo,
 		wx.WithDecode(func(resp []byte) error {
@@ -55,6 +56,7 @@ type ResultPatrolCorpStatus struct {
 	TotalSolved  int `json:"total_solved"`
 }
 
+// GetPatrolCorpStatus 获取单位巡查上报数据统计
 func GetPatrolCorpStatus(gridID string, result *ResultPatrolCorpStatus) wx.Action {
 	params := &ParamsPatrolCorpStatus{
 		GridID: gridID,
@@ -80,6 +82,7 @@ type ResultPatrolUserStatus struct {
 	SolvedToday int `json:"solved_today"`
 }
 
+// GetPatrolUserStatus 获取个人巡查上报数据统计
 func GetPatrolUserStatus(userID string, result *ResultPatrolUserStatus) wx.Action {
 	params := &ParamsPatrolUserStatus{
 		UserID: userID,
@@ -112,6 +115,7 @@ type PatrolCategoryStatistic struct {
 	TotalSolved   int    `json:"total_solved"`
 }
 
+// GetPatrolCategoryStatistic 获取上报事件分类统计
 func GetPatrolCategoryStatistic(categoryID string, result *ResultPatrolCategoryStatistic) wx.Action {
 	params := &ParamsPatrolCategoryStatistic{
 		CategoryID: categoryID,
@@ -154,6 +158,7 @@ type ResultPatrolOrderList struct {
 	OrderList  []*PatrolOrder `json:"order_list"`
 }
 
+// ListPatrolOrder 获取巡查上报事件列表
 func ListPatrolOrder(beginCreateTime, beginModifyTime int64, cursor string, limit int, result *ResultPatrolOrderList) wx.Action {
 	params := &ParamsPatrolOrderList{
 		BeginCreateTime: beginCreateTime,
@@ -180,6 +185,7 @@ type ResultPatrolOrderInfo struct {
 	OrderInfo *PatrolOrder `json:"order_info"`
 }
 
+// GetPatrolOrderInfo 获取巡查上报的事件详情信息
 func GetPatrolOrderInfo(orderID string, result *ResultPatrolOrderInfo) wx.Action {
 	params := &ParamsPatrolOrderInfo{
 		OrderID: orderID,

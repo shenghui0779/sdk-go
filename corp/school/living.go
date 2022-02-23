@@ -18,6 +18,7 @@ type ResultUserAllLivingID struct {
 	LivingIDList []string `json:"livingid_list"`
 }
 
+// GetUserAllLivingID 获取老师直播ID列表
 func GetUserAllLivingID(userID, cursor string, limit int, result *ResultUserAllLivingID) wx.Action {
 	params := &ParamsUserAllLivingID{
 		UserID: userID,
@@ -56,6 +57,7 @@ type ResultLivingInfo struct {
 	LivingInfo *LivingInfo `json:"living_info"`
 }
 
+// GetLivingInfo 获取直播详情
 func GetLivingInfo(livingID string, result *ResultLivingInfo) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolGetLivingInfo,
 		wx.WithQuery("livingid", livingID),
@@ -99,6 +101,7 @@ type ResultLivingWatchStat struct {
 	StatInfoes *LivingWatchStatInfo `json:"stat_infoes"`
 }
 
+// GetLivingWatchStat 获取观看直播统计
 func GetLivingWatchStat(livingID, nextKey string, result *ResultLivingWatchStat) wx.Action {
 	params := &ParamsLivingWatchStat{
 		LivingID: livingID,
@@ -136,6 +139,7 @@ type ResultLivingUnwatchStat struct {
 	StatInfo *LivingUnwatchStatInfo `json:"stat_info"`
 }
 
+// GetLivingUnwatchStat 获取未观看直播统计
 func GetLivingUnwatchStat(livingID, nextKey string, result *ResultLivingUnwatchStat) wx.Action {
 	params := &ParamsLivingUnwatchStat{
 		LivingID: livingID,
@@ -156,6 +160,7 @@ type ParamsLivingReplayDataDelete struct {
 	LivingID string `json:"livingid"`
 }
 
+// DeleteLivingReplayData 删除直播回放
 func DeleteLivingReplayData(livingID string) wx.Action {
 	params := &ParamsLivingReplayDataDelete{
 		LivingID: livingID,

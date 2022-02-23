@@ -361,7 +361,7 @@ func TestCancelBookMeetingRoom(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestGetMeetingRoomBookingInfoByMeetingID(t *testing.T) {
+func TestGetMeetingRoomBookingInfoByID(t *testing.T) {
 	body := []byte(`{"meetingroom_id":1,"meeting_id":"mtebsada6e027c123cbafAAA"}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -393,7 +393,7 @@ func TestGetMeetingRoomBookingInfoByMeetingID(t *testing.T) {
 
 	result := new(MeetingRoomBookingInfo)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMeetingRoomBookingInfoByMeetingID(1, "mtebsada6e027c123cbafAAA", result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMeetingRoomBookingInfoByID(1, "mtebsada6e027c123cbafAAA", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &MeetingRoomBookingInfo{

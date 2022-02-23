@@ -25,6 +25,7 @@ type ResultTemplateDetail struct {
 	TemplateContent *TemplateContent `json:"template_content"`
 }
 
+// GetTemplateDetail 获取审批模板详情
 func GetTemplateDetail(templateID string, result *ResultTemplateDetail) wx.Action {
 	params := &ParamsTemplateDetail{
 		TemplateID: templateID,
@@ -65,6 +66,7 @@ type ResultApplyEvent struct {
 	SPNO string `json:"sp_no"`
 }
 
+// ApplyEvent 提交审批申请
 func ApplyEvent(params *ParamsApplyEvent, result *ResultApplyEvent) wx.Action {
 	return wx.NewPostAction(urls.CorpOAApplyEvent,
 		wx.WithBody(func() ([]byte, error) {
@@ -88,6 +90,7 @@ type ResultApprovalInfo struct {
 	SPNOList []string `json:"sp_no_list"`
 }
 
+// GetApprovalInfo 批量获取审批单号
 func GetApprovalInfo(params *ParamsApprovalInfo, result *ResultApprovalInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetApprovalInfo,
 		wx.WithBody(func() ([]byte, error) {
@@ -147,6 +150,7 @@ type ApprovalComment struct {
 	MediaID         []string `json:"media_id"`
 }
 
+// GetApprovalDetail 获取审批申请详情
 func GetApprovalDetail(spno string, result *ResultApprovalDetail) wx.Action {
 	params := &ParamsApprovalDetail{
 		SPNO: spno,

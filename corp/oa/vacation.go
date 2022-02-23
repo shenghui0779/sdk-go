@@ -26,6 +26,7 @@ type VacationQuotaAttr struct {
 	AutoresetDuration int   `json:"autoreset_duration"`
 }
 
+// GetCorpVacationConf 获取企业假期管理配置
 func GetCorpVacationConf(result *ResultCorpVacationConf) wx.Action {
 	return wx.NewGetAction(urls.CorpOAGetVacationCorpConf,
 		wx.WithDecode(func(resp []byte) error {
@@ -50,6 +51,7 @@ type VacationQuota struct {
 	VacationName   string `json:"vacationname"`
 }
 
+// GetUserVacationQuota 获取成员假期余额
 func GetUserVacationQuota(userID string, result *ResultUserVacationQuota) wx.Action {
 	params := &ParamsUserVacationQuota{
 		UserID: userID,
@@ -73,6 +75,7 @@ type ParamsOneUserQuotaSet struct {
 	Remarks      string `json:"remarks"`
 }
 
+// SetOneUserQuota 修改成员假期余额
 func SetOneUserQuota(params *ParamsOneUserQuotaSet) wx.Action {
 	return wx.NewPostAction(urls.CorpOASetOneUserVacationQuota,
 		wx.WithBody(func() ([]byte, error) {

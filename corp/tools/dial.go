@@ -37,6 +37,7 @@ type ResultDialRecord struct {
 	Record []*DialRecord `json:"record"`
 }
 
+// GetDialRecord 获取公费电话拨打记录
 func GetDialRecord(starttime, endtime int64, offset, limit int, result *ResultDialRecord) wx.Action {
 	params := &ParamsDialRecord{
 		StartTime: starttime,

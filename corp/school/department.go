@@ -29,6 +29,7 @@ type ResultDepartmentCreate struct {
 	ID int64 `json:"id"`
 }
 
+// CreateDepartment 创建部门
 func CreateDepartment(params *ParamsDepartmentCreate, result *ResultDepartmentCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolDepartmentCreate,
 		wx.WithBody(func() ([]byte, error) {
@@ -58,6 +59,7 @@ type ParamsDepartmentUpdate struct {
 	DepartmentAdmins []*DepartmentAdminUpdate `json:"department_admins,omitempty"`
 }
 
+// UpdateDeparment 更新部门
 func UpdateDeparment(params *ParamsDepartmentUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolDepartmentUpdate,
 		wx.WithBody(func() ([]byte, error) {
@@ -66,6 +68,7 @@ func UpdateDeparment(params *ParamsDepartmentUpdate) wx.Action {
 	)
 }
 
+// DeleteDepartment 删除部门
 func DeleteDepartment(id int64) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolDepartmentDelete,
 		wx.WithQuery("id", strconv.FormatInt(id, 10)),
@@ -96,6 +99,7 @@ type ResultDepartmentList struct {
 	Departments []*Department `json:"departments"`
 }
 
+// ListDepartment 获取部门列表
 func ListDepartment(id int64, result *ResultDepartmentList) wx.Action {
 	options := []wx.ActionOption{
 		wx.WithDecode(func(resp []byte) error {
@@ -119,6 +123,7 @@ type ResultUpgradeInfoSet struct {
 	NextUpgradeTime int64 `json:"next_upgrade_time"`
 }
 
+// SetUpgradeInfo 修改自动升年级的配置
 func SetUpgradeInfo(upgradeTime int64, upgradeSwitch int, result *ResultUpgradeInfoSet) wx.Action {
 	params := &ParamsUpgradeInfoSet{
 		UpgradeTime:   upgradeTime,

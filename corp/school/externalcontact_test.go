@@ -311,3 +311,56 @@ func TestConvertToOpenID(t *testing.T) {
 		OpenID: "ooAAAAAAAAAAA",
 	}, result)
 }
+
+func TestGetAgentAllowScope(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"allow_scope": {
+		"students": [
+			{
+				"userid": "student1"
+			},
+			{
+				"userid": "student2"
+			}
+		],
+		"departments": [
+			1,
+			2
+		]
+	}
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/school/agent/get_allow_scope?access_token=ACCESS_TOKEN&agentid=1", nil).Return(resp, nil)
+
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultAgentAllowScope)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetAgentAllowScope(1, result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultAgentAllowScope{
+		AllowScope: &AgentAllowScope{
+			Students: []*AgentAllowStudent{
+				{
+					UserID: "student1",
+				},
+				{
+					UserID: "student2",
+				},
+			},
+			Departments: []int64{1, 2},
+		},
+	}, result)
+}

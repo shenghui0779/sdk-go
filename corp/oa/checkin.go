@@ -195,6 +195,7 @@ type ResultCorpCheckinOption struct {
 	Group []*CorpCheckinOption `json:"group"`
 }
 
+// GetCorpCheckinOption 获取企业所有打卡规则
 func GetCorpCheckinOption(result *ResultCorpCheckinOption) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetCorpCheckinOption,
 		wx.WithBody(func() ([]byte, error) {
@@ -215,6 +216,7 @@ type ResultCheckinOption struct {
 	Info []*CheckinOption `json:"info"`
 }
 
+// GetCheckinOption 获取员工打卡规则
 func GetCheckinOption(datetime int64, userIDs []string, result *ResultCheckinOption) wx.Action {
 	params := &ParamsCheckinOption{
 		DateTime:   datetime,
@@ -263,6 +265,7 @@ type ResultCheckinData struct {
 	CheckinData []*CheckinData `json:"checkindata"`
 }
 
+// GetCheckinData 获取打卡记录数据
 func GetCheckinData(dataType int, starttime, endtime int64, userIDs []string, result *ResultCheckinData) wx.Action {
 	params := &ParamsCheckinData{
 		OpenCheckinDataType: dataType,
@@ -391,6 +394,7 @@ type ResultCheckinDayData struct {
 	Datas []*CheckinDayData `json:"datas"`
 }
 
+// GetCheckinDayData 获取打卡日报数据
 func GetCheckinDayData(starttime, endtime int64, userIDs []string, result *ResultCheckinDayData) wx.Action {
 	params := &ParamsCheckinDayData{
 		StartTime:  starttime,
@@ -418,6 +422,7 @@ type ResultCheckinMonthData struct {
 	Datas []*CheckinMonthData `json:"datas"`
 }
 
+// GetCheckinMonthData 获取打卡月报数据
 func GetCheckinMonthData(starttime, endtime int64, userIDs []string, result *ResultCheckinMonthData) wx.Action {
 	params := &ParamsCheckinMonthData{
 		StartTime:  starttime,
@@ -476,6 +481,7 @@ type ScheduleTimeSection struct {
 	RemindOffWorkSec int   `json:"remind_off_work_sec"`
 }
 
+// GetCheckinScheduleList 获取打卡人员排班信息
 func GetCheckinScheduleList(starttime, endtime int64, userIDs []string, result *ResultCheckinScheduleListGet) wx.Action {
 	params := &ParamsCheckinScheduleListGet{
 		StartTime:  starttime,
@@ -505,6 +511,7 @@ type ScheduleListItem struct {
 	ScheduleID int64  `json:"schedule_id"`
 }
 
+// SetCheckinScheduleList 为打卡人员排班
 func SetCheckinScheduleList(groupID int64, yearmonth int, items ...*ScheduleListItem) wx.Action {
 	params := &ParamsCheckinScheduleListSet{
 		GroupID:   groupID,
@@ -524,6 +531,7 @@ type ParamsCheckinUserFaceAdd struct {
 	UserFace string `json:"userface"`
 }
 
+// AddCheckinUserFace 录入打卡人员人脸信息
 func AddCheckinUserFace(userID, userFace string) wx.Action {
 	params := &ParamsCheckinUserFaceAdd{
 		UserID:   userID,
@@ -555,6 +563,7 @@ type HardwareCheckinData struct {
 	DeviceName  string `json:"device_name"`
 }
 
+// GetHardwareCheckinData 获取设备打卡数据
 func GetHardwareCheckinData(filterType int, starttime, endtime int64, userIDs []string, result *ResultHardwareCheckinData) wx.Action {
 	params := &ParamsHardwareCheckinData{
 		FilterType: filterType,

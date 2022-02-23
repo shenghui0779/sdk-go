@@ -21,6 +21,7 @@ type PstnccState struct {
 	UserID string `json:"userid"`
 }
 
+// CallPstncc 发起语音电话
 func CallPstncc(calleeUserIDs []string, result *ResultPstnccCall) wx.Action {
 	params := &ParamsPstnccCall{
 		CalleeUserID: calleeUserIDs,
@@ -48,6 +49,7 @@ type ResultPstnccStates struct {
 	Reason   int   `json:"reason"`
 }
 
+// GetPstnccStates 获取接听状态
 func GetPstnccStates(calleeUserID, callID string, result *ResultPstnccStates) wx.Action {
 	params := &ParamsPstnccStates{
 		CalleeUserID: calleeUserID,

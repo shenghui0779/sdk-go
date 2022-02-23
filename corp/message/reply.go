@@ -58,6 +58,7 @@ func (r *Reply) Bytes(from, to string) ([]byte, error) {
 	return xml.Marshal(r)
 }
 
+// ReplyText 被动回复消息（文本消息）
 func ReplyText(content string) event.Reply {
 	return &Reply{
 		MsgType: wx.CDATA(event.MsgText),
@@ -65,6 +66,7 @@ func ReplyText(content string) event.Reply {
 	}
 }
 
+// ReplyImage 被动回复消息（图片消息）
 func ReplyImage(mediaID string) event.Reply {
 	return &Reply{
 		MsgType: wx.CDATA(event.MsgImage),
@@ -74,6 +76,7 @@ func ReplyImage(mediaID string) event.Reply {
 	}
 }
 
+// ReplyVoice 被动回复消息（语音消息）
 func ReplyVoice(mediaID string) event.Reply {
 	return &Reply{
 		MsgType: wx.CDATA(event.MsgVoice),
@@ -83,6 +86,7 @@ func ReplyVoice(mediaID string) event.Reply {
 	}
 }
 
+// ReplyVideo 被动回复消息（视频消息）
 func ReplyVideo(mediaID, title, description string) event.Reply {
 	return &Reply{
 		MsgType: wx.CDATA(event.MsgVideo),
@@ -94,6 +98,7 @@ func ReplyVideo(mediaID, title, description string) event.Reply {
 	}
 }
 
+// ReplyNews 被动回复消息（图文消息）
 func ReplyNews(articles ...*XMLNewsArticle) event.Reply {
 	return &Reply{
 		MsgType:      wx.CDATA(event.MsgNews),
@@ -300,6 +305,7 @@ type XMLMultipleInteractionCard struct {
 	ReplaceText  wx.CDATA
 }
 
+// ReplyUpdateCardButton 被动回复消息（更新点击用户的按钮文案）
 func ReplyUpdateCardButton(replaceName string) event.Reply {
 	return &Reply{
 		MsgType: wx.CDATA(event.MsgUpdateButton),
@@ -309,6 +315,7 @@ func ReplyUpdateCardButton(replaceName string) event.Reply {
 	}
 }
 
+// ReplyUpdateTextNoticeCard 被动回复消息（更新点击用户的整张卡片 - 文本通知型）
 func ReplyUpdateTextNoticeCard(card *XMLTextNoticeCard) event.Reply {
 	return &Reply{
 		MsgType: wx.CDATA(event.MsgUpdateTemplateCard),
@@ -327,6 +334,7 @@ func ReplyUpdateTextNoticeCard(card *XMLTextNoticeCard) event.Reply {
 	}
 }
 
+// ReplyUpdateNewsNoticeCard 被动回复消息（更新点击用户的整张卡片 - 图文展示型）
 func ReplyUpdateNewsNoticeCard(card *XMLNewsNoticeCard) event.Reply {
 	return &Reply{
 		MsgType: wx.CDATA(event.MsgUpdateTemplateCard),
@@ -346,6 +354,7 @@ func ReplyUpdateNewsNoticeCard(card *XMLNewsNoticeCard) event.Reply {
 	}
 }
 
+// ReplyUpdateButtonInteractionCard 被动回复消息（更新点击用户的整张卡片 - 按钮交互型）
 func ReplyUpdateButtonInteractionCard(card *XMLButtonInteractionCard) event.Reply {
 	return &Reply{
 		MsgType: wx.CDATA(event.MsgUpdateTemplateCard),
@@ -365,6 +374,7 @@ func ReplyUpdateButtonInteractionCard(card *XMLButtonInteractionCard) event.Repl
 	}
 }
 
+// ReplyUpdateVoteInteractionCard 被动回复消息（更新点击用户的整张卡片 - 投票选择型）
 func ReplyUpdateVoteInteractionCard(card *XMLVoteInteractionCard) event.Reply {
 	return &Reply{
 		MsgType: wx.CDATA(event.MsgUpdateTemplateCard),
@@ -379,6 +389,7 @@ func ReplyUpdateVoteInteractionCard(card *XMLVoteInteractionCard) event.Reply {
 	}
 }
 
+// ReplyUpdateMultipleInteractionCard 被动回复消息（更新点击用户的整张卡片 - 多项选择型）
 func ReplyUpdateMultipleInteractionCard(card *XMLMultipleInteractionCard) event.Reply {
 	return &Reply{
 		MsgType: wx.CDATA(event.MsgUpdateTemplateCard),

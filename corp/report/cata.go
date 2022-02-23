@@ -17,6 +17,7 @@ type ResultGridCataAdd struct {
 	CategoryID string `json:"category_id"`
 }
 
+// AddGridCata 添加事件类别
 func AddGridCata(params *ParamsGridCataAdd, result *ResultGridCataAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGridCataAdd,
 		wx.WithBody(func() ([]byte, error) {
@@ -35,6 +36,7 @@ type ParamsGridCataUpdate struct {
 	ParentCategoryID string `json:"parent_category_id,omitempty"`
 }
 
+// UpdateGridCata 修改事件类别
 func UpdateGridCata(params *ParamsGridCataUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGridCataUpdate,
 		wx.WithBody(func() ([]byte, error) {
@@ -47,6 +49,7 @@ type ParamsGridCataDelete struct {
 	CategoryID string `json:"category_id"`
 }
 
+// DeleteGridCata 删除事件类别
 func DeleteGridCata(categoryID string) wx.Action {
 	params := &ParamsGridCataDelete{
 		CategoryID: categoryID,
@@ -70,6 +73,7 @@ type GridCategory struct {
 	ParentCategoryID string `json:"parent_category_id"`
 }
 
+// ListGridCata 获取事件类别列表
 func ListGridCata(result *ResultGridCataList) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGridCataList,
 		wx.WithDecode(func(resp []byte) error {

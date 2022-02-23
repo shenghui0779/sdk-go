@@ -19,6 +19,7 @@ type ParamsParentCreate struct {
 	Children     []*ParamsChild `json:"children"`
 }
 
+// CreateParent 创建家长
 func CreateParent(params *ParamsParentCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolParentCreate,
 		wx.WithBody(func() ([]byte, error) {
@@ -34,6 +35,7 @@ type ParamsParentUpdate struct {
 	Children        []*ParamsChild `json:"children,omitempty"`
 }
 
+// UpdateParent 更新家长
 func UpdateParent(params *ParamsParentUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolParentUpdate,
 		wx.WithBody(func() ([]byte, error) {
@@ -42,6 +44,7 @@ func UpdateParent(params *ParamsParentUpdate) wx.Action {
 	)
 }
 
+// DeleteParent 删除家长
 func DeleteParent(userID string) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolParentDelete,
 		wx.WithQuery("userid", userID),
@@ -62,6 +65,7 @@ type ResultParentBatchCreate struct {
 	ResultList []*ParentErrResult `json:"result_list"`
 }
 
+// BatchCreateParent 批量创建家长
 func BatchCreateParent(params *ParamsParentBatchCreate, result *ResultParentBatchCreate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolParentBatchCreate,
 		wx.WithBody(func() ([]byte, error) {
@@ -81,6 +85,7 @@ type ResultParentBatchUpdate struct {
 	ResultList []*ParentErrResult `json:"result_list"`
 }
 
+// BatchUpdateParent 批量更新家长
 func BatchUpdateParent(params *ParamsParentBatchUpdate, result *ResultParentBatchUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpSchoolParentBatchUpdate,
 		wx.WithBody(func() ([]byte, error) {
@@ -100,6 +105,7 @@ type ResultParentBatchDelete struct {
 	ResultList []*ParentErrResult `json:"result_list"`
 }
 
+// BatchDeleteParent 批量删除家长
 func BatchDeleteParent(userIDs []string, result *ResultParentBatchDelete) wx.Action {
 	params := &ParamsParentBatchDelete{
 		UserIDList: userIDs,

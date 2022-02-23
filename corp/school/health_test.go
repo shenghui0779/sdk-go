@@ -338,7 +338,7 @@ func TestGetHealthReportAnswer(t *testing.T) {
 	}, result)
 }
 
-func TestGetTeacherHealthInfo(t *testing.T) {
+func TestGetTeacherCustomizeHealthInfo(t *testing.T) {
 	body := []byte(`{"date":"2020-03-27","next_key":"NEXT_KEY","limit":100}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -417,7 +417,7 @@ func TestGetTeacherHealthInfo(t *testing.T) {
 
 	result := new(ResultCustomizeHealthInfo)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetTeacherHealthInfo("2020-03-27", "NEXT_KEY", 100, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetTeacherCustomizeHealthInfo("2020-03-27", "NEXT_KEY", 100, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCustomizeHealthInfo{
@@ -481,7 +481,7 @@ func TestGetTeacherHealthInfo(t *testing.T) {
 	}, result)
 }
 
-func TestGetStudentHealthInfo(t *testing.T) {
+func TestGetStudentCustomizeHealthInfo(t *testing.T) {
 	body := []byte(`{"date":"2020-03-27","next_key":"NEXT_KEY","limit":100}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -560,7 +560,7 @@ func TestGetStudentHealthInfo(t *testing.T) {
 
 	result := new(ResultCustomizeHealthInfo)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetStudentHealthInfo("2020-03-27", "NEXT_KEY", 100, result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetStudentCustomizeHealthInfo("2020-03-27", "NEXT_KEY", 100, result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultCustomizeHealthInfo{

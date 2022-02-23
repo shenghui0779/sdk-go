@@ -38,6 +38,7 @@ type ResultMeetingRoomAdd struct {
 	MeetingRoomID int64 `json:"meetingroom_id"`
 }
 
+// AddMeetingRoom 添加会议室
 func AddMeetingRoom(params *ParamsMeetingRoomAdd, result *ResultMeetingRoomAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpOAMeetingRoomAdd,
 		wx.WithBody(func() ([]byte, error) {
@@ -60,6 +61,7 @@ type ResultMeetingRoomList struct {
 	MeetingRoomList []*MeetingRoom `json:"meetingroom_list"`
 }
 
+// ListMeetingRoom 查询会议室
 func ListMeetingRoom(params *ParamsMeetingRoomList, result *ResultMeetingRoomList) wx.Action {
 	return wx.NewPostAction(urls.CorpOAMeetingRoomList,
 		wx.WithBody(func() ([]byte, error) {
@@ -82,6 +84,7 @@ type ParamsMeetingRoomEdit struct {
 	Coordinate    *Coordinate `json:"coordinate,omitempty"`
 }
 
+// EditMeetingRoom 编辑会议室
 func EditMeetingRoom(params *ParamsMeetingRoomEdit) wx.Action {
 	return wx.NewPostAction(urls.CorpOAMeetingRoomEdit,
 		wx.WithBody(func() ([]byte, error) {
@@ -94,6 +97,7 @@ type ParamsMeetingRoomDelete struct {
 	MeetingRoomID int64 `json:"meetingroom_id"`
 }
 
+// DeleteMeetingRoom 删除会议室
 func DeleteMeetingRoom(meetingRoomID int64) wx.Action {
 	params := &ParamsMeetingRoomDelete{
 		MeetingRoomID: meetingRoomID,
@@ -132,6 +136,7 @@ type MeetingRoomBookingSchedule struct {
 	Booker     string `json:"booker"`
 }
 
+// GetMeetingRoomBookingInfo 查询会议室的预定信息
 func GetMeetingRoomBookingInfo(params *ParamsMeetingRoomBookingInfo, result *ResultMeetingRoomBookingInfo) wx.Action {
 	return wx.NewPostAction(urls.CorpOAGetMeetingRoomBookingInfo,
 		wx.WithBody(func() ([]byte, error) {
@@ -157,6 +162,7 @@ type ResultMeetingRoomBook struct {
 	ScheduleID string `json:"schedule_id"`
 }
 
+// BookMeetingRoom 预定会议室
 func BookMeetingRoom(params *ParamsMeetingRoomBook, result *ResultMeetingRoomBook) wx.Action {
 	return wx.NewPostAction(urls.CorpOAMeetingRoomBook,
 		wx.WithBody(func() ([]byte, error) {
@@ -173,6 +179,7 @@ type ParamsMeetingRoomBookCancel struct {
 	KeepSchedule int    `json:"keep_schedule"`
 }
 
+// 取消预定会议室
 func CancelBookMeetingRoom(meetingID string, keepSchedule int) wx.Action {
 	params := &ParamsMeetingRoomBookCancel{
 		MeetingID:    meetingID,
@@ -191,7 +198,8 @@ type ParamsMeetingRoomBookingInfoByMeetingID struct {
 	MeetingID     string `json:"meeting_id"`
 }
 
-func GetMeetingRoomBookingInfoByMeetingID(meetingRoomID int64, meetingID string, result *MeetingRoomBookingInfo) wx.Action {
+// GetMeetingRoomBookingInfoByID 根据会议ID查询会议室的预定信息
+func GetMeetingRoomBookingInfoByID(meetingRoomID int64, meetingID string, result *MeetingRoomBookingInfo) wx.Action {
 	params := &ParamsMeetingRoomBookingInfoByMeetingID{
 		MeetingRoomID: meetingRoomID,
 		MeetingID:     meetingID,

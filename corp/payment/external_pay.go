@@ -12,6 +12,7 @@ type ParamsMerchantAdd struct {
 	MerchantName string `json:"merchant_name"`
 }
 
+// AddMerchant 新增收款商户号
 func AddMerchant(mchID, mchName string) wx.Action {
 	params := &ParamsMerchantAdd{
 		MchID:        mchID,
@@ -42,6 +43,7 @@ type ResultMerchantGet struct {
 	AllowUseScope *AllowUseScope `json:"allow_use_scope"`
 }
 
+// GetMerchant 查询收款商户号详情
 func GetMerchant(mchID string, result *ResultMerchantGet) wx.Action {
 	params := &ParamsMerchantGet{
 		MchID: mchID,
@@ -61,6 +63,7 @@ type ParamsMerchantDelete struct {
 	MchID string `json:"mch_id"`
 }
 
+// DeleteMerchant 删除收款商户号
 func DeleteMerchant(mchID string) wx.Action {
 	params := &ParamsMerchantDelete{
 		MchID: mchID,
@@ -78,6 +81,7 @@ type ParamsMchUseScopeSet struct {
 	AllowUseScope *AllowUseScope `json:"allow_use_scope"`
 }
 
+// SetMchUseScope 设置收款商户号使用范围
 func SetMchUseScope(mchID string, scope *AllowUseScope) wx.Action {
 	params := &ParamsMchUseScopeSet{
 		MchID:         mchID,
@@ -141,6 +145,7 @@ type ResultBillList struct {
 	BillList   []*BillInfo `json:"bill_list"`
 }
 
+// GetBillList 获取对外收款记录
 func GetBillList(params *ParamsBillList, result *ResultBillList) wx.Action {
 	return wx.NewPostAction(urls.CorpPaymentBillListGet,
 		wx.WithBody(func() ([]byte, error) {

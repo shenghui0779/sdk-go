@@ -17,6 +17,7 @@ type ResultResidentGridInfo struct {
 	GridList []*ResidentGrid `json:"grid_list"`
 }
 
+// GetResidentGridInfo 获取配置的网格及网格负责人
 func GetResidentGridInfo(result *ResultResidentGridInfo) wx.Action {
 	return wx.NewGetAction(urls.CorpReportGetResidentGridInfo,
 		wx.WithDecode(func(resp []byte) error {
@@ -39,6 +40,7 @@ type ResultResidentCorpStatus struct {
 	TotalSolved   int `json:"total_solved"`
 }
 
+// GetResidentCorpStatus 获取单位居民上报数据统计
 func GetResidentCorpStatus(gridID string, result *ResultResidentCorpStatus) wx.Action {
 	params := &ParamsResidentCorpStatus{
 		GridID: gridID,
@@ -65,6 +67,7 @@ type ResultResidentUserStatus struct {
 	Pending     int `json:"pending"`
 }
 
+// GetResidentUserStatus 获取个人居民上报数据统计
 func GetResidentUserStatus(userID string, result *ResultResidentUserStatus) wx.Action {
 	params := &ParamsResidentUserStatus{
 		UserID: userID,
@@ -97,6 +100,7 @@ type ResultResidentCategoryStatistic struct {
 	DashboardList []*ResidentCategoryStatistic `json:"dashboard_list"`
 }
 
+// GetResidentCategoryStatistic 获取上报事件分类统计
 func GetResidentCategoryStatistic(categoryID string, result *ResultResidentCategoryStatistic) wx.Action {
 	params := &ParamsResidentCategoryStatistic{
 		CategoryID: categoryID,
@@ -142,6 +146,7 @@ type ResultResidentOrderList struct {
 	OrderList  []*ResidentOrder `json:"order_list"`
 }
 
+// ListResidentOrder 获取居民上报事件列表
 func ListResidentOrder(beginCreateTime, beginModifyTime int64, cursor string, limit int, result *ResultResidentOrderList) wx.Action {
 	params := &ParamsResidentOrderList{
 		BeginCreateTime: beginCreateTime,
@@ -168,6 +173,7 @@ type ResultResidentOrderInfo struct {
 	OrderInfo *ResidentOrder `json:"order_info"`
 }
 
+// GetResidentOrderInfo 获取居民上报的事件详情信息
 func GetResidentOrderInfo(orderID string, result *ResultResidentOrderInfo) wx.Action {
 	params := &ParamsResidentOrderInfo{
 		OrderID: orderID,

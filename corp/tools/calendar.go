@@ -41,6 +41,7 @@ type ResultCalendarAdd struct {
 	CalID string `json:"cal_id"`
 }
 
+// AddCalendar 创建日历
 func AddCalendar(params *ParamsCalendarAdd, result *ResultCalendarAdd) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsCalendarAdd,
 		wx.WithBody(func() ([]byte, error) {
@@ -65,6 +66,7 @@ type CalendarUpdateData struct {
 	Shares      []*CalendarShare `json:"shares,omitempty"`
 }
 
+// UpdateCalendar 更新日历
 func UpdateCalendar(params *ParamsCalendarUpdate) wx.Action {
 	return wx.NewPostAction(urls.CorpToolsCalendarUpdate,
 		wx.WithBody(func() ([]byte, error) {
@@ -81,6 +83,7 @@ type ResultCalendarGet struct {
 	CalendarList []*Calendar `json:"calendar_list"`
 }
 
+// GetCalendar 获取日历详情
 func GetCalendar(calIDs []string, result *ResultCalendarGet) wx.Action {
 	params := ParamsCalendarGet{
 		CalIDList: calIDs,
@@ -100,6 +103,7 @@ type ParamsCalendarDelete struct {
 	CalID string `json:"cal_id"`
 }
 
+// DeleteCalendar 删除日历
 func DeleteCalendar(calID string) wx.Action {
 	params := &ParamsCalendarDelete{
 		CalID: calID,
