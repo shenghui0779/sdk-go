@@ -336,7 +336,7 @@ func TestSendNews(t *testing.T) {
 			URL:         "URL",
 			PicURL:      "http://res.mail.qq.com/node/ww/wwopenmng/images/independent/doc/test_pic_msg1.png",
 			AppID:       "wx123123123123123",
-			Pagepath:    "pages/index?userid=zhangsan&orderid=123123123",
+			PagePath:    "pages/index?userid=zhangsan&orderid=123123123",
 		},
 	}
 
@@ -597,24 +597,24 @@ func TestSendTextNoticeCard(t *testing.T) {
 		SubTitleText: "下载企业微信还能抢红包！",
 		HorizontalContentList: []*HorizontalContent{
 			{
-				Keyname: "邀请人",
+				KeyName: "邀请人",
 				Value:   "张三",
 			},
 			{
 				Type:    1,
-				Keyname: "企业微信官网",
+				KeyName: "企业微信官网",
 				Value:   "点击访问",
 				URL:     "https://work.weixin.qq.com",
 			},
 			{
 				Type:    2,
-				Keyname: "企业微信下载",
+				KeyName: "企业微信下载",
 				Value:   "企业微信.apk",
 				MediaID: "文件的media_id",
 			},
 			{
 				Type:    3,
-				Keyname: "员工信息",
+				KeyName: "员工信息",
 				Value:   "点击查看",
 				UserID:  "zhangsan",
 			},
@@ -629,14 +629,14 @@ func TestSendTextNoticeCard(t *testing.T) {
 				Type:     2,
 				Title:    "跳转小程序",
 				AppID:    "小程序的appid",
-				Pagepath: "/index.html",
+				PagePath: "/index.html",
 			},
 		},
 		CardAction: &CardAction{
 			Type:     2,
 			URL:      "https://work.weixin.qq.com",
 			AppID:    "小程序的appid",
-			Pagepath: "/index.html",
+			PagePath: "/index.html",
 		},
 	}
 
@@ -734,24 +734,24 @@ func TestSendNewsNoticeCard(t *testing.T) {
 		},
 		HorizontalContentList: []*HorizontalContent{
 			{
-				Keyname: "邀请人",
+				KeyName: "邀请人",
 				Value:   "张三",
 			},
 			{
 				Type:    1,
-				Keyname: "企业微信官网",
+				KeyName: "企业微信官网",
 				Value:   "点击访问",
 				URL:     "https://work.weixin.qq.com",
 			},
 			{
 				Type:    2,
-				Keyname: "企业微信下载",
+				KeyName: "企业微信下载",
 				Value:   "企业微信.apk",
 				MediaID: "文件的media_id",
 			},
 			{
 				Type:    3,
-				Keyname: "员工信息",
+				KeyName: "员工信息",
 				Value:   "点击查看",
 				UserID:  "zhangsan",
 			},
@@ -766,14 +766,14 @@ func TestSendNewsNoticeCard(t *testing.T) {
 				Type:     2,
 				Title:    "跳转小程序",
 				AppID:    "小程序的appid",
-				Pagepath: "/index.html",
+				PagePath: "/index.html",
 			},
 		},
 		CardAction: &CardAction{
 			Type:     2,
 			URL:      "https://work.weixin.qq.com",
 			AppID:    "小程序的appid",
-			Pagepath: "/index.html",
+			PagePath: "/index.html",
 		},
 	}
 
@@ -855,24 +855,24 @@ func TestSendButtonInteractionCard(t *testing.T) {
 		SubTitleText: "下载企业微信还能抢红包！",
 		HorizontalContentList: []*HorizontalContent{
 			{
-				Keyname: "邀请人",
+				KeyName: "邀请人",
 				Value:   "张三",
 			},
 			{
 				Type:    1,
-				Keyname: "企业微信官网",
+				KeyName: "企业微信官网",
 				Value:   "点击访问",
 				URL:     "https://work.weixin.qq.com",
 			},
 			{
 				Type:    2,
-				Keyname: "企业微信下载",
+				KeyName: "企业微信下载",
 				Value:   "企业微信.apk",
 				MediaID: "文件的media_id",
 			},
 			{
 				Type:    3,
-				Keyname: "员工信息",
+				KeyName: "员工信息",
 				Value:   "点击查看",
 				UserID:  "zhangsan",
 			},
@@ -881,7 +881,7 @@ func TestSendButtonInteractionCard(t *testing.T) {
 			Type:     2,
 			URL:      "https://work.weixin.qq.com",
 			AppID:    "小程序的appid",
-			Pagepath: "/index.html",
+			PagePath: "/index.html",
 		},
 		ButtonSelection: &ButtonSelection{
 			QuestionKey: "btn_question_key1",

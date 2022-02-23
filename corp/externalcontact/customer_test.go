@@ -192,7 +192,7 @@ func TestGet(t *testing.T) {
 						Miniprogram: &AttrMinip{
 							Title:    "my miniprogram",
 							AppID:    "wx8bd80126147df384",
-							Pagepath: "/index",
+							PagePath: "/index",
 						},
 					},
 				},
@@ -391,7 +391,7 @@ func TestBatchGetByUser(t *testing.T) {
 								Miniprogram: &AttrMinip{
 									Title:    "my miniprogram",
 									AppID:    "wx8bd80126147df384",
-									Pagepath: "/index",
+									PagePath: "/index",
 								},
 							},
 						},

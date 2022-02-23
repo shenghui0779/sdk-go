@@ -36,6 +36,8 @@ const (
 	MsgMarkdown             MsgType = "markdown"               // markdown消息
 	MsgMinipNotice          MsgType = "miniprogram_notice"     // 小程序通知消息
 	MsgTemplateCard         MsgType = "template_card"          // 模板卡片消息
+	MsgUpdateButton         MsgType = "update_button"          // 更新点击用户的按钮文案
+	MsgUpdateTemplateCard   MsgType = "update_template_card"   // 更新点击用户的整张卡片
 	MsgEvent                MsgType = "event"                  // 事件推送
 )
 

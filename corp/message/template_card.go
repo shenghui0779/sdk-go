@@ -62,33 +62,37 @@ type MainTitle struct {
 }
 
 type QuoteArea struct {
-	Type      int    `json:"type"`
-	URL       string `json:"url"`
-	Title     string `json:"title"`
-	QuoteText string `json:"quote_text"`
+	Type      int    `json:"type,omitempty"`
+	URL       string `json:"url,omitempty"`
+	AppID     string `json:"appid,omitempty"`
+	PagePath  string `json:"pagepath,omitempty"`
+	Title     string `json:"title,omitempty"`
+	QuoteText string `json:"quote_text,omitempty"`
 }
 
 type ImageTextArea struct {
-	Type     int    `json:"type"`
-	URL      string `json:"url"`
-	Title    string `json:"title"`
-	Desc     string `json:"desc"`
+	Type     int    `json:"type,omitempty"`
+	URL      string `json:"url,omitempty"`
+	AppID    string `json:"appid,omitempty"`
+	PagePath string `json:"pagepath,omitempty"`
+	Title    string `json:"title,omitempty"`
+	Desc     string `json:"desc,omitempty"`
 	ImageURL string `json:"image_url"`
 }
 
 type CardImage struct {
 	URL         string  `json:"url"`
-	AspectRatio float64 `json:"aspect_ratio"`
+	AspectRatio float64 `json:"aspect_ratio,omitempty"`
 }
 
 type VerticalContent struct {
 	Title string `json:"title"`
-	Desc  string `json:"desc"`
+	Desc  string `json:"desc,omitempty"`
 }
 
 type HorizontalContent struct {
 	Type    int    `json:"type,omitempty"`
-	Keyname string `json:"keyname"`
+	KeyName string `json:"keyname"`
 	Value   string `json:"value"`
 	UserID  string `json:"userid,omitempty"`
 	MediaID string `json:"media_id,omitempty"`
@@ -96,23 +100,23 @@ type HorizontalContent struct {
 }
 
 type CardJump struct {
-	Type     int    `json:"type"`
+	Type     int    `json:"type,omitempty"`
 	Title    string `json:"title"`
 	URL      string `json:"url,omitempty"`
 	AppID    string `json:"appid,omitempty"`
-	Pagepath string `json:"pagepath,omitempty"`
+	PagePath string `json:"pagepath,omitempty"`
 }
 
 type CardAction struct {
 	Type     int    `json:"type"`
 	URL      string `json:"url,omitempty"`
 	AppID    string `json:"appid,omitempty"`
-	Pagepath string `json:"pagepath,omitempty"`
+	PagePath string `json:"pagepath,omitempty"`
 }
 
 type EmphasisContent struct {
 	Title string `json:"title"`
-	Desc  string `json:"desc"`
+	Desc  string `json:"desc,omitempty"`
 }
 
 type CheckBox struct {
@@ -192,7 +196,6 @@ type ButtonInteractionCard struct {
 
 type VoteInteractionCard struct {
 	Source       *CardSource
-	ActionMenu   *ActionMenu
 	MainTitle    *MainTitle
 	CheckBox     *CheckBox
 	SubmitButton *SubmitButton
@@ -201,7 +204,6 @@ type VoteInteractionCard struct {
 
 type MultipleInteractionCard struct {
 	Source       *CardSource
-	ActionMenu   *ActionMenu
 	MainTitle    *MainTitle
 	SelectList   []*ButtonSelection
 	SubmitButton *SubmitButton
@@ -379,7 +381,6 @@ func UpdateToVoteInteractionCard(agentID int64, respCode string, card *VoteInter
 		TemplateCard: &TemplateCard{
 			CardType:     CardVoteInteraction,
 			Source:       card.Source,
-			ActionMenu:   card.ActionMenu,
 			MainTitle:    card.MainTitle,
 			CheckBox:     card.CheckBox,
 			SubmitButton: card.SubmitButton,
@@ -412,7 +413,6 @@ func UpdateToMultipleInteractionCard(agentID int64, respCode string, card *Multi
 		TemplateCard: &TemplateCard{
 			CardType:     CardMultipleInteraction,
 			Source:       card.Source,
-			ActionMenu:   card.ActionMenu,
 			MainTitle:    card.MainTitle,
 			SelectList:   card.SelectList,
 			SubmitButton: card.SubmitButton,

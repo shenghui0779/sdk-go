@@ -248,7 +248,7 @@ func TestGetExternalContact(t *testing.T) {
 						Miniprogram: &AttrMinip{
 							Title:    "my miniprogram",
 							AppID:    "wxAAAAA",
-							Pagepath: "/index",
+							PagePath: "/index",
 						},
 					},
 				},

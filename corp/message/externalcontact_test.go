@@ -448,7 +448,7 @@ func TestSendExternalContactMiniprogram(t *testing.T) {
 		AppID:        "APPID",
 		Title:        "欢迎报名夏令营",
 		ThumbMediaID: "MEDIA_ID",
-		Pagepath:     "PAGE_PATH",
+		PagePath:     "PAGE_PATH",
 	}
 
 	extra := &ExternalContactExtra{

@@ -39,7 +39,7 @@ type NewsArticle struct {
 	URL         string `json:"url,omitempty"`
 	PicURL      string `json:"picurl,omitempty"`
 	AppID       string `json:"appid,omitempty"`
-	Pagepath    string `json:"pagepath,omitempty"`
+	PagePath    string `json:"pagepath,omitempty"`
 	BtnTxt      string `json:"btntxt,omitempty"`
 }
 
@@ -60,7 +60,7 @@ type Miniprogram struct {
 	AppID        string `json:"appid"`
 	Title        string `json:"title,omitempty"`
 	ThumbMediaID string `json:"thumb_media_id"`
-	Pagepath     string `json:"pagepath"`
+	PagePath     string `json:"pagepath"`
 }
 
 type MinipNotice struct {
@@ -542,7 +542,6 @@ func SendVoteInteractionCard(agentidID int64, taskID string, card *VoteInteracti
 			CardType:     CardVoteInteraction,
 			TaskID:       taskID,
 			Source:       card.Source,
-			ActionMenu:   card.ActionMenu,
 			MainTitle:    card.MainTitle,
 			CheckBox:     card.CheckBox,
 			SubmitButton: card.SubmitButton,
@@ -579,7 +578,6 @@ func SendMultipleInteractionCard(agentidID int64, taskID string, card *MultipleI
 			CardType:     CardMultipleInteraction,
 			TaskID:       taskID,
 			Source:       card.Source,
-			ActionMenu:   card.ActionMenu,
 			MainTitle:    card.MainTitle,
 			SelectList:   card.SelectList,
 			SubmitButton: card.SubmitButton,

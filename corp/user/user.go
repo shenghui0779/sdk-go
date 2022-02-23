@@ -42,7 +42,7 @@ type AttrWeb struct {
 
 type AttrMinip struct {
 	AppID    string `json:"appid"`
-	Pagepath string `json:"pagepath"`
+	PagePath string `json:"pagepath"`
 	Title    string `json:"title"`
 }
 

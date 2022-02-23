@@ -103,7 +103,7 @@ func TestCreateUser(t *testing.T) {
 					Name: "测试app",
 					Miniprogram: &AttrMinip{
 						AppID:    "wx8bd8012614784fake",
-						Pagepath: "/index",
+						PagePath: "/index",
 						Title:    "my miniprogram",
 					},
 				},
@@ -200,7 +200,7 @@ func TestUpdateUser(t *testing.T) {
 					Name: "测试app",
 					Miniprogram: &AttrMinip{
 						AppID:    "wx8bd80126147dFAKE",
-						Pagepath: "/index",
+						PagePath: "/index",
 						Title:    "my miniprogram",
 					},
 				},
@@ -390,7 +390,7 @@ func TestGetUser(t *testing.T) {
 					Name: "测试app",
 					Miniprogram: &AttrMinip{
 						AppID:    "wx8bd80126147dFAKE",
-						Pagepath: "/index",
+						PagePath: "/index",
 						Title:    "my miniprogram",
 					},
 				},
@@ -680,7 +680,7 @@ func TestListUser(t *testing.T) {
 							Name: "测试app",
 							Miniprogram: &AttrMinip{
 								AppID:    "wx8bd80126147dFAKE",
-								Pagepath: "/index",
+								PagePath: "/index",
 								Title:    "miniprogram",
 							},
 						},
