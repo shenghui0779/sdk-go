@@ -368,4 +368,7 @@ const (
 	CorpReportResidentCategoryStatistic = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/category_statistic"
 	CorpReportGetResidentOrderList      = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_order_list"
 	CorpReportGetResidentOrderInfo      = "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_order_info"
+	CorpReportGetSiteCodeList           = "https://qyapi.weixin.qq.com/cgi-bin/report/sitecode/list"
+	CorpReportGetSiteCodeReportInfo     = "https://qyapi.weixin.qq.com/cgi-bin/report/sitecode/get_site_report_info"
+	CorpReportGetSiteCodeReportAnswer   = "https://qyapi.weixin.qq.com/cgi-bin/report/sitecode/get_report_answer"
 )
