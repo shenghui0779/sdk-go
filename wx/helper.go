@@ -59,7 +59,7 @@ func FormatMap2XML(m WXML) ([]byte, error) {
 	return []byte(builder.String()), nil
 }
 
-// FormatMap2XML format map to xml with sorted keys for test
+// FormatMap2XML 用于单元测试
 // func FormatMap2XML(m WXML) ([]byte, error) {
 // 	ks := make([]string, 0, len(m))
 

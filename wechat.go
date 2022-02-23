@@ -11,6 +11,11 @@ import (
 )
 
 // NewMch 微信商户
+// ⚠️注意：appid应为以下几种之一（具体按支付场景选择）：
+// 1. 微信开放平台审核通过的应用appid（在open.weixin.qq.com申请的）
+// 2. 公众号的appid
+// 3. 小程序的appid（在mp.weixin.qq.com申请的）
+// 4. 企业微信corpid
 func NewMch(appid, mchid, apikey string, certs ...tls.Certificate) *mch.Mch {
 	return mch.New(appid, mchid, apikey, certs...)
 }

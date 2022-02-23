@@ -46,46 +46,46 @@ func UnifyOrder(data *OrderData) wx.Action {
 				"total_fee":        strconv.Itoa(data.TotalFee),
 				"spbill_create_ip": data.SpbillCreateIP,
 				"notify_url":       data.NotifyURL,
-				"sign_type":        SignMD5,
+				"sign_type":        string(SignMD5),
 			}
 
-			if data.DeviceInfo != "" {
+			if len(data.DeviceInfo) != 0 {
 				body["device_info"] = data.DeviceInfo
 			}
 
-			if data.Detail != "" {
+			if len(data.Detail) != 0 {
 				body["detail"] = data.Detail
 			}
 
-			if data.Attach != "" {
+			if len(data.Attach) != 0 {
 				body["attach"] = data.Attach
 			}
 
-			if data.FeeType != "" {
+			if len(data.FeeType) != 0 {
 				body["fee_type"] = data.FeeType
 			}
 
-			if data.TimeStart != "" {
+			if len(data.TimeStart) != 0 {
 				body["time_start"] = data.TimeStart
 			}
 
-			if data.TimeExpire != "" {
+			if len(data.TimeExpire) != 0 {
 				body["time_expire"] = data.TimeExpire
 			}
 
-			if data.GoodsTag != "" {
+			if len(data.GoodsTag) != 0 {
 				body["goods_tag"] = data.GoodsTag
 			}
 
-			if data.ProductID != "" {
+			if len(data.ProductID) != 0 {
 				body["product_id"] = data.ProductID
 			}
 
-			if data.LimitPay != "" {
+			if len(data.LimitPay) != 0 {
 				body["limit_pay"] = data.LimitPay
 			}
 
-			if data.OpenID != "" {
+			if len(data.OpenID) != 0 {
 				body["openid"] = data.OpenID
 			}
 
@@ -93,7 +93,7 @@ func UnifyOrder(data *OrderData) wx.Action {
 				body["receipt"] = "Y"
 			}
 
-			if data.SceneInfo != "" {
+			if len(data.SceneInfo) != 0 {
 				body["scene_info"] = data.SceneInfo
 			}
 
@@ -110,7 +110,7 @@ func QueryOrderByTransactionID(transactionID string) wx.Action {
 				"mch_id":         mchid,
 				"transaction_id": transactionID,
 				"nonce_str":      nonce,
-				"sign_type":      SignMD5,
+				"sign_type":      string(SignMD5),
 			}, nil
 		}),
 	)
@@ -125,7 +125,7 @@ func QueryOrderByOutTradeNO(outTradeNO string) wx.Action {
 				"mch_id":       mchid,
 				"out_trade_no": outTradeNO,
 				"nonce_str":    nonce,
-				"sign_type":    SignMD5,
+				"sign_type":    string(SignMD5),
 			}, nil
 		}),
 	)
@@ -140,7 +140,7 @@ func CloseOrder(outTradeNO string) wx.Action {
 				"mch_id":       mchid,
 				"out_trade_no": outTradeNO,
 				"nonce_str":    nonce,
-				"sign_type":    SignMD5,
+				"sign_type":    string(SignMD5),
 			}, nil
 		}),
 	)

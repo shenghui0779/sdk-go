@@ -2,9 +2,7 @@ package mch
 
 import (
 	"context"
-	"crypto/hmac"
 	"crypto/md5"
-	"crypto/sha256"
 	"crypto/tls"
 	"encoding/base64"
 	"encoding/hex"
@@ -82,11 +80,7 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPO
 	}
 
 	// 签名
-	if v, ok := m["sign_type"]; ok && v == SignHMacSHA256 {
-		m["sign"] = mch.SignWithHMacSHA256(m, true)
-	} else {
-		m["sign"] = mch.SignWithMD5(m, true)
-	}
+	m["sign"] = mch.Sign(SignType(m["sign_type"]), m, true)
 
 	if len(action.Method()) == 0 {
 		if len(action.URL()) == 0 {
@@ -150,7 +144,7 @@ func (mch *Mch) APPAPI(prepayID string) wx.WXML {
 		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	m["sign"] = mch.SignWithMD5(m, true)
+	m["sign"] = mch.Sign(SignMD5, m, true)
 
 	return m
 }
@@ -161,11 +155,11 @@ func (mch *Mch) JSAPI(prepayID string) wx.WXML {
 		"appId":     mch.appid,
 		"nonceStr":  mch.nonce(),
 		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
-		"signType":  SignMD5,
+		"signType":  string(SignMD5),
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	m["paySign"] = mch.SignWithMD5(m, true)
+	m["paySign"] = mch.Sign(SignMD5, m, true)
 
 	return m
 }
@@ -173,16 +167,15 @@ func (mch *Mch) JSAPI(prepayID string) wx.WXML {
 // MinipRedpackJSAPI 小程序领取红包
 func (mch *Mch) MinipRedpackJSAPI(pkg string) wx.WXML {
 	m := wx.WXML{
-		"appId":     mch.appid,
 		"nonceStr":  mch.nonce(),
 		"package":   url.QueryEscape(pkg),
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
+		"signType":  string(SignMD5),
 	}
 
-	m["paySign"] = mch.SignWithMD5(m, false)
+	signStr := fmt.Sprintf("appId=%s&nonceStr=%s&package=%s&timeStamp=%s&key=%s", mch.appid, m["nonceStr"], m["package"], m["timeStamp"], mch.apikey)
 
-	delete(m, "appId")
-	m["signType"] = SignMD5
+	m["paySign"] = yiigo.MD5(signStr)
 
 	return m
 }
@@ -198,7 +191,7 @@ func (mch *Mch) DownloadBill(ctx context.Context, billDate, billType string) ([]
 		"nonce_str": mch.nonce(),
 	}
 
-	m["sign"] = mch.SignWithMD5(m, true)
+	m["sign"] = mch.Sign(SignMD5, m, true)
 
 	body, err := wx.FormatMap2XML(m)
 
@@ -237,7 +230,7 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, billDate, accountType stri
 		"nonce_str":    mch.nonce(),
 	}
 
-	m["sign"] = mch.SignWithHMacSHA256(m, true)
+	m["sign"] = mch.Sign(SignHMacSHA256, m, true)
 
 	body, err := wx.FormatMap2XML(m)
 
@@ -282,7 +275,7 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string
 		m["limit"] = strconv.Itoa(limit[0])
 	}
 
-	m["sign"] = mch.SignWithHMacSHA256(m, true)
+	m["sign"] = mch.Sign(SignHMacSHA256, m, true)
 
 	body, err := wx.FormatMap2XML(m)
 
@@ -310,26 +303,16 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, beginTime, endTime string
 	return resp, nil
 }
 
-// SignWithMD5 生成MD5签名
-func (mch *Mch) SignWithMD5(m wx.WXML, toUpper bool) string {
-	h := md5.New()
-	h.Write([]byte(mch.buildSignStr(m)))
+// Sign 生成签名
+func (mch *Mch) Sign(t SignType, m wx.WXML, toUpper bool) string {
+	str := mch.buildSignStr(m)
+	sign := ""
 
-	sign := hex.EncodeToString(h.Sum(nil))
-
-	if toUpper {
-		sign = strings.ToUpper(sign)
+	if t == SignHMacSHA256 {
+		sign = yiigo.HMAC(yiigo.AlgoSha256, str, mch.apikey)
+	} else {
+		sign = yiigo.MD5(str)
 	}
-
-	return sign
-}
-
-// SignWithHMacSHA256 生成HMAC-SHA256签名
-func (mch *Mch) SignWithHMacSHA256(m wx.WXML, toUpper bool) string {
-	h := hmac.New(sha256.New, []byte(mch.apikey))
-	h.Write([]byte(mch.buildSignStr(m)))
-
-	sign := hex.EncodeToString(h.Sum(nil))
 
 	if toUpper {
 		sign = strings.ToUpper(sign)
@@ -341,15 +324,13 @@ func (mch *Mch) SignWithHMacSHA256(m wx.WXML, toUpper bool) string {
 // VerifyWXMLResult 微信请求/回调通知签名验证
 func (mch *Mch) VerifyWXMLResult(m wx.WXML) error {
 	if wxsign, ok := m["sign"]; ok {
-		signature := ""
+		t := SignMD5
 
-		if v, ok := m["sign_type"]; ok && v == SignHMacSHA256 {
-			signature = mch.SignWithHMacSHA256(m, true)
-		} else {
-			signature = mch.SignWithMD5(m, true)
+		if v, ok := m["sign_type"]; ok {
+			t = SignType(v)
 		}
 
-		if wxsign != signature {
+		if signature := mch.Sign(t, m, true); wxsign != signature {
 			return fmt.Errorf("signature verified failed, want: %s, got: %s", signature, wxsign)
 		}
 	}

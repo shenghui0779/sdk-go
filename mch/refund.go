@@ -32,7 +32,7 @@ func RefundByTransactionID(transactionID string, data *RefundData) wx.Action {
 				"out_refund_no":  data.OutRefundNO,
 				"total_fee":      strconv.Itoa(data.TotalFee),
 				"refund_fee":     strconv.Itoa(data.RefundFee),
-				"sign_type":      SignMD5,
+				"sign_type":      string(SignMD5),
 			}
 
 			if data.RefundFeeType != "" {
@@ -69,7 +69,7 @@ func RefundByOutTradeNO(outTradeNO string, data *RefundData) wx.Action {
 				"out_refund_no": data.OutRefundNO,
 				"total_fee":     strconv.Itoa(data.TotalFee),
 				"refund_fee":    strconv.Itoa(data.RefundFee),
-				"sign_type":     SignMD5,
+				"sign_type":     string(SignMD5),
 			}
 
 			if data.RefundFeeType != "" {
@@ -103,7 +103,7 @@ func QueryRefundByRefundID(refundID string, offset ...int) wx.Action {
 				"mch_id":    mchid,
 				"refund_id": refundID,
 				"nonce_str": nonce,
-				"sign_type": SignMD5,
+				"sign_type": string(SignMD5),
 			}
 
 			if len(offset) != 0 {
@@ -124,7 +124,7 @@ func QueryRefundByOutRefundNO(outRefundNO string, offset ...int) wx.Action {
 				"mch_id":        mchid,
 				"out_refund_no": outRefundNO,
 				"nonce_str":     nonce,
-				"sign_type":     SignMD5,
+				"sign_type":     string(SignMD5),
 			}
 
 			if len(offset) != 0 {
@@ -145,7 +145,7 @@ func QueryRefundByTransactionID(transactionID string, offset ...int) wx.Action {
 				"mch_id":         mchid,
 				"transaction_id": transactionID,
 				"nonce_str":      nonce,
-				"sign_type":      SignMD5,
+				"sign_type":      string(SignMD5),
 			}
 
 			if len(offset) != 0 {
@@ -166,7 +166,7 @@ func QueryRefundByOutTradeNO(outTradeNO string, offset ...int) wx.Action {
 				"mch_id":       mchid,
 				"out_trade_no": outTradeNO,
 				"nonce_str":    nonce,
-				"sign_type":    SignMD5,
+				"sign_type":    string(SignMD5),
 			}
 
 			if len(offset) != 0 {

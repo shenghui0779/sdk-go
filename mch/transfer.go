@@ -50,7 +50,7 @@ func TransferToBalance(data *TransferBalanceData) wx.Action {
 				"check_name":       data.CheckName,
 				"amount":           strconv.Itoa(data.Amount),
 				"desc":             data.Desc,
-				"sign_type":        SignMD5,
+				"sign_type":        string(SignMD5),
 			}
 
 			if data.ReUserName != "" {
@@ -79,7 +79,7 @@ func QueryTransferBalanceOrder(partnerTradeNO string) wx.Action {
 				"mch_id":           mchid,
 				"partner_trade_no": partnerTradeNO,
 				"nonce_str":        nonce,
-				"sign_type":        SignMD5,
+				"sign_type":        string(SignMD5),
 			}, nil
 		}),
 		wx.WithTLS(),
@@ -96,7 +96,7 @@ func TransferToBankCard(data *TransferBankCardData, publicKey []byte) wx.Action 
 				"partner_trade_no": data.PartnerTradeNO,
 				"bank_code":        data.BankCode,
 				"amount":           strconv.Itoa(data.Amount),
-				"sign_type":        SignMD5,
+				"sign_type":        string(SignMD5),
 			}
 
 			// 收款方银行卡号加密
@@ -135,7 +135,7 @@ func QueryTransferBankCardOrder(partnerTradeNO string) wx.Action {
 				"mch_id":           mchid,
 				"partner_trade_no": partnerTradeNO,
 				"nonce_str":        nonce,
-				"sign_type":        SignMD5,
+				"sign_type":        string(SignMD5),
 			}, nil
 		}),
 		wx.WithTLS(),
@@ -149,7 +149,7 @@ func RSAPublicKey() wx.Action {
 			return wx.WXML{
 				"mch_id":    mchid,
 				"nonce_str": nonce,
-				"sign_type": SignMD5,
+				"sign_type": string(SignMD5),
 			}, nil
 		}),
 		wx.WithTLS(),

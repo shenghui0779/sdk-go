@@ -25,69 +25,65 @@ func TestNew(t *testing.T) {
 	assert.Equal(t, "192006250b4c09247ec02edce69f6a2d", mch.ApiKey())
 }
 
-// 涉及时间戳，签名会变化（已通过固定时间戳验证）
-// func TestAPPAPI(t *testing.T) {
-// 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+// 涉及时间戳，签名会变化（请先固定时间戳：1414561699）
+func TestAPPAPI(t *testing.T) {
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-// 	mch.nonce = func(size int) string {
-// 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
-// 	}
+	mch.nonce = func() string {
+		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
+	}
 
-// 	m := mch.APPAPI("WX1217752501201407033233368018")
+	m := mch.APPAPI("WX1217752501201407033233368018")
 
-// 	assert.Equal(t, wx.WXML{
-// 		"appid":     "wx2421b1c4370ec43b",
-// 		"partnerid": "10000100",
-// 		"prepayid":  "WX1217752501201407033233368018",
-// 		"package":   "Sign=WXPay",
-// 		"noncestr":  "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
-// 		"timestamp": "1414561699",
-// 		"sign":      "C9612FA7A6BA5F51E195D5F9337CA288",
-// 	}, m)
-// }
+	assert.Equal(t, wx.WXML{
+		"appid":     "wx2421b1c4370ec43b",
+		"partnerid": "10000100",
+		"prepayid":  "WX1217752501201407033233368018",
+		"package":   "Sign=WXPay",
+		"noncestr":  "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
+		"timestamp": "1414561699",
+		"sign":      "C9612FA7A6BA5F51E195D5F9337CA288",
+	}, m)
+}
 
-// 涉及时间戳，签名会变化（已通过固定时间戳验证）
-// func TestJSAPI(t *testing.T) {
-// 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+// 涉及时间戳，签名会变化（请先固定时间戳：1414561699）
+func TestJSAPI(t *testing.T) {
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-//  assert.Nil(t, err)
+	mch.nonce = func() string {
+		return "e61463f8efa94090b1f366cccfbbb444"
+	}
 
-// 	mch.nonce = func(size int) string {
-// 		return "e61463f8efa94090b1f366cccfbbb444"
-// 	}
+	m := mch.JSAPI("u802345jgfjsdfgsdg888")
 
-// 	m := mch.JSAPI("u802345jgfjsdfgsdg888")
+	assert.Equal(t, wx.WXML{
+		"appId":     "wx2421b1c4370ec43b",
+		"timeStamp": "1414561699",
+		"nonceStr":  "e61463f8efa94090b1f366cccfbbb444",
+		"package":   "prepay_id=u802345jgfjsdfgsdg888",
+		"signType":  "MD5",
+		"paySign":   "A62A01211E36F5D2173A9EE93EBAC56C",
+	}, m)
+}
 
-// 	assert.Equal(t, wx.WXML{
-// 		"appId":     "wx2421b1c4370ec43b",
-// 		"timeStamp": "1414561699",
-// 		"nonceStr":  "e61463f8efa94090b1f366cccfbbb444",
-// 		"package":   "prepay_id=u802345jgfjsdfgsdg888",
-// 		"signType":  "MD5",
-// 		"paySign":   "A62A01211E36F5D2173A9EE93EBAC56C",
-// 	}, m)
-// }
+// 涉及时间戳，签名会变化（请先固定时间戳：1414561699）
+func TestMinipRedpackJSAPI(t *testing.T) {
+	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
 
-// 涉及时间戳，签名会变化（已通过固定时间戳验证）
-// func TestMinipRedpackJSAPI(t *testing.T) {
-// 	mch := New("wx2421b1c4370ec43b", "10000100", "192006250b4c09247ec02edce69f6a2d")
+	mch.nonce = func() string {
+		return "e61463f8efa94090b1f366cccfbbb444"
+	}
 
-// 	assert.Nil(t, err)
+	m := mch.MinipRedpackJSAPI("sendid=242e8abd163d300019b2cae74ba8e8c06e3f0e51ab84d16b3c80decd22a5b672&ver=8&sign=4110d649a5aef52dd6b95654ddf91ca7d5411ac159ace4e1a766b7d3967a1c3dfe1d256811445a4abda2d9cfa4a9b377a829258bd00d90313c6c346f2349fe5d&mchid=11475856&appid=wxd27ebc41b85ce36d")
 
-// 	mch.nonce = func(size int) string {
-// 		return "e61463f8efa94090b1f366cccfbbb444"
-// 	}
-
-// 	m := mch.MinipRedpackJSAPI("sendid=242e8abd163d300019b2cae74ba8e8c06e3f0e51ab84d16b3c80decd22a5b672&ver=8&sign=4110d649a5aef52dd6b95654ddf91ca7d5411ac159ace4e1a766b7d3967a1c3dfe1d256811445a4abda2d9cfa4a9b377a829258bd00d90313c6c346f2349fe5d&mchid=11475856&appid=wxd27ebc41b85ce36d")
-
-// 	assert.Equal(t, wx.WXML{
-// 		"timeStamp": "1414561699",
-// 		"nonceStr":  "e61463f8efa94090b1f366cccfbbb444",
-// 		"package":   "sendid%3D242e8abd163d300019b2cae74ba8e8c06e3f0e51ab84d16b3c80decd22a5b672%26ver%3D8%26sign%3D4110d649a5aef52dd6b95654ddf91ca7d5411ac159ace4e1a766b7d3967a1c3dfe1d256811445a4abda2d9cfa4a9b377a829258bd00d90313c6c346f2349fe5d%26mchid%3D11475856%26appid%3Dwxd27ebc41b85ce36d",
-// 		"signType":  "MD5",
-// 		"paySign":   "0cecd02326e26c27fbc77f6062ef8654",
-// 	}, m)
-// }
+	assert.Equal(t, wx.WXML{
+		"timeStamp": "1414561699",
+		"nonceStr":  "e61463f8efa94090b1f366cccfbbb444",
+		"package":   "sendid%3D242e8abd163d300019b2cae74ba8e8c06e3f0e51ab84d16b3c80decd22a5b672%26ver%3D8%26sign%3D4110d649a5aef52dd6b95654ddf91ca7d5411ac159ace4e1a766b7d3967a1c3dfe1d256811445a4abda2d9cfa4a9b377a829258bd00d90313c6c346f2349fe5d%26mchid%3D11475856%26appid%3Dwxd27ebc41b85ce36d",
+		"signType":  "MD5",
+		"paySign":   "0cecd02326e26c27fbc77f6062ef8654",
+	}, m)
+}
 
 func TestDownloadBill(t *testing.T) {
 	body, err := wx.FormatMap2XML(wx.WXML{
@@ -240,7 +236,7 @@ func TestSignWithMD5(t *testing.T) {
 	}
 
 	// 签名校验来自：[微信支付接口签名校验工具](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=20_1)
-	assert.Equal(t, "66724B3332E124BFC3D62A31A68F7887", mch.SignWithMD5(m, true))
+	assert.Equal(t, "66724B3332E124BFC3D62A31A68F7887", mch.Sign(SignMD5, m, true))
 }
 
 func TestSignWithHMacSHA256(t *testing.T) {
@@ -256,7 +252,7 @@ func TestSignWithHMacSHA256(t *testing.T) {
 	}
 
 	// 签名校验来自：[微信支付接口签名校验工具](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=20_1)
-	assert.Equal(t, "3B12F569A5714858F8251366BC3CBCDDBD249905CCA01D8F56D365EF1FC2CA5C", mch.SignWithHMacSHA256(m, true))
+	assert.Equal(t, "3B12F569A5714858F8251366BC3CBCDDBD249905CCA01D8F56D365EF1FC2CA5C", mch.Sign(SignHMacSHA256, m, true))
 }
 
 func TestVerifyWXMLResult(t *testing.T) {

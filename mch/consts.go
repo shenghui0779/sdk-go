@@ -11,9 +11,11 @@ const (
 )
 
 // 签名类型
+type SignType string
+
 const (
-	SignMD5        = "MD5"
-	SignHMacSHA256 = "HMAC-SHA256"
+	SignMD5        SignType = "MD5"
+	SignHMacSHA256 SignType = "HMAC-SHA256"
 )
 
 // 返回结果

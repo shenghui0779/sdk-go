@@ -82,7 +82,7 @@ func APPEntrust(c *Contract) wx.Action {
 				"version":                  "1.0",
 				"timestamp":                strconv.FormatInt(c.Timestamp, 10),
 				"notify_url":               c.NotifyURL,
-				"sign_type":                SignMD5,
+				"sign_type":                string(SignMD5),
 			}
 
 			if c.ReturnAPP {
@@ -108,7 +108,7 @@ func OAEntrust(c *Contract) wx.Action {
 				"version":                  "1.0",
 				"timestamp":                strconv.FormatInt(c.Timestamp, 10),
 				"notify_url":               c.NotifyURL,
-				"sign_type":                SignMD5,
+				"sign_type":                string(SignMD5),
 			}
 
 			if c.ReturnWeb {
@@ -133,7 +133,7 @@ func MPEntrust(c *Contract) wx.Action {
 				"contract_display_account": c.ContractDisplayAccount,
 				"timestamp":                strconv.FormatInt(c.Timestamp, 10),
 				"notify_url":               c.NotifyURL,
-				"sign_type":                SignMD5,
+				"sign_type":                string(SignMD5),
 			}
 
 			if c.OuterID != 0 {
@@ -160,7 +160,7 @@ func H5Entrust(c *Contract) wx.Action {
 				"timestamp":                strconv.FormatInt(c.Timestamp, 10),
 				"clientip":                 c.SpbillCreateIP,
 				"notify_url":               c.NotifyURL,
-				"sign_type":                SignHMacSHA256,
+				"sign_type":                string(SignHMacSHA256),
 			}
 
 			if c.ReturnAPPID != "" {
@@ -194,7 +194,7 @@ func EntrustByOrder(order *ContractOrder) wx.Action {
 				"contract_display_account": order.ContractDisplayAccount,
 				"notify_url":               order.PaymentNotifyURL,
 				"contract_notify_url":      order.ContractNotifyURL,
-				"sign_type":                SignMD5,
+				"sign_type":                string(SignMD5),
 			}
 
 			if order.DeviceInfo != "" {
@@ -251,7 +251,7 @@ func QueryContractByID(contractID string) wx.Action {
 				"mch_id":      mchid,
 				"contract_id": contractID,
 				"version":     "1.0",
-				"sign_type":   SignMD5,
+				"sign_type":   string(SignMD5),
 			}, nil
 		}),
 	)
@@ -267,7 +267,7 @@ func QueryContractByCode(planID, contractCode string) wx.Action {
 				"plan_id":       planID,
 				"contract_code": contractCode,
 				"version":       "1.0",
-				"sign_type":     SignMD5,
+				"sign_type":     string(SignMD5),
 			}, nil
 		}),
 	)
@@ -289,22 +289,22 @@ func PappayApply(data *PappayData) wx.Action {
 				"total_fee":        strconv.Itoa(data.TotalFee),
 				"contract_id":      data.ContractID,
 				"spbill_create_ip": data.SpbillCreateIP,
-				"sign_type":        SignMD5,
+				"sign_type":        string(SignMD5),
 			}
 
-			if data.Detail != "" {
+			if len(data.Detail) != 0 {
 				body["detail"] = data.Detail
 			}
 
-			if data.Attach != "" {
+			if len(data.Attach) != 0 {
 				body["attach"] = data.Attach
 			}
 
-			if data.FeeType != "" {
+			if len(data.FeeType) != 0 {
 				body["fee_type"] = data.FeeType
 			}
 
-			if data.GoodsTag != "" {
+			if len(data.GoodsTag) != 0 {
 				body["goods_tag"] = data.GoodsTag
 			}
 
@@ -327,7 +327,7 @@ func DeleteContractByID(contractID, remark string) wx.Action {
 				"contract_id":                 contractID,
 				"version":                     "1.0",
 				"contract_termination_remark": remark,
-				"sign_type":                   SignMD5,
+				"sign_type":                   string(SignMD5),
 			}, nil
 		}),
 	)
@@ -344,7 +344,7 @@ func DeleteContractByCode(planID, contractCode, remark string) wx.Action {
 				"contract_code":               contractCode,
 				"version":                     "1.0",
 				"contract_termination_remark": remark,
-				"sign_type":                   SignMD5,
+				"sign_type":                   string(SignMD5),
 			}, nil
 		}),
 	)
@@ -359,7 +359,7 @@ func QueryPappayByTransactionID(transactionID string) wx.Action {
 				"mch_id":         mchid,
 				"transaction_id": transactionID,
 				"nonce_str":      nonce,
-				"sign_type":      SignMD5,
+				"sign_type":      string(SignMD5),
 			}, nil
 		}),
 	)
@@ -374,7 +374,7 @@ func QueryPappayByOutTradeNO(outTradeNO string) wx.Action {
 				"mch_id":       mchid,
 				"out_trade_no": outTradeNO,
 				"nonce_str":    nonce,
-				"sign_type":    SignMD5,
+				"sign_type":    string(SignMD5),
 			}, nil
 		}),
 	)

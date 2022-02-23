@@ -42,7 +42,7 @@ func SendNormalRedpack(data *RedpackData) wx.Action {
 				"client_ip":    data.ClientIP,
 				"act_name":     data.ActName,
 				"remark":       data.Remark,
-				"sign_type":    SignMD5,
+				"sign_type":    string(SignMD5),
 			}
 
 			if data.SceneID != "" {
@@ -76,7 +76,7 @@ func SendGroupRedpack(data *RedpackData) wx.Action {
 				"wishing":      data.Wishing,
 				"act_name":     data.ActName,
 				"remark":       data.Remark,
-				"sign_type":    SignMD5,
+				"sign_type":    string(SignMD5),
 			}
 
 			if data.SceneID != "" {
@@ -110,7 +110,7 @@ func SendMinipRedpack(data *RedpackData) wx.Action {
 				"act_name":     data.ActName,
 				"remark":       data.Remark,
 				"notify_way":   "MINI_PROGRAM_JSAPI",
-				"sign_type":    SignMD5,
+				"sign_type":    string(SignMD5),
 			}
 
 			if data.SceneID != "" {
@@ -133,7 +133,7 @@ func QueryRedpackByBillNO(billNO string) wx.Action {
 				"mch_billno": billNO,
 				"bill_type":  "MCHT",
 				"nonce_str":  nonce,
-				"sign_type":  SignMD5,
+				"sign_type":  string(SignMD5),
 			}, nil
 		}),
 	)
