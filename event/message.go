@@ -74,6 +74,7 @@ const (
 	EventCardPayOrder               EventType = "card_pay_order"               // 券点流水详情事件
 	EventSubmitMemberCardUserInfo   EventType = "submit_membercard_user_info"  // 会员卡激活
 	EventWxaMediaCheck              EventType = "wxa_media_check"              // 校验图片/音频是否含有违法违规内容
+	EventPublishJobFinish           EventType = "PUBLISHJOBFINISH"             // 发布任务结束
 	EventKFMsgOREvent               EventType = "kf_msg_or_event"              // 企业微信客服
 	EventEnterSession               EventType = "enter_session"                // 用户进入会话
 	EventMsgSendFail                EventType = "msg_send_fail"                // 消息发送失败

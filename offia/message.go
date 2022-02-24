@@ -140,7 +140,7 @@ func SendTemplateMsg(msg *TemplateMsg) wx.Action {
 	)
 }
 
-type TemplateSubscribeMsg struct {
+type ParamsTemplateSubscribe struct {
 	ToUser     string       `json:"touser"`                // 接收者openid
 	Scene      string       `json:"scene"`                 // 订阅场景值
 	Title      string       `json:"title"`                 // 消息标题，15字以内
@@ -150,11 +150,11 @@ type TemplateSubscribeMsg struct {
 	Data       MsgTemplData `json:"data"`                  // 消息正文，value为消息内容文本（200字以内），没有固定格式，可用\n换行，color为整段消息内容的字体颜色（目前仅支持整段消息为一种颜色）
 }
 
-// SendSubscribeTemplateMsg 基础消息能力 - 公众号一次性订阅消息
-func SendSubscribeTemplateMsg(msg *TemplateSubscribeMsg) wx.Action {
-	return wx.NewPostAction(urls.OffiaSubscribeTemplateMsgSend,
+// SubscribeTemplateSubscribe 基础消息能力 - 公众号一次性订阅消息
+func SubscribeTemplate(params *ParamsTemplateSubscribe) wx.Action {
+	return wx.NewPostAction(urls.OffiaTemplateSubscribe,
 		wx.WithBody(func() ([]byte, error) {
-			return wx.MarshalNoEscapeHTML(msg)
+			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }

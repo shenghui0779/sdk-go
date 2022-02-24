@@ -223,7 +223,7 @@ func TestSendTemplateMsg(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestSendSubscribeTemplateMsg(t *testing.T) {
+func TestSubscribeTemplate(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","scene":"SCENE","title":"TITLE","template_id":"TEMPLATE_ID","url":"URL","miniprogram":{"appid":"xiaochengxuappid12345","pagepath":"index?foo=bar"},"data":{"content":{"value":"VALUE","color":"COLOR"}}}`)
 
 	resp := &http.Response{
@@ -241,7 +241,7 @@ func TestSendSubscribeTemplateMsg(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &TemplateSubscribeMsg{
+	params := &ParamsTemplateSubscribe{
 		ToUser:     "OPENID",
 		Scene:      "SCENE",
 		Title:      "TITLE",
@@ -259,7 +259,7 @@ func TestSendSubscribeTemplateMsg(t *testing.T) {
 		},
 	}
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendSubscribeTemplateMsg(params))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SubscribeTemplate(params))
 
 	assert.Nil(t, err)
 }
