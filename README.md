@@ -74,16 +74,14 @@ oa.SetServerConfig("token", "encodingAESKey")
 // 设置 debug 模式（目前支持记录，支持自定义日志）
 oa.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
 
-// ------------------------------------------------------------
+// --------- 生成网页授权URL ---------------------
 
-// 生成网页授权URL
 url := oa.OAuth2URL("scope", "redirectURL", "state")
 
 fmt.Println(url)
 
-// ------------------------------------------------------------
+// --------- 获取网页授权Token ---------------------
 
-// 获取网页授权Token
 result, err := oa.Code2OAuthToken(ctx, "code")
 
 if err != nil {
@@ -94,9 +92,8 @@ if err != nil {
 
 fmt.Println(result)
 
-// ------------------------------------------------------------
+// --------- 获取AccessToken ---------------------
 
-// 获取AccessToken
 result, err := oa.AccessToken(ctx)
 
 if err != nil {
@@ -107,9 +104,8 @@ if err != nil {
 
 fmt.Println(result)
 
-// ------------------------------------------------------------
+// --------- 获取关注的用户列表 ---------------------
 
-// 获取关注的用户列表
 result := new(ResultUserList)
 action := offia.GetUserList("nextOpenID", result)
 
@@ -139,9 +135,8 @@ oa.SetServerConfig("token", "encodingAESKey")
 // 设置 debug 模式（目前支持记录，支持自定义日志）
 oa.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
 
-// ------------------------------------------------------------
+// --------- 获取小程序授权的SessionKey ---------------------
 
-// 获取小程序授权的session_key
 result, err := oa.Code2Session(ctx, "code")
 
 if err != nil {
@@ -152,9 +147,8 @@ if err != nil {
 
 fmt.Println(result)
 
-// ------------------------------------------------------------
+// --------- 获取AccessToken ---------------------
 
-// 获取AccessToken
 result, err := oa.AccessToken(ctx)
 
 if err != nil {
@@ -165,9 +159,8 @@ if err != nil {
 
 fmt.Println(result)
 
-// ------------------------------------------------------------
+// --------- 解密授权的用户信息 ---------------------
 
-// 解密授权的用户信息
 result := new(minip.UserInfo)
 
 if err := DecryptAuthInfo("sessionKey", "iv", "encryptedData", result); err != nil {
@@ -178,9 +171,8 @@ if err := DecryptAuthInfo("sessionKey", "iv", "encryptedData", result); err != n
 
 fmt.Println(result)
 
-// ------------------------------------------------------------
+// --------- 创建小程序二维码（数量有限） ---------------------
 
-// 创建小程序二维码（数量有限）
 qrcode := new(minip.QRCode)
 action := minip.CreateQRCode("pagepath", 120, qrcode)
 
@@ -210,23 +202,20 @@ cp.SetServerConfig("token", "encodingAESKey")
 // 设置 debug 模式（支持自定义日志）
 cp.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
 
-// ------------------------------------------------------------
+// --------- 生成网页授权URL ---------------------
 
-// 生成网页授权URL
 url := cp.OAuth2URL("scope", "redirectURL", "state")
 
 fmt.Println(url)
 
-// ------------------------------------------------------------
+// --------- 生成扫码授权URL ---------------------
 
-// 生成扫码授权URL
 url := cp.QRCodeAuthURL("agentID", "redirectURL", "state")
 
 fmt.Println(url)
 
-// ------------------------------------------------------------
+// --------- 获取AccessToken ---------------------
 
-// 获取AccessToken
 result, err := cp.AccessToken(ctx, "secret")
 
 if err != nil {
@@ -237,9 +226,8 @@ if err != nil {
 
 fmt.Println(result)
 
-// ------------------------------------------------------------
+// --------- 获取获取部门成员详情 ---------------------
 
-// 获取获取部门成员详情
 result := new(ResultUserList)
 action := user.ListUser(1, 1, result)
 
