@@ -39,12 +39,12 @@ const (
 
 // redpack
 const (
-	MchRedpackNormal      = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack"        // 普通红包
-	MchRedpackGroup       = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack"   // 裂变红包
-	MchRedpackMinip       = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendminiprogramhb"  // 小程序红包
-	MchRedpackQuery       = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo"          // 红包查询
-	MchRedpackWorkWX      = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendworkwxredpack"  // 企业红包
-	MchRedpackWorkWXQuery = "https://api.mch.weixin.qq.com/mmpaymkttransfers/queryworkwxredpack" // 企业红包查询
+	MchRedpackNormal    = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack"        // 普通红包
+	MchRedpackGroup     = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack"   // 裂变红包
+	MchRedpackMinip     = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendminiprogramhb"  // 小程序红包
+	MchRedpackQuery     = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo"          // 红包查询
+	MchRedpackCorp      = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendworkwxredpack"  // 企业红包
+	MchRedpackCorpQuery = "https://api.mch.weixin.qq.com/mmpaymkttransfers/queryworkwxredpack" // 企业红包查询
 )
 
 // other

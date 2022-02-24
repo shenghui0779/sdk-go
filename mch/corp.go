@@ -10,8 +10,8 @@ import (
 	"github.com/shenghui0779/yiigo"
 )
 
-// ParamsWorkWXRedpack 企业红包参数
-type ParamsWorkWXRedpack struct {
+// ParamsCorpRedpack 企业红包参数
+type ParamsCorpRedpack struct {
 	// 必填参数
 	MchBillNO   string // 商户订单号（每个订单号必须唯一。取值范围：0~9，a~z，A~Z）接口根据商户订单号支持重入，如出现超时可再调用
 	ReOpenID    string // 接受红包的用户openid
@@ -26,7 +26,7 @@ type ParamsWorkWXRedpack struct {
 	SceneID             string // 发放红包使用场景，红包金额大于200或者小于1元时必传
 }
 
-type ParamsWorkWXTransfer struct {
+type ParamsCorpTransfer struct {
 	// 必填参数
 	PartnerTradeNO string
 	OpenID         string
@@ -44,10 +44,10 @@ type ParamsWorkWXTransfer struct {
 	DeviceInfo     string
 }
 
-// SendWorkWXRedpack 发放企业红包（需要证书）
+// SendCorpRedpack 发放企业红包（需要证书）
 // 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
-func SendWorkWXRedpack(appid, secret string, params *ParamsWorkWXRedpack) wx.Action {
-	return wx.NewPostAction(urls.MchRedpackWorkWX,
+func SendCorpRedpack(appid, secret string, params *ParamsCorpRedpack) wx.Action {
+	return wx.NewPostAction(urls.MchRedpackCorp,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
@@ -96,9 +96,9 @@ func SendWorkWXRedpack(appid, secret string, params *ParamsWorkWXRedpack) wx.Act
 	)
 }
 
-// QueryWorkWXRedpack 查询企业红包记录（需要证书）
-func QueryWorkWXRedpack(appid, billNO string) wx.Action {
-	return wx.NewPostAction(urls.MchRedpackWorkWXQuery,
+// QueryCorpRedpack 查询企业红包记录（需要证书）
+func QueryCorpRedpack(appid, billNO string) wx.Action {
+	return wx.NewPostAction(urls.MchRedpackCorpQuery,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
@@ -114,7 +114,7 @@ func QueryWorkWXRedpack(appid, billNO string) wx.Action {
 
 // TransferToPocket 向员工付款（需要证书）
 // 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
-func TransferToPocket(appid, secret string, params *ParamsWorkWXTransfer) wx.Action {
+func TransferToPocket(appid, secret string, params *ParamsCorpTransfer) wx.Action {
 	return wx.NewPostAction(urls.MchTransferToPocket,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {

@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSendWorkWXRedpack(t *testing.T) {
+func TestSendCorpRedpack(t *testing.T) {
 	body, err := wx.FormatMap2XML(wx.WXML{
 		"wxappid":                "wx8888888888888888",
 		"mch_id":                 "10000098",
@@ -66,7 +66,7 @@ func TestSendWorkWXRedpack(t *testing.T) {
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), SendWorkWXRedpack("wx8888888888888888", "192006250b4c09247ec02edce69f6a2d", &ParamsWorkWXRedpack{
+	r, err := mch.Do(context.TODO(), SendCorpRedpack("wx8888888888888888", "192006250b4c09247ec02edce69f6a2d", &ParamsCorpRedpack{
 		MchBillNO:           "123456",
 		ReOpenID:            "oxTWIuGaIt6gTKsQRLau2M0yL16E",
 		TotalAmount:         1000,
@@ -94,7 +94,7 @@ func TestSendWorkWXRedpack(t *testing.T) {
 	}, r)
 }
 
-func TestQueryWorkWXRedpack(t *testing.T) {
+func TestQueryCorpRedpack(t *testing.T) {
 	body, err := wx.FormatMap2XML(wx.WXML{
 		"appid":      "wx8888888888888888",
 		"mch_id":     "10000098",
@@ -148,7 +148,7 @@ func TestQueryWorkWXRedpack(t *testing.T) {
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryWorkWXRedpack("wx8888888888888888", "123456"))
+	r, err := mch.Do(context.TODO(), QueryCorpRedpack("wx8888888888888888", "123456"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
@@ -229,7 +229,7 @@ func TestTransferToPocket(t *testing.T) {
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), TransferToPocket("wxe062425f740c8888", "192006250b4c09247ec02edce69f6a2d", &ParamsWorkWXTransfer{
+	r, err := mch.Do(context.TODO(), TransferToPocket("wxe062425f740c8888", "192006250b4c09247ec02edce69f6a2d", &ParamsCorpTransfer{
 		PartnerTradeNO: "100000982017072019616",
 		OpenID:         "ohO4Gt7wVPxIT1A9GjFaMYMiZY1s",
 		CheckName:      "NO_CHECK",
