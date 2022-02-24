@@ -45,11 +45,11 @@ import (
 pay := gochat.NewMch("mchid", "apikey", tls.Certificate...)
 
 // 设置 debug 模式（支持自定义日志）
-oa.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
+pay.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
 
 // --------- 统一下单 ---------------------
 action := mch.UnifyOrder("appid", &mch.ParamsUnifyOrder{...})
-result, err := mch.Do(ctx, action)
+result, err := pay.Do(ctx, action)
 
 if err != nil {
     fmt.Println(err)
