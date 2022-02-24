@@ -7,7 +7,6 @@ import (
 	"github.com/shenghui0779/gochat/mch"
 	"github.com/shenghui0779/gochat/minip"
 	"github.com/shenghui0779/gochat/offia"
-	"github.com/shenghui0779/gochat/oplatform"
 )
 
 // NewMch 微信商户
@@ -23,11 +22,6 @@ func NewOffia(appid, appsecret string) *offia.Offia {
 // NewMinip 微信小程序
 func NewMinip(appid, appsecret string) *minip.Minip {
 	return minip.New(appid, appsecret)
-}
-
-// NewOplatform 微信开放平台
-func NewOplatform(appid, appsecret string) *oplatform.Oplatform {
-	return oplatform.New(appid, appsecret)
 }
 
 // NewCorp 企业微信
