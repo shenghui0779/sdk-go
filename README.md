@@ -44,7 +44,10 @@ import (
 // 创建实例
 pay := gochat.NewMch("mchid", "apikey", tls.Certificate...)
 
-// 统一下单
+// 设置 debug 模式（支持自定义日志）
+oa.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
+
+// --------- 统一下单 ---------------------
 action := mch.UnifyOrder("appid", &mch.ParamsUnifyOrder{...})
 result, err := mch.Do(ctx, action)
 
@@ -71,7 +74,7 @@ oa := gochat.NewOffia("appid", "appsecret")
 // 设置服务器配置
 oa.SetServerConfig("token", "encodingAESKey")
 
-// 设置 debug 模式（目前支持记录，支持自定义日志）
+// 设置 debug 模式（支持自定义日志）
 oa.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
 
 // --------- 生成网页授权URL ---------------------
@@ -132,7 +135,7 @@ oa := gochat.NewMinip("appid", "appsecret")
 // 设置服务器配置
 oa.SetServerConfig("token", "encodingAESKey")
 
-// 设置 debug 模式（目前支持记录，支持自定义日志）
+// 设置 debug 模式（支持自定义日志）
 oa.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
 
 // --------- 获取小程序授权的SessionKey ---------------------
