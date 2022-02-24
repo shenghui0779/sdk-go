@@ -31,7 +31,7 @@ go get -u github.com/shenghui0779/gochat
   - 解密 - `DecryptEventMessage`
   - 回复 - `Reply`
 - 企业微信按照不同功能模块划分了相应的目录，根据URL可以找到对应的目录和文件
-- 由于自身账号限制，所有API均采用Mock单元测试（Mock数据来源于微信官方文档，如遇问题，欢迎提[Issue](https://github.com/shenghui0779/gochat/issues)）
+- 由于开发者账号限制，所有API均采用Mock单元测试（Mock数据来源于官方文档，如遇问题，欢迎提[Issue](https://github.com/shenghui0779/gochat/issues)）
 
 ## 支付.v2
 
