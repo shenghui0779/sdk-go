@@ -2,10 +2,10 @@ package wx
 
 import (
 	"context"
-	"strings"
 	"time"
 
 	"github.com/shenghui0779/yiigo"
+	"github.com/tidwall/pretty"
 	"go.uber.org/zap"
 )
 
@@ -23,8 +23,6 @@ type LogData struct {
 	Error      error         `json:"error"`
 }
 
-var replacer = strings.NewReplacer("\n", "", "\t", "", "\r", "#")
-
 type wxlogger struct{}
 
 func (l *wxlogger) Log(ctx context.Context, data *LogData) {
@@ -33,8 +31,8 @@ func (l *wxlogger) Log(ctx context.Context, data *LogData) {
 	fields = append(fields,
 		zap.String("method", data.Method),
 		zap.String("url", data.URL),
-		zap.String("body", replacer.Replace(string(data.Body))),
-		zap.String("response", replacer.Replace(string(data.Response))),
+		zap.ByteString("body", pretty.Ugly(data.Body)),
+		zap.ByteString("response", pretty.Ugly(data.Response)),
 		zap.Int("status", data.StatusCode),
 		zap.String("duration", data.Duration.String()),
 	)
