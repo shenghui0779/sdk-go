@@ -144,8 +144,8 @@ type ParamsBatchTagging struct {
 	OpenIDList []string `json:"openid_list"`
 }
 
-// BatchTagging 用户管理 - 用户标签管理 - 批量为用户打标签
-func BatchTagging(tagID int64, openids ...string) wx.Action {
+// BatchTaggingUsers 用户管理 - 用户标签管理 - 批量为用户打标签
+func BatchTaggingUsers(tagID int64, openids ...string) wx.Action {
 	params := &ParamsBatchTagging{
 		TagID:      tagID,
 		OpenIDList: openids,
@@ -163,8 +163,8 @@ type ParamsBatchUnTagging struct {
 	OpenIDList []string `json:"openid_list"`
 }
 
-// BatchUnTagging 用户管理 - 用户标签管理 - 批量为用户取消标签
-func BatchUnTagging(tagID int64, openids ...string) wx.Action {
+// BatchUnTaggingUsers 用户管理 - 用户标签管理 - 批量为用户取消标签
+func BatchUnTaggingUsers(tagID int64, openids ...string) wx.Action {
 	params := &ParamsBatchUnTagging{
 		TagID:      tagID,
 		OpenIDList: openids,
@@ -302,8 +302,8 @@ type ResultUserList struct {
 	NextOpenID string       `json:"next_openid"`
 }
 
-// GetUserList 用户管理 - 获取用户列表
-func GetUserList(nextOpenID string, result *ResultUserList) wx.Action {
+// ListUser 用户管理 - 获取用户列表
+func ListUser(nextOpenID string, result *ResultUserList) wx.Action {
 	options := []wx.ActionOption{
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -328,8 +328,8 @@ type ResultBlackList struct {
 	NextOpenID string       `json:"next_openid"`
 }
 
-// GetBlackList 用户管理 - 获取公众号的黑名单列表
-func GetBlackList(beginOpenID string, result *ResultBlackList) wx.Action {
+// ListBlackUsers 用户管理 - 获取公众号的黑名单列表
+func ListBlackUsers(beginOpenID string, result *ResultBlackList) wx.Action {
 	params := &ParamsBlackList{
 		BeginOpenID: beginOpenID,
 	}
@@ -344,13 +344,13 @@ func GetBlackList(beginOpenID string, result *ResultBlackList) wx.Action {
 	)
 }
 
-type ParamsBlackUsers struct {
+type ParamsBatchBlackUsers struct {
 	OpenIDList []string `json:"openid_list"`
 }
 
-// BlackUsers 用户管理 - 拉黑用户
-func BlackUsers(openids ...string) wx.Action {
-	params := &ParamsBlackUsers{
+// BatchBlackUsers 用户管理 - 拉黑用户
+func BatchBlackUsers(openids ...string) wx.Action {
+	params := &ParamsBatchBlackUsers{
 		OpenIDList: openids,
 	}
 
@@ -361,13 +361,13 @@ func BlackUsers(openids ...string) wx.Action {
 	)
 }
 
-type ParamsUnBlackUsers struct {
+type ParamsBatchUnBlackUsers struct {
 	OpenIDList []string `json:"openid_list"`
 }
 
-// UnBlackUsers 用户管理 - 取消拉黑用户
-func UnBlackUsers(openids ...string) wx.Action {
-	params := &ParamsUnBlackUsers{
+// BatchUnBlackUsers 用户管理 - 取消拉黑用户
+func BatchUnBlackUsers(openids ...string) wx.Action {
+	params := &ParamsBatchUnBlackUsers{
 		OpenIDList: openids,
 	}
 

@@ -89,7 +89,7 @@ func (oa *Offia) SubscribeMsgAuthURL(scene, templateID, redirectURL, reserved st
 	return fmt.Sprintf("%s?action=get_confirm&appid=%s&template_id=%s&redirect_url=%s&reserved=%s#wechat_redirect", urls.SubscribeMsgAuth, oa.appid, templateID, redirectURL, reserved)
 }
 
-// Code2OAuthToken 获取网页授权AccessToken
+// Code2OAuthToken 获取网页授权Token
 func (oa *Offia) Code2OAuthToken(ctx context.Context, code string, options ...yiigo.HTTPOption) (*OAuthToken, error) {
 	resp, err := oa.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", urls.OffiaSnsCode2Token, oa.appid, oa.appsecret, code), nil, options...)
 

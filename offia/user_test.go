@@ -193,7 +193,7 @@ func TestGetTagUsers(t *testing.T) {
 	}, result)
 }
 
-func TestBatchTagging(t *testing.T) {
+func TestBatchTaggingUsers(t *testing.T) {
 	body := []byte(`{"tagid":134,"openid_list":["ocYxcuAEy30bX0NXmGn4ypqx3tI0","ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"]}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -210,12 +210,12 @@ func TestBatchTagging(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchTagging(134, "ocYxcuAEy30bX0NXmGn4ypqx3tI0", "ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchTaggingUsers(134, "ocYxcuAEy30bX0NXmGn4ypqx3tI0", "ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"))
 
 	assert.Nil(t, err)
 }
 
-func TestBatchUnTagging(t *testing.T) {
+func TestBatchUnTaggingUsers(t *testing.T) {
 	body := []byte(`{"tagid":134,"openid_list":["ocYxcuAEy30bX0NXmGn4ypqx3tI0","ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"]}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -232,7 +232,7 @@ func TestBatchUnTagging(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchUnTagging(134, "ocYxcuAEy30bX0NXmGn4ypqx3tI0", "ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchUnTaggingUsers(134, "ocYxcuAEy30bX0NXmGn4ypqx3tI0", "ocYxcuBt0mRugKZ7tGAHPnUaOW7Y"))
 
 	assert.Nil(t, err)
 }
@@ -440,7 +440,7 @@ func TestBatchGetUserInfo(t *testing.T) {
 	}, result)
 }
 
-func TestGetUserList(t *testing.T) {
+func TestListUser(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -465,7 +465,7 @@ func TestGetUserList(t *testing.T) {
 
 	result := new(ResultUserList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetUserList("NEXT_OPENID", result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ListUser("NEXT_OPENID", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultUserList{
@@ -478,7 +478,7 @@ func TestGetUserList(t *testing.T) {
 	}, result)
 }
 
-func TestGetBlackList(t *testing.T) {
+func TestListBlackUsers(t *testing.T) {
 	body := []byte(`{"begin_openid":"OPENID1"}`)
 
 	resp := &http.Response{
@@ -509,7 +509,7 @@ func TestGetBlackList(t *testing.T) {
 
 	result := new(ResultBlackList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetBlackList("OPENID1", result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ListBlackUsers("OPENID1", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultBlackList{
@@ -522,7 +522,7 @@ func TestGetBlackList(t *testing.T) {
 	}, result)
 }
 
-func TestBlackUsers(t *testing.T) {
+func TestBatchBlackUsers(t *testing.T) {
 	body := []byte(`{"openid_list":["OPENID1","OPENID2"]}`)
 
 	resp := &http.Response{
@@ -540,12 +540,12 @@ func TestBlackUsers(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BlackUsers("OPENID1", "OPENID2"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchBlackUsers("OPENID1", "OPENID2"))
 
 	assert.Nil(t, err)
 }
 
-func TestUnBlackUsers(t *testing.T) {
+func TestBatchUnBlackUsers(t *testing.T) {
 	body := []byte(`{"openid_list":["OPENID1","OPENID2"]}`)
 
 	resp := &http.Response{
@@ -563,7 +563,7 @@ func TestUnBlackUsers(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UnBlackUsers("OPENID1", "OPENID2"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", BatchUnBlackUsers("OPENID1", "OPENID2"))
 
 	assert.Nil(t, err)
 }
