@@ -38,6 +38,7 @@ go get -u github.com/shenghui0779/gochat
 ```go
 import (
     "github.com/shenghui0779/gochat"
+    "github.com/shenghui0779/gochat/wx"
     "github.com/shenghui0779/gochat/mch"
 )
 
@@ -65,6 +66,7 @@ fmt.Println(result)
 ```go
 import (
     "github.com/shenghui0779/gochat"
+    "github.com/shenghui0779/gochat/wx"
     "github.com/shenghui0779/gochat/offia"
 )
 
@@ -109,7 +111,7 @@ fmt.Println(result)
 
 // --------- 获取关注的用户列表 ---------------------
 
-result := new(ResultUserList)
+result := new(offia.ResultUserList)
 action := offia.GetUserList("nextOpenID", result)
 
 if err := oa.Do(ctx, action); err != nil {
@@ -126,6 +128,7 @@ fmt.Println(result)
 ```go
 import (
     "github.com/shenghui0779/gochat"
+    "github.com/shenghui0779/gochat/wx"
     "github.com/shenghui0779/gochat/minip"
 )
 
@@ -193,7 +196,8 @@ fmt.Println(base64.StdEncoding.EncodeToString(qrcode.Buffer))
 ```go
 import (
     "github.com/shenghui0779/gochat"
-    "github.com/shenghui0779/gochat/corp/user"
+    "github.com/shenghui0779/gochat/wx"
+    "github.com/shenghui0779/gochat/corp/addrbook"
 )
 
 // 创建实例
@@ -229,10 +233,10 @@ if err != nil {
 
 fmt.Println(result)
 
-// --------- 获取获取部门成员详情 ---------------------
+// --------- 获取部门列表 ---------------------
 
-result := new(ResultUserList)
-action := user.ListUser(1, 1, result)
+result := new(addrbook.ResultDepartmentList)
+action := addrbook.ListDepartment(0, result)
 
 if err := cp.Do(ctx, action); err != nil {
     fmt.Println(err)
