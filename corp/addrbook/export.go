@@ -1,4 +1,4 @@
-package user
+package addrbook
 
 import (
 	"encoding/json"
