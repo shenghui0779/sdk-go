@@ -81,7 +81,7 @@ oa.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
 
 // --------- 生成网页授权URL ---------------------
 
-url := oa.OAuth2URL("scope", "redirectURL", "state")
+url := oa.OAuth2URL(offia.ScopeSnsapiBase, "redirectURL", "state")
 
 fmt.Println(url)
 
@@ -197,6 +197,7 @@ fmt.Println(base64.StdEncoding.EncodeToString(qrcode.Buffer))
 import (
     "github.com/shenghui0779/gochat"
     "github.com/shenghui0779/gochat/wx"
+    "github.com/shenghui0779/gochat/corp"
     "github.com/shenghui0779/gochat/corp/addrbook"
 )
 
@@ -211,7 +212,7 @@ cp.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
 
 // --------- 生成网页授权URL ---------------------
 
-url := cp.OAuth2URL("scope", "redirectURL", "state")
+url := cp.OAuth2URL(corp.ScopeSnsapiBase, "redirectURL", "state")
 
 fmt.Println(url)
 
