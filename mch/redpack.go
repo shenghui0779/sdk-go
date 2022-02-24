@@ -24,7 +24,8 @@ type ParamsRedpack struct {
 	RiskInfo string // 活动信息，urlencode(posttime=xx&mobile=xx&deviceid=xx。posttime：用户操作的时间戳；mobile：业务系统账号的手机号，国家代码-手机号，不需要+号；deviceid：MAC地址或者设备唯一标识；clientversion：用户操作的客户端版本
 }
 
-// SendNormalRedpack 发放普通红包
+// SendNormalRedpack 发放普通红包（需要证书）
+// 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
 func SendNormalRedpack(appid string, params *ParamsRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackNormal,
 		wx.WithTLS(),
@@ -58,7 +59,8 @@ func SendNormalRedpack(appid string, params *ParamsRedpack) wx.Action {
 	)
 }
 
-// SendGroupRedpack 发放裂变红包
+// SendGroupRedpack 发放裂变红包（需要证书）
+// 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
 func SendGroupRedpack(appid string, params *ParamsRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackGroup,
 		wx.WithTLS(),
@@ -92,7 +94,8 @@ func SendGroupRedpack(appid string, params *ParamsRedpack) wx.Action {
 	)
 }
 
-// SendMinipRedpack 发放小程序红包
+// SendMinipRedpack 发放小程序红包（需要证书）
+// 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
 func SendMinipRedpack(appid string, params *ParamsRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackMinip,
 		wx.WithTLS(),
@@ -122,7 +125,7 @@ func SendMinipRedpack(appid string, params *ParamsRedpack) wx.Action {
 	)
 }
 
-// QueryRedpack 查询红包记录
+// QueryRedpack 查询红包记录（需要证书）
 func QueryRedpack(appid, billNO string) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackQuery,
 		wx.WithTLS(),

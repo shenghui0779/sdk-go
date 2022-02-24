@@ -20,9 +20,11 @@ type ParamsRefund struct {
 	NotifyURL     string // 异步接收微信支付退款结果通知的回调地址，通知URL必须为外网可访问的url，不允许带参数
 }
 
-// RefundByTransactionID 根据微信订单号退款
+// RefundByTransactionID 根据微信订单号退款（需要证书）
+// 注意：一笔退款失败后重新提交，请不要更换退款单号，请使用原商户退款单号。
 func RefundByTransactionID(appid, transactionID string, params *ParamsRefund) wx.Action {
 	return wx.NewPostAction(urls.MchRefundApply,
+		wx.WithTLS(),
 		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":          appid,
@@ -53,13 +55,14 @@ func RefundByTransactionID(appid, transactionID string, params *ParamsRefund) wx
 
 			return body, nil
 		}),
-		wx.WithTLS(),
 	)
 }
 
-// RefundByOutTradeNO 根据商户订单号退款
+// RefundByOutTradeNO 根据商户订单号退款（需要证书）
+// 注意：一笔退款失败后重新提交，请不要更换退款单号，请使用原商户退款单号。
 func RefundByOutTradeNO(appid, outTradeNO string, params *ParamsRefund) wx.Action {
 	return wx.NewPostAction(urls.MchRefundApply,
+		wx.WithTLS(),
 		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			body := wx.WXML{
 				"appid":         appid,
@@ -90,7 +93,6 @@ func RefundByOutTradeNO(appid, outTradeNO string, params *ParamsRefund) wx.Actio
 
 			return body, nil
 		}),
-		wx.WithTLS(),
 	)
 }
 

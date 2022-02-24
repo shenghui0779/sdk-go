@@ -15,22 +15,20 @@ import (
 
 func TestSendWorkWXRedpack(t *testing.T) {
 	body, err := wx.FormatMap2XML(wx.WXML{
-		"wxappid":      "wx2421b1c4370ec43b",
-		"mch_id":       "10000100",
-		"mch_billno":   "0010010404201411170000046545",
-		"send_name":    "send_name",
-		"re_openid":    "onqOjjmM1tad-3ROpncN-yUfa6uI",
-		"total_amount": "200",
-		"total_num":    "1",
-		"wishing":      "恭喜发财",
-		"client_ip":    "127.0.0.1",
-		"act_name":     "新年红包",
-		"remark":       "新年红包",
-		"scene_id":     "PRODUCT_2",
-		"risk_info":    "posttime%3d123123412%26clientversion%3d234134%26mobile%3d122344545%26deviceid%3dIOS",
-		"nonce_str":    "50780e0cca98c8c8e814883e5caa672e",
-		"sign_type":    "MD5",
-		"sign":         "C9BB9D2CBE57D6E3A28BD220AFA2248D",
+		"wxappid":                "wx8888888888888888",
+		"mch_id":                 "10000098",
+		"mch_billno":             "123456",
+		"re_openid":              "oxTWIuGaIt6gTKsQRLau2M0yL16E",
+		"total_amount":           "1000",
+		"wishing":                "感谢您参加猜灯谜活动，祝您元宵节快乐！",
+		"act_name":               "猜灯谜抢红包活动",
+		"remark":                 "猜越多得越多，快来抢！",
+		"sender_name":            "XX活动",
+		"sender_header_media_id": "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
+		"nonce_str":              "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
+		"workwx_sign":            "FCB8624E2CED048CA15E2FF2B87C91A6",
+		"sign_type":              "MD5",
+		"sign":                   "62C6597C4D4EC88A9DFF1258D2A94FAA",
 	})
 
 	assert.Nil(t, err)
@@ -38,13 +36,18 @@ func TestSendWorkWXRedpack(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
-	<return_code>SUCCESS</return_code>
-	<result_code>SUCCESS</result_code>
-	<wxappid>wx2421b1c4370ec43b</wxappid>
-	<mch_id>10000100</mch_id>
-	<mch_billno>0010010404201411170000046545</mch_billno>
-	<re_openid>onqOjjmM1tad-3ROpncN-yUfa6uI</re_openid>
-	<total_amount>1</total_amount>
+	<return_code><![CDATA[SUCCESS]]></return_code>
+	<return_msg><![CDATA[ok]]></return_msg>
+	<sign><![CDATA[3894524D14BA9FE46E7E58DF3514EF12]]></sign>
+	<result_code><![CDATA[SUCCESS]]></result_code>
+	<mch_billno><![CDATA[123456]]></mch_billno>
+	<mch_id><![CDATA[10000098]]></mch_id>
+	<wxappid><![CDATA[wx8888888888888888]]></wxappid>
+	<re_openid><![CDATA[oxTWIuGaIt6gTKsQRLau2M0yL16E]]></re_openid>
+	<total_amount><![CDATA[1000]]></total_amount>
+	<send_listid><![CDATA[235785324578098]]></send_listid>
+	<sender_name><![CDATA[XX活动]]></sender_name>
+	<sender_header_media_id><![CDATA[1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0]]></sender_header_media_id>
 </xml>`))),
 	}
 
@@ -53,51 +56,52 @@ func TestSendWorkWXRedpack(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack", body).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendworkwxredpack", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000098", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
-		return "50780e0cca98c8c8e814883e5caa672e"
+		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), SendNormalRedpack("wx2421b1c4370ec43b", &ParamsRedpack{
-		MchBillNO:   "0010010404201411170000046545",
-		SendName:    "send_name",
-		ReOpenID:    "onqOjjmM1tad-3ROpncN-yUfa6uI",
-		TotalAmount: 200,
-		TotalNum:    1,
-		Wishing:     "恭喜发财",
-		ClientIP:    "127.0.0.1",
-		ActName:     "新年红包",
-		Remark:      "新年红包",
-		SceneID:     "PRODUCT_2",
-		RiskInfo:    "posttime%3d123123412%26clientversion%3d234134%26mobile%3d122344545%26deviceid%3dIOS",
+	r, err := mch.Do(context.TODO(), SendWorkWXRedpack("wx8888888888888888", "192006250b4c09247ec02edce69f6a2d", &ParamsWorkWXRedpack{
+		MchBillNO:           "123456",
+		ReOpenID:            "oxTWIuGaIt6gTKsQRLau2M0yL16E",
+		TotalAmount:         1000,
+		Wishing:             "感谢您参加猜灯谜活动，祝您元宵节快乐！",
+		ActName:             "猜灯谜抢红包活动",
+		Remark:              "猜越多得越多，快来抢！",
+		SenderName:          "XX活动",
+		SenderHeaderMediaID: "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
 	}))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
-		"return_code":  "SUCCESS",
-		"result_code":  "SUCCESS",
-		"wxappid":      "wx2421b1c4370ec43b",
-		"mch_id":       "10000100",
-		"mch_billno":   "0010010404201411170000046545",
-		"re_openid":    "onqOjjmM1tad-3ROpncN-yUfa6uI",
-		"total_amount": "1",
+		"return_code":            "SUCCESS",
+		"return_msg":             "ok",
+		"result_code":            "SUCCESS",
+		"wxappid":                "wx8888888888888888",
+		"mch_id":                 "10000098",
+		"sign":                   "3894524D14BA9FE46E7E58DF3514EF12",
+		"mch_billno":             "123456",
+		"re_openid":              "oxTWIuGaIt6gTKsQRLau2M0yL16E",
+		"total_amount":           "1000",
+		"send_listid":            "235785324578098",
+		"sender_name":            "XX活动",
+		"sender_header_media_id": "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
 	}, r)
 }
 
 func TestQueryWorkWXRedpack(t *testing.T) {
 	body, err := wx.FormatMap2XML(wx.WXML{
-		"appid":      "wx2421b1c4370ec43b",
-		"mch_id":     "10000100",
-		"mch_billno": "9010080799701411170000046603",
-		"bill_type":  "MCHT",
-		"nonce_str":  "50780e0cca98c8c8e814883e5caa672e",
+		"appid":      "wx8888888888888888",
+		"mch_id":     "10000098",
+		"mch_billno": "123456",
+		"nonce_str":  "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
 		"sign_type":  "MD5",
-		"sign":       "231F70D63D64EB36C1BE83E7E598B280",
+		"sign":       "540A546A87AF45F048E2FA55DF0398DC",
 	})
 
 	assert.Nil(t, err)
@@ -105,18 +109,28 @@ func TestQueryWorkWXRedpack(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
-	<return_code>SUCCESS</return_code>
-	<result_code>SUCCESS</result_code>
-	<mch_id>10000100</mch_id>
-	<mch_billno>9010080799701411170000046603</mch_billno>
-	<detail_id>10000417012016080830956240040</detail_id>
-	<status>RECEIVED</status>
-	<send_type>ACTIVITY</send_type>
-	<hb_type>NORMAL</hb_type>
-	<total_amount>100</total_amount>
-	<total_num>1</total_num>
-	<send_time>2016-08-08 21:49:22</send_time>
-</xml>`))),
+	<return_code><![CDATA[SUCCESS]]></return_code>
+	<return_msg><![CDATA[ok]]></return_msg>
+	<sign><![CDATA[645086515F23B2113649B68D00D131E4]]></sign>
+	<result_code><![CDATA[SUCCESS]]></result_code>
+	<mch_billno><![CDATA[123456]]></mch_billno>
+	<mch_id><![CDATA[10000098]]></mch_id>
+	<detail_id><![CDATA[43235678654322356]]></detail_id>
+	<status><![CDATA[RECEIVED]]></status>
+	<send_type><![CDATA[API]]></send_type>
+	<total_amount><![CDATA[5000]]></total_amount>
+	<reason><![CDATA[余额不足]]></reason>
+	<send_time><![CDATA[2017-07-20 22:45:12]]></send_time>
+	<wishing><![CDATA[新年快乐]]></wishing>
+	<remark><![CDATA[新年红包]]></remark>
+	<act_name><![CDATA[新年红包]]></act_name>
+	<openid><![CDATA[ohO4GtzOAAYMp2yapORH3dQB3W18]]></openid>
+	<amount><![CDATA[100]]></amount>
+	<rcv_time><![CDATA[2017-07-20 22:46:59]]></rcv_time>
+	<sender_name><![CDATA[XX活动]]></sender_name>
+	<sender_header_media_id><![CDATA[1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0]]></sender_header_media_id>
+</xml>
+`))),
 	}
 
 	ctrl := gomock.NewController(t)
@@ -124,48 +138,61 @@ func TestQueryWorkWXRedpack(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo", body).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/queryworkwxredpack", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000098", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
-		return "50780e0cca98c8c8e814883e5caa672e"
+		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
 	}
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryRedpack("wx2421b1c4370ec43b", "9010080799701411170000046603"))
+	r, err := mch.Do(context.TODO(), QueryWorkWXRedpack("wx8888888888888888", "123456"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
-		"return_code":  "SUCCESS",
-		"result_code":  "SUCCESS",
-		"mch_id":       "10000100",
-		"mch_billno":   "9010080799701411170000046603",
-		"detail_id":    "10000417012016080830956240040",
-		"status":       "RECEIVED",
-		"send_type":    "ACTIVITY",
-		"hb_type":      "NORMAL",
-		"total_amount": "100",
-		"total_num":    "1",
-		"send_time":    "2016-08-08 21:49:22",
+		"return_code":            "SUCCESS",
+		"return_msg":             "ok",
+		"result_code":            "SUCCESS",
+		"mch_id":                 "10000098",
+		"mch_billno":             "123456",
+		"sign":                   "645086515F23B2113649B68D00D131E4",
+		"detail_id":              "43235678654322356",
+		"status":                 "RECEIVED",
+		"send_type":              "API",
+		"total_amount":           "5000",
+		"reason":                 "余额不足",
+		"send_time":              "2017-07-20 22:45:12",
+		"wishing":                "新年快乐",
+		"remark":                 "新年红包",
+		"act_name":               "新年红包",
+		"openid":                 "ohO4GtzOAAYMp2yapORH3dQB3W18",
+		"amount":                 "100",
+		"rcv_time":               "2017-07-20 22:46:59",
+		"sender_name":            "XX活动",
+		"sender_header_media_id": "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
 	}, r)
 }
 
 func TestTransferToPocket(t *testing.T) {
 	body, err := wx.FormatMap2XML(wx.WXML{
-		"mch_appid":        "wx2421b1c4370ec43b",
-		"mchid":            "10000100",
-		"partner_trade_no": "100000982014120919616",
+		"appid":            "wxe062425f740c8888",
+		"mch_id":           "1900000109",
+		"device_info":      "013467007045764",
+		"nonce_str":        "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS",
+		"partner_trade_no": "100000982017072019616",
 		"openid":           "ohO4Gt7wVPxIT1A9GjFaMYMiZY1s",
-		"check_name":       "FORCE_CHECK",
+		"check_name":       "NO_CHECK",
 		"re_user_name":     "张三",
 		"amount":           "100",
-		"desc":             "节日快乐!",
+		"desc":             "六月出差报销费用",
 		"spbill_create_ip": "10.2.3.10",
-		"nonce_str":        "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS",
+		"workwx_sign":      "FB5C2BD04CB52ED2176F5F883F9EA81F",
+		"ww_msg_type":      "NORMAL_MSG",
+		"act_name":         "示例项目",
 		"sign_type":        "MD5",
-		"sign":             "97CD9C3C88B189B60C230677CE0FC3BB",
+		"sign":             "89E7CBC1A2A618EC2C00C6B215702C4C",
 	})
 
 	assert.Nil(t, err)
@@ -173,14 +200,17 @@ func TestTransferToPocket(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
-	<return_code>SUCCESS</return_code>
-	<mch_appid>wx2421b1c4370ec43b</mch_appid>
-	<mchid>10000100</mchid>
-	<nonce_str>lxuDzMnRjpcXzxLx0q</nonce_str>
-	<result_code>SUCCESS</result_code>
-	<partner_trade_no>10013574201505191526582441</partner_trade_no>
-	<payment_no>1000018301201505190181489473</payment_no>
-	<payment_time>2015-05-19 15:26:59</payment_time>
+	<return_code><![CDATA[SUCCESS]]></return_code>
+	<return_msg><![CDATA[ok]]></return_msg>
+	<appid><![CDATA[wxec38b8ff840b8888]]></appid>
+	<mch_id><![CDATA[1900000109]]></mch_id>
+	<device_info><![CDATA[013467007045764]]></device_info>
+	<nonce_str><![CDATA[lxuDzMnRjpcXzxLx0q]]></nonce_str>
+	<result_code><![CDATA[SUCCESS]]></result_code>
+	<partner_trade_no><![CDATA[100000982017072019616]]></partner_trade_no>
+	<payment_no><![CDATA[1000018301201505190181489473]]></payment_no>
+	<payment_time><![CDATA[2017-07-20 22:05:59]]></payment_time>
+	<sign>2D3F4D8C4D68DA71684846F835552300</sign>
 </xml>`))),
 	}
 
@@ -189,9 +219,9 @@ func TestTransferToPocket(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", body).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/paywwsptrans2pocket", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("1900000109", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS"
@@ -199,37 +229,43 @@ func TestTransferToPocket(t *testing.T) {
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), TransferToBalance("wx2421b1c4370ec43b", &ParamsTransferBalance{
-		PartnerTradeNO: "100000982014120919616",
+	r, err := mch.Do(context.TODO(), TransferToPocket("wxe062425f740c8888", "192006250b4c09247ec02edce69f6a2d", &ParamsWorkWXTransfer{
+		PartnerTradeNO: "100000982017072019616",
 		OpenID:         "ohO4Gt7wVPxIT1A9GjFaMYMiZY1s",
-		CheckName:      "FORCE_CHECK",
+		CheckName:      "NO_CHECK",
 		Amount:         100,
-		Desc:           "节日快乐!",
-		ReUserName:     "张三",
+		Desc:           "六月出差报销费用",
 		SpbillCreateIP: "10.2.3.10",
+		WWMsgType:      "NORMAL_MSG",
+		ActName:        "示例项目",
+		ReUserName:     "张三",
+		DeviceInfo:     "013467007045764",
 	}))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
 		"return_code":      "SUCCESS",
-		"mch_appid":        "wx2421b1c4370ec43b",
-		"mchid":            "10000100",
+		"return_msg":       "ok",
+		"appid":            "wxec38b8ff840b8888",
+		"mch_id":           "1900000109",
+		"device_info":      "013467007045764",
 		"nonce_str":        "lxuDzMnRjpcXzxLx0q",
 		"result_code":      "SUCCESS",
-		"partner_trade_no": "10013574201505191526582441",
+		"partner_trade_no": "100000982017072019616",
 		"payment_no":       "1000018301201505190181489473",
-		"payment_time":     "2015-05-19 15:26:59",
+		"payment_time":     "2017-07-20 22:05:59",
+		"sign":             "2D3F4D8C4D68DA71684846F835552300",
 	}, r)
 }
 
 func TestQueryTransferPocket(t *testing.T) {
 	body, err := wx.FormatMap2XML(wx.WXML{
-		"appid":            "wx2421b1c4370ec43b",
-		"mch_id":           "10000100",
-		"partner_trade_no": "1000005901201407261446939628",
+		"appid":            "wxe062425f740c8888",
+		"mch_id":           "10000097",
+		"partner_trade_no": "0010010404201411170000046545",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
 		"sign_type":        "MD5",
-		"sign":             "DF0024F9502E233115C0198912B4EB5D",
+		"sign":             "B6D80B2ABB044A8C69E6836CDDA5ADF3",
 	})
 
 	assert.Nil(t, err)
@@ -237,18 +273,20 @@ func TestQueryTransferPocket(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
-	<return_code>SUCCESS</return_code>
-	<appid>wx2421b1c4370ec43b</appid>
-	<mch_id>10000100</mch_id>
-	<result_code>SUCCESS</result_code>
-	<detail_id>1000000000201503283103439304</detail_id>
-	<partner_trade_no>1000005901201407261446939628</partner_trade_no>
-	<status>SUCCESS</status>
-	<payment_amount>650</payment_amount>
-	<openid>oxTWIuGaIt6gTKsQRLau2M0yL16E</openid>
-	<transfer_name>测试</transfer_name>
-	<transfer_time>2015-04-21 20:00:00</transfer_time>
-	<desc>福利测试</desc>
+	<return_code><![CDATA[SUCCESS]]></return_code>
+	<return_msg><![CDATA[获取成功]]></return_msg>
+	<result_code><![CDATA[SUCCESS]]></result_code>
+	<mch_id>10000097</mch_id>
+	<appid><![CDATA[wxe062425f740c30d8]]></appid>
+	<detail_id><![CDATA[1000000000201503283103439304]]></detail_id>
+	<partner_trade_no><![CDATA[0010010404201411170000046545]]></partner_trade_no>
+	<status><![CDATA[SUCCESS]]></status>
+	<payment_amount>100</payment_amount>
+	<openid><![CDATA[oxTWIuGaIt6gTKsQRLau2M0yL16E]]></openid>
+	<transfer_time><![CDATA[2017-07-22 20:10:15]]></transfer_time>
+	<transfer_name><![CDATA[测试]]></transfer_name>
+	<desc><![CDATA[付款测试]]></desc>
+	<sign>A5CC7D1D0431EE5E54B67B7F6AF84220</sign>
 </xml>`))),
 	}
 
@@ -257,9 +295,9 @@ func TestQueryTransferPocket(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo", body).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/querywwsptrans2pocket", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000097", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
@@ -267,21 +305,23 @@ func TestQueryTransferPocket(t *testing.T) {
 
 	mch.SetTLSClient(wx.WithHTTPClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryTransferBalance("wx2421b1c4370ec43b", "1000005901201407261446939628"))
+	r, err := mch.Do(context.TODO(), QueryTransferPocket("wxe062425f740c8888", "0010010404201411170000046545"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
 		"return_code":      "SUCCESS",
-		"appid":            "wx2421b1c4370ec43b",
-		"mch_id":           "10000100",
+		"return_msg":       "获取成功",
 		"result_code":      "SUCCESS",
+		"mch_id":           "10000097",
+		"appid":            "wxe062425f740c30d8",
 		"detail_id":        "1000000000201503283103439304",
-		"partner_trade_no": "1000005901201407261446939628",
+		"partner_trade_no": "0010010404201411170000046545",
 		"status":           "SUCCESS",
-		"payment_amount":   "650",
+		"payment_amount":   "100",
 		"openid":           "oxTWIuGaIt6gTKsQRLau2M0yL16E",
 		"transfer_name":    "测试",
-		"transfer_time":    "2015-04-21 20:00:00",
-		"desc":             "福利测试",
+		"transfer_time":    "2017-07-22 20:10:15",
+		"desc":             "付款测试",
+		"sign":             "A5CC7D1D0431EE5E54B67B7F6AF84220",
 	}, r)
 }

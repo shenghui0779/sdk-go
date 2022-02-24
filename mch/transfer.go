@@ -36,7 +36,8 @@ type ParamsTransferBankCard struct {
 	Desc string // 企业付款到银行卡付款说明，即订单备注（UTF8编码，允许100个字符以内）
 }
 
-// TransferToBalance 付款到零钱【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
+// TransferToBalance 付款到零钱（需要证书）
+// 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
 func TransferToBalance(appid string, params *ParamsTransferBalance) wx.Action {
 	return wx.NewPostAction(urls.MchTransferToBalance,
 		wx.WithTLS(),
@@ -70,7 +71,7 @@ func TransferToBalance(appid string, params *ParamsTransferBalance) wx.Action {
 	)
 }
 
-// QueryTransferBalance 查询付款到零钱结果
+// QueryTransferBalance 查询付款到零钱结果（需要证书）
 func QueryTransferBalance(appid, partnerTradeNO string) wx.Action {
 	return wx.NewPostAction(urls.MchTransferBalanceOrderQuery,
 		wx.WithTLS(),
@@ -86,7 +87,8 @@ func QueryTransferBalance(appid, partnerTradeNO string) wx.Action {
 	)
 }
 
-// TransferToBankCard 付款到银行卡【注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。】
+// TransferToBankCard 付款到银行卡（需要证书）
+// 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
 func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey []byte) wx.Action {
 	return wx.NewPostAction(urls.MchTransferToBankCard,
 		wx.WithTLS(),
@@ -127,7 +129,7 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey 
 	)
 }
 
-// QueryTransferBankCard 查询付款到银行卡结果
+// QueryTransferBankCard 查询付款到银行卡结果（需要证书）
 func QueryTransferBankCard(appid, partnerTradeNO string) wx.Action {
 	return wx.NewPostAction(urls.MchTransferBankCardOrderQuery,
 		wx.WithTLS(),
@@ -142,7 +144,7 @@ func QueryTransferBankCard(appid, partnerTradeNO string) wx.Action {
 	)
 }
 
-// RSAPublicKey 获取RSA加密公钥
+// RSAPublicKey 获取RSA加密公钥（需要证书）
 func RSAPublicKey() wx.Action {
 	return wx.NewPostAction(urls.MchRSAPublicKey,
 		wx.WithTLS(),

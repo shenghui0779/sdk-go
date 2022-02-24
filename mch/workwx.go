@@ -44,7 +44,8 @@ type ParamsWorkWXTransfer struct {
 	DeviceInfo     string
 }
 
-// SendWorkWXRedpack 发放企业红包
+// SendWorkWXRedpack 发放企业红包（需要证书）
+// 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
 func SendWorkWXRedpack(appid, secret string, params *ParamsWorkWXRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackWorkWX,
 		wx.WithTLS(),
@@ -95,9 +96,9 @@ func SendWorkWXRedpack(appid, secret string, params *ParamsWorkWXRedpack) wx.Act
 	)
 }
 
-// QueryWorkWXRedpack 查询企业红包记录
+// QueryWorkWXRedpack 查询企业红包记录（需要证书）
 func QueryWorkWXRedpack(appid, billNO string) wx.Action {
-	return wx.NewPostAction(urls.MchRedpackQuery,
+	return wx.NewPostAction(urls.MchRedpackWorkWXQuery,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
 			return wx.WXML{
@@ -111,7 +112,8 @@ func QueryWorkWXRedpack(appid, billNO string) wx.Action {
 	)
 }
 
-// TransferToPocket 向员工付款
+// TransferToPocket 向员工付款（需要证书）
+// 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
 func TransferToPocket(appid, secret string, params *ParamsWorkWXTransfer) wx.Action {
 	return wx.NewPostAction(urls.MchTransferToPocket,
 		wx.WithTLS(),
@@ -170,7 +172,7 @@ func TransferToPocket(appid, secret string, params *ParamsWorkWXTransfer) wx.Act
 	)
 }
 
-// QueryTransferPocket 查询向员工付款结果
+// QueryTransferPocket 查询向员工付款结果（需要证书）
 func QueryTransferPocket(appid, partnerTradeNO string) wx.Action {
 	return wx.NewPostAction(urls.MchTransferPocketOrderQuery,
 		wx.WithTLS(),
