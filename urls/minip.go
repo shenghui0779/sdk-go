@@ -62,12 +62,12 @@ const (
 
 // subscribe
 const (
-	MinipAddTemplate                  = "https://api.weixin.qq.com/wxaapi/newtmpl/addtemplate"
-	MinipDeleteTemplate               = "https://api.weixin.qq.com/wxaapi/newtmpl/deltemplate"
-	MinipGetCategory                  = "https://api.weixin.qq.com/wxaapi/newtmpl/getcategory"
-	MinipGetetPubTemplateKeyWordsByID = "https://api.weixin.qq.com/wxaapi/newtmpl/getpubtemplatekeywords"
-	MinipGetPubTemplateTitleList      = "https://api.weixin.qq.com/wxaapi/newtmpl/getpubtemplatetitles"
-	MinipGetTemplateList              = "https://api.weixin.qq.com/wxaapi/newtmpl/gettemplate"
+	MinipSubscribeAddTemplate            = "https://api.weixin.qq.com/wxaapi/newtmpl/addtemplate"
+	MinipSubscribeDeleteTemplate         = "https://api.weixin.qq.com/wxaapi/newtmpl/deltemplate"
+	MinipSubscribeGetCategory            = "https://api.weixin.qq.com/wxaapi/newtmpl/getcategory"
+	MinipSubscribeGetPubTemplateKeyWords = "https://api.weixin.qq.com/wxaapi/newtmpl/getpubtemplatekeywords"
+	MinipSubscribeGetPubTemplateTitles   = "https://api.weixin.qq.com/wxaapi/newtmpl/getpubtemplatetitles"
+	MinipSubscribeGetTemplateList        = "https://api.weixin.qq.com/wxaapi/newtmpl/gettemplate"
 )
 
 // other

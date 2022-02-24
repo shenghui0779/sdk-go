@@ -14,7 +14,7 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-func TestAddTemplate(t *testing.T) {
+func TestAddSubscribeTemplate(t *testing.T) {
 	body := []byte(`{"tid":"401","kidList":[1,2],"sceneDesc":"测试数据"}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -35,23 +35,23 @@ func TestAddTemplate(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsTemplAdd{
+	params := &ParamsSubscribeTemplAdd{
 		TID:       "401",
 		KidList:   []int{1, 2},
 		SceneDesc: "测试数据",
 	}
 
-	result := new(ResultTemplAdd)
+	result := new(ResultSubscribeTemplAdd)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddTemplate(params, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddSubscribeTemplate(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultTemplAdd{
+	assert.Equal(t, &ResultSubscribeTemplAdd{
 		PriTmplID: "9Aw5ZV1j9xdWTFEkqCpZ7jWySL7aGN6rQom4gXINfJs",
 	}, result)
 }
 
-func TestDeleteTemplate(t *testing.T) {
+func TestDeleteSubscribeTemplate(t *testing.T) {
 	body := []byte(`{"priTmplId":"wDYzYZVxobJivW9oMpSCpuvACOfJXQIoKUm0PY397Tc"}`)
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
@@ -68,12 +68,12 @@ func TestDeleteTemplate(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteTemplate("wDYzYZVxobJivW9oMpSCpuvACOfJXQIoKUm0PY397Tc"))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteSubscribeTemplate("wDYzYZVxobJivW9oMpSCpuvACOfJXQIoKUm0PY397Tc"))
 
 	assert.Nil(t, err)
 }
 
-func TestGetCategory(t *testing.T) {
+func TestGetSubscribeCategory(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -98,13 +98,13 @@ func TestGetCategory(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultCategoryGet)
+	result := new(ResultSubscribeCategory)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetCategory(result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetSubscribeCategory(result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultCategoryGet{
-		Data: []*CategoryData{
+	assert.Equal(t, &ResultSubscribeCategory{
+		Data: []*SubscribeCategory{
 			{
 				ID:   616,
 				Name: "公交",
@@ -113,7 +113,7 @@ func TestGetCategory(t *testing.T) {
 	}, result)
 }
 
-func TestGetPubTemplateKeyWordsByID(t *testing.T) {
+func TestGetPubTemplateKeyWords(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -142,7 +142,7 @@ func TestGetPubTemplateKeyWordsByID(t *testing.T) {
 
 	result := new(ResultPubTemplKeywords)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetPubTemplateKeyWordsByID("99", result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetPubTemplateKeyWords("99", result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultPubTemplKeywords{
@@ -185,12 +185,12 @@ func TestListPubTemplateTitle(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultPubTemplTitleList)
+	result := new(ResultPubTemplTitles)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ListPubTemplateTitle("2,616", 0, 1, result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetPubTemplateTitles("2,616", 0, 1, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultPubTemplTitleList{
+	assert.Equal(t, &ResultPubTemplTitles{
 		Count: 55,
 		Data: []*PubTemplTitle{
 			{
@@ -203,7 +203,7 @@ func TestListPubTemplateTitle(t *testing.T) {
 	}, result)
 }
 
-func TestListTemplate(t *testing.T) {
+func TestListSubscribeTemplate(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,
 		Body: io.NopCloser(bytes.NewReader([]byte(`{
@@ -274,13 +274,13 @@ func TestListTemplate(t *testing.T) {
 	oa := New("APPID", "APPSECRET")
 	oa.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultTemplList)
+	result := new(ResultSubscribeTemplList)
 
-	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ListTemplate(result))
+	err := oa.Do(context.TODO(), "ACCESS_TOKEN", ListSubscribeTemplate(result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultTemplList{
-		Data: []*TemplData{
+	assert.Equal(t, &ResultSubscribeTemplList{
+		Data: []*SubscribeTemplInfo{
 			{
 				PriTmplId: "9Aw5ZV1j9xdWTFEkqCpZ7mIBbSC34khK55OtzUPl0rU",
 				Title:     "报名结果通知",

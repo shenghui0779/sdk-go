@@ -8,19 +8,19 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
-type ParamsTemplAdd struct {
+type ParamsSubscribeTemplAdd struct {
 	TID       string `json:"tid"`
 	KidList   []int  `json:"kidList"`
 	SceneDesc string `json:"sceneDesc"`
 }
 
-type ResultTemplAdd struct {
+type ResultSubscribeTemplAdd struct {
 	PriTmplID string `json:"priTmplId"`
 }
 
-// AddTemplate 订阅消息 - 组合模板并添加至帐号下的个人模板库
-func AddTemplate(params *ParamsTemplAdd, result *ResultTemplAdd) wx.Action {
-	return wx.NewPostAction(urls.MinipAddTemplate,
+// AddSubscribeTemplate 订阅消息 - 组合模板并添加至帐号下的个人模板库
+func AddSubscribeTemplate(params *ParamsSubscribeTemplAdd, result *ResultSubscribeTemplAdd) wx.Action {
+	return wx.NewPostAction(urls.MinipSubscribeAddTemplate,
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
@@ -30,35 +30,35 @@ func AddTemplate(params *ParamsTemplAdd, result *ResultTemplAdd) wx.Action {
 	)
 }
 
-type ParamsTemplDelete struct {
+type ParamsSubscribeTemplDelete struct {
 	PriTmplID string `json:"priTmplId"`
 }
 
-// DeleteTemplate 订阅消息 - 删除帐号下的个人模板
-func DeleteTemplate(templID string) wx.Action {
-	params := &ParamsTemplDelete{
-		PriTmplID: templID,
+// DeleteSubscribeTemplate 订阅消息 - 删除帐号下的个人模板
+func DeleteSubscribeTemplate(priTmplID string) wx.Action {
+	params := &ParamsSubscribeTemplDelete{
+		PriTmplID: priTmplID,
 	}
 
-	return wx.NewPostAction(urls.MinipDeleteTemplate,
+	return wx.NewPostAction(urls.MinipSubscribeDeleteTemplate,
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
 	)
 }
 
-type ResultCategoryGet struct {
-	Data []*CategoryData `json:"data"`
+type ResultSubscribeCategory struct {
+	Data []*SubscribeCategory `json:"data"`
 }
 
-type CategoryData struct {
+type SubscribeCategory struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
-// GetCategory 订阅消息 - 获取小程序账号的类目
-func GetCategory(result *ResultCategoryGet) wx.Action {
-	return wx.NewGetAction(urls.MinipGetCategory,
+// GetSubscribeCategory 订阅消息 - 获取小程序账号的类目
+func GetSubscribeCategory(result *ResultSubscribeCategory) wx.Action {
+	return wx.NewGetAction(urls.MinipSubscribeGetCategory,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
@@ -76,9 +76,9 @@ type PubTemplKeywords struct {
 	Rule    string `json:"rule"`
 }
 
-// GetPubTemplateKeyWordsByID 订阅消息 - 获取模板标题下的关键词列表
-func GetPubTemplateKeyWordsByID(tid string, result *ResultPubTemplKeywords) wx.Action {
-	return wx.NewGetAction(urls.MinipGetetPubTemplateKeyWordsByID,
+// GetPubTemplateKeyWords 订阅消息 - 获取模板标题下的关键词列表
+func GetPubTemplateKeyWords(tid string, result *ResultPubTemplKeywords) wx.Action {
+	return wx.NewGetAction(urls.MinipSubscribeGetPubTemplateKeyWords,
 		wx.WithQuery("tid", tid),
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
@@ -86,7 +86,7 @@ func GetPubTemplateKeyWordsByID(tid string, result *ResultPubTemplKeywords) wx.A
 	)
 }
 
-type ResultPubTemplTitleList struct {
+type ResultPubTemplTitles struct {
 	Count int              `json:"count"`
 	Data  []*PubTemplTitle `json:"data"`
 }
@@ -98,9 +98,9 @@ type PubTemplTitle struct {
 	CategoryID int64  `json:"categoryId"`
 }
 
-// ListPubTemplateTitle 订阅消息 - 获取帐号所属类目下的公共模板标题（多个类目id用逗号隔开）
-func ListPubTemplateTitle(ids string, start, limit int, result *ResultPubTemplTitleList) wx.Action {
-	return wx.NewGetAction(urls.MinipGetPubTemplateTitleList,
+// GetPubTemplateTitles 订阅消息 - 获取帐号所属类目下的公共模板标题（多个类目id用逗号隔开）
+func GetPubTemplateTitles(ids string, start, limit int, result *ResultPubTemplTitles) wx.Action {
+	return wx.NewGetAction(urls.MinipSubscribeGetPubTemplateTitles,
 		wx.WithQuery("ids", ids),
 		wx.WithQuery("start", strconv.Itoa(start)),
 		wx.WithQuery("limit", strconv.Itoa(limit)),
@@ -110,11 +110,11 @@ func ListPubTemplateTitle(ids string, start, limit int, result *ResultPubTemplTi
 	)
 }
 
-type ResultTemplList struct {
-	Data []*TemplData `json:"data"`
+type ResultSubscribeTemplList struct {
+	Data []*SubscribeTemplInfo `json:"data"`
 }
 
-type TemplData struct {
+type SubscribeTemplInfo struct {
 	PriTmplId            string              `json:"priTmplId"`
 	Title                string              `json:"title"`
 	Content              string              `json:"content"`
@@ -128,9 +128,9 @@ type KeywordEnumValue struct {
 	KeywordCode   string   `json:"keywordCode"`
 }
 
-// ListTemplate 订阅消息 - 获取当前帐号下的个人模板列表
-func ListTemplate(result *ResultTemplList) wx.Action {
-	return wx.NewGetAction(urls.MinipGetTemplateList,
+// ListSubscribeTemplate 订阅消息 - 获取当前帐号下的个人模板列表
+func ListSubscribeTemplate(result *ResultSubscribeTemplList) wx.Action {
+	return wx.NewGetAction(urls.MinipSubscribeGetTemplateList,
 		wx.WithDecode(func(resp []byte) error {
 			return json.Unmarshal(resp, result)
 		}),
