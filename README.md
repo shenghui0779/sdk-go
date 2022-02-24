@@ -52,7 +52,7 @@ action := mch.UnifyOrder("appid", &mch.ParamsUnifyOrder{...})
 result, err := pay.Do(ctx, action)
 
 if err != nil {
-    fmt.Println(err)
+    log.Println(err)
 
     return
 }
@@ -88,7 +88,7 @@ fmt.Println(url)
 result, err := oa.Code2OAuthToken(ctx, "code")
 
 if err != nil {
-    fmt.Println(err)
+    log.Println(err)
 
     return
 }
@@ -100,7 +100,7 @@ fmt.Println(result)
 result, err := oa.AccessToken(ctx)
 
 if err != nil {
-    fmt.Println(err)
+    log.Println(err)
 
     return
 }
@@ -113,7 +113,7 @@ result := new(ResultUserList)
 action := offia.GetUserList("nextOpenID", result)
 
 if err := oa.Do(ctx, action); err != nil {
-    fmt.Println(err)
+    log.Println(err)
 
     return
 }
