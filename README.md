@@ -25,7 +25,7 @@ go get -u github.com/shenghui0779/gochat
 ## 使用须知
 
 - 微信API被封装成 `Action` 接口（授权 和 AccessToken 的部分API除外）
-- 每个API对应一个返回 `Action` 的方法，统一由 `Do` 方法执行，返回结果以 `Result` 为前缀的结构体指针接收
+- 每个API对应一个 `Action`，统一由 `Do` 方法执行，返回结果以 `Result` 为前缀的结构体指针接收
 - 对于微信通知的事件消息，提供了三个方法：
   - 验签 - `VerifyEventSign`
   - 解密 - `DecryptEventMessage`
