@@ -52,7 +52,7 @@ func (corp *Corp) OAuth2URL(scope AuthScope, redirectURL, state string) string {
 	return fmt.Sprintf("%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect", urls.Oauth2Authorize, corp.corpid, redirectURL, scope, state)
 }
 
-// QRCodeAuthURL 扫码授权URL（请使用 URLEncode 对 redirectURL 进行处理）
+// QRCodeAuthURL 生成扫码授权URL（请使用 URLEncode 对 redirectURL 进行处理）
 // [参考](https://open.work.weixin.qq.com/api/doc/90000/90135/90988)
 func (corp *Corp) QRCodeAuthURL(agentID, redirectURL, state string) string {
 	return fmt.Sprintf("%s?appid=%s&agentid=%s&redirect_uri=%s&state=%s", urls.QRCodeAuthorize, corp.corpid, agentID, redirectURL, state)
