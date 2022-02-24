@@ -41,7 +41,7 @@ import (
     "github.com/shenghui0779/gochat/mch"
 )
 
-// 创建商户
+// 创建实例
 pay := gochat.NewMch("mchid", "apikey", tls.Certificate...)
 
 // 统一下单
