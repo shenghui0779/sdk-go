@@ -4,12 +4,12 @@
 
 📦 微信 Go SDK
 
-| 目录   | 对应                            | 功能                                                      |
-| ------ | ------------------------------- | --------------------------------------------------------- |
-| /mch   | 微信支付.v2（普通商户直连模式） | 下单、支付、退款、查询、委托代扣、企业付款、企业红包 等   |
-| /offia | 微信公众号（Official Accounts） | 网页授权、用户管理、模板消息、菜单管理、客服、事件消息 等 |
-| /minip | 微信小程序（Mini Program）      | 小程序授权、数据解密、二维码、消息发送、事件消息 等       |
-| /corp  | 企业微信小程序（Work Wechat）   | 支持几乎全部服务端API                                     |
+| 目录   | 对应                            | 功能                                                                          |
+| ------ | ------------------------------- | ----------------------------------------------------------------------------- |
+| /mch   | 微信支付.v2（普通商户直连模式） | 下单、支付、退款、查询、委托代扣、红包、企业付款、账单、解密、验签 等         |
+| /offia | 微信公众号（Official Accounts） | 网页授权、用户、消息、素材、菜单、发布能力、草稿箱、客服、二维码、事件处理 等 |
+| /minip | 微信小程序（Mini Program）      | 授权、解密、二维码、消息、素材、插件、URL Scheme、URL Link、OCR、事件处理 等  |
+| /corp  | 企业微信小程序（Work Wechat）   | 支持几乎全部服务端API                                                         |
 
 ## 获取
 
@@ -22,7 +22,10 @@ go get -u github.com/shenghui0779/gochat
 - 微信API被封装成 `Action` 接口（授权 和 AccessToken 等部分API除外）
 - 每个API对应一个 `Action`，统一由 `Do` 方法执行
 - 除支付（mch）外，返回结果均以 `Result` 为前缀的结构体指针接收
-- 对于微信通知的事件消息，提供了三个方法：
+- 对于微信支付的回调通知处理，提供了两个方法：
+  - 验签 - `VerifyWXMLResult`
+  - 解密 - `DecryptWithAES256ECB` (退款)
+- 对于微信通知的事件消息处理，提供了三个方法：
   - 验签 - `VerifyEventSign`
   - 解密 - `DecryptEventMessage`
   - 回复 - `Reply`
@@ -55,6 +58,17 @@ if err != nil {
 }
 
 fmt.Println(result)
+
+// --------- 拉起支付 ---------------------
+
+// APP支付
+pay.APPAPI("appid", "prepayID")
+
+// JSAPI/小程序支付
+pay.JSAPI("appid", "prepayID")
+
+// 小程序红包
+pay.MinipRedpackJSAPI("appid", "package")
 ```
 
 ## 公众号
