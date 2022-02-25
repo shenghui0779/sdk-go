@@ -25,13 +25,14 @@ go get -u github.com/shenghui0779/gochat
 ## 使用须知
 
 - 微信API被封装成 `Action` 接口（授权 和 AccessToken 等部分API除外）
-- 每个API对应一个 `Action`，统一由 `Do` 方法执行，返回结果以 `Result` 为前缀的结构体指针接收
+- 每个API对应一个 `Action`，统一由 `Do` 方法执行
+- 除支付（mch）外，返回结果均以 `Result` 为前缀的结构体指针接收
 - 对于微信通知的事件消息，提供了三个方法：
   - 验签 - `VerifyEventSign`
   - 解密 - `DecryptEventMessage`
   - 回复 - `Reply`
 - 企业微信按照不同功能模块划分了相应的目录，根据URL可以找到对应的目录和文件
-- 由于开发者账号限制，所有API均采用Mock单元测试（Mock数据来源于官方文档，如遇问题，欢迎提[Issue](https://github.com/shenghui0779/gochat/issues)）
+- 所有API均采用Mock单元测试（Mock数据来源于官方文档，如遇问题，欢迎提[Issue](https://github.com/shenghui0779/gochat/issues)）
 
 ## 支付.v2
 
