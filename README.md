@@ -25,7 +25,7 @@ go get -u github.com/shenghui0779/gochat
 - 对于微信支付的回调通知处理，提供了两个方法：
   - 验签 - `VerifyWXMLResult`
   - 解密 - `DecryptWithAES256ECB` (退款)
-- 对于微信通知的事件消息处理，提供了三个方法：
+- 对于微信推送的事件消息处理，提供了三个方法：
   - 验签 - `VerifyEventSign`
   - 解密 - `DecryptEventMessage`
   - 回复 - `Reply`
