@@ -159,7 +159,7 @@ oa.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
 result, err := oa.Code2Session(ctx, "code")
 
 if err != nil {
-    fmt.Println(err)
+    log.Println(err)
 
     return
 }
@@ -171,7 +171,7 @@ fmt.Println(result)
 result, err := oa.AccessToken(ctx)
 
 if err != nil {
-    fmt.Println(err)
+    log.Println(err)
 
     return
 }
@@ -240,7 +240,7 @@ fmt.Println(url)
 result, err := cp.AccessToken(ctx, "secret")
 
 if err != nil {
-    fmt.Println(err)
+    log.Println(err)
 
     return
 }
@@ -253,7 +253,7 @@ result := new(addrbook.ResultDepartmentList)
 action := addrbook.ListDepartment(0, result)
 
 if err := cp.Do(ctx, action); err != nil {
-    fmt.Println(err)
+    log.Println(err)
 
     return
 }
