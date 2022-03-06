@@ -155,3 +155,202 @@ func TestTransferMinipSession(t *testing.T) {
 		SessionKey: "DGAuy2KVaGcnsUrXk8ERgw==",
 	}, result)
 }
+
+func TestListChain(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"chains": [
+		{
+			"chain_id": "chainid1",
+			"chain_name": "能源供应链"
+		},
+		{
+			"chain_id": "chainid2",
+			"chain_name": "原材料供应链"
+		}
+	]
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/get_chain_list?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
+
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultChainList)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListChain(result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultChainList{
+		Chains: []*Chain{
+			{
+				ChainID:   "chainid1",
+				ChainName: "能源供应链",
+			},
+			{
+				ChainID:   "chainid2",
+				ChainName: "原材料供应链",
+			},
+		},
+	}, result)
+}
+
+func TestGetChainGroup(t *testing.T) {
+	body := []byte(`{"chain_id":"Chxxxxxx"}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"groups": [
+		{
+			"groupid": 2,
+			"group_name": "一级经销商",
+			"parentid": 1,
+			"order": 1
+		},
+		{
+			"groupid": 3,
+			"group_name": "二级经销商",
+			"parentid": 2,
+			"order": 3
+		}
+	]
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/get_chain_group?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultChainGroup)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetChainGroup("Chxxxxxx", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultChainGroup{
+		Groups: []*ChainGroup{
+			{
+				GroupID:   2,
+				GroupName: "一级经销商",
+				ParentID:  1,
+				Order:     1,
+			},
+			{
+				GroupID:   3,
+				GroupName: "二级经销商",
+				ParentID:  2,
+				Order:     3,
+			},
+		},
+	}, result)
+}
+
+func TestListChainCorpInfo(t *testing.T) {
+	body := []byte(`{"chain_id":"Chxxxxxx","groupid":1,"fetch_child":1}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"group_corps": [
+		{
+			"groupid": 2,
+			"corpid": "wwxxxx",
+			"corp_name": "美馨粮油公司",
+			"custom_id": "wof3du51quo5sl1is"
+		}
+	]
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/get_chain_corpinfo_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultChainCorpInfoList)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", ListChainCorpInfo("Chxxxxxx", 1, 1, result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultChainCorpInfoList{
+		GroupCorps: []*ChainGroupCorp{
+			{
+				GroupID:  2,
+				CorpID:   "wwxxxx",
+				CorpName: "美馨粮油公司",
+				CustomID: "wof3du51quo5sl1is",
+			},
+		},
+	}, result)
+}
+
+func TestUnionIDToExternalUserID(t *testing.T) {
+	body := []byte(`{"unionid":"xxxxx","openid":"xxxxx","corpid":"xxxxx"}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"external_userid_info": [
+		{
+			"corpid": "AAAAA",
+			"external_userid": "BBBB"
+		},
+		{
+			"corpid": "CCCCC",
+			"external_userid": "DDDDD"
+		}
+	]
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/unionid_to_external_userid?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultUnionIDToExternalUserID)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UnionIDToExternalUserID("xxxxx", "xxxxx", "xxxxx", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultUnionIDToExternalUserID{
+		ExternalUserIDInfo: []*ExternalUserIDInfo{
+			{
+				CorpID:         "AAAAA",
+				ExternalUserID: "BBBB",
+			},
+			{
+				CorpID:         "CCCCC",
+				ExternalUserID: "DDDDD",
+			},
+		},
+	}, result)
+}

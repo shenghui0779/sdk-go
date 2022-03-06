@@ -281,9 +281,13 @@ const (
 
 // cropgroup
 const (
-	CorpGroupListAppShareInfo     = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/list_app_share_info"
-	CorpGroupGetAccessToken       = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/gettoken"
-	CorpGroupMinipTransferSession = "https://qyapi.weixin.qq.com/cgi-bin/miniprogram/transfer_session"
+	CorpGroupListAppShareInfo        = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/list_app_share_info"
+	CorpGroupGetAccessToken          = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/gettoken"
+	CorpGroupMinipTransferSession    = "https://qyapi.weixin.qq.com/cgi-bin/miniprogram/transfer_session"
+	CorpGroupGetChainList            = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/get_chain_list"
+	CorpGroupGetChainGroup           = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/get_chain_group"
+	CorpGroupGetChainCorpInfoList    = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/get_chain_corpinfo_list"
+	CorpGroupUnionIDToExternalUserID = "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/unionid_to_external_userid"
 )
 
 // msgaudit
