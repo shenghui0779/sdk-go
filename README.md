@@ -269,7 +269,8 @@ fmt.Println(result)
 
 **Enjoy 😊**
 
-### 赏一杯咖啡吧 ^_^
+## Donate
+
+如果本仓库对你有帮助，可以请作者喝杯速溶咖啡
 
 ![pay](https://cdn.jsdelivr.net/gh/iiinsomnia/images/5812c1aebe24192ee6ce749798035d26.png)
-
