@@ -149,14 +149,6 @@ func (l *wxlogger) Log(ctx context.Context, data *LogData) {
 	l.zlog.Info("[gochat] action info", fields...)
 }
 
-// NewLogger returns new logger
-func NewLogger(cfg *LoggerConfig, fn LogFn) Logger {
-	return &wxlogger{
-		zlog:  newLogger(cfg),
-		logFn: fn,
-	}
-}
-
 // DefaultLogger returns default logger
 func DefaultLogger() Logger {
 	return &wxlogger{
