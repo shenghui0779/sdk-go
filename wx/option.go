@@ -11,12 +11,9 @@ func WithHTTPClient(client HTTPClient) ClientOption {
 }
 
 // WithLogger sets logger for wechat client.
-func WithLogger(cfg *LoggerConfig, fn LogFn) ClientOption {
+func WithLogger(logger Logger) ClientOption {
 	return func(c *wxclient) {
-		c.logger = &wxlogger{
-			zlog:  newLogger(cfg),
-			logFn: fn,
-		}
+		c.logger = logger
 	}
 }
 

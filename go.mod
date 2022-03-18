@@ -9,11 +9,9 @@ require (
 	github.com/tidwall/pretty v1.2.0
 	go.uber.org/zap v1.21.0
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
 require (
-	github.com/BurntSushi/toml v1.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
