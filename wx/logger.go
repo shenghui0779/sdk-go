@@ -5,10 +5,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/natefinch/lumberjack"
 	"github.com/tidwall/pretty"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 // LoggerConfig keeps the settings to configure logger.

@@ -4,12 +4,12 @@ go 1.17
 
 require (
 	github.com/golang/mock v1.6.0
-	github.com/natefinch/lumberjack v2.0.0+incompatible
-	github.com/stretchr/testify v1.7.1-0.20210427113832-6241f9ab9942
+	github.com/stretchr/testify v1.7.1
 	github.com/tidwall/gjson v1.14.0
 	github.com/tidwall/pretty v1.2.0
 	go.uber.org/zap v1.21.0
-	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
+	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
 require (
@@ -18,11 +18,10 @@ require (
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/rogpeppe/go-internal v1.8.0 // indirect
+	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
