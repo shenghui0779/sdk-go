@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/event"
@@ -58,7 +57,7 @@ func (corp *Corp) QRCodeAuthURL(agentID, redirectURL, state string) string {
 	return fmt.Sprintf("%s?appid=%s&agentid=%s&redirect_uri=%s&state=%s", urls.QRCodeAuthorize, corp.corpid, agentID, redirectURL, state)
 }
 
-func (corp *Corp) AccessToken(ctx context.Context, secret string, options ...yiigo.HTTPOption) (*AccessToken, error) {
+func (corp *Corp) AccessToken(ctx context.Context, secret string, options ...wx.HTTPOption) (*AccessToken, error) {
 	resp, err := corp.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?corpid=%s&corpsecret=%s", urls.CorpCgiBinAccessToken, corp.corpid, secret), nil, options...)
 
 	if err != nil {
@@ -81,7 +80,7 @@ func (corp *Corp) AccessToken(ctx context.Context, secret string, options ...yii
 }
 
 // Do exec action
-func (corp *Corp) Do(ctx context.Context, accessToken string, action wx.Action, options ...yiigo.HTTPOption) error {
+func (corp *Corp) Do(ctx context.Context, accessToken string, action wx.Action, options ...wx.HTTPOption) error {
 	var (
 		resp []byte
 		err  error

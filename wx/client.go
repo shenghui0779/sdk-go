@@ -9,29 +9,27 @@ import (
 	"net"
 	"net/http"
 	"time"
-
-	"github.com/shenghui0779/yiigo"
 )
 
 // Client is the interface that do http request
 type Client interface {
 	// Post sends an HTTP post request
-	Do(ctx context.Context, method, reqURL string, body []byte, options ...yiigo.HTTPOption) ([]byte, error)
+	Do(ctx context.Context, method, reqURL string, body []byte, options ...HTTPOption) ([]byte, error)
 
 	// Upload sends an HTTP post request for uploading media
-	Upload(ctx context.Context, reqURL string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error)
+	Upload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) ([]byte, error)
 
 	// Set sets options for client
 	Set(options ...ClientOption)
 }
 
 type wxclient struct {
-	client yiigo.HTTPClient
+	client HTTPClient
 	logger Logger
 	debug  bool
 }
 
-func (c *wxclient) Do(ctx context.Context, method, reqURL string, body []byte, options ...yiigo.HTTPOption) ([]byte, error) {
+func (c *wxclient) Do(ctx context.Context, method, reqURL string, body []byte, options ...HTTPOption) ([]byte, error) {
 	logData := &LogData{
 		URL:    reqURL,
 		Method: method,
@@ -79,7 +77,7 @@ func (c *wxclient) Do(ctx context.Context, method, reqURL string, body []byte, o
 	return b, nil
 }
 
-func (c *wxclient) Upload(ctx context.Context, reqURL string, form yiigo.UploadForm, options ...yiigo.HTTPOption) ([]byte, error) {
+func (c *wxclient) Upload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) ([]byte, error) {
 	logData := &LogData{
 		URL:    reqURL,
 		Method: http.MethodPost,
@@ -160,7 +158,7 @@ func DefaultClient(certs ...tls.Certificate) Client {
 	}
 
 	return &wxclient{
-		client: yiigo.NewHTTPClient(client),
+		client: NewHTTPClient(client),
 		logger: DefaultLogger(),
 	}
 }

@@ -3,8 +3,6 @@ package minip
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -46,14 +44,14 @@ func ApplyPlugin(pluginAppID, reason string) wx.Action {
 
 // PluginDevApplyInfo 插件使用方信息
 type PluginDevApplyInfo struct {
-	AppID      string    `json:"appid"`       // 使用者的appid
-	Status     int       `json:"status"`      // 插件状态
-	Nickname   string    `json:"nickname"`    // 使用者的昵称
-	HeadImgURL string    `json:"headimgurl"`  // 使用者的头像
-	Categories []yiigo.X `json:"categories"`  // 使用者的类目
-	CreateTime string    `json:"create_time"` // 使用者的申请时间
-	ApplyURL   string    `json:"apply_url"`   // 使用者的小程序码
-	Reason     string    `json:"reason"`      // 使用者的申请说明
+	AppID      string `json:"appid"`       // 使用者的appid
+	Status     int    `json:"status"`      // 插件状态
+	Nickname   string `json:"nickname"`    // 使用者的昵称
+	HeadImgURL string `json:"headimgurl"`  // 使用者的头像
+	Categories []wx.M `json:"categories"`  // 使用者的类目
+	CreateTime string `json:"create_time"` // 使用者的申请时间
+	ApplyURL   string `json:"apply_url"`   // 使用者的小程序码
+	Reason     string `json:"reason"`      // 使用者的申请说明
 }
 
 type ParamsPluginDevApplyList struct {

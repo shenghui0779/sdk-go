@@ -3,18 +3,16 @@ package minip
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
 // ParamsServiceInvoke 服务调用参数
 type ParamsServiceInvoke struct {
-	Service     string  `json:"service"`       // 服务ID
-	API         string  `json:"api"`           // 接口名
-	Data        yiigo.X `json:"data"`          // 服务提供方接口定义的 JSON 格式的数据
-	ClientMsgID string  `json:"client_msg_id"` // 随机字符串ID，调用方请求的唯一标识
+	Service     string `json:"service"`       // 服务ID
+	API         string `json:"api"`           // 接口名
+	Data        wx.M   `json:"data"`          // 服务提供方接口定义的 JSON 格式的数据
+	ClientMsgID string `json:"client_msg_id"` // 随机字符串ID，调用方请求的唯一标识
 }
 
 // ResultServiceInvoke 服务调用结果

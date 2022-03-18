@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/corp"
@@ -33,7 +32,7 @@ func TestUploadAttachment(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/upload_attachment?access_token=ACCESS_TOKEN&attachment_type=1&media_type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/upload_attachment?access_token=ACCESS_TOKEN&attachment_type=1&media_type=image", gomock.AssignableToTypeOf(wx.NewUploadForm())).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
@@ -67,7 +66,7 @@ func TestUploadAttachmentByURL(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/upload_attachment?access_token=ACCESS_TOKEN&attachment_type=1&media_type=image", gomock.AssignableToTypeOf(yiigo.NewUploadForm())).Return(resp, nil)
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/upload_attachment?access_token=ACCESS_TOKEN&attachment_type=1&media_type=image", gomock.AssignableToTypeOf(wx.NewUploadForm())).Return(resp, nil)
 
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))

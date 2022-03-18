@@ -2,7 +2,10 @@ package wx
 
 import (
 	"bytes"
+	"crypto/hmac"
+	"crypto/md5"
 	"crypto/rand"
+	"crypto/sha256"
 	"crypto/tls"
 	"encoding/hex"
 	"encoding/json"
@@ -16,6 +19,9 @@ import (
 
 	"golang.org/x/crypto/pkcs12"
 )
+
+// M is a convenient alias for a map[string]interface{}.
+type M map[string]interface{}
 
 // WXML deal with xml for wechat
 type WXML map[string]string
@@ -36,6 +42,23 @@ func Nonce(size uint) string {
 	io.ReadFull(rand.Reader, nonce)
 
 	return hex.EncodeToString(nonce)
+}
+
+// MD5 calculates the md5 hash of a string.
+func MD5(s string) string {
+	h := md5.New()
+	h.Write([]byte(s))
+
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+// HMacSHA256 generates a keyed SHA256 hash value.
+func HMacSHA256(s, key string) string {
+	mac := hmac.New(sha256.New, []byte(key))
+
+	mac.Write([]byte(s))
+
+	return hex.EncodeToString(mac.Sum(nil))
 }
 
 // FormatMap2XML format map to xml

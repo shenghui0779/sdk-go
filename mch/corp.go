@@ -7,7 +7,6 @@ import (
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/shenghui0779/yiigo"
 )
 
 // ParamsCorpRedpack 企业红包参数
@@ -73,7 +72,7 @@ func SendCorpRedpack(appid, secret string, params *ParamsCorpRedpack) wx.Action 
 				secret,
 			)
 
-			body["workwx_sign"] = strings.ToUpper(yiigo.MD5(signStr))
+			body["workwx_sign"] = strings.ToUpper(wx.MD5(signStr))
 
 			if params.AgentID != 0 {
 				body["agentid"] = strconv.FormatInt(params.AgentID, 10)
@@ -145,7 +144,7 @@ func TransferToPocket(appid, secret string, params *ParamsCorpTransfer) wx.Actio
 				secret,
 			)
 
-			body["workwx_sign"] = strings.ToUpper(yiigo.MD5(signStr))
+			body["workwx_sign"] = strings.ToUpper(wx.MD5(signStr))
 
 			if params.AgentID != 0 {
 				body["agentid"] = strconv.FormatInt(params.AgentID, 10)

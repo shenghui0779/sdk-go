@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/shenghui0779/yiigo"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/gochat/event"
@@ -90,7 +89,7 @@ func (oa *Offia) SubscribeMsgAuthURL(scene, templateID, redirectURL, reserved st
 }
 
 // Code2OAuthToken 获取网页授权Token
-func (oa *Offia) Code2OAuthToken(ctx context.Context, code string, options ...yiigo.HTTPOption) (*OAuthToken, error) {
+func (oa *Offia) Code2OAuthToken(ctx context.Context, code string, options ...wx.HTTPOption) (*OAuthToken, error) {
 	resp, err := oa.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code", urls.OffiaSnsCode2Token, oa.appid, oa.appsecret, code), nil, options...)
 
 	if err != nil {
@@ -113,7 +112,7 @@ func (oa *Offia) Code2OAuthToken(ctx context.Context, code string, options ...yi
 }
 
 // RefreshOAuthToken 刷新网页授权AccessToken
-func (oa *Offia) RefreshOAuthToken(ctx context.Context, refreshToken string, options ...yiigo.HTTPOption) (*OAuthToken, error) {
+func (oa *Offia) RefreshOAuthToken(ctx context.Context, refreshToken string, options ...wx.HTTPOption) (*OAuthToken, error) {
 	resp, err := oa.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?appid=%s&grant_type=refresh_token&refresh_token=%s", urls.OffiaSnsRefreshAccessToken, oa.appid, refreshToken), nil, options...)
 
 	if err != nil {
@@ -136,7 +135,7 @@ func (oa *Offia) RefreshOAuthToken(ctx context.Context, refreshToken string, opt
 }
 
 // AccessToken 获取普通AccessToken
-func (oa *Offia) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (*AccessToken, error) {
+func (oa *Offia) AccessToken(ctx context.Context, options ...wx.HTTPOption) (*AccessToken, error) {
 	resp, err := oa.client.Do(ctx, http.MethodGet, fmt.Sprintf("%s?grant_type=client_credential&appid=%s&secret=%s", urls.OffiaCgiBinAccessToken, oa.appid, oa.appsecret), nil, options...)
 
 	if err != nil {
@@ -159,7 +158,7 @@ func (oa *Offia) AccessToken(ctx context.Context, options ...yiigo.HTTPOption) (
 }
 
 // Do exec action
-func (oa *Offia) Do(ctx context.Context, accessToken string, action wx.Action, options ...yiigo.HTTPOption) error {
+func (oa *Offia) Do(ctx context.Context, accessToken string, action wx.Action, options ...wx.HTTPOption) error {
 	var (
 		resp []byte
 		err  error

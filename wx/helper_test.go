@@ -3,7 +3,6 @@ package wx
 import (
 	"testing"
 
-	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,7 +34,7 @@ func TestUint32Bytes(t *testing.T) {
 }
 
 func TestMarshalNoEscapeHTML(t *testing.T) {
-	b, err := MarshalNoEscapeHTML(yiigo.X{
+	b, err := MarshalNoEscapeHTML(M{
 		"action":   "long2short",
 		"long_url": "http://wap.koudaitong.com/v2/showcase/goods?alias=128wi9shh&spm=h56083&redirect_count=1",
 	})

@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -40,7 +38,7 @@ func OCRIDCardFront(mode OCRMode, imgPath string, result *ResultIDCardFrontOCR) 
 
 	return wx.NewPostAction(urls.OffiaOCRIDCard,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -53,8 +51,8 @@ func OCRIDCardFront(mode OCRMode, imgPath string, result *ResultIDCardFrontOCR) 
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("img", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("img", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -85,7 +83,7 @@ func OCRIDCardBack(mode OCRMode, imgPath string, result *ResultIDCardBackOCR) wx
 
 	return wx.NewPostAction(urls.OffiaOCRIDCard,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -98,8 +96,8 @@ func OCRIDCardBack(mode OCRMode, imgPath string, result *ResultIDCardBackOCR) wx
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("img", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("img", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -130,7 +128,7 @@ func OCRBankCard(mode OCRMode, imgPath string, result *ResultBankCardOCR) wx.Act
 
 	return wx.NewPostAction(urls.OffiaOCRBankCard,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -143,8 +141,8 @@ func OCRBankCard(mode OCRMode, imgPath string, result *ResultBankCardOCR) wx.Act
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("img", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("img", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -175,7 +173,7 @@ func OCRPlateNumber(mode OCRMode, imgPath string, result *ResultPlateNumberOCR) 
 
 	return wx.NewPostAction(urls.OffiaOCRPlateNumber,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -188,8 +186,8 @@ func OCRPlateNumber(mode OCRMode, imgPath string, result *ResultPlateNumberOCR) 
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("img", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("img", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -230,7 +228,7 @@ func OCRDriverLicense(mode OCRMode, imgPath string, result *ResultDriverLicenseO
 
 	return wx.NewPostAction(urls.OffiaOCRDriverLicense,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -243,8 +241,8 @@ func OCRDriverLicense(mode OCRMode, imgPath string, result *ResultDriverLicenseO
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("img", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("img", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -292,7 +290,7 @@ func OCRVehicleLicense(mode OCRMode, imgPath string, result *ResultVehicleLicens
 
 	return wx.NewPostAction(urls.OffiaOCRVehicleLicense,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -305,8 +303,8 @@ func OCRVehicleLicense(mode OCRMode, imgPath string, result *ResultVehicleLicens
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("img", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("img", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -350,7 +348,7 @@ func OCRBusinessLicense(mode OCRMode, imgPath string, result *ResultBusinessLice
 
 	return wx.NewPostAction(urls.OffiaOCRBusinessLicense,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -363,8 +361,8 @@ func OCRBusinessLicense(mode OCRMode, imgPath string, result *ResultBusinessLice
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("img", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("img", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -402,7 +400,7 @@ func OCRComm(mode OCRMode, imgPath string, result *ResultCommOCR) wx.Action {
 
 	return wx.NewPostAction(urls.OffiaOCRComm,
 		wx.WithQuery("type", string(mode)),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -415,8 +413,8 @@ func OCRComm(mode OCRMode, imgPath string, result *ResultCommOCR) wx.Action {
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("img", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("img", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {

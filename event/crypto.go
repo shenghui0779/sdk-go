@@ -5,8 +5,6 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/wx"
 )
 
@@ -28,7 +26,7 @@ func Encrypt(receiveid, encodingAESKey, nonce string, plainText []byte) ([]byte,
 	copy(encryptData[20:], plainText)
 	copy(encryptData[appidOffset:], receiveid)
 
-	cbc := yiigo.NewCBCCrypto(key, key[:aes.BlockSize], yiigo.PKCS7)
+	cbc := wx.NewCBCCrypto(key, key[:aes.BlockSize], wx.PKCS7)
 	cipherText, err := cbc.Encrypt(encryptData)
 
 	if err != nil {
@@ -52,7 +50,7 @@ func Decrypt(receiveid, encodingAESKey, cipherText string) ([]byte, error) {
 		return nil, err
 	}
 
-	cbc := yiigo.NewCBCCrypto(key, key[:aes.BlockSize], yiigo.PKCS7)
+	cbc := wx.NewCBCCrypto(key, key[:aes.BlockSize], wx.PKCS7)
 	plainText, err := cbc.Decrypt(decryptData)
 
 	if err != nil {

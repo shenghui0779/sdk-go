@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -41,7 +39,7 @@ func UploadAttachment(mediaType MediaType, attachmentType AttachmentType, attach
 	return wx.NewPostAction(urls.CorpExternalContactUploadAttachment,
 		wx.WithQuery("media_type", string(mediaType)),
 		wx.WithQuery("attachment_type", strconv.Itoa(int(attachmentType))),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(attachmentPath))
 
 			if err != nil {
@@ -54,8 +52,8 @@ func UploadAttachment(mediaType MediaType, attachmentType AttachmentType, attach
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -69,8 +67,8 @@ func UploadAttachmentByURL(mediaType MediaType, attachmentType AttachmentType, f
 	return wx.NewPostAction(urls.CorpExternalContactUploadAttachment,
 		wx.WithQuery("media_type", string(mediaType)),
 		wx.WithQuery("attachment_type", strconv.Itoa(int(attachmentType))),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			resp, err := yiigo.HTTPGet(context.Background(), url)
+		wx.WithUpload(func() (wx.UploadForm, error) {
+			resp, err := wx.HTTPGet(context.Background(), url)
 
 			if err != nil {
 				return nil, err
@@ -84,8 +82,8 @@ func UploadAttachmentByURL(mediaType MediaType, attachmentType AttachmentType, f
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {

@@ -4,8 +4,6 @@ import (
 	"encoding/base64"
 	"strconv"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -103,7 +101,7 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey 
 			}
 
 			// 收款方银行卡号加密
-			b, err := yiigo.RSAEncryptOEAP([]byte(params.EncBankNO), publicKey)
+			b, err := wx.RSAEncryptOEAP([]byte(params.EncBankNO), publicKey)
 
 			if err != nil {
 				return nil, err
@@ -112,7 +110,7 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey 
 			body["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
 
 			// 收款方用户名加密
-			b, err = yiigo.RSAEncryptOEAP([]byte(params.EncTrueName), publicKey)
+			b, err = wx.RSAEncryptOEAP([]byte(params.EncTrueName), publicKey)
 
 			if err != nil {
 				return nil, err

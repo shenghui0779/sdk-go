@@ -1,21 +1,19 @@
 package wx
 
-import "github.com/shenghui0779/yiigo"
-
 // ClientOption configures how we set up the wechat client.
 type ClientOption func(c *wxclient)
 
 // WithHTTPClient sets http client for wechat client.
-func WithHTTPClient(client yiigo.HTTPClient) ClientOption {
+func WithHTTPClient(client HTTPClient) ClientOption {
 	return func(c *wxclient) {
 		c.client = client
 	}
 }
 
 // WithLogger sets logger for wechat client.
-func WithLogger(logger Logger) ClientOption {
+func WithLogger(cfg *LoggerConfig, fn LogFn) ClientOption {
 	return func(c *wxclient) {
-		c.logger = logger
+		c.logger = NewLogger(cfg, fn)
 	}
 }
 
@@ -51,7 +49,7 @@ func WithWXML(f func(mchid, nonce string) (WXML, error)) ActionOption {
 }
 
 // WithUpload sets uploadform for action.
-func WithUpload(f func() (yiigo.UploadForm, error)) ActionOption {
+func WithUpload(f func() (UploadForm, error)) ActionOption {
 	return func(a *action) {
 		a.upload = true
 		a.uploadform = f

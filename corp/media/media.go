@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -33,7 +31,7 @@ func Upload(mediaType MediaType, mediaPath string, result *ResultUpload) wx.Acti
 
 	return wx.NewPostAction(urls.CorpMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(mediaPath))
 
 			if err != nil {
@@ -46,8 +44,8 @@ func Upload(mediaType MediaType, mediaPath string, result *ResultUpload) wx.Acti
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -60,8 +58,8 @@ func Upload(mediaType MediaType, mediaPath string, result *ResultUpload) wx.Acti
 func UploadByURL(mediaType MediaType, filename, url string, result *ResultUpload) wx.Action {
 	return wx.NewPostAction(urls.CorpMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			resp, err := yiigo.HTTPGet(context.Background(), url)
+		wx.WithUpload(func() (wx.UploadForm, error) {
+			resp, err := wx.HTTPGet(context.Background(), url)
 
 			if err != nil {
 				return nil, err
@@ -75,8 +73,8 @@ func UploadByURL(mediaType MediaType, filename, url string, result *ResultUpload
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -94,7 +92,7 @@ func UploadImg(imgPath string, result *ResultUploadImg) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.CorpMediaUploadImg,
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -107,8 +105,8 @@ func UploadImg(imgPath string, result *ResultUploadImg) wx.Action {
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -120,8 +118,8 @@ func UploadImg(imgPath string, result *ResultUploadImg) wx.Action {
 // UploadImgByURL 上传图片
 func UploadImgByURL(filename, url string, result *ResultUploadImg) wx.Action {
 	return wx.NewPostAction(urls.CorpMediaUploadImg,
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
-			resp, err := yiigo.HTTPGet(context.Background(), url)
+		wx.WithUpload(func() (wx.UploadForm, error) {
+			resp, err := wx.HTTPGet(context.Background(), url)
 
 			if err != nil {
 				return nil, err
@@ -135,8 +133,8 @@ func UploadImgByURL(filename, url string, result *ResultUploadImg) wx.Action {
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("media", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {

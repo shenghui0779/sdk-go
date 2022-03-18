@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/mock"
@@ -84,7 +83,7 @@ func TestListPluginDevApply(t *testing.T) {
 				Status:     1,
 				Nickname:   "名称",
 				HeadImgURL: "**********",
-				Categories: []yiigo.X{
+				Categories: []wx.M{
 					{
 						"first":  "IT科技",
 						"second": "硬件与设备",

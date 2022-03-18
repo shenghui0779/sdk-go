@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -25,7 +23,7 @@ func ImageSecCheck(imgPath string) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.MinipImageSecCheck,
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -38,8 +36,8 @@ func ImageSecCheck(imgPath string) wx.Action {
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("media", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("media", filename, body),
 			), nil
 		}),
 	)
@@ -76,7 +74,7 @@ func MediaCheckAsync(mediaType SecMediaType, mediaURL string, result *ResultMedi
 func MsgSecCheck(content string) wx.Action {
 	return wx.NewPostAction(urls.MinipMsgSecCheck,
 		wx.WithBody(func() ([]byte, error) {
-			return wx.MarshalNoEscapeHTML(yiigo.X{
+			return wx.MarshalNoEscapeHTML(wx.M{
 				"content": content,
 			})
 		}),

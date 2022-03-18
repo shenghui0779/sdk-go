@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/shenghui0779/yiigo"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/mock"
@@ -40,7 +39,7 @@ func TestInvokeService(t *testing.T) {
 	params := &ParamsServiceInvoke{
 		Service: "wx79ac3de8be320b71",
 		API:     "OcrAllInOne",
-		Data: yiigo.X{
+		Data: wx.M{
 			"data_type": 3,
 			"img_url":   "http://mmbiz.qpic.cn/mmbiz_jpg/7UFjuNbYxibu66xSqsQqKcuoGBZM77HIyibdiczeWibdMeA2XMt5oibWVQMgDibriazJSOibLqZxcO6DVVcZMxDKgeAtbQ/0",
 			"ocr_type":  1,

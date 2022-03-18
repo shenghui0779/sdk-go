@@ -14,7 +14,6 @@ import (
 
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/wx"
-	"github.com/shenghui0779/yiigo"
 )
 
 func TestNew(t *testing.T) {
@@ -110,7 +109,7 @@ func TestDownloadBill(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/downloadbill", body, gomock.AssignableToTypeOf(yiigo.WithHTTPClose())).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/downloadbill", body, gomock.AssignableToTypeOf(wx.WithHTTPClose())).Return(resp, nil)
 
 	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
@@ -156,7 +155,7 @@ func TestDownloadFundFlow(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/downloadfundflow", body, gomock.AssignableToTypeOf(yiigo.WithHTTPClose())).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/downloadfundflow", body, gomock.AssignableToTypeOf(wx.WithHTTPClose())).Return(resp, nil)
 
 	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
@@ -203,7 +202,7 @@ func TestBatchQueryComment(t *testing.T) {
 
 	client := mock.NewMockHTTPClient(ctrl)
 
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/billcommentsp/batchquerycomment", body, gomock.AssignableToTypeOf(yiigo.WithHTTPClose())).Return(resp, nil)
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/billcommentsp/batchquerycomment", body, gomock.AssignableToTypeOf(wx.WithHTTPClose())).Return(resp, nil)
 
 	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 

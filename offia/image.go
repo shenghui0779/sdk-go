@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -50,7 +48,7 @@ func AICrop(imgPath string, result *ResultAICrop) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaAICrop,
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -63,8 +61,8 @@ func AICrop(imgPath string, result *ResultAICrop) wx.Action {
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("img", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("img", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -101,7 +99,7 @@ func ScanQRCode(imgPath string, result *ResultQRCodeScan) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaScanQRCode,
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -114,8 +112,8 @@ func ScanQRCode(imgPath string, result *ResultQRCodeScan) wx.Action {
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("img", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("img", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -144,7 +142,7 @@ func SuperreSolution(imgPath string, result *ResultSuperreSolution) wx.Action {
 	_, filename := filepath.Split(imgPath)
 
 	return wx.NewPostAction(urls.OffiaSuperreSolution,
-		wx.WithUpload(func() (yiigo.UploadForm, error) {
+		wx.WithUpload(func() (wx.UploadForm, error) {
 			path, err := filepath.Abs(filepath.Clean(imgPath))
 
 			if err != nil {
@@ -157,8 +155,8 @@ func SuperreSolution(imgPath string, result *ResultSuperreSolution) wx.Action {
 				return nil, err
 			}
 
-			return yiigo.NewUploadForm(
-				yiigo.WithFileField("img", filename, body),
+			return wx.NewUploadForm(
+				wx.WithFileField("img", filename, body),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {

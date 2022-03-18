@@ -15,8 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/shenghui0779/yiigo"
-
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
@@ -65,7 +63,7 @@ func (mch *Mch) ApiKey() string {
 }
 
 // Do exec action
-func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...yiigo.HTTPOption) (wx.WXML, error) {
+func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOption) (wx.WXML, error) {
 	m, err := action.WXML(mch.mchid, mch.nonce())
 
 	if err != nil {
@@ -168,7 +166,7 @@ func (mch *Mch) MinipRedpackJSAPI(appid, pkg string) wx.WXML {
 
 	signStr := fmt.Sprintf("appId=%s&nonceStr=%s&package=%s&timeStamp=%s&key=%s", appid, m["nonceStr"], m["package"], m["timeStamp"], mch.apikey)
 
-	m["paySign"] = yiigo.MD5(signStr)
+	m["paySign"] = wx.MD5(signStr)
 
 	return m
 }
@@ -192,7 +190,7 @@ func (mch *Mch) DownloadBill(ctx context.Context, appid, billDate, billType stri
 		return nil, err
 	}
 
-	resp, err := mch.client.Do(ctx, http.MethodPost, urls.MchDownloadBill, body, yiigo.WithHTTPClose())
+	resp, err := mch.client.Do(ctx, http.MethodPost, urls.MchDownloadBill, body, wx.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -231,7 +229,7 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, appid string, billDate, ac
 		return nil, err
 	}
 
-	resp, err := mch.tlscli.Do(ctx, http.MethodPost, urls.MchDownloadFundFlow, body, yiigo.WithHTTPClose())
+	resp, err := mch.tlscli.Do(ctx, http.MethodPost, urls.MchDownloadFundFlow, body, wx.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -276,7 +274,7 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, appid, beginTime, endTime
 		return nil, err
 	}
 
-	resp, err := mch.tlscli.Do(ctx, http.MethodPost, urls.MchBatchQueryComment, body, yiigo.WithHTTPClose())
+	resp, err := mch.tlscli.Do(ctx, http.MethodPost, urls.MchBatchQueryComment, body, wx.WithHTTPClose())
 
 	if err != nil {
 		return nil, err
@@ -302,9 +300,9 @@ func (mch *Mch) Sign(t SignType, m wx.WXML, toUpper bool) string {
 	sign := ""
 
 	if t == SignHMacSHA256 {
-		sign = yiigo.HMAC(yiigo.AlgoSha256, str, mch.apikey)
+		sign = wx.HMacSHA256(str, mch.apikey)
 	} else {
-		sign = yiigo.MD5(str)
+		sign = wx.MD5(str)
 	}
 
 	if toUpper {
@@ -348,7 +346,7 @@ func (mch *Mch) DecryptWithAES256ECB(encrypt string) (wx.WXML, error) {
 	h := md5.New()
 	h.Write([]byte(mch.apikey))
 
-	ecb := yiigo.NewECBCrypto([]byte(hex.EncodeToString(h.Sum(nil))), yiigo.PKCS7)
+	ecb := wx.NewECBCrypto([]byte(hex.EncodeToString(h.Sum(nil))), wx.PKCS7)
 
 	plainText, err := ecb.Decrypt(cipherText)
 

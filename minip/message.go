@@ -101,7 +101,7 @@ type KFLink struct {
 	Title       string `json:"title"`       // 消息标题
 	Description string `json:"description"` // 图文链接消息
 	URL         string `json:"url"`         // 图文链接消息被点击后跳转的链接
-	ThumbURL    string `json:"thumb_url"`   // 图文链接消息的图片链接，支持 JPG、PNG 格式，较好的效果为大图 640 yiigo.X 320，小图 80 yiigo.X 80
+	ThumbURL    string `json:"thumb_url"`   // 图文链接消息的图片链接，支持 JPG、PNG 格式，较好的效果为大图 640 wx.M 320，小图 80 wx.M 80
 }
 
 // KFMinipPage 客服小程序卡片
