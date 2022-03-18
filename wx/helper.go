@@ -60,7 +60,7 @@ func SHA256(s string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-// HMacSHA256 generates a keyed SHA256 hash value.
+// HMacSHA256 generates a keyed sha256 hash value.
 func HMacSHA256(s, key string) string {
 	mac := hmac.New(sha256.New, []byte(key))
 
