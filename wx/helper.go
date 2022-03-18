@@ -85,29 +85,29 @@ func FormatMap2XML(m WXML) ([]byte, error) {
 // FormatMap2XML 用于单元测试
 // func FormatMap2XML(m WXML) ([]byte, error) {
 // 	ks := make([]string, 0, len(m))
-
+//
 // 	for k := range m {
 // 		ks = append(ks, k)
 // 	}
-
+//
 // 	sort.Strings(ks)
-
+//
 // 	var builder strings.Builder
-
+//
 // 	builder.WriteString("<xml>")
-
+//
 // 	for _, k := range ks {
 // 		builder.WriteString(fmt.Sprintf("<%s>", k))
-
+//
 // 		if err := xml.EscapeText(&builder, []byte(m[k])); err != nil {
 // 			return nil, err
 // 		}
-
+//
 // 		builder.WriteString(fmt.Sprintf("</%s>", k))
 // 	}
-
+//
 // 	builder.WriteString("</xml>")
-
+//
 // 	return []byte(builder.String()), nil
 // }
 

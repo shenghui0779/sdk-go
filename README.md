@@ -32,6 +32,9 @@ go get -u github.com/shenghui0779/gochat
 - 企业微信按照不同功能模块划分了相应的目录，根据URL可以找到对应的目录和文件
 - 所有API均采用Mock单元测试（Mock数据来源于官方文档，如遇问题，欢迎提[Issue](https://github.com/shenghui0779/gochat/issues)）
 
+> - 执行单元测试时，有些不能通过（比如：因时间戳导致等），需要看代码注释说明
+> - 执行 `mch` 单元测试时，还需要使用用于单元测试的 `FormatMap2XML`
+
 ## 支付
 
 > - 版本：V2
