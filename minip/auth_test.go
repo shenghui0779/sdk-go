@@ -14,6 +14,86 @@ import (
 	"github.com/shenghui0779/gochat/wx"
 )
 
+func TestGetPhoneNumber(t *testing.T) {
+	body := []byte(`{"code":"e31968a7f94cc5ee25fafc2aef2773f0bb8c3937b22520eb8ee345274d00c144"}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"phone_info": {
+		"phoneNumber": "xxxxxx",
+		"purePhoneNumber": "xxxxxx",
+		"countryCode": "86",
+		"watermark": {
+			"timestamp": 1637744274,
+			"appid": "xxxx"
+		}
+	}
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultPhoneNumber)
+
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetPhoneNumber("e31968a7f94cc5ee25fafc2aef2773f0bb8c3937b22520eb8ee345274d00c144", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultPhoneNumber{
+		PhoneInfo: &PhoneInfo{
+			PhoneNumber:     "xxxxxx",
+			PurePhoneNumber: "xxxxxx",
+			CountryCode:     "86",
+			Watermark: Watermark{
+				Timestamp: 1637744274,
+				AppID:     "xxxx",
+			},
+		},
+	}, result)
+}
+
+func TestCheckEncryptedData(t *testing.T) {
+	body := []byte(`{"encrypted_msg_hash":"657edd868c9715a9bebe42b833269a557a48498785397a796f1568c29a200b2c"}`)
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"vaild": true,
+	"create_time": 1629121902
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/business/checkencryptedmsg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
+
+	mp := New("APPID", "APPSECRET")
+	mp.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultEncryptedDataCheck)
+
+	err := mp.Do(context.TODO(), "ACCESS_TOKEN", CheckEncryptedData("hsSuSUsePBqSQw2rYMtf9Nvha603xX8f2BMQBcYRoJiMNwOqt/UEhrqekebG5ar0LFNAm5MD4Uz6zorRwiXJwbySJ/FEJHav4NsobBIU1PwdjbJWVQLFy7+YFkHB32OnQXWMh6ugW7Dyk2KS5BXp1f5lniKPp1KNLyNLlFlNZ2mgJCJmWvHj5AI7BLpWwoRvqRyZvVXo+9FsWqvBdxmAPA==", result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultEncryptedDataCheck{
+		Valid:      true,
+		CreateTime: 1629121902,
+	}, result)
+}
+
 func TestGetPaidUnionIDByTransactionID(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusOK,

@@ -105,7 +105,7 @@ func (mp *Minip) AccessToken(ctx context.Context, options ...wx.HTTPOption) (*Ac
 }
 
 // DecryptAuthInfo 解密授权信息
-func (mp *Minip) DecryptAuthInfo(sessionKey, iv, encryptedData string, result AuthInfo) error {
+func (mp *Minip) DecryptAuthInfo(sessionKey, iv, encryptedData string, result *AuthInfo) error {
 	key, err := base64.StdEncoding.DecodeString(sessionKey)
 
 	if err != nil {
@@ -132,15 +132,7 @@ func (mp *Minip) DecryptAuthInfo(sessionKey, iv, encryptedData string, result Au
 		return err
 	}
 
-	if err := json.Unmarshal(b, result); err != nil {
-		return err
-	}
-
-	if result.AppID() != mp.appid {
-		return fmt.Errorf("appid mismatch, want: %s, got: %s", mp.appid, result.AppID())
-	}
-
-	return nil
+	return json.Unmarshal(b, result)
 }
 
 // Do exec action

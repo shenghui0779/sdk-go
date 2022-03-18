@@ -4,6 +4,7 @@ package urls
 const (
 	MinipAccessToken        = "https://api.weixin.qq.com/cgi-bin/token"
 	MinipCode2Session       = "https://api.weixin.qq.com/sns/jscode2session"
+	MinipPhoneNumber        = "https://api.weixin.qq.com/wxa/business/getuserphonenumber"
 	MinipEncryptedDataCheck = "https://api.weixin.qq.com/wxa/business/checkencryptedmsg"
 	MinipPaidUnion          = "https://api.weixin.qq.com/wxa/getpaidunionid"
 )

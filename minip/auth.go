@@ -29,19 +29,14 @@ type AccessToken struct {
 	ExpiresIn int64  `json:"expires_in"`
 }
 
-// AuthInfo 小程序授权信息
-type AuthInfo interface {
-	AppID() string
-}
-
-// WaterMark 水印
-type WaterMark struct {
+// Watermark 水印
+type Watermark struct {
 	Timestamp int64  `json:"timestamp"`
 	AppID     string `json:"appid"`
 }
 
-// UserInfo 用户信息
-type UserInfo struct {
+// AuthInfo 用户信息
+type AuthInfo struct {
 	OpenID    string    `json:"openId"`
 	Language  string    `json:"language"`
 	City      string    `json:"city"`
@@ -51,23 +46,37 @@ type UserInfo struct {
 	Gender    Gender    `json:"gender"`
 	Country   string    `json:"country"`
 	UnionID   string    `json:"unionId"`
-	WaterMark WaterMark `json:"watermark"`
+	Watermark Watermark `json:"watermark"`
 }
 
-func (u *UserInfo) AppID() string {
-	return u.WaterMark.AppID
+type ResultPhoneNumber struct {
+	PhoneInfo *PhoneInfo `json:"phone_info"`
 }
 
-// PhoneInfo 用户手机号绑定信息
 type PhoneInfo struct {
-	PhoneNumber     string    `json:"phoneNumber"`
-	PurePhoneNumber string    `json:"purePhoneNumber"`
-	CountryCode     string    `json:"countryCode"`
-	WaterMark       WaterMark `json:"watermark"`
+	PhoneNumber     string    `json:"phoneNumber"`     // 用户绑定的手机号（国外手机号会有区号）
+	PurePhoneNumber string    `json:"purePhoneNumber"` // 没有区号的手机号
+	CountryCode     string    `json:"countryCode"`     // 区号
+	Watermark       Watermark `json:"watermark"`       // 数据水印
 }
 
-func (p *PhoneInfo) AppID() string {
-	return p.WaterMark.AppID
+type ParamsPhoneNumber struct {
+	Code string `json:"code"`
+}
+
+func GetPhoneNumber(code string, result *ResultPhoneNumber) wx.Action {
+	params := &ParamsPhoneNumber{
+		Code: code,
+	}
+
+	return wx.NewPostAction(urls.MinipPhoneNumber,
+		wx.WithBody(func() ([]byte, error) {
+			return wx.MarshalNoEscapeHTML(params)
+		}),
+		wx.WithDecode(func(resp []byte) error {
+			return json.Unmarshal(resp, result)
+		}),
+	)
 }
 
 type ParamsEncryptedDataCheck struct {
@@ -75,14 +84,14 @@ type ParamsEncryptedDataCheck struct {
 }
 
 type ResultEncryptedDataCheck struct {
-	Valid      bool  `json:"valid"`       // 是否是合法的数据
+	Valid      bool  `json:"vaild"`       // 是否是合法的数据
 	CreateTime int64 `json:"create_time"` // 加密数据生成的时间戳
 }
 
 // CheckEncryptedData 用户信息 - 检查加密信息是否由微信生成（当前只支持手机号加密数据），只能检测最近3天生成的加密数据
-func CheckEncryptedData(encryptedHash string, result *ResultEncryptedDataCheck) wx.Action {
+func CheckEncryptedData(encryptedData string, result *ResultEncryptedDataCheck) wx.Action {
 	params := &ParamsEncryptedDataCheck{
-		EncryptedMsgHash: encryptedHash,
+		EncryptedMsgHash: wx.SHA256(encryptedData),
 	}
 
 	return wx.NewPostAction(urls.MinipEncryptedDataCheck,

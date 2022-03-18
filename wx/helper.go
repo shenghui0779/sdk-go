@@ -52,6 +52,14 @@ func MD5(s string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+// SHA256 calculates the sha256 hash of a string.
+func SHA256(s string) string {
+	h := sha256.New()
+	h.Write([]byte(s))
+
+	return hex.EncodeToString(h.Sum(nil))
+}
+
 // HMacSHA256 generates a keyed SHA256 hash value.
 func HMacSHA256(s, key string) string {
 	mac := hmac.New(sha256.New, []byte(key))
