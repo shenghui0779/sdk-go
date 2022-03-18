@@ -149,17 +149,17 @@ import (
 )
 
 // 创建实例
-oa := gochat.NewMinip("appid", "appsecret")
+mp := gochat.NewMinip("appid", "appsecret")
 
 // 设置服务器配置
-oa.SetServerConfig("token", "encodingAESKey")
+mp.SetServerConfig("token", "encodingAESKey")
 
 // 设置 debug 模式（支持自定义日志）
-oa.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
+mp.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
 
 // --------- 获取授权SessionKey -------------------------------
 
-result, err := oa.Code2Session(ctx, "code")
+result, err := mp.Code2Session(ctx, "code")
 
 if err != nil {
     log.Println(err)
@@ -171,7 +171,7 @@ fmt.Println(result)
 
 // --------- 获取AccessToken -------------------------------
 
-result, err := oa.AccessToken(ctx)
+result, err := mp.AccessToken(ctx)
 
 if err != nil {
     log.Println(err)
@@ -185,7 +185,19 @@ fmt.Println(result)
 
 result := new(minip.UserInfo)
 
-if err := DecryptAuthInfo("sessionKey", "iv", "encryptedData", result); err != nil {
+if err := mp.DecryptAuthInfo("sessionKey", "iv", "encryptedData", result); err != nil {
+    log.Println(err)
+
+    return
+}
+
+fmt.Println(result)
+
+// --------- 获取用户手机号 -------------------------------
+
+result := new(minip.ResultPhoneNumber)
+
+if err := minip.GetPhoneNumber("code", result); err != nil {
     log.Println(err)
 
     return
