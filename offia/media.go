@@ -4,7 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"os"
 	"path/filepath"
 
 	"github.com/shenghui0779/gochat/urls"
@@ -42,14 +43,22 @@ func UploadMedia(mediaType MediaType, mediaPath string, result *ResultMediaUploa
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -63,22 +72,22 @@ func UploadMediaByURL(mediaType MediaType, filename, url string, result *ResultM
 	return wx.NewPostAction(urls.OffiaMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (wx.UploadForm, error) {
-			resp, err := wx.HTTPGet(context.Background(), url)
-
-			if err != nil {
-				return nil, err
-			}
-
-			defer resp.Body.Close()
-
-			body, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					resp, err := wx.HTTPGet(context.Background(), url)
+
+					if err != nil {
+						return err
+					}
+
+					defer resp.Body.Close()
+
+					if _, err = io.Copy(w, resp.Body); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -106,14 +115,22 @@ func AddMaterial(mediaType MediaType, mediaPath string, result *ResultMaterialAd
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -127,22 +144,22 @@ func AddMaterialByURL(mediaType MediaType, filename, url string, result *ResultM
 	return wx.NewPostAction(urls.OffiaMaterialAdd,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (wx.UploadForm, error) {
-			resp, err := wx.HTTPGet(context.Background(), url)
-
-			if err != nil {
-				return nil, err
-			}
-
-			defer resp.Body.Close()
-
-			body, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					resp, err := wx.HTTPGet(context.Background(), url)
+
+					if err != nil {
+						return err
+					}
+
+					defer resp.Body.Close()
+
+					if _, err = io.Copy(w, resp.Body); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -252,14 +269,22 @@ func UploadImg(imgPath string, result *ResultMaterialAdd) wx.Action {
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -272,22 +297,22 @@ func UploadImg(imgPath string, result *ResultMaterialAdd) wx.Action {
 func UploadImgByURL(filename, url string, result *ResultMaterialAdd) wx.Action {
 	return wx.NewPostAction(urls.OffiaNewsImgUpload,
 		wx.WithUpload(func() (wx.UploadForm, error) {
-			resp, err := wx.HTTPGet(context.Background(), url)
-
-			if err != nil {
-				return nil, err
-			}
-
-			defer resp.Body.Close()
-
-			body, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					resp, err := wx.HTTPGet(context.Background(), url)
+
+					if err != nil {
+						return err
+					}
+
+					defer resp.Body.Close()
+
+					if _, err = io.Copy(w, resp.Body); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -309,14 +334,22 @@ func UploadVideo(videoPath, title, description string, result *ResultMaterialAdd
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 				wx.WithFormField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, description)),
 			), nil
 		}),
@@ -331,22 +364,22 @@ func UploadVideoByURL(filename, videoURL, title, description string, result *Res
 	return wx.NewPostAction(urls.OffiaMaterialAdd,
 		wx.WithQuery("type", string(MediaVideo)),
 		wx.WithUpload(func() (wx.UploadForm, error) {
-			resp, err := wx.HTTPGet(context.Background(), videoURL)
-
-			if err != nil {
-				return nil, err
-			}
-
-			defer resp.Body.Close()
-
-			body, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					resp, err := wx.HTTPGet(context.Background(), videoURL)
+
+					if err != nil {
+						return err
+					}
+
+					defer resp.Body.Close()
+
+					if _, err = io.Copy(w, resp.Body); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 				wx.WithFormField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, description)),
 			), nil
 		}),

@@ -3,7 +3,8 @@ package media
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
+	"os"
 	"path/filepath"
 
 	"github.com/shenghui0779/gochat/urls"
@@ -38,14 +39,22 @@ func Upload(mediaType MediaType, mediaPath string, result *ResultUpload) wx.Acti
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -59,22 +68,22 @@ func UploadByURL(mediaType MediaType, filename, url string, result *ResultUpload
 	return wx.NewPostAction(urls.CorpMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (wx.UploadForm, error) {
-			resp, err := wx.HTTPGet(context.Background(), url)
-
-			if err != nil {
-				return nil, err
-			}
-
-			defer resp.Body.Close()
-
-			body, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					resp, err := wx.HTTPGet(context.Background(), url)
+
+					if err != nil {
+						return err
+					}
+
+					defer resp.Body.Close()
+
+					if _, err = io.Copy(w, resp.Body); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -99,14 +108,22 @@ func UploadImg(imgPath string, result *ResultUploadImg) wx.Action {
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -119,22 +136,22 @@ func UploadImg(imgPath string, result *ResultUploadImg) wx.Action {
 func UploadImgByURL(filename, url string, result *ResultUploadImg) wx.Action {
 	return wx.NewPostAction(urls.CorpMediaUploadImg,
 		wx.WithUpload(func() (wx.UploadForm, error) {
-			resp, err := wx.HTTPGet(context.Background(), url)
-
-			if err != nil {
-				return nil, err
-			}
-
-			defer resp.Body.Close()
-
-			body, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					resp, err := wx.HTTPGet(context.Background(), url)
+
+					if err != nil {
+						return err
+					}
+
+					defer resp.Body.Close()
+
+					if _, err = io.Copy(w, resp.Body); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {

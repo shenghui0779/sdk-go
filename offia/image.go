@@ -2,7 +2,8 @@ package offia
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
+	"os"
 	"path/filepath"
 
 	"github.com/shenghui0779/gochat/urls"
@@ -55,14 +56,22 @@ func AICrop(imgPath string, result *ResultAICrop) wx.Action {
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("img", filename, body),
+				wx.WithFormFile("img", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -106,14 +115,22 @@ func ScanQRCode(imgPath string, result *ResultQRCodeScan) wx.Action {
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("img", filename, body),
+				wx.WithFormFile("img", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -149,14 +166,22 @@ func SuperreSolution(imgPath string, result *ResultSuperreSolution) wx.Action {
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("img", filename, body),
+				wx.WithFormFile("img", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {

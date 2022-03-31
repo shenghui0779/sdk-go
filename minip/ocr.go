@@ -2,7 +2,8 @@ package minip
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
+	"os"
 	"path/filepath"
 
 	"github.com/shenghui0779/gochat/urls"
@@ -45,14 +46,22 @@ func OCRIDCardFront(mode OCRMode, imgPath string, result *ResultIDCardFrontOCR) 
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("img", filename, body),
+				wx.WithFormFile("img", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -90,14 +99,22 @@ func OCRIDCardBack(mode OCRMode, imgPath string, result *ResultIDCardBackOCR) wx
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("img", filename, body),
+				wx.WithFormFile("img", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -135,14 +152,22 @@ func OCRBankCard(mode OCRMode, imgPath string, result *ResultBankCardOCR) wx.Act
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("img", filename, body),
+				wx.WithFormFile("img", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -180,14 +205,22 @@ func OCRPlateNumber(mode OCRMode, imgPath string, result *ResultPlateNumberOCR) 
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("img", filename, body),
+				wx.WithFormFile("img", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -235,14 +268,22 @@ func OCRDriverLicense(mode OCRMode, imgPath string, result *ResultDriverLicenseO
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("img", filename, body),
+				wx.WithFormFile("img", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -297,14 +338,22 @@ func OCRVehicleLicense(mode OCRMode, imgPath string, result *ResultVehicleLicens
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("img", filename, body),
+				wx.WithFormFile("img", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -355,14 +404,22 @@ func OCRBusinessLicense(mode OCRMode, imgPath string, result *ResultBusinessLice
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("img", filename, body),
+				wx.WithFormFile("img", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -407,14 +464,22 @@ func OCRComm(mode OCRMode, imgPath string, result *ResultCommOCR) wx.Action {
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("img", filename, body),
+				wx.WithFormFile("img", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {

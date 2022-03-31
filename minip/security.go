@@ -2,7 +2,8 @@ package minip
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
+	"os"
 	"path/filepath"
 
 	"github.com/shenghui0779/gochat/urls"
@@ -30,14 +31,22 @@ func ImageSecCheck(imgPath string) wx.Action {
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 	)

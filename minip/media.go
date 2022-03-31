@@ -3,7 +3,8 @@ package minip
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
+	"os"
 	"path/filepath"
 
 	"github.com/shenghui0779/gochat/urls"
@@ -36,14 +37,22 @@ func UploadTempMedia(mediaType MediaType, mediaPath string, result *ResultMediaU
 				return nil, err
 			}
 
-			body, err := ioutil.ReadFile(path)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					f, err := os.Open(path)
+
+					if err != nil {
+						return err
+					}
+
+					defer f.Close()
+
+					if _, err = io.Copy(w, f); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
@@ -57,22 +66,22 @@ func UploadTempMediaByURL(mediaType MediaType, filename, url string, result *Res
 	return wx.NewPostAction(urls.MinipMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (wx.UploadForm, error) {
-			resp, err := wx.HTTPGet(context.TODO(), url)
-
-			if err != nil {
-				return nil, err
-			}
-
-			defer resp.Body.Close()
-
-			body, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return wx.NewUploadForm(
-				wx.WithFileField("media", filename, body),
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					resp, err := wx.HTTPGet(context.Background(), url)
+
+					if err != nil {
+						return err
+					}
+
+					defer resp.Body.Close()
+
+					if _, err = io.Copy(w, resp.Body); err != nil {
+						return err
+					}
+
+					return nil
+				}),
 			), nil
 		}),
 		wx.WithDecode(func(resp []byte) error {
