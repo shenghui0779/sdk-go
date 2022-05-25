@@ -283,9 +283,3 @@ fmt.Println(result)
 - 配合 [yiigo](https://github.com/shenghui0779/yiigo) 使用，可以更方便的操作 `MySQL`、`MongoDB` 与 `Redis` 等
 
 **Enjoy 😊**
-
-## Donate
-
-如果本仓库对你有帮助，可以请作者喝杯速溶咖啡
-
-![pay](https://cdn.jsdelivr.net/gh/iiinsomnia/images/5812c1aebe24192ee6ce749798035d26.png)
