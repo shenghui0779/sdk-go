@@ -11,7 +11,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	wx "github.com/shenghui0779/gochat/wx"
+	wx "github.com/chenghonour/gochat/wx"
 )
 
 // MockUploadForm is a mock of UploadForm interface.

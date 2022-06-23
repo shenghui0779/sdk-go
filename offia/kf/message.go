@@ -1,9 +1,9 @@
 package kf
 
 import (
-	"github.com/shenghui0779/gochat/event"
-	"github.com/shenghui0779/gochat/urls"
-	"github.com/shenghui0779/gochat/wx"
+	"github.com/chenghonour/gochat/event"
+	"github.com/chenghonour/gochat/urls"
+	"github.com/chenghonour/gochat/wx"
 )
 
 // MsgText 消息文本

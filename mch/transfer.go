@@ -4,8 +4,8 @@ import (
 	"encoding/base64"
 	"strconv"
 
-	"github.com/shenghui0779/gochat/urls"
-	"github.com/shenghui0779/gochat/wx"
+	"github.com/chenghonour/gochat/urls"
+	"github.com/chenghonour/gochat/wx"
 )
 
 // ParamsTransferBalance 付款到零钱参数

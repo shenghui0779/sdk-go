@@ -1,6 +1,7 @@
 # gochat
+# Forked from shenghui0779/gochat, thinks
 
-[![golang](https://img.shields.io/badge/Language-Go-green.svg?style=flat)](https://golang.org) [![GitHub release](https://img.shields.io/github/release/shenghui0779/gochat.svg)](https://github.com/shenghui0779/gochat/releases/latest) [![pkg.go.dev](https://img.shields.io/badge/dev-reference-007d9c?logo=go&logoColor=white&style=flat)](https://pkg.go.dev/github.com/shenghui0779/gochat) [![Apache 2.0 license](http://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](http://opensource.org/licenses/apache2.0)
+[![golang](https://img.shields.io/badge/Language-Go-green.svg?style=flat)](https://golang.org) [![GitHub release](https://img.shields.io/github/release/chenghonour/gochat.svg)](https://github.com/chenghonour/gochat/releases/latest) [![pkg.go.dev](https://img.shields.io/badge/dev-reference-007d9c?logo=go&logoColor=white&style=flat)](https://pkg.go.dev/github.com/chenghonour/gochat) [![Apache 2.0 license](http://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](http://opensource.org/licenses/apache2.0)
 
 📦 微信 Go SDK
 
@@ -14,7 +15,7 @@
 ## 获取
 
 ```sh
-go get -u github.com/shenghui0779/gochat
+go get -u github.com/chenghonour/gochat
 ```
 
 ## 使用须知
@@ -30,7 +31,7 @@ go get -u github.com/shenghui0779/gochat
   - 解密 - `DecryptEventMessage`
   - 回复 - `Reply`
 - 企业微信按照不同功能模块划分了相应的目录，根据URL可以找到对应的目录和文件
-- 所有API均采用Mock单元测试（Mock数据来源于官方文档，如遇问题，欢迎提[Issue](https://github.com/shenghui0779/gochat/issues)）
+- 所有API均采用Mock单元测试（Mock数据来源于官方文档，如遇问题，欢迎提[Issue](https://github.com/chenghonour/gochat/issues)）
 
 > - 执行单元测试时，有些不能通过（比如：因时间戳导致等），需要看代码注释说明
 > - 执行 `mch` 单元测试时，还需要使用用于单元测试的 `FormatMap2XML`
@@ -42,9 +43,9 @@ go get -u github.com/shenghui0779/gochat
 
 ```go
 import (
-    "github.com/shenghui0779/gochat"
-    "github.com/shenghui0779/gochat/wx"
-    "github.com/shenghui0779/gochat/mch"
+    "github.com/chenghonour/gochat"
+    "github.com/chenghonour/gochat/wx"
+    "github.com/chenghonour/gochat/mch"
 )
 
 // 创建实例
@@ -81,9 +82,9 @@ pay.MinipRedpackJSAPI("appid", "package")
 
 ```go
 import (
-    "github.com/shenghui0779/gochat"
-    "github.com/shenghui0779/gochat/wx"
-    "github.com/shenghui0779/gochat/offia"
+    "github.com/chenghonour/gochat"
+    "github.com/chenghonour/gochat/wx"
+    "github.com/chenghonour/gochat/offia"
 )
 
 // 创建实例
@@ -143,9 +144,9 @@ fmt.Println(result)
 
 ```go
 import (
-    "github.com/shenghui0779/gochat"
-    "github.com/shenghui0779/gochat/wx"
-    "github.com/shenghui0779/gochat/minip"
+    "github.com/chenghonour/gochat"
+    "github.com/chenghonour/gochat/wx"
+    "github.com/chenghonour/gochat/minip"
 )
 
 // 创建实例
@@ -223,10 +224,10 @@ fmt.Println(base64.StdEncoding.EncodeToString(qrcode.Buffer))
 
 ```go
 import (
-    "github.com/shenghui0779/gochat"
-    "github.com/shenghui0779/gochat/wx"
-    "github.com/shenghui0779/gochat/corp"
-    "github.com/shenghui0779/gochat/corp/addrbook"
+    "github.com/chenghonour/gochat"
+    "github.com/chenghonour/gochat/wx"
+    "github.com/chenghonour/gochat/corp"
+    "github.com/chenghonour/gochat/corp/addrbook"
 )
 
 // 创建实例
@@ -278,7 +279,7 @@ fmt.Println(result)
 
 ## 说明
 
-- [API Reference](https://pkg.go.dev/github.com/shenghui0779/gochat)
+- [API Reference](https://pkg.go.dev/github.com/chenghonour/gochat)
 - 注意：因 `access_token` 每日获取次数有限且含有效期，故服务端应妥善保存 `access_token` 并定时刷新
 - 配合 [yiigo](https://github.com/shenghui0779/yiigo) 使用，可以更方便的操作 `MySQL`、`MongoDB` 与 `Redis` 等
 

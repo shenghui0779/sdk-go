@@ -3,7 +3,7 @@ package mch
 import (
 	"encoding/xml"
 
-	"github.com/shenghui0779/gochat/wx"
+	"github.com/chenghonour/gochat/wx"
 )
 
 // Reply 回复支付结果

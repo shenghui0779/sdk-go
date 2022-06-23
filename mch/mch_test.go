@@ -12,8 +12,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
+	"github.com/chenghonour/gochat/mock"
+	"github.com/chenghonour/gochat/wx"
 )
 
 func TestNew(t *testing.T) {

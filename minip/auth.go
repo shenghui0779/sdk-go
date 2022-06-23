@@ -3,8 +3,8 @@ package minip
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/gochat/urls"
-	"github.com/shenghui0779/gochat/wx"
+	"github.com/chenghonour/gochat/urls"
+	"github.com/chenghonour/gochat/wx"
 )
 
 // AuthSession 小程序授权Session

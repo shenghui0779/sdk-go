@@ -3,8 +3,8 @@ package msgaudit
 import (
 	"encoding/json"
 
-	"github.com/shenghui0779/gochat/urls"
-	"github.com/shenghui0779/gochat/wx"
+	"github.com/chenghonour/gochat/urls"
+	"github.com/chenghonour/gochat/wx"
 )
 
 type ParamsPermitUserList struct {

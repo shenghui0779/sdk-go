@@ -3,10 +3,10 @@ package gochat
 import (
 	"crypto/tls"
 
-	"github.com/shenghui0779/gochat/corp"
-	"github.com/shenghui0779/gochat/mch"
-	"github.com/shenghui0779/gochat/minip"
-	"github.com/shenghui0779/gochat/offia"
+	"github.com/chenghonour/gochat/corp"
+	"github.com/chenghonour/gochat/mch"
+	"github.com/chenghonour/gochat/minip"
+	"github.com/chenghonour/gochat/offia"
 )
 
 // NewMch 微信商户

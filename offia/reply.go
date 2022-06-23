@@ -4,8 +4,8 @@ import (
 	"encoding/xml"
 	"time"
 
-	"github.com/shenghui0779/gochat/event"
-	"github.com/shenghui0779/gochat/wx"
+	"github.com/chenghonour/gochat/event"
+	"github.com/chenghonour/gochat/wx"
 )
 
 type XMLText struct {

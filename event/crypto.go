@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/shenghui0779/gochat/wx"
+	"github.com/chenghonour/gochat/wx"
 )
 
 // Encrypt 参考微信[加密技术方案](https://open.work.weixin.qq.com/api/doc/90000/90139/90968)

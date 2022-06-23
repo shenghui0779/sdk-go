@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/shenghui0779/gochat/wx"
+	"github.com/chenghonour/gochat/wx"
 )
 
 func TestCrypto(t *testing.T) {
