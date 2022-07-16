@@ -14,7 +14,7 @@ import (
 )
 
 func TestSendCorpRedpack(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"wxappid":                "wx8888888888888888",
 		"mch_id":                 "10000098",
 		"mch_billno":             "123456",
@@ -27,8 +27,7 @@ func TestSendCorpRedpack(t *testing.T) {
 		"sender_header_media_id": "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
 		"nonce_str":              "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
 		"workwx_sign":            "FCB8624E2CED048CA15E2FF2B87C91A6",
-		"sign_type":              "MD5",
-		"sign":                   "62C6597C4D4EC88A9DFF1258D2A94FAA",
+		"sign":                   "F49B5E6435F626E21918C3CBE0EFC416",
 	})
 
 	assert.Nil(t, err)
@@ -95,13 +94,12 @@ func TestSendCorpRedpack(t *testing.T) {
 }
 
 func TestQueryCorpRedpack(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":      "wx8888888888888888",
 		"mch_id":     "10000098",
 		"mch_billno": "123456",
 		"nonce_str":  "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
-		"sign_type":  "MD5",
-		"sign":       "540A546A87AF45F048E2FA55DF0398DC",
+		"sign":       "124D7B0A14B3D98F109DF3D560190EF0",
 	})
 
 	assert.Nil(t, err)
@@ -176,7 +174,7 @@ func TestQueryCorpRedpack(t *testing.T) {
 }
 
 func TestTransferToPocket(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":            "wxe062425f740c8888",
 		"mch_id":           "1900000109",
 		"device_info":      "013467007045764",
@@ -191,8 +189,7 @@ func TestTransferToPocket(t *testing.T) {
 		"workwx_sign":      "FB5C2BD04CB52ED2176F5F883F9EA81F",
 		"ww_msg_type":      "NORMAL_MSG",
 		"act_name":         "示例项目",
-		"sign_type":        "MD5",
-		"sign":             "89E7CBC1A2A618EC2C00C6B215702C4C",
+		"sign":             "BC0B057C9F1FA1599509BA627281322F",
 	})
 
 	assert.Nil(t, err)
@@ -259,13 +256,12 @@ func TestTransferToPocket(t *testing.T) {
 }
 
 func TestQueryTransferPocket(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":            "wxe062425f740c8888",
 		"mch_id":           "10000097",
 		"partner_trade_no": "0010010404201411170000046545",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
-		"sign_type":        "MD5",
-		"sign":             "B6D80B2ABB044A8C69E6836CDDA5ADF3",
+		"sign":             "AAE662C19C1B5ED4FB273D53F73D07DF",
 	})
 
 	assert.Nil(t, err)

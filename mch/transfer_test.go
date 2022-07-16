@@ -15,7 +15,7 @@ import (
 )
 
 func TestTransferToBalance(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"mch_appid":        "wx2421b1c4370ec43b",
 		"mchid":            "10000100",
 		"partner_trade_no": "100000982014120919616",
@@ -26,8 +26,7 @@ func TestTransferToBalance(t *testing.T) {
 		"desc":             "节日快乐!",
 		"spbill_create_ip": "10.2.3.10",
 		"nonce_str":        "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS",
-		"sign_type":        "MD5",
-		"sign":             "97CD9C3C88B189B60C230677CE0FC3BB",
+		"sign":             "86557FA2370F4A0897C7DD15D5CDAE1D",
 	})
 
 	assert.Nil(t, err)
@@ -85,13 +84,12 @@ func TestTransferToBalance(t *testing.T) {
 }
 
 func TestQueryTransferBalance(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
 		"partner_trade_no": "1000005901201407261446939628",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
-		"sign_type":        "MD5",
-		"sign":             "DF0024F9502E233115C0198912B4EB5D",
+		"sign":             "0DE046BCF7FB34BF484C6F42693C11A0",
 	})
 
 	assert.Nil(t, err)
@@ -148,7 +146,7 @@ func TestQueryTransferBalance(t *testing.T) {
 	}, r)
 }
 
-// RSA每次加密结果不同，导致签名会变化
+// RSA-OAEP每次加密结果不同，导致签名会变化
 // func TestTransferToBankCard(t *testing.T) {
 // 	ctrl := gomock.NewController(t)
 // 	defer ctrl.Finish()
@@ -164,7 +162,6 @@ func TestQueryTransferBalance(t *testing.T) {
 // 		"enc_true_name":    "ABpj6B97My6jKc2TwbkXM/W55LmlxmldJHhKr3n2cr36UeQCGOKlc3Cc1sQytng4hKrDd+qrXT3fmoRvxc10mnViGKdwq1G6XAmGYMMs2Pm0edzqWicrTi8/dcXoVaxLj4ZwCBm+8OtCpJefxGi9xZjpnXpUvEa2hzlPbghFNoPMHIOdECwzvYMqAM2OoRwqicTZgroRS0jI88NhM5UTn00ZwFSoN3VeFkkDSeKXZ25232l51WjBqyg6JLRGltPtiKwaNhCd5cxkPrCJrMJAzJ8PVQmBrEfRnyHDJiYGIQZ1bGoB9eKTN/+cjcGWuxyXDrpdIc0DJzCy/5Yswrv+qg==",
 // 		"desc":             "test",
 // 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
-// 		"sign_type":        "MD5",
 // 		"sign":             "93FD9CF5C2D3F2D6016A168F69D221D5",
 // 	}).Return(wx.WXML{
 // 		"return_code":      "SUCCESS",
@@ -208,12 +205,11 @@ func TestQueryTransferBalance(t *testing.T) {
 // }
 
 func TestQueryTransferBankCard(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"mch_id":           "10000100",
 		"partner_trade_no": "1212121221278",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
-		"sign_type":        "MD5",
-		"sign":             "F5F586AE6B1BDB6756D2B1AD0A01BADA",
+		"sign":             "E4E201459D36D29853C951D64545149E",
 	})
 
 	assert.Nil(t, err)
@@ -271,7 +267,7 @@ func TestQueryTransferBankCard(t *testing.T) {
 }
 
 func TestRSAPublicKey(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"mch_id":    "10000100",
 		"nonce_str": "50780e0cca98c8c8e814883e5caa672e",
 		"sign_type": "MD5",

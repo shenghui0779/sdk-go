@@ -84,7 +84,7 @@ func TestMinipRedpackJSAPI(t *testing.T) {
 }
 
 func TestDownloadBill(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":     "wx2421b1c4370ec43b",
 		"mch_id":    "10000100",
 		"bill_date": "20141110",
@@ -130,7 +130,7 @@ func TestDownloadBill(t *testing.T) {
 }
 
 func TestDownloadFundFlow(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":        "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"bill_date":    "20141110",
@@ -176,7 +176,7 @@ func TestDownloadFundFlow(t *testing.T) {
 }
 
 func TestBatchQueryComment(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":      "wx2421b1c4370ec43b",
 		"mch_id":     "10000100",
 		"begin_time": "20170724000000",
@@ -219,38 +219,6 @@ func TestBatchQueryComment(t *testing.T) {
 2017-07-01 10:00:05,1001690740201411100005734289,5,赞，水果很新鲜
 2017-07-01 11:00:05,1001690740201411100005734278,5,不错，支付渠道很方便
 2017-07-01 11:30:05,1001690740201411100005734250,4,东西还算符合预期`), b)
-}
-
-func TestSignWithMD5(t *testing.T) {
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	m := wx.WXML{
-		"appid":     "wx2421b1c4370ec43b",
-		"partnerid": "10000100",
-		"prepayid":  "WX1217752501201407033233368018",
-		"package":   "Sign=WXPay",
-		"noncestr":  "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
-		"timestamp": "1514363815",
-	}
-
-	// 签名校验来自：[微信支付接口签名校验工具](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=20_1)
-	assert.Equal(t, "66724B3332E124BFC3D62A31A68F7887", mch.Sign(SignMD5, m, true))
-}
-
-func TestSignWithHMacSHA256(t *testing.T) {
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	m := wx.WXML{
-		"appid":     "wx2421b1c4370ec43b",
-		"partnerid": "10000100",
-		"prepayid":  "WX1217752501201407033233368018",
-		"package":   "Sign=WXPay",
-		"noncestr":  "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
-		"timestamp": "1514363815",
-	}
-
-	// 签名校验来自：[微信支付接口签名校验工具](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=20_1)
-	assert.Equal(t, "3B12F569A5714858F8251366BC3CBCDDBD249905CCA01D8F56D365EF1FC2CA5C", mch.Sign(SignHMacSHA256, m, true))
 }
 
 func TestVerifyWXMLResult(t *testing.T) {

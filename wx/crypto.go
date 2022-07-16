@@ -211,8 +211,8 @@ func PKCS5Unpadding(plainText []byte, blockSize int) []byte {
 	return plainText[:(l - unpadding)]
 }
 
-// RSAEncryptOEAP rsa encrypt with PKCS #1 OEAP.
-func RSAEncryptOEAP(plainText, publicKey []byte) ([]byte, error) {
+// RSAEncryptOAEP rsa encrypt with PKCS #1 OAEP.
+func RSAEncryptOAEP(plainText, publicKey []byte) ([]byte, error) {
 	block, _ := pem.Decode(publicKey)
 
 	if block == nil {
@@ -234,8 +234,8 @@ func RSAEncryptOEAP(plainText, publicKey []byte) ([]byte, error) {
 	return rsa.EncryptOAEP(sha1.New(), rand.Reader, key, plainText, nil)
 }
 
-// RSADecryptOEAP rsa decrypt with PKCS #1 OEAP.
-func RSADecryptOEAP(cipherText, privateKey []byte) ([]byte, error) {
+// RSADecryptOAEP rsa decrypt with PKCS #1 OAEP.
+func RSADecryptOAEP(cipherText, privateKey []byte) ([]byte, error) {
 	block, _ := pem.Decode(privateKey)
 
 	if block == nil {

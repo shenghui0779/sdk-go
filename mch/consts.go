@@ -10,14 +10,6 @@ const (
 	TradeMicroPay = "MICROPAY" // 付款码支付
 )
 
-// 签名类型
-type SignType string
-
-const (
-	SignMD5        SignType = "MD5"
-	SignHMacSHA256 SignType = "HMAC-SHA256"
-)
-
 // 返回结果
 const (
 	ResultSuccess = "SUCCESS"

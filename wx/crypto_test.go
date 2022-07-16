@@ -119,12 +119,12 @@ HsIxLjl3+jtjS8cptPO47qFnr7Pnvb7kA8MNVrI+ymny/WG/yfU=
 
 	plainText := "IloveGochat"
 
-	eboeap, err := RSAEncryptOEAP([]byte(plainText), publicKey)
+	eboaep, err := RSAEncryptOAEP([]byte(plainText), publicKey)
 
 	assert.Nil(t, err)
 
-	dboeap, err := RSADecryptOEAP(eboeap, privateKey)
+	dboaep, err := RSADecryptOAEP(eboaep, privateKey)
 
 	assert.Nil(t, err)
-	assert.Equal(t, plainText, string(dboeap))
+	assert.Equal(t, plainText, string(dboaep))
 }

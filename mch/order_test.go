@@ -15,7 +15,7 @@ import (
 )
 
 func TestUnifyOrder(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
 		"nonce_str":        "1add1a30ac87aa2db72f57a2375d8fec",
@@ -27,8 +27,7 @@ func TestUnifyOrder(t *testing.T) {
 		"spbill_create_ip": "14.23.150.211",
 		"notify_url":       "http://wxpay.wxutil.com/pub_v2/pay/notify.v2.php",
 		"attach":           "支付测试",
-		"sign_type":        "MD5",
-		"sign":             "7C07373FE5EAEDB936F3E454875C9462",
+		"sign":             "845E712D712B283EEB45448079C12D41",
 	})
 
 	assert.Nil(t, err)
@@ -88,13 +87,12 @@ func TestUnifyOrder(t *testing.T) {
 }
 
 func TestQueryOrderByTransactionID(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":          "wx2421b1c4370ec43b",
 		"mch_id":         "10000100",
 		"transaction_id": "1008450740201411110005820873",
 		"nonce_str":      "ec2316275641faa3aacf3cc599e8730f",
-		"sign_type":      "MD5",
-		"sign":           "CA9B10C422366B6647827F0E6C18A4D8",
+		"sign":           "3714E8E1F1327F1FD47627DE033745C2",
 	})
 
 	assert.Nil(t, err)
@@ -166,13 +164,12 @@ func TestQueryOrderByTransactionID(t *testing.T) {
 }
 
 func TestQueryOrderByOutTradeNO(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":        "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"out_trade_no": "1415757673",
 		"nonce_str":    "ec2316275641faa3aacf3cc599e8730f",
-		"sign_type":    "MD5",
-		"sign":         "5F222EA3F23200DD4E86C4C42E96698D",
+		"sign":         "B077F50A14E8A088ACAD5A2318F7207E",
 	})
 
 	assert.Nil(t, err)
@@ -244,13 +241,12 @@ func TestQueryOrderByOutTradeNO(t *testing.T) {
 }
 
 func TestCloseOrder(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":        "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"out_trade_no": "1415983244",
 		"nonce_str":    "4ca93f17ddf3443ceabf72f26d64fe0e",
-		"sign_type":    "MD5",
-		"sign":         "72D4DE9625257C606558F1027331C516",
+		"sign":         "8D2363E7A0948301A065F369DEB9011B",
 	})
 
 	assert.Nil(t, err)

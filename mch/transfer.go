@@ -39,8 +39,8 @@ type ParamsTransferBankCard struct {
 func TransferToBalance(appid string, params *ParamsTransferBalance) wx.Action {
 	return wx.NewPostAction(urls.MchTransferToBalance,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"mch_appid":        appid,
 				"mchid":            mchid,
 				"nonce_str":        nonce,
@@ -49,22 +49,24 @@ func TransferToBalance(appid string, params *ParamsTransferBalance) wx.Action {
 				"check_name":       params.CheckName,
 				"amount":           strconv.Itoa(params.Amount),
 				"desc":             params.Desc,
-				"sign_type":        string(SignMD5),
 			}
 
 			if params.ReUserName != "" {
-				body["re_user_name"] = params.ReUserName
+				m["re_user_name"] = params.ReUserName
 			}
 
 			if params.DeviceInfo != "" {
-				body["device_info"] = params.DeviceInfo
+				m["device_info"] = params.DeviceInfo
 			}
 
 			if params.SpbillCreateIP != "" {
-				body["spbill_create_ip"] = params.SpbillCreateIP
+				m["spbill_create_ip"] = params.SpbillCreateIP
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -73,14 +75,18 @@ func TransferToBalance(appid string, params *ParamsTransferBalance) wx.Action {
 func QueryTransferBalance(appid, partnerTradeNO string) wx.Action {
 	return wx.NewPostAction(urls.MchTransferBalanceOrderQuery,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			return wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":            appid,
 				"mch_id":           mchid,
 				"partner_trade_no": partnerTradeNO,
 				"nonce_str":        nonce,
-				"sign_type":        string(SignMD5),
-			}, nil
+			}
+
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -90,39 +96,41 @@ func QueryTransferBalance(appid, partnerTradeNO string) wx.Action {
 func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey []byte) wx.Action {
 	return wx.NewPostAction(urls.MchTransferToBankCard,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"mch_id":           mchid,
 				"nonce_str":        nonce,
 				"partner_trade_no": params.PartnerTradeNO,
 				"bank_code":        params.BankCode,
 				"amount":           strconv.Itoa(params.Amount),
-				"sign_type":        string(SignMD5),
 			}
 
 			// 收款方银行卡号加密
-			b, err := wx.RSAEncryptOEAP([]byte(params.EncBankNO), publicKey)
+			b, err := wx.RSAEncryptOAEP([]byte(params.EncBankNO), publicKey)
 
 			if err != nil {
 				return nil, err
 			}
 
-			body["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
+			m["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
 
 			// 收款方用户名加密
-			b, err = wx.RSAEncryptOEAP([]byte(params.EncTrueName), publicKey)
+			b, err = wx.RSAEncryptOAEP([]byte(params.EncTrueName), publicKey)
 
 			if err != nil {
 				return nil, err
 			}
 
-			body["enc_true_name"] = base64.StdEncoding.EncodeToString(b)
+			m["enc_true_name"] = base64.StdEncoding.EncodeToString(b)
 
 			if params.Desc != "" {
-				body["desc"] = params.Desc
+				m["desc"] = params.Desc
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -131,13 +139,17 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey 
 func QueryTransferBankCard(appid, partnerTradeNO string) wx.Action {
 	return wx.NewPostAction(urls.MchTransferBankCardOrderQuery,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			return wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"mch_id":           mchid,
 				"partner_trade_no": partnerTradeNO,
 				"nonce_str":        nonce,
-				"sign_type":        string(SignMD5),
-			}, nil
+			}
+
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -146,12 +158,17 @@ func QueryTransferBankCard(appid, partnerTradeNO string) wx.Action {
 func RSAPublicKey() wx.Action {
 	return wx.NewPostAction(urls.MchRSAPublicKey,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			return wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"mch_id":    mchid,
 				"nonce_str": nonce,
-				"sign_type": string(SignMD5),
-			}, nil
+				"sign_type": "MD5",
+			}
+
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }

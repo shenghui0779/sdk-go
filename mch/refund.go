@@ -25,8 +25,8 @@ type ParamsRefund struct {
 func RefundByTransactionID(appid, transactionID string, params *ParamsRefund) wx.Action {
 	return wx.NewPostAction(urls.MchRefundApply,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":          appid,
 				"mch_id":         mchid,
 				"nonce_str":      nonce,
@@ -34,26 +34,28 @@ func RefundByTransactionID(appid, transactionID string, params *ParamsRefund) wx
 				"out_refund_no":  params.OutRefundNO,
 				"total_fee":      strconv.Itoa(params.TotalFee),
 				"refund_fee":     strconv.Itoa(params.RefundFee),
-				"sign_type":      string(SignMD5),
 			}
 
 			if params.RefundFeeType != "" {
-				body["refund_fee_type"] = params.RefundFeeType
+				m["refund_fee_type"] = params.RefundFeeType
 			}
 
 			if params.RefundDesc != "" {
-				body["refund_desc"] = params.RefundDesc
+				m["refund_desc"] = params.RefundDesc
 			}
 
 			if params.RefundAccount != "" {
-				body["refund_account"] = params.RefundAccount
+				m["refund_account"] = params.RefundAccount
 			}
 
 			if params.NotifyURL != "" {
-				body["notify_url"] = params.NotifyURL
+				m["notify_url"] = params.NotifyURL
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -63,8 +65,8 @@ func RefundByTransactionID(appid, transactionID string, params *ParamsRefund) wx
 func RefundByOutTradeNO(appid, outTradeNO string, params *ParamsRefund) wx.Action {
 	return wx.NewPostAction(urls.MchRefundApply,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":         appid,
 				"mch_id":        mchid,
 				"nonce_str":     nonce,
@@ -72,26 +74,28 @@ func RefundByOutTradeNO(appid, outTradeNO string, params *ParamsRefund) wx.Actio
 				"out_refund_no": params.OutRefundNO,
 				"total_fee":     strconv.Itoa(params.TotalFee),
 				"refund_fee":    strconv.Itoa(params.RefundFee),
-				"sign_type":     string(SignMD5),
 			}
 
 			if params.RefundFeeType != "" {
-				body["refund_fee_type"] = params.RefundFeeType
+				m["refund_fee_type"] = params.RefundFeeType
 			}
 
 			if params.RefundDesc != "" {
-				body["refund_desc"] = params.RefundDesc
+				m["refund_desc"] = params.RefundDesc
 			}
 
 			if params.RefundAccount != "" {
-				body["refund_account"] = params.RefundAccount
+				m["refund_account"] = params.RefundAccount
 			}
 
 			if params.NotifyURL != "" {
-				body["notify_url"] = params.NotifyURL
+				m["notify_url"] = params.NotifyURL
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -99,20 +103,22 @@ func RefundByOutTradeNO(appid, outTradeNO string, params *ParamsRefund) wx.Actio
 // QueryRefundByRefundID 根据微信退款单号查询退款信息
 func QueryRefundByRefundID(appid, refundID string, offset ...int) wx.Action {
 	return wx.NewPostAction(urls.MchRefundQuery,
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":     appid,
 				"mch_id":    mchid,
 				"refund_id": refundID,
 				"nonce_str": nonce,
-				"sign_type": string(SignMD5),
 			}
 
 			if len(offset) != 0 {
-				body["offset"] = strconv.Itoa(offset[0])
+				m["offset"] = strconv.Itoa(offset[0])
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -120,20 +126,22 @@ func QueryRefundByRefundID(appid, refundID string, offset ...int) wx.Action {
 // QueryRefundByOutRefundNO 根据商户退款单号查询退款信息
 func QueryRefundByOutRefundNO(appid, outRefundNO string, offset ...int) wx.Action {
 	return wx.NewPostAction(urls.MchRefundQuery,
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":         appid,
 				"mch_id":        mchid,
 				"out_refund_no": outRefundNO,
 				"nonce_str":     nonce,
-				"sign_type":     string(SignMD5),
 			}
 
 			if len(offset) != 0 {
-				body["offset"] = strconv.Itoa(offset[0])
+				m["offset"] = strconv.Itoa(offset[0])
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -141,20 +149,22 @@ func QueryRefundByOutRefundNO(appid, outRefundNO string, offset ...int) wx.Actio
 // QueryRefundByTransactionID 根据微信订单号查询退款信息
 func QueryRefundByTransactionID(appid, transactionID string, offset ...int) wx.Action {
 	return wx.NewPostAction(urls.MchRefundQuery,
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":          appid,
 				"mch_id":         mchid,
 				"transaction_id": transactionID,
 				"nonce_str":      nonce,
-				"sign_type":      string(SignMD5),
 			}
 
 			if len(offset) != 0 {
-				body["offset"] = strconv.Itoa(offset[0])
+				m["offset"] = strconv.Itoa(offset[0])
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -162,20 +172,22 @@ func QueryRefundByTransactionID(appid, transactionID string, offset ...int) wx.A
 // QueryRefundByOutTradeNO 根据商户订单号查询退款信息
 func QueryRefundByOutTradeNO(appid, outTradeNO string, offset ...int) wx.Action {
 	return wx.NewPostAction(urls.MchRefundQuery,
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":        appid,
 				"mch_id":       mchid,
 				"out_trade_no": outTradeNO,
 				"nonce_str":    nonce,
-				"sign_type":    string(SignMD5),
 			}
 
 			if len(offset) != 0 {
-				body["offset"] = strconv.Itoa(offset[0])
+				m["offset"] = strconv.Itoa(offset[0])
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }

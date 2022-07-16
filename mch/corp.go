@@ -48,8 +48,8 @@ type ParamsCorpTransfer struct {
 func SendCorpRedpack(appid, secret string, params *ParamsCorpRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackCorp,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"wxappid":      appid,
 				"mch_id":       mchid,
 				"nonce_str":    nonce,
@@ -59,7 +59,6 @@ func SendCorpRedpack(appid, secret string, params *ParamsCorpRedpack) wx.Action 
 				"wishing":      params.Wishing,
 				"act_name":     params.ActName,
 				"remark":       params.Remark,
-				"sign_type":    string(SignMD5),
 			}
 
 			signStr := fmt.Sprintf("act_name=%s&mch_billno=%s&mch_id=%s&nonce_str=%s&re_openid=%s&total_amount=%d&wxappid=%s&secret=%s",
@@ -72,25 +71,28 @@ func SendCorpRedpack(appid, secret string, params *ParamsCorpRedpack) wx.Action 
 				secret,
 			)
 
-			body["workwx_sign"] = strings.ToUpper(wx.MD5(signStr))
+			m["workwx_sign"] = strings.ToUpper(wx.MD5(signStr))
 
 			if params.AgentID != 0 {
-				body["agentid"] = strconv.FormatInt(params.AgentID, 10)
+				m["agentid"] = strconv.FormatInt(params.AgentID, 10)
 			}
 
 			if len(params.SenderName) != 0 {
-				body["sender_name"] = params.SenderName
+				m["sender_name"] = params.SenderName
 			}
 
 			if len(params.SenderHeaderMediaID) != 0 {
-				body["sender_header_media_id"] = params.SenderHeaderMediaID
+				m["sender_header_media_id"] = params.SenderHeaderMediaID
 			}
 
 			if len(params.SceneID) != 0 {
-				body["scene_id"] = params.SceneID
+				m["scene_id"] = params.SceneID
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -99,14 +101,18 @@ func SendCorpRedpack(appid, secret string, params *ParamsCorpRedpack) wx.Action 
 func QueryCorpRedpack(appid, billNO string) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackCorpQuery,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			return wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":      appid,
 				"mch_id":     mchid,
 				"mch_billno": billNO,
 				"nonce_str":  nonce,
-				"sign_type":  string(SignMD5),
-			}, nil
+			}
+
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -116,8 +122,8 @@ func QueryCorpRedpack(appid, billNO string) wx.Action {
 func TransferToPocket(appid, secret string, params *ParamsCorpTransfer) wx.Action {
 	return wx.NewPostAction(urls.MchTransferToPocket,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":            appid,
 				"mch_id":           mchid,
 				"nonce_str":        nonce,
@@ -129,7 +135,6 @@ func TransferToPocket(appid, secret string, params *ParamsCorpTransfer) wx.Actio
 				"spbill_create_ip": params.SpbillCreateIP,
 				"ww_msg_type":      params.WWMsgType,
 				"act_name":         params.ActName,
-				"sign_type":        string(SignMD5),
 			}
 
 			signStr := fmt.Sprintf("amount=%d&appid=%s&desc=%s&mch_id=%s&nonce_str=%s&openid=%s&partner_trade_no=%s&ww_msg_type=%s&secret=%s",
@@ -144,29 +149,32 @@ func TransferToPocket(appid, secret string, params *ParamsCorpTransfer) wx.Actio
 				secret,
 			)
 
-			body["workwx_sign"] = strings.ToUpper(wx.MD5(signStr))
+			m["workwx_sign"] = strings.ToUpper(wx.MD5(signStr))
 
 			if params.AgentID != 0 {
-				body["agentid"] = strconv.FormatInt(params.AgentID, 10)
+				m["agentid"] = strconv.FormatInt(params.AgentID, 10)
 			}
 
 			if len(params.ReUserName) != 0 {
-				body["re_user_name"] = params.ReUserName
+				m["re_user_name"] = params.ReUserName
 			}
 
 			if params.ApprovalType != 0 {
-				body["approval_type"] = strconv.Itoa(params.ApprovalType)
+				m["approval_type"] = strconv.Itoa(params.ApprovalType)
 			}
 
 			if len(params.ApprovalNumber) != 0 {
-				body["approval_number"] = params.ApprovalNumber
+				m["approval_number"] = params.ApprovalNumber
 			}
 
 			if len(params.DeviceInfo) != 0 {
-				body["device_info"] = params.DeviceInfo
+				m["device_info"] = params.DeviceInfo
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -175,14 +183,18 @@ func TransferToPocket(appid, secret string, params *ParamsCorpTransfer) wx.Actio
 func QueryTransferPocket(appid, partnerTradeNO string) wx.Action {
 	return wx.NewPostAction(urls.MchTransferPocketOrderQuery,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			return wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":            appid,
 				"mch_id":           mchid,
 				"partner_trade_no": partnerTradeNO,
 				"nonce_str":        nonce,
-				"sign_type":        string(SignMD5),
-			}, nil
+			}
+
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }

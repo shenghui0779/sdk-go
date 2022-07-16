@@ -15,6 +15,7 @@ import (
 	"io"
 	"io/ioutil"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"golang.org/x/crypto/pkcs12"
@@ -35,6 +36,58 @@ func (c CDATA) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 		string `xml:",cdata"`
 	}{string(c)}, start)
 }
+
+// 签名类型
+type SignType string
+
+func (st SignType) Sign(key string, m WXML, toUpper bool) string {
+	sign := ""
+	str := st.buildStr(key, m)
+
+	if st == SignHMacSHA256 {
+		sign = HMacSHA256(str, key)
+	} else {
+		sign = MD5(str)
+	}
+
+	if toUpper {
+		sign = strings.ToUpper(sign)
+	}
+
+	return sign
+}
+
+func (st SignType) buildStr(key string, m WXML) string {
+	l := len(m)
+
+	ks := make([]string, 0, l)
+	kvs := make([]string, 0, l)
+
+	for k := range m {
+		if k == "sign" {
+			continue
+		}
+
+		ks = append(ks, k)
+	}
+
+	sort.Strings(ks)
+
+	for _, k := range ks {
+		if v, ok := m[k]; ok && v != "" {
+			kvs = append(kvs, fmt.Sprintf("%s=%s", k, v))
+		}
+	}
+
+	kvs = append(kvs, fmt.Sprintf("key=%s", key))
+
+	return strings.Join(kvs, "&")
+}
+
+const (
+	SignMD5        SignType = "MD5"
+	SignHMacSHA256 SignType = "HMAC-SHA256"
+)
 
 // Nonce returns nonce string, param `size` better for even number.
 func Nonce(size uint) string {
@@ -90,34 +143,38 @@ func FormatMap2XML(m WXML) ([]byte, error) {
 	return []byte(builder.String()), nil
 }
 
-// FormatMap2XML 用于单元测试
-// func FormatMap2XML(m WXML) ([]byte, error) {
-// 	ks := make([]string, 0, len(m))
-//
-// 	for k := range m {
-// 		ks = append(ks, k)
-// 	}
-//
-// 	sort.Strings(ks)
-//
-// 	var builder strings.Builder
-//
-// 	builder.WriteString("<xml>")
-//
-// 	for _, k := range ks {
-// 		builder.WriteString(fmt.Sprintf("<%s>", k))
-//
-// 		if err := xml.EscapeText(&builder, []byte(m[k])); err != nil {
-// 			return nil, err
-// 		}
-//
-// 		builder.WriteString(fmt.Sprintf("</%s>", k))
-// 	}
-//
-// 	builder.WriteString("</xml>")
-//
-// 	return []byte(builder.String()), nil
-// }
+// FormatMap2XMLForTest 用于单元测试
+func FormatMap2XMLForTest(m WXML) ([]byte, error) {
+	ks := make([]string, 0, len(m))
+
+	for k := range m {
+		ks = append(ks, k)
+	}
+
+	sort.Strings(ks)
+
+	var builder strings.Builder
+
+	builder.WriteString("<xml>")
+
+	for _, k := range ks {
+		builder.WriteString(fmt.Sprintf("<%s>", k))
+
+		if err := xml.EscapeText(&builder, []byte(m[k])); err != nil {
+			return nil, err
+		}
+
+		builder.WriteString(fmt.Sprintf("</%s>", k))
+	}
+
+	builder.WriteString("</xml>")
+
+	xmlStr := builder.String()
+
+	fmt.Println("[XML]", xmlStr)
+
+	return []byte(xmlStr), nil
+}
 
 // ParseXML2Map parse xml to map
 func ParseXML2Map(b []byte) (WXML, error) {

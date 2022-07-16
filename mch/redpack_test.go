@@ -15,7 +15,7 @@ import (
 )
 
 func TestSendNormalRedpack(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "0010010404201411170000046545",
@@ -30,8 +30,7 @@ func TestSendNormalRedpack(t *testing.T) {
 		"scene_id":     "PRODUCT_2",
 		"risk_info":    "posttime%3d123123412%26clientversion%3d234134%26mobile%3d122344545%26deviceid%3dIOS",
 		"nonce_str":    "50780e0cca98c8c8e814883e5caa672e",
-		"sign_type":    "MD5",
-		"sign":         "C9BB9D2CBE57D6E3A28BD220AFA2248D",
+		"sign":         "CAE645705D54BA78424107C6048E45B8",
 	})
 
 	assert.Nil(t, err)
@@ -91,7 +90,7 @@ func TestSendNormalRedpack(t *testing.T) {
 }
 
 func TestSendGroupRedpack(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "0010010404201411170000046545",
@@ -106,8 +105,7 @@ func TestSendGroupRedpack(t *testing.T) {
 		"scene_id":     "PRODUCT_2",
 		"risk_info":    "posttime%3d123123412%26clientversion%3d234134%26mobile%3d122344545%26deviceid%3dIOS",
 		"nonce_str":    "50780e0cca98c8c8e814883e5caa672e",
-		"sign_type":    "MD5",
-		"sign":         "07A8148D88B056AE56BFBFCC8CBC0401",
+		"sign":         "A7E8609BDC147326E8EE82BD031EBA3D",
 	})
 
 	assert.Nil(t, err)
@@ -166,7 +164,7 @@ func TestSendGroupRedpack(t *testing.T) {
 }
 
 func TestSendMinipRedpack(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"wxappid":      "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"mch_billno":   "2334580734271081478888000026",
@@ -179,8 +177,7 @@ func TestSendMinipRedpack(t *testing.T) {
 		"remark":       "remark",
 		"notify_way":   "MINI_PROGRAM_JSAPI",
 		"nonce_str":    "50780e0cca98c8c8e814883e5caa672e",
-		"sign_type":    "MD5",
-		"sign":         "68D051FA341FE68A671439BF28980CE6",
+		"sign":         "A3F75B94BB93591BA9065556F70855FA",
 	})
 
 	assert.Nil(t, err)
@@ -241,14 +238,13 @@ func TestSendMinipRedpack(t *testing.T) {
 }
 
 func TestQueryRedpack(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":      "wx2421b1c4370ec43b",
 		"mch_id":     "10000100",
 		"mch_billno": "9010080799701411170000046603",
 		"bill_type":  "MCHT",
 		"nonce_str":  "50780e0cca98c8c8e814883e5caa672e",
-		"sign_type":  "MD5",
-		"sign":       "231F70D63D64EB36C1BE83E7E598B280",
+		"sign":       "B52930D6136EA0B5A40F5692EA47DE08",
 	})
 
 	assert.Nil(t, err)

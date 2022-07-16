@@ -15,7 +15,7 @@ import (
 )
 
 func TestAPPEntrust(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":                    "wx2421b1c4370ec43b",
 		"mch_id":                   "10000100",
 		"plan_id":                  "12535",
@@ -26,8 +26,7 @@ func TestAPPEntrust(t *testing.T) {
 		"version":                  "1.0",
 		"timestamp":                "1414488825",
 		"return_app":               "Y",
-		"sign_type":                "MD5",
-		"sign":                     "588134C9FA5B9D4E89E44FA303F6CB6F",
+		"sign":                     "537B5AEA9A0644EF06ECFB2607A351AB",
 	})
 
 	assert.Nil(t, err)
@@ -103,17 +102,17 @@ func TestOAEntrust(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, wx.WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/entrustweb?appid=wx2421b1c4370ec43b&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&sign=48F3F8F08E560D736E8D0FEFACBB012E&sign_type=MD5&timestamp=1414488825&version=1.0"}, r)
+	assert.Equal(t, wx.WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/entrustweb?appid=wx2421b1c4370ec43b&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&sign=EB82C3E01B0DB4639921AE07F5A1E68F&timestamp=1414488825&version=1.0"}, r)
 }
 
-func TestMPEntrust(t *testing.T) {
+func TestMinipEntrust(t *testing.T) {
 	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
 
 	mch.nonce = func() string {
 		return "IITRi8Iabbblz1Jc"
 	}
 
-	r, err := mch.Do(context.TODO(), MPEntrust("wx2421b1c4370ec43b", &ParamsContract{
+	r, err := mch.Do(context.TODO(), MinipEntrust("wx2421b1c4370ec43b", &ParamsContract{
 		PlanID:                 "106",
 		ContractCode:           "122",
 		RequestSerial:          123,
@@ -132,8 +131,7 @@ func TestMPEntrust(t *testing.T) {
 		"contract_display_account": "张三",
 		"notify_url":               "https://www.qq.com/test/papay",
 		"timestamp":                "1414488825",
-		"sign_type":                "MD5",
-		"sign":                     "E0EC5B06A03B55F2B1FC754AB04D8381",
+		"sign":                     "1A90937A8F2FF340B42A4ADB806B7D00",
 	}, r)
 }
 
@@ -156,11 +154,11 @@ func TestH5Entrust(t *testing.T) {
 	}))
 
 	assert.Nil(t, err)
-	assert.Equal(t, wx.WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/h5entrustweb?appid=wx2421b1c4370ec43b&clientip=12.1.1.12&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&return_appid=wxcbda96de0b165542&sign=CE76472E3C209CB2B3F6FC6A649B6849D4BCC78F4A4A820EEF4D5A55EF3F2660&sign_type=HMAC-SHA256&timestamp=1414488825&version=1.0"}, r)
+	assert.Equal(t, wx.WXML{"entrust_url": "https://api.mch.weixin.qq.com/papay/h5entrustweb?appid=wx2421b1c4370ec43b&clientip=12.1.1.12&contract_code=122&contract_display_account=name1&mch_id=10000100&notify_url=www.qq.com%2Ftest%2Fpapay&plan_id=106&request_serial=123&return_appid=wxcbda96de0b165542&sign=211AFAFF9BF4DE757BD281F3BEF39D06EC8BB710B1E2A07A3614CD63CEE08FCF&timestamp=1414488825&version=1.0"}, r)
 }
 
-func TestEntrustByOrder(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+func TestEntrustInPay(t *testing.T) {
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":                    "wx2421b1c4370ec43b",
 		"mch_id":                   "10000100",
 		"contract_mchid":           "10000100",
@@ -180,8 +178,7 @@ func TestEntrustByOrder(t *testing.T) {
 		"contract_display_account": "微信代扣",
 		"contract_notify_url":      "https://yoursite.com",
 		"nonce_str":                "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
-		"sign_type":                "MD5",
-		"sign":                     "B59547B883DA4E3E3483DFCD1FC0CB98",
+		"sign":                     "0FEB33AF95AEFA8922ADB0753A14BB38",
 	})
 
 	assert.Nil(t, err)
@@ -251,13 +248,12 @@ func TestEntrustByOrder(t *testing.T) {
 }
 
 func TestQueryContractByID(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":       "wx2421b1c4370ec43b",
 		"mch_id":      "10000100",
 		"contract_id": "201509160000028648",
 		"version":     "1.0",
-		"sign_type":   "MD5",
-		"sign":        "423CE9A1BA3B99329D7B9A4ACC8B57EA",
+		"sign":        "D23A52B839DA39302E746FBB1D0E4F7D",
 	})
 
 	assert.Nil(t, err)
@@ -325,14 +321,13 @@ func TestQueryContractByID(t *testing.T) {
 }
 
 func TestQueryContractByCode(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":         "wx2421b1c4370ec43b",
 		"mch_id":        "10000100",
 		"plan_id":       "123",
 		"contract_code": "1023658866",
 		"version":       "1.0",
-		"sign_type":     "MD5",
-		"sign":          "8657D130240326FF8A9BA9FFD3A22C54",
+		"sign":          "1FCDD5BAF037DF736096306BB5213920",
 	})
 
 	assert.Nil(t, err)
@@ -400,7 +395,7 @@ func TestQueryContractByCode(t *testing.T) {
 }
 
 func TestPappayApply(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":            "wx2421b1c4370ec43b",
 		"mch_id":           "10000100",
 		"out_trade_no":     "217752501201407033233368018",
@@ -412,8 +407,7 @@ func TestPappayApply(t *testing.T) {
 		"trade_type":       "PAP",
 		"contract_id":      "Wx15463511252015071056489715",
 		"nonce_str":        "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
-		"sign_type":        "MD5",
-		"sign":             "B93354AC5A479C50A85019E8B47C01FE",
+		"sign":             "94AD0747C8E32D815623D89A051F7DE8",
 	})
 
 	assert.Nil(t, err)
@@ -468,14 +462,13 @@ func TestPappayApply(t *testing.T) {
 }
 
 func TestDeleteContractByID(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":                       "wx2421b1c4370ec43b",
 		"mch_id":                      "10000100",
 		"contract_id":                 "100005698",
 		"contract_termination_remark": "原因",
 		"version":                     "1.0",
-		"sign_type":                   "MD5",
-		"sign":                        "9A1F0B64467723BDF0D26CC39ED0B001",
+		"sign":                        "5E8C697575CC65D77BBE96B5BB39916E",
 	})
 
 	assert.Nil(t, err)
@@ -521,15 +514,14 @@ func TestDeleteContractByID(t *testing.T) {
 }
 
 func TestDeleteContractByCode(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":                       "wx2421b1c4370ec43b",
 		"mch_id":                      "10000100",
 		"plan_id":                     "12251",
 		"contract_code":               "1234",
 		"contract_termination_remark": "原因",
 		"version":                     "1.0",
-		"sign_type":                   "MD5",
-		"sign":                        "9AA3B7174E2B71DA6268741A70E1DDDF",
+		"sign":                        "5498EE11E3B24F7AE1308F61FC9A25C2",
 	})
 
 	assert.Nil(t, err)
@@ -575,13 +567,12 @@ func TestDeleteContractByCode(t *testing.T) {
 }
 
 func TestQueryPappayByTransactionID(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":          "wx2421b1c4370ec43b",
 		"mch_id":         "10000100",
 		"transaction_id": "1008450740201411110005820873",
 		"nonce_str":      "0b9f35f484df17a732e537c37708d1d0",
-		"sign_type":      "MD5",
-		"sign":           "264E5038F1CB9D66132E769ABB5B745C",
+		"sign":           "F57DB02F4B69F3E81F26B28EF6FFC484",
 	})
 
 	assert.Nil(t, err)
@@ -653,13 +644,12 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 }
 
 func TestQueryPappayByOutTradeNO(t *testing.T) {
-	body, err := wx.FormatMap2XML(wx.WXML{
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"appid":        "wx2421b1c4370ec43b",
 		"mch_id":       "10000100",
 		"out_trade_no": "1415757673",
 		"nonce_str":    "0b9f35f484df17a732e537c37708d1d0",
-		"sign_type":    "MD5",
-		"sign":         "5F14ED52C2F179580A1DED73268A1009",
+		"sign":         "31A8D85095AE5762A86C1EEC10D1FB7C",
 	})
 
 	assert.Nil(t, err)

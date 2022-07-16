@@ -29,8 +29,8 @@ type ParamsRedpack struct {
 func SendNormalRedpack(appid string, params *ParamsRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackNormal,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"wxappid":      appid,
 				"mch_id":       mchid,
 				"nonce_str":    nonce,
@@ -43,18 +43,20 @@ func SendNormalRedpack(appid string, params *ParamsRedpack) wx.Action {
 				"client_ip":    params.ClientIP,
 				"act_name":     params.ActName,
 				"remark":       params.Remark,
-				"sign_type":    string(SignMD5),
 			}
 
 			if params.SceneID != "" {
-				body["scene_id"] = params.SceneID
+				m["scene_id"] = params.SceneID
 			}
 
 			if params.RiskInfo != "" {
-				body["risk_info"] = params.RiskInfo
+				m["risk_info"] = params.RiskInfo
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -64,8 +66,8 @@ func SendNormalRedpack(appid string, params *ParamsRedpack) wx.Action {
 func SendGroupRedpack(appid string, params *ParamsRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackGroup,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"wxappid":      appid,
 				"mch_id":       mchid,
 				"nonce_str":    nonce,
@@ -78,18 +80,20 @@ func SendGroupRedpack(appid string, params *ParamsRedpack) wx.Action {
 				"wishing":      params.Wishing,
 				"act_name":     params.ActName,
 				"remark":       params.Remark,
-				"sign_type":    string(SignMD5),
 			}
 
 			if params.SceneID != "" {
-				body["scene_id"] = params.SceneID
+				m["scene_id"] = params.SceneID
 			}
 
 			if params.RiskInfo != "" {
-				body["risk_info"] = params.RiskInfo
+				m["risk_info"] = params.RiskInfo
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -99,8 +103,8 @@ func SendGroupRedpack(appid string, params *ParamsRedpack) wx.Action {
 func SendMinipRedpack(appid string, params *ParamsRedpack) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackMinip,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"wxappid":      appid,
 				"mch_id":       mchid,
 				"nonce_str":    nonce,
@@ -113,14 +117,16 @@ func SendMinipRedpack(appid string, params *ParamsRedpack) wx.Action {
 				"act_name":     params.ActName,
 				"remark":       params.Remark,
 				"notify_way":   "MINI_PROGRAM_JSAPI",
-				"sign_type":    string(SignMD5),
 			}
 
 			if params.SceneID != "" {
-				body["scene_id"] = params.SceneID
+				m["scene_id"] = params.SceneID
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -129,15 +135,19 @@ func SendMinipRedpack(appid string, params *ParamsRedpack) wx.Action {
 func QueryRedpack(appid, billNO string) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackQuery,
 		wx.WithTLS(),
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			return wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":      appid,
 				"mch_id":     mchid,
 				"mch_billno": billNO,
 				"bill_type":  "MCHT",
 				"nonce_str":  nonce,
-				"sign_type":  string(SignMD5),
-			}, nil
+			}
+
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }

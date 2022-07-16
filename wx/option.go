@@ -42,7 +42,7 @@ func WithBody(f func() ([]byte, error)) ActionOption {
 }
 
 // WithWXML sets post with xml for action.
-func WithWXML(f func(mchid, nonce string) (WXML, error)) ActionOption {
+func WithWXML(f func(mchid, apikey, nonce string) (WXML, error)) ActionOption {
 	return func(a *action) {
 		a.wxml = f
 	}

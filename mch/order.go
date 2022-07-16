@@ -34,8 +34,8 @@ type ParamsUnifyOrder struct {
 // UnifyOrder 统一下单
 func UnifyOrder(appid string, params *ParamsUnifyOrder) wx.Action {
 	return wx.NewPostAction(urls.MchOrderUnify,
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			body := wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":            appid,
 				"mch_id":           mchid,
 				"nonce_str":        nonce,
@@ -46,72 +46,78 @@ func UnifyOrder(appid string, params *ParamsUnifyOrder) wx.Action {
 				"total_fee":        strconv.Itoa(params.TotalFee),
 				"spbill_create_ip": params.SpbillCreateIP,
 				"notify_url":       params.NotifyURL,
-				"sign_type":        string(SignMD5),
 			}
 
 			if len(params.DeviceInfo) != 0 {
-				body["device_info"] = params.DeviceInfo
+				m["device_info"] = params.DeviceInfo
 			}
 
 			if len(params.Detail) != 0 {
-				body["detail"] = params.Detail
+				m["detail"] = params.Detail
 			}
 
 			if len(params.Attach) != 0 {
-				body["attach"] = params.Attach
+				m["attach"] = params.Attach
 			}
 
 			if len(params.FeeType) != 0 {
-				body["fee_type"] = params.FeeType
+				m["fee_type"] = params.FeeType
 			}
 
 			if len(params.TimeStart) != 0 {
-				body["time_start"] = params.TimeStart
+				m["time_start"] = params.TimeStart
 			}
 
 			if len(params.TimeExpire) != 0 {
-				body["time_expire"] = params.TimeExpire
+				m["time_expire"] = params.TimeExpire
 			}
 
 			if len(params.GoodsTag) != 0 {
-				body["goods_tag"] = params.GoodsTag
+				m["goods_tag"] = params.GoodsTag
 			}
 
 			if len(params.ProductID) != 0 {
-				body["product_id"] = params.ProductID
+				m["product_id"] = params.ProductID
 			}
 
 			if len(params.LimitPay) != 0 {
-				body["limit_pay"] = params.LimitPay
+				m["limit_pay"] = params.LimitPay
 			}
 
 			if len(params.OpenID) != 0 {
-				body["openid"] = params.OpenID
+				m["openid"] = params.OpenID
 			}
 
 			if params.Receipt {
-				body["receipt"] = "Y"
+				m["receipt"] = "Y"
 			}
 
 			if len(params.SceneInfo) != 0 {
-				body["scene_info"] = params.SceneInfo
+				m["scene_info"] = params.SceneInfo
 			}
 
-			return body, nil
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}))
 }
 
 // QueryOrderByTransactionID 根据微信订单号查询
 func QueryOrderByTransactionID(appid, transactionID string) wx.Action {
 	return wx.NewPostAction(urls.MchOrderQuery,
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			return wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":          appid,
 				"mch_id":         mchid,
 				"transaction_id": transactionID,
 				"nonce_str":      nonce,
-				"sign_type":      string(SignMD5),
-			}, nil
+			}
+
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -119,14 +125,18 @@ func QueryOrderByTransactionID(appid, transactionID string) wx.Action {
 // QueryOrderByOutTradeNO 根据商户订单号查询
 func QueryOrderByOutTradeNO(appid, outTradeNO string) wx.Action {
 	return wx.NewPostAction(urls.MchOrderQuery,
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			return wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":        appid,
 				"mch_id":       mchid,
 				"out_trade_no": outTradeNO,
 				"nonce_str":    nonce,
-				"sign_type":    string(SignMD5),
-			}, nil
+			}
+
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }
@@ -134,14 +144,18 @@ func QueryOrderByOutTradeNO(appid, outTradeNO string) wx.Action {
 // CloseOrder 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
 func CloseOrder(appid, outTradeNO string) wx.Action {
 	return wx.NewPostAction(urls.MchOrderClose,
-		wx.WithWXML(func(mchid, nonce string) (wx.WXML, error) {
-			return wx.WXML{
+		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
+			m := wx.WXML{
 				"appid":        appid,
 				"mch_id":       mchid,
 				"out_trade_no": outTradeNO,
 				"nonce_str":    nonce,
-				"sign_type":    string(SignMD5),
-			}, nil
+			}
+
+			// 签名
+			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+
+			return m, nil
 		}),
 	)
 }

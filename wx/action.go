@@ -15,7 +15,7 @@ type Action interface {
 	URL(accessToken ...string) string
 
 	// WXML returns body for xml request
-	WXML(mchid, nonce string) (WXML, error)
+	WXML(mchid, apikey, nonce string) (WXML, error)
 
 	// Body returns body for post request
 	Body() ([]byte, error)
@@ -37,7 +37,7 @@ type action struct {
 	method     string
 	reqURL     string
 	query      url.Values
-	wxml       func(mchid, nonce string) (WXML, error)
+	wxml       func(mchid, apikey, nonce string) (WXML, error)
 	body       func() ([]byte, error)
 	uploadform func() (UploadForm, error)
 	decode     func(resp []byte) error
@@ -61,9 +61,9 @@ func (a *action) URL(accessToken ...string) string {
 	return fmt.Sprintf("%s?%s", a.reqURL, a.query.Encode())
 }
 
-func (a *action) WXML(mchid, nonce string) (WXML, error) {
+func (a *action) WXML(mchid, apikey, nonce string) (WXML, error) {
 	if a.wxml != nil {
-		return a.wxml(mchid, nonce)
+		return a.wxml(mchid, apikey, nonce)
 	}
 
 	return WXML{}, nil

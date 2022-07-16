@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -64,14 +63,11 @@ func (mch *Mch) ApiKey() string {
 
 // Do exec action
 func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOption) (wx.WXML, error) {
-	m, err := action.WXML(mch.mchid, mch.nonce())
+	m, err := action.WXML(mch.mchid, mch.apikey, mch.nonce())
 
 	if err != nil {
 		return nil, err
 	}
-
-	// 签名
-	m["sign"] = mch.Sign(SignType(m["sign_type"]), m, true)
 
 	if len(action.Method()) == 0 {
 		if len(action.URL()) == 0 {
@@ -88,6 +84,7 @@ func (mch *Mch) Do(ctx context.Context, action wx.Action, options ...wx.HTTPOpti
 	}
 
 	body, err := wx.FormatMap2XML(m)
+	// body, err := wx.FormatMap2XMLForTest(m) // 运行单元测试时使用
 
 	if err != nil {
 		return nil, err
@@ -135,7 +132,7 @@ func (mch *Mch) APPAPI(appid, prepayID string) wx.WXML {
 		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	m["sign"] = mch.Sign(SignMD5, m, true)
+	m["sign"] = wx.SignMD5.Sign(mch.apikey, m, true)
 
 	return m
 }
@@ -146,11 +143,11 @@ func (mch *Mch) JSAPI(appid, prepayID string) wx.WXML {
 		"appId":     appid,
 		"nonceStr":  mch.nonce(),
 		"package":   fmt.Sprintf("prepay_id=%s", prepayID),
-		"signType":  string(SignMD5),
+		"signType":  "MD5",
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	m["paySign"] = mch.Sign(SignMD5, m, true)
+	m["paySign"] = wx.SignMD5.Sign(mch.apikey, m, true)
 
 	return m
 }
@@ -161,7 +158,7 @@ func (mch *Mch) MinipRedpackJSAPI(appid, pkg string) wx.WXML {
 		"nonceStr":  mch.nonce(),
 		"package":   url.QueryEscape(pkg),
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
-		"signType":  string(SignMD5),
+		"signType":  "MD5",
 	}
 
 	signStr := fmt.Sprintf("appId=%s&nonceStr=%s&package=%s&timeStamp=%s&key=%s", appid, m["nonceStr"], m["package"], m["timeStamp"], mch.apikey)
@@ -182,9 +179,10 @@ func (mch *Mch) DownloadBill(ctx context.Context, appid, billDate, billType stri
 		"nonce_str": mch.nonce(),
 	}
 
-	m["sign"] = mch.Sign(SignMD5, m, true)
+	m["sign"] = wx.SignMD5.Sign(mch.apikey, m, true)
 
 	body, err := wx.FormatMap2XML(m)
+	// body, err := wx.FormatMap2XMLForTest(m) // 运行单元测试时使用
 
 	if err != nil {
 		return nil, err
@@ -221,9 +219,10 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, appid string, billDate, ac
 		"nonce_str":    mch.nonce(),
 	}
 
-	m["sign"] = mch.Sign(SignHMacSHA256, m, true)
+	m["sign"] = wx.SignHMacSHA256.Sign(mch.apikey, m, true)
 
 	body, err := wx.FormatMap2XML(m)
+	// body, err := wx.FormatMap2XMLForTest(m) // 运行单元测试时使用
 
 	if err != nil {
 		return nil, err
@@ -266,9 +265,10 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, appid, beginTime, endTime
 		m["limit"] = strconv.Itoa(limit[0])
 	}
 
-	m["sign"] = mch.Sign(SignHMacSHA256, m, true)
+	m["sign"] = wx.SignHMacSHA256.Sign(mch.apikey, m, true)
 
 	body, err := wx.FormatMap2XML(m)
+	// body, err := wx.FormatMap2XMLForTest(m) // 运行单元测试时使用
 
 	if err != nil {
 		return nil, err
@@ -294,34 +294,16 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, appid, beginTime, endTime
 	return resp, nil
 }
 
-// Sign 生成签名
-func (mch *Mch) Sign(t SignType, m wx.WXML, toUpper bool) string {
-	str := mch.buildSignStr(m)
-	sign := ""
-
-	if t == SignHMacSHA256 {
-		sign = wx.HMacSHA256(str, mch.apikey)
-	} else {
-		sign = wx.MD5(str)
-	}
-
-	if toUpper {
-		sign = strings.ToUpper(sign)
-	}
-
-	return sign
-}
-
 // VerifyWXMLResult 微信请求/回调通知签名验证
 func (mch *Mch) VerifyWXMLResult(m wx.WXML) error {
 	if wxsign, ok := m["sign"]; ok {
-		t := SignMD5
+		st := wx.SignMD5
 
 		if v, ok := m["sign_type"]; ok {
-			t = SignType(v)
+			st = wx.SignType(strings.ToUpper(v))
 		}
 
-		if signature := mch.Sign(t, m, true); wxsign != signature {
+		if signature := st.Sign(mch.apikey, m, true); wxsign != signature {
 			return fmt.Errorf("signature verified failed, want: %s, got: %s", signature, wxsign)
 		}
 	}
@@ -355,32 +337,4 @@ func (mch *Mch) DecryptWithAES256ECB(encrypt string) (wx.WXML, error) {
 	}
 
 	return wx.ParseXML2Map(plainText)
-}
-
-// Sign 生成签名
-func (mch *Mch) buildSignStr(m wx.WXML) string {
-	l := len(m)
-
-	ks := make([]string, 0, l)
-	kvs := make([]string, 0, l)
-
-	for k := range m {
-		if k == "sign" {
-			continue
-		}
-
-		ks = append(ks, k)
-	}
-
-	sort.Strings(ks)
-
-	for _, k := range ks {
-		if v, ok := m[k]; ok && v != "" {
-			kvs = append(kvs, fmt.Sprintf("%s=%s", k, v))
-		}
-	}
-
-	kvs = append(kvs, fmt.Sprintf("key=%s", mch.apikey))
-
-	return strings.Join(kvs, "&")
 }
