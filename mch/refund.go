@@ -53,7 +53,7 @@ func RefundByTransactionID(appid, transactionID string, params *ParamsRefund) wx
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -93,7 +93,7 @@ func RefundByOutTradeNO(appid, outTradeNO string, params *ParamsRefund) wx.Actio
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -116,7 +116,7 @@ func QueryRefundByRefundID(appid, refundID string, offset ...int) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -139,7 +139,7 @@ func QueryRefundByOutRefundNO(appid, outRefundNO string, offset ...int) wx.Actio
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -162,7 +162,7 @@ func QueryRefundByTransactionID(appid, transactionID string, offset ...int) wx.A
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -185,7 +185,7 @@ func QueryRefundByOutTradeNO(appid, outTradeNO string, offset ...int) wx.Action 
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),

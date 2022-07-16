@@ -49,7 +49,7 @@ func TestSignWithMD5(t *testing.T) {
 	}
 
 	// 签名校验来自：[微信支付接口签名校验工具](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=20_1)
-	assert.Equal(t, "66724B3332E124BFC3D62A31A68F7887", SignMD5.Sign("192006250b4c09247ec02edce69f6a2d", m, true))
+	assert.Equal(t, "66724B3332E124BFC3D62A31A68F7887", SignMD5.Do("192006250b4c09247ec02edce69f6a2d", m, true))
 }
 
 func TestSignWithHMacSHA256(t *testing.T) {
@@ -63,7 +63,7 @@ func TestSignWithHMacSHA256(t *testing.T) {
 	}
 
 	// 签名校验来自：[微信支付接口签名校验工具](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=20_1)
-	assert.Equal(t, "3B12F569A5714858F8251366BC3CBCDDBD249905CCA01D8F56D365EF1FC2CA5C", SignHMacSHA256.Sign("192006250b4c09247ec02edce69f6a2d", m, true))
+	assert.Equal(t, "3B12F569A5714858F8251366BC3CBCDDBD249905CCA01D8F56D365EF1FC2CA5C", SignHMacSHA256.Do("192006250b4c09247ec02edce69f6a2d", m, true))
 }
 
 func TestUint32Bytes(t *testing.T) {

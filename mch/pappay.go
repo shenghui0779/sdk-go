@@ -89,7 +89,7 @@ func APPEntrust(appid string, params *ParamsContract) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -117,7 +117,7 @@ func OAEntrust(appid string, params *ParamsContract) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -144,7 +144,7 @@ func MinipEntrust(appid string, params *ParamsContract) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -173,7 +173,7 @@ func H5Entrust(appid string, params *ParamsContract) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignHMacSHA256.Sign(apikey, m, true)
+			m["sign"] = wx.SignHMacSHA256.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -245,7 +245,7 @@ func EntrustInPay(appid string, params *ParamsContractInPay) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -264,7 +264,7 @@ func QueryContractByID(appid string, contractID string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -284,7 +284,7 @@ func QueryContractByCode(appid, planID, contractCode string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -330,7 +330,7 @@ func PappayApply(appid string, params *ParamsPappay) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -350,7 +350,7 @@ func DeleteContractByID(appid, contractID, remark string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -371,7 +371,7 @@ func DeleteContractByCode(appid, planID, contractCode, remark string) wx.Action 
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -390,7 +390,7 @@ func QueryPappayByTransactionID(appid, transactionID string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -409,7 +409,7 @@ func QueryPappayByOutTradeNO(appid, outTradeNO string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),

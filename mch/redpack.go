@@ -54,7 +54,7 @@ func SendNormalRedpack(appid string, params *ParamsRedpack) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -91,7 +91,7 @@ func SendGroupRedpack(appid string, params *ParamsRedpack) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -124,7 +124,7 @@ func SendMinipRedpack(appid string, params *ParamsRedpack) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -145,7 +145,7 @@ func QueryRedpack(appid, billNO string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),

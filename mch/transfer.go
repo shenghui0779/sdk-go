@@ -64,7 +64,7 @@ func TransferToBalance(appid string, params *ParamsTransferBalance) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -84,7 +84,7 @@ func QueryTransferBalance(appid, partnerTradeNO string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -128,7 +128,7 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey 
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -147,7 +147,7 @@ func QueryTransferBankCard(appid, partnerTradeNO string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -166,7 +166,7 @@ func RSAPublicKey() wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),

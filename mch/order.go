@@ -97,7 +97,7 @@ func UnifyOrder(appid string, params *ParamsUnifyOrder) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}))
@@ -115,7 +115,7 @@ func QueryOrderByTransactionID(appid, transactionID string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -134,7 +134,7 @@ func QueryOrderByOutTradeNO(appid, outTradeNO string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -153,7 +153,7 @@ func CloseOrder(appid, outTradeNO string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),

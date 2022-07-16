@@ -132,7 +132,7 @@ func (mch *Mch) APPAPI(appid, prepayID string) wx.WXML {
 		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	m["sign"] = wx.SignMD5.Sign(mch.apikey, m, true)
+	m["sign"] = wx.SignMD5.Do(mch.apikey, m, true)
 
 	return m
 }
@@ -147,7 +147,7 @@ func (mch *Mch) JSAPI(appid, prepayID string) wx.WXML {
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
-	m["paySign"] = wx.SignMD5.Sign(mch.apikey, m, true)
+	m["paySign"] = wx.SignMD5.Do(mch.apikey, m, true)
 
 	return m
 }
@@ -179,7 +179,7 @@ func (mch *Mch) DownloadBill(ctx context.Context, appid, billDate, billType stri
 		"nonce_str": mch.nonce(),
 	}
 
-	m["sign"] = wx.SignMD5.Sign(mch.apikey, m, true)
+	m["sign"] = wx.SignMD5.Do(mch.apikey, m, true)
 
 	body, err := wx.FormatMap2XML(m)
 	// body, err := wx.FormatMap2XMLForTest(m) // 运行单元测试时使用
@@ -219,7 +219,7 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, appid string, billDate, ac
 		"nonce_str":    mch.nonce(),
 	}
 
-	m["sign"] = wx.SignHMacSHA256.Sign(mch.apikey, m, true)
+	m["sign"] = wx.SignHMacSHA256.Do(mch.apikey, m, true)
 
 	body, err := wx.FormatMap2XML(m)
 	// body, err := wx.FormatMap2XMLForTest(m) // 运行单元测试时使用
@@ -265,7 +265,7 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, appid, beginTime, endTime
 		m["limit"] = strconv.Itoa(limit[0])
 	}
 
-	m["sign"] = wx.SignHMacSHA256.Sign(mch.apikey, m, true)
+	m["sign"] = wx.SignHMacSHA256.Do(mch.apikey, m, true)
 
 	body, err := wx.FormatMap2XML(m)
 	// body, err := wx.FormatMap2XMLForTest(m) // 运行单元测试时使用
@@ -303,7 +303,7 @@ func (mch *Mch) VerifyWXMLResult(m wx.WXML) error {
 			st = wx.SignType(strings.ToUpper(v))
 		}
 
-		if signature := st.Sign(mch.apikey, m, true); wxsign != signature {
+		if signature := st.Do(mch.apikey, m, true); wxsign != signature {
 			return fmt.Errorf("signature verified failed, want: %s, got: %s", signature, wxsign)
 		}
 	}

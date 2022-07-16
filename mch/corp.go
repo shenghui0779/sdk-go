@@ -90,7 +90,7 @@ func SendCorpRedpack(appid, secret string, params *ParamsCorpRedpack) wx.Action 
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -110,7 +110,7 @@ func QueryCorpRedpack(appid, billNO string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -172,7 +172,7 @@ func TransferToPocket(appid, secret string, params *ParamsCorpTransfer) wx.Actio
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),
@@ -192,7 +192,7 @@ func QueryTransferPocket(appid, partnerTradeNO string) wx.Action {
 			}
 
 			// 签名
-			m["sign"] = wx.SignMD5.Sign(apikey, m, true)
+			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
 			return m, nil
 		}),

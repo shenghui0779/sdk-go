@@ -40,7 +40,7 @@ func (c CDATA) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 // 签名类型
 type SignType string
 
-func (st SignType) Sign(key string, m WXML, toUpper bool) string {
+func (st SignType) Do(key string, m WXML, toUpper bool) string {
 	sign := ""
 	str := st.buildStr(key, m)
 
