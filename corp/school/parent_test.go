@@ -187,7 +187,7 @@ func TestBatchCreateParent(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultParentBatchCreate{
-		ResultList: []*ParentErrResult{
+		ResultList: []*ParentErrRet{
 			{
 				ParentUserID: "lisi_parent_userid",
 				ErrCode:      1,
@@ -255,7 +255,7 @@ func TestBatchUpdateParent(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultParentBatchUpdate{
-		ResultList: []*ParentErrResult{
+		ResultList: []*ParentErrRet{
 			{
 				ParentUserID: "lisi_parent_userid",
 				ErrCode:      1,
@@ -300,7 +300,7 @@ func TestBatchDeleteParent(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultParentBatchDelete{
-		ResultList: []*ParentErrResult{
+		ResultList: []*ParentErrRet{
 			{
 				ParentUserID: "lisi",
 				ErrCode:      1111,

@@ -74,8 +74,8 @@ func AICrop(imgPath string, result *ResultAICrop) wx.Action {
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -84,8 +84,8 @@ func AICrop(imgPath string, result *ResultAICrop) wx.Action {
 func AICropByURL(imgURL string, result *ResultAICrop) wx.Action {
 	return wx.NewPostAction(urls.OffiaAICrop,
 		wx.WithQuery("img_url", imgURL),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -133,8 +133,8 @@ func ScanQRCode(imgPath string, result *ResultQRCodeScan) wx.Action {
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -143,8 +143,8 @@ func ScanQRCode(imgPath string, result *ResultQRCodeScan) wx.Action {
 func ScanQRCodeByURL(imgURL string, result *ResultQRCodeScan) wx.Action {
 	return wx.NewPostAction(urls.OffiaScanQRCode,
 		wx.WithQuery("img_url", imgURL),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -184,8 +184,8 @@ func SuperreSolution(imgPath string, result *ResultSuperreSolution) wx.Action {
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -194,8 +194,8 @@ func SuperreSolution(imgPath string, result *ResultSuperreSolution) wx.Action {
 func SuperreSolutionByURL(imgURL string, result *ResultSuperreSolution) wx.Action {
 	return wx.NewPostAction(urls.OffiaSuperreSolution,
 		wx.WithQuery("img_url", imgURL),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

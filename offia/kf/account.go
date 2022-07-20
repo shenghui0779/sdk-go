@@ -39,8 +39,8 @@ type ResultAccountList struct {
 // GetAccountList 获取客服列表
 func GetAccountList(result *ResultAccountList) wx.Action {
 	return wx.NewGetAction(urls.OffiaKFAccountList,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -60,8 +60,8 @@ type ResultOnlineList struct {
 // GetOnlineList 获取客服在线列表
 func GetOnlineList(result *ResultOnlineList) wx.Action {
 	return wx.NewGetAction(urls.OffiaKFOnlineList,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

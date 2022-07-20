@@ -29,8 +29,8 @@ type VacationQuotaAttr struct {
 // GetCorpVacationConf 获取企业假期管理配置
 func GetCorpVacationConf(result *ResultCorpVacationConf) wx.Action {
 	return wx.NewGetAction(urls.CorpOAGetVacationCorpConf,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -61,8 +61,8 @@ func GetUserVacationQuota(userID string, result *ResultUserVacationQuota) wx.Act
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

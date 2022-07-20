@@ -36,8 +36,8 @@ func CreateLiving(params *ParamsLivingCreate, result *ResultLivingCreate) wx.Act
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -115,8 +115,8 @@ func GetLivingCode(livingID, openID string, result *ResultLivingCode) wx.Action 
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -144,8 +144,8 @@ func GetUserAllLivingID(userID, cursor string, limit int, result *ResultUserAllL
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -179,8 +179,8 @@ type ResultLivingInfo struct {
 func GetLivingInfo(livingID string, result *ResultLivingInfo) wx.Action {
 	return wx.NewGetAction(urls.CorpToolsLivingGetInfo,
 		wx.WithQuery("livingid", livingID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -228,8 +228,8 @@ func GetLivingWatchStat(livingID, nextKey string, result *ResultLivingWatchStat)
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -256,8 +256,8 @@ func GetLivingShareInfo(wwshareCode string, result *ResultLivingShareInfo) wx.Ac
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

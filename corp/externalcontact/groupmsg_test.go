@@ -321,21 +321,21 @@ func TestGetGroupMsgSendResult(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	params := &ParamsGroupMsgSendResult{
+	params := &ParamsGroupMsgSendRet{
 		MsgID:  "msgGCAAAXtWyujaWJHDDGi0mACAAAA",
 		UserID: "zhangsan",
 		Limit:  50,
 		Cursor: "CURSOR",
 	}
 
-	result := new(ResultGroupMsgSendResult)
+	result := new(ResultGroupMsgSendRet)
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetGroupMsgSendResult(params, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultGroupMsgSendResult{
+	assert.Equal(t, &ResultGroupMsgSendRet{
 		NextCursor: "CURSOR",
-		SendList: []*GroupMsgSendResult{
+		SendList: []*GroupMsgSendRet{
 			{
 				ExternalUserID: "wmqfasd1e19278asdasAAAA",
 				ChatID:         "wrOgQhDgAAMYQiS5ol9G7gK9JVAAAA",

@@ -34,8 +34,8 @@ func AddDraft(params *ParamsDraftAdd, result *ResultDraftAdd) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -79,8 +79,8 @@ func GetDraft(mediaID string, result *ResultDraftGet) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -109,8 +109,8 @@ type ResultDraftCount struct {
 // GetDraftCount 草稿箱 - 获取草稿总数
 func GetDraftCount(result *ResultDraftCount) wx.Action {
 	return wx.NewGetAction(urls.OffiaDraftCount,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -149,8 +149,8 @@ func BatchGetDraft(offset, count, nocontent int, result *ResultDraftBatchGet) wx
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

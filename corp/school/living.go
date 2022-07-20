@@ -30,8 +30,8 @@ func GetUserAllLivingID(userID, cursor string, limit int, result *ResultUserAllL
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -61,8 +61,8 @@ type ResultLivingInfo struct {
 func GetLivingInfo(livingID string, result *ResultLivingInfo) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolGetLivingInfo,
 		wx.WithQuery("livingid", livingID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -112,8 +112,8 @@ func GetLivingWatchStat(livingID, nextKey string, result *ResultLivingWatchStat)
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -150,8 +150,8 @@ func GetLivingUnwatchStat(livingID, nextKey string, result *ResultLivingUnwatchS
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

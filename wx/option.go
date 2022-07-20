@@ -57,7 +57,7 @@ func WithUpload(f func() (UploadForm, error)) ActionOption {
 }
 
 // WithDecode sets response decode for action.
-func WithDecode(f func(resp []byte) error) ActionOption {
+func WithDecode(f func(b []byte) error) ActionOption {
 	return func(a *action) {
 		a.decode = f
 	}

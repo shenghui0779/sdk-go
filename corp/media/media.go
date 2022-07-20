@@ -57,8 +57,8 @@ func Upload(mediaType MediaType, mediaPath string, result *ResultUpload) wx.Acti
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -86,8 +86,8 @@ func UploadByURL(mediaType MediaType, filename, url string, result *ResultUpload
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -126,8 +126,8 @@ func UploadImg(imgPath string, result *ResultUploadImg) wx.Action {
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -154,8 +154,8 @@ func UploadImgByURL(filename, url string, result *ResultUploadImg) wx.Action {
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

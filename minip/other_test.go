@@ -120,47 +120,6 @@ func TestGenerateShortLink(t *testing.T) {
 	}, result)
 }
 
-func TestGetUserRiskRank(t *testing.T) {
-	body := []byte(`{"appid":"APPID","openid":"OPENID","scene":1,"mobile_no":"12345678","client_ip":"******","email_address":"****@qq.com"}`)
-
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"errcode": 0,
-	"errmsg": "ok",
-	"risk_rank": 0
-}`))),
-	}
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	client := mock.NewMockHTTPClient(ctrl)
-
-	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/getuserriskrank?access_token=ACCESS_TOKEN", body).Return(resp, nil)
-
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
-
-	params := &ParamsUserRisk{
-		AppID:        "APPID",
-		OpenID:       "OPENID",
-		Scene:        RiskCheat,
-		MobileNO:     "12345678",
-		ClientIP:     "******",
-		EmailAddress: "****@qq.com",
-	}
-
-	result := new(ResultUserRisk)
-
-	err := mp.Do(context.TODO(), "ACCESS_TOKEN", GetUserRiskRank(params, result))
-
-	assert.Nil(t, err)
-	assert.Equal(t, &ResultUserRisk{
-		RiskRank: 0,
-	}, result)
-}
-
 func TestGenerateScheme(t *testing.T) {
 	body := []byte(`{"jump_wxa":{"path":"/pages/publishHomework/publishHomework"},"is_expire":true,"expire_time":1606737600}`)
 	resp := &http.Response{

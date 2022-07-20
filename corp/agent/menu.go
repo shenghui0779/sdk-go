@@ -57,8 +57,8 @@ type ResultMenuGet struct {
 func GetMenu(agentID int64, result *ResultMenuGet) wx.Action {
 	return wx.NewGetAction(urls.CorpMenuGet,
 		wx.WithQuery("agentid", strconv.FormatInt(agentID, 10)),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

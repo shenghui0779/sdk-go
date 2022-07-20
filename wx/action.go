@@ -24,7 +24,7 @@ type Action interface {
 	UploadForm() (UploadForm, error)
 
 	// Decode decodes response
-	Decode(resp []byte) error
+	Decode(b []byte) error
 
 	// IsUpload specifies the request does upload
 	IsUpload() bool

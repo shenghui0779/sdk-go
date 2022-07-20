@@ -75,8 +75,8 @@ func AddMsgTemplate(params *ParamsMsgTemplateAdd, result *ResultMsgTemplateAdd) 
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -111,8 +111,8 @@ func ListGroupMsg(params *ParamsGroupMsgList, result *ResultGroupMsgList) wx.Act
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -140,25 +140,25 @@ func GetGroupMsgTask(params *ParamsGroupMsgTask, result *ResultGroupMsgTask) wx.
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
 
-type ParamsGroupMsgSendResult struct {
+type ParamsGroupMsgSendRet struct {
 	MsgID  string `json:"msgid"`
 	UserID string `json:"userid"`
 	Limit  int    `json:"limit,omitempty"`
 	Cursor string `json:"cursor,omitempty"`
 }
 
-type ResultGroupMsgSendResult struct {
-	NextCursor string                `json:"next_cursor"`
-	SendList   []*GroupMsgSendResult `json:"send_list"`
+type ResultGroupMsgSendRet struct {
+	NextCursor string             `json:"next_cursor"`
+	SendList   []*GroupMsgSendRet `json:"send_list"`
 }
 
-type GroupMsgSendResult struct {
+type GroupMsgSendRet struct {
 	ExternalUserID string `json:"external_userid"`
 	ChatID         string `json:"chat_id"`
 	UserID         string `json:"userid"`
@@ -167,13 +167,13 @@ type GroupMsgSendResult struct {
 }
 
 // GetGroupMsgSendResult 获取企业群发成员执行结果
-func GetGroupMsgSendResult(params *ParamsGroupMsgSendResult, result *ResultGroupMsgSendResult) wx.Action {
+func GetGroupMsgSendResult(params *ParamsGroupMsgSendRet, result *ResultGroupMsgSendRet) wx.Action {
 	return wx.NewPostAction(urls.CorpExternalContactGetGroupMsgSendResult,
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -214,8 +214,8 @@ func AddGroupWelcomeTemplate(params *ParamsGroupWelcomeTemplateAdd, result *Resu
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -263,8 +263,8 @@ func GetGroupWelcomeTemplate(templateID string, result *ResultGroupWelcomeTempla
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

@@ -47,8 +47,8 @@ func GetOAuthUser(openid string, result *ResultOAuthUser) wx.Action {
 	return wx.NewGetAction(urls.OffiaSnsUserInfo,
 		wx.WithQuery("openid", openid),
 		wx.WithQuery("lang", "zh_CN"),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -79,8 +79,8 @@ type ResultApiTicket struct {
 func GetApiTicket(ticketType TicketType, result *ResultApiTicket) wx.Action {
 	return wx.NewGetAction(urls.OffiaCgiBinTicket,
 		wx.WithQuery("type", string(ticketType)),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

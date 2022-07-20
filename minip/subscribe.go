@@ -24,8 +24,8 @@ func AddSubscribeTemplate(params *ParamsSubscribeTemplAdd, result *ResultSubscri
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -59,8 +59,8 @@ type SubscribeCategory struct {
 // GetSubscribeCategory 订阅消息 - 获取小程序账号的类目
 func GetSubscribeCategory(result *ResultSubscribeCategory) wx.Action {
 	return wx.NewGetAction(urls.MinipSubscribeGetCategory,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -80,8 +80,8 @@ type PubTemplKeywords struct {
 func GetPubTemplateKeyWords(tid string, result *ResultPubTemplKeywords) wx.Action {
 	return wx.NewGetAction(urls.MinipSubscribeGetPubTemplateKeyWords,
 		wx.WithQuery("tid", tid),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -104,8 +104,8 @@ func GetPubTemplateTitles(ids string, start, limit int, result *ResultPubTemplTi
 		wx.WithQuery("ids", ids),
 		wx.WithQuery("start", strconv.Itoa(start)),
 		wx.WithQuery("limit", strconv.Itoa(limit)),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -131,8 +131,8 @@ type KeywordEnumValue struct {
 // ListSubscribeTemplate 订阅消息 - 获取当前帐号下的个人模板列表
 func ListSubscribeTemplate(result *ResultSubscribeTemplList) wx.Action {
 	return wx.NewGetAction(urls.MinipSubscribeGetTemplateList,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

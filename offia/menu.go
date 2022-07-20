@@ -101,8 +101,8 @@ func TryMatchMenu(userID string, result *ResultMenuMatch) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -128,8 +128,8 @@ type ResultMenuGet struct {
 // GetMenu 自定义菜单 - 获取自定义菜单配置
 func GetMenu(result *ResultMenuGet) wx.Action {
 	return wx.NewGetAction(urls.OffiaMenuGet,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

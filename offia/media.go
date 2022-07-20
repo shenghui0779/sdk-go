@@ -61,8 +61,8 @@ func UploadMedia(mediaType MediaType, mediaPath string, result *ResultMediaUploa
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -90,8 +90,8 @@ func UploadMediaByURL(mediaType MediaType, filename, url string, result *ResultM
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -133,8 +133,8 @@ func AddMaterial(mediaType MediaType, mediaPath string, result *ResultMaterialAd
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -162,8 +162,8 @@ func AddMaterialByURL(mediaType MediaType, filename, url string, result *ResultM
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -197,8 +197,8 @@ func GetNewsMaterial(mediaID string, result *ResultNewsMaterialGet) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -219,8 +219,8 @@ func GetVideoMaterial(mediaID string, result *ResultVideoMaterialGet) wx.Action 
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -239,9 +239,9 @@ func GetOtherMaterial(mediaID string, result *ResultOtherMaterialGet) wx.Action 
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			result.Buffer = make([]byte, len(resp))
-			copy(result.Buffer, resp)
+		wx.WithDecode(func(b []byte) error {
+			result.Buffer = make([]byte, len(b))
+			copy(result.Buffer, b)
 
 			return nil
 		}),
@@ -287,8 +287,8 @@ func UploadImg(imgPath string, result *ResultMaterialAdd) wx.Action {
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -315,8 +315,8 @@ func UploadImgByURL(filename, url string, result *ResultMaterialAdd) wx.Action {
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -353,8 +353,8 @@ func UploadVideo(videoPath, title, description string, result *ResultMaterialAdd
 				wx.WithFormField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, description)),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -383,8 +383,8 @@ func UploadVideoByURL(filename, videoURL, title, description string, result *Res
 				wx.WithFormField("description", fmt.Sprintf(`{"title":"%s", "introduction":"%s"}`, title, description)),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -416,8 +416,8 @@ func AddNews(articles []*NewsArticle, result *ResultMaterialAdd) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -453,8 +453,8 @@ type ResultMaterialCount struct {
 // GetMaterialCount 素材管理 - 获取素材总数
 func GetMaterialCount(result *ResultMaterialCount) wx.Action {
 	return wx.NewGetAction(urls.OffiaMaterialCountGet,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -490,8 +490,8 @@ func ListMatertial(mediaType MediaType, offset, count int, result *ResultMateria
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -524,8 +524,8 @@ func ListMaterialNews(offset, count int, result *ResultMaterialNewsList) wx.Acti
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

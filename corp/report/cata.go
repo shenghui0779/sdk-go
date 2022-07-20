@@ -23,8 +23,8 @@ func AddGridCata(params *ParamsGridCataAdd, result *ResultGridCataAdd) wx.Action
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -76,8 +76,8 @@ type GridCategory struct {
 // ListGridCata 获取事件类别列表
 func ListGridCata(result *ResultGridCataList) wx.Action {
 	return wx.NewPostAction(urls.CorpReportGridCataList,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

@@ -162,17 +162,17 @@ func TestGetBatchResult(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultBatchResult)
+	result := new(ResultBatchRet)
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetBatchResult("JOBID", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultBatchResult{
+	assert.Equal(t, &ResultBatchRet{
 		Status:     1,
 		Type:       "replace_user",
 		Total:      3,
 		Percentage: 33,
-		Result: []*BatchResult{
+		Result: []*BatchRet{
 			{
 				UserID:  "lisi",
 				ErrCode: 0,

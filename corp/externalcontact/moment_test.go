@@ -125,15 +125,15 @@ func TestGetMomentTaskResult(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultMomentTaskResult)
+	result := new(ResultMomentTaskRet)
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentTaskResult("JOBID", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultMomentTaskResult{
+	assert.Equal(t, &ResultMomentTaskRet{
 		Status: 1,
 		Type:   "add_moment_task",
-		Result: &MomentTaskResult{
+		Result: &MomentTaskRet{
 			ErrCode:  0,
 			ErrMsg:   "ok",
 			MomentID: "xxxx",
@@ -360,12 +360,12 @@ func TestGetMomentSendResult(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultMomentSendResult)
+	result := new(ResultMomentSendRet)
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetMomentSendResult("momxxx", "xxx", "CURSOR", 100, result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultMomentSendResult{
+	assert.Equal(t, &ResultMomentSendRet{
 		NextCursor: "CURSOR",
 		CustomerList: []*MomentCustomer{
 			{

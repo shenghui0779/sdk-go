@@ -15,8 +15,8 @@ type ResultAgentPermList struct {
 // ListAgentPerm 获取应用的可见范围
 func ListAgentPerm(result *ResultAgentPermList) wx.Action {
 	return wx.NewPostAction(urls.CorpLinkedcorpPermList,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

@@ -26,8 +26,8 @@ func InvokeService(params *ParamsServiceInvoke, result *ResultServiceInvoke) wx.
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -56,8 +56,8 @@ func SoterVerify(openID, jsonStr, jsonSign string, result *ResultSoterVerify) wx
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -84,46 +84,8 @@ func GenerateShortLink(pageURL, pageTitle string, isPermanent bool, result *Resu
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
-		}),
-	)
-}
-
-// RiskScene 风控场景
-type RiskScene int
-
-// 微信支持的风控场景值
-const (
-	RiskRegister RiskScene = 0 // 注册
-	RiskCheat    RiskScene = 1 // 营销作弊
-)
-
-// ParamsUserRisk 用户风控参数
-type ParamsUserRisk struct {
-	AppID        string    `json:"appid"`                   // 小程序appid
-	OpenID       string    `json:"openid"`                  // 用户的openid
-	Scene        RiskScene `json:"scene"`                   // 场景值，0:注册，1:营销作弊
-	MobileNO     string    `json:"mobile_no,omitempty"`     // 用户手机号
-	ClientIP     string    `json:"client_ip"`               // 用户访问源ip
-	EmailAddress string    `json:"email_address,omitempty"` // 用户邮箱地址
-	ExtendedInfo string    `json:"extended_info,omitempty"` // 额外补充信息
-	IsTest       bool      `json:"is_test,omitempty"`       // false：正式调用，true：测试调用
-}
-
-// ResultUserRisk 用户风控结果
-type ResultUserRisk struct {
-	RiskRank int `json:"risk_rank"`
-}
-
-// GetUserRiskRank 安全风控 - 获取用户的安全等级（无需用户授权）
-func GetUserRiskRank(params *ParamsUserRisk, result *ResultUserRisk) wx.Action {
-	return wx.NewPostAction(urls.MinipUserRiskRank,
-		wx.WithBody(func() ([]byte, error) {
-			return wx.MarshalNoEscapeHTML(params)
-		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -152,8 +114,8 @@ func GenerateScheme(params *ParamsSchemeGenerate, result *ResultSchemeGenerate) 
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -191,8 +153,8 @@ func QueryScheme(scheme string, result *ResultSchemeQuery) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -226,8 +188,8 @@ func GenerateURLLink(params *ParamsURLLinkGenerate, result *ResultURLLinkGenerat
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -266,8 +228,8 @@ func QueryURLLink(urllink string, result *ResultURLLinkQuery) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

@@ -25,8 +25,8 @@ func CreateDepartment(params *ParamsDepartmentCreate, result *ResultDepartmentCr
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -71,8 +71,8 @@ type ResultDepartmentList struct {
 // ListDepartment 获取部门列表
 func ListDepartment(id int64, result *ResultDepartmentList) wx.Action {
 	options := []wx.ActionOption{
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	}
 
@@ -96,8 +96,8 @@ type ResultSimpleDepartmentList struct {
 // ListSimpleDepartment 获取子部门ID列表
 func ListSimpleDepartment(id int64, result *ResultSimpleDepartmentList) wx.Action {
 	options := []wx.ActionOption{
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	}
 
@@ -115,8 +115,8 @@ type ResultDepartmentGet struct {
 // GetDepartment 获取单个部门详情
 func GetDepartment(id int64, result *ResultDepartmentGet) wx.Action {
 	options := []wx.ActionOption{
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	}
 

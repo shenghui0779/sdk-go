@@ -70,13 +70,13 @@ func AddMomentTask(params *ParamsMomentTaskAdd, result *ResultMomentTaskAdd) wx.
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
 
-type MomentTaskResult struct {
+type MomentTaskRet struct {
 	ErrCode                    int                               `json:"errcode"`
 	ErrMsg                     string                            `json:"errmsg"`
 	MomentID                   string                            `json:"moment_id"`
@@ -93,18 +93,18 @@ type MomentInvalidExternalContactList struct {
 	TagList []string `json:"tag_list"`
 }
 
-type ResultMomentTaskResult struct {
-	Status int               `json:"status"`
-	Type   string            `json:"type"`
-	Result *MomentTaskResult `json:"result"`
+type ResultMomentTaskRet struct {
+	Status int            `json:"status"`
+	Type   string         `json:"type"`
+	Result *MomentTaskRet `json:"result"`
 }
 
 // GetMomentTaskResult 获取客户朋友圈的任务创建结果
-func GetMomentTaskResult(jobID string, result *ResultMomentTaskResult) wx.Action {
+func GetMomentTaskResult(jobID string, result *ResultMomentTaskRet) wx.Action {
 	return wx.NewGetAction(urls.CorpExternalContactGetMomentTaskResult,
 		wx.WithQuery("jobid", jobID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -142,8 +142,8 @@ func ListMoment(params *ParamsMomentList, result *ResultMomentList) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -176,8 +176,8 @@ func GetMomentTask(momentID, cursor string, limit int, result *ResultMomentTaskG
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -212,27 +212,27 @@ func ListMomentCustomer(momentID, userID, cursor string, limit int, result *Resu
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
 
-type ParamsMomentSendResult struct {
+type ParamsMomentSendRet struct {
 	MomentID string `json:"moment_id"`
 	UserID   string `json:"userid"`
 	Cursor   string `json:"cursor,omitempty"`
 	Limit    int    `json:"limit,omitempty"`
 }
 
-type ResultMomentSendResult struct {
+type ResultMomentSendRet struct {
 	NextCursor   string            `json:"next_cursor"`
 	CustomerList []*MomentCustomer `json:"customer_list"`
 }
 
 // GetMomentSendResult 获取客户朋友圈发表后的可见客户列表
-func GetMomentSendResult(momentID, userID, cursor string, limit int, result *ResultMomentSendResult) wx.Action {
-	params := &ParamsMomentSendResult{
+func GetMomentSendResult(momentID, userID, cursor string, limit int, result *ResultMomentSendRet) wx.Action {
+	params := &ParamsMomentSendRet{
 		MomentID: momentID,
 		UserID:   userID,
 		Cursor:   cursor,
@@ -243,8 +243,8 @@ func GetMomentSendResult(momentID, userID, cursor string, limit int, result *Res
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -286,8 +286,8 @@ func GetMomentComments(momentID, userID, cursor string, limit int, result *Resul
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

@@ -17,8 +17,8 @@ type ResultSubscribeQRCode struct {
 // GetSubscribeQRCode 获取「学校通知」二维码
 func GetSubscribeQRCode(result *ResultSubscribeQRCode) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolGetSubscribeQRCode,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -47,8 +47,8 @@ type ResultSubscribeModeGet struct {
 // GetSubscribeMode 获取关注「学校通知」的模式
 func GetSubscribeMode(result *ResultSubscribeModeGet) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolGetSubscribeMode,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -129,8 +129,8 @@ type ResultExternalContact struct {
 func GetExternalContact(externalUserID string, result *ResultExternalContact) wx.Action {
 	return wx.NewGetAction(urls.CorpExternalContactGet,
 		wx.WithQuery("external_userid", externalUserID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -153,8 +153,8 @@ func ConvertToOpenID(userID string, result *ResultOpenIDConvert) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -176,8 +176,8 @@ type AgentAllowStudent struct {
 func GetAgentAllowScope(agentID int64, result *ResultAgentAllowScope) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolGetAgentAllowScope,
 		wx.WithQuery("agentid", strconv.FormatInt(agentID, 10)),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

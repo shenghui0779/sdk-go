@@ -28,8 +28,8 @@ type ResultFollowUserList struct {
 // ListFollowUser 获取配置了客户联系功能的成员列表
 func ListFollowUser(result *ResultFollowUserList) wx.Action {
 	return wx.NewGetAction(urls.CorpExternalContactFollowUserList,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -109,8 +109,8 @@ func AddContactWay(params *ParamsContactWayAdd, result *ResultContactWayAdd) wx.
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -156,8 +156,8 @@ func GetContactWay(configID string, result *ResultContactWayGet) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -184,8 +184,8 @@ func ListContactWay(params *ParamsContactWayList, result *ResultContactWayList) 
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

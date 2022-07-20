@@ -26,8 +26,8 @@ func CreateTag(name string, result *ResultTagCreate) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -73,8 +73,8 @@ type TagUser struct {
 func GetTagUser(tagID int64, result *ResultTagUser) wx.Action {
 	return wx.NewGetAction(urls.CorpUserTagGetUser,
 		wx.WithQuery("tagid", strconv.FormatInt(tagID, 10)),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -102,8 +102,8 @@ func AddTagUser(tagID int64, userIDs []string, partyIDs []int64, result *ResultT
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -131,8 +131,8 @@ func DeleteTagUser(tagID int64, userIDs []string, partyIDs []int64, result *Resu
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -149,8 +149,8 @@ type Tag struct {
 // ListTag 获取标签列表
 func ListTag(result *ResultTagList) wx.Action {
 	return wx.NewGetAction(urls.CorpUserTagList,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

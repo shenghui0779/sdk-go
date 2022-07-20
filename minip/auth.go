@@ -64,8 +64,8 @@ func GetPhoneNumber(code string, result *ResultPhoneNumber) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -89,8 +89,8 @@ func CheckEncryptedData(encryptedData string, result *ResultEncryptedDataCheck) 
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -105,8 +105,8 @@ func GetPaidUnionIDByTransactionID(openid, transactionID string, result *ResultP
 	return wx.NewGetAction(urls.MinipPaidUnion,
 		wx.WithQuery("openid", openid),
 		wx.WithQuery("transaction_id", transactionID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -117,8 +117,8 @@ func GetPaidUnionIDByOutTradeNO(openid, mchid, outTradeNO string, result *Result
 		wx.WithQuery("openid", openid),
 		wx.WithQuery("mch_id", mchid),
 		wx.WithQuery("out_trade_no", outTradeNO),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

@@ -149,7 +149,7 @@ func TestBatchCreateStudent(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultStudentBatchCreate{
-		ResultList: []*StudentErrResult{
+		ResultList: []*StudentErrRet{
 			{
 				StudentUserID: "zhangsan",
 				ErrCode:       1,
@@ -207,7 +207,7 @@ func TestBatchUpdateStudent(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultStudentBatchUpdate{
-		ResultList: []*StudentErrResult{
+		ResultList: []*StudentErrRet{
 			{
 				StudentUserID: "zhangsan",
 				ErrCode:       1,
@@ -252,7 +252,7 @@ func TestBatchDeleteStudent(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultStudentBatchDelete{
-		ResultList: []*StudentErrResult{
+		ResultList: []*StudentErrRet{
 			{
 				StudentUserID: "lisi",
 				ErrCode:       1111,

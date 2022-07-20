@@ -20,8 +20,8 @@ type ResultResidentGridInfo struct {
 // GetResidentGridInfo 获取配置的网格及网格负责人
 func GetResidentGridInfo(result *ResultResidentGridInfo) wx.Action {
 	return wx.NewGetAction(urls.CorpReportGetResidentGridInfo,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -50,8 +50,8 @@ func GetResidentCorpStatus(gridID string, result *ResultResidentCorpStatus) wx.A
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -77,8 +77,8 @@ func GetResidentUserStatus(userID string, result *ResultResidentUserStatus) wx.A
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -110,8 +110,8 @@ func GetResidentCategoryStatistic(categoryID string, result *ResultResidentCateg
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -159,8 +159,8 @@ func ListResidentOrder(beginCreateTime, beginModifyTime int64, cursor string, li
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -183,8 +183,8 @@ func GetResidentOrderInfo(orderID string, result *ResultResidentOrderInfo) wx.Ac
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

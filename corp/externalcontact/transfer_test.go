@@ -109,13 +109,13 @@ func TestGetTransferResult(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultTransferResult)
+	result := new(ResultTransferRet)
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetTransferResult("zhangsan", "lisi", "CURSOR", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultTransferResult{
-		Customer: []*TransferResult{
+	assert.Equal(t, &ResultTransferRet{
+		Customer: []*TransferRet{
 			{
 				ExternalUserID: "woAJ2GCAAAXtWyujaWJHDDGi0mACCCC",
 				Status:         1,
@@ -282,13 +282,13 @@ func TestGetResignedTransferResult(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultResignedTransferResult)
+	result := new(ResultResignedTransferRet)
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetResignedTransferResult("zhangsan", "lisi", "CURSOR", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultResignedTransferResult{
-		Customer: []*ResignedTransferResult{
+	assert.Equal(t, &ResultResignedTransferRet{
+		Customer: []*ResignedTransferRet{
 			{
 				ExternalUserID: "woAJ2GCAAAXtWyujaWJHDDGi0mACCCC",
 				Status:         1,

@@ -27,8 +27,8 @@ func AddAccount(name, mediaID string, result *ResultAccountAdd) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -84,8 +84,8 @@ type AccountListData struct {
 // ListAccount 获取客服帐号列表
 func ListAccount(result *ResultAccountList) wx.Action {
 	return wx.NewGetAction(urls.CorpKFAccountList,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -110,8 +110,8 @@ func AddContactWay(openKFID, scene string, result *ResultContactWayAdd) wx.Actio
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

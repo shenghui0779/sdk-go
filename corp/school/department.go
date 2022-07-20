@@ -35,8 +35,8 @@ func CreateDepartment(params *ParamsDepartmentCreate, result *ResultDepartmentCr
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -102,8 +102,8 @@ type ResultDepartmentList struct {
 // ListDepartment 获取部门列表
 func ListDepartment(id int64, result *ResultDepartmentList) wx.Action {
 	options := []wx.ActionOption{
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	}
 
@@ -134,8 +134,8 @@ func SetUpgradeInfo(upgradeTime int64, upgradeSwitch int, result *ResultUpgradeI
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

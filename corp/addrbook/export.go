@@ -28,8 +28,8 @@ func ExportSimpleUser(encodingAESKey string, blockSize int64, result *ResultExpo
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -45,8 +45,8 @@ func ExportUser(encodingAESKey string, blockSize int64, result *ResultExport) wx
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -62,8 +62,8 @@ func ExportDepartment(encodingAESKey string, blockSize int64, result *ResultExpo
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -80,13 +80,13 @@ func ExportTagUser(tagID int64, encodingAESKey string, blockSize int64, result *
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
 
-type ResultExportResult struct {
+type ResultExportRet struct {
 	Status   int           `json:"status"`
 	DataList []*ExportData `json:"data_list"`
 }
@@ -98,11 +98,11 @@ type ExportData struct {
 }
 
 // GetExportResult 获取导出结果
-func GetExportResult(jobID string, result *ResultExportResult) wx.Action {
+func GetExportResult(jobID string, result *ResultExportRet) wx.Action {
 	return wx.NewGetAction(urls.CorpUserGetExportResult,
 		wx.WithQuery("jobid", jobID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

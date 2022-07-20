@@ -65,8 +65,8 @@ func UploadAttachment(mediaType MediaType, attachmentType AttachmentType, attach
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -95,8 +95,8 @@ func UploadAttachmentByURL(mediaType MediaType, attachmentType AttachmentType, f
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

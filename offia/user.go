@@ -57,8 +57,8 @@ func CreateTag(name string, result *ResultTagCreate) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -86,8 +86,8 @@ type ResultTagsGet struct {
 // GetTags 用户管理 - 用户标签管理 - 获取公众号已创建的标签
 func GetTags(result *ResultTagsGet) wx.Action {
 	return wx.NewGetAction(urls.OffiaTagGet,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -133,8 +133,8 @@ func GetTagUsers(tagID int64, nextOpenID string, result *ResultTagUsers) wx.Acti
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -195,8 +195,8 @@ func GetUserTags(openid string, result *ResultUserTags) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -255,8 +255,8 @@ func GetUserInfo(openid, lang string, result *UserInfo) wx.Action {
 
 	options := []wx.ActionOption{
 		wx.WithQuery("openid", params.OpenID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	}
 
@@ -285,8 +285,8 @@ func BatchGetUserInfo(users []*ParamsUserInfo, result *ResultBatchUserInfo) wx.A
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -305,8 +305,8 @@ type ResultUserList struct {
 // ListUser 用户管理 - 获取用户列表
 func ListUser(nextOpenID string, result *ResultUserList) wx.Action {
 	options := []wx.ActionOption{
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	}
 
@@ -338,8 +338,8 @@ func ListBlackUsers(beginOpenID string, result *ResultBlackList) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

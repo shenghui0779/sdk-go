@@ -73,8 +73,8 @@ func SendExternalContactText(agentID int64, content string, extra *ExternalConta
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -104,8 +104,8 @@ func SendExternalContactImage(agentID int64, mediaID string, extra *ExternalCont
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -135,8 +135,8 @@ func SendExternalContactVoice(agentID int64, mediaID string, extra *ExternalCont
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -164,8 +164,8 @@ func SendExternalContactVideo(agentID int64, video *Video, extra *ExternalContac
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -195,8 +195,8 @@ func SendExternalContactFile(agentID int64, mediaID string, extra *ExternalConta
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -226,8 +226,8 @@ func SendExternalContactNews(agentID int64, articles []*NewsArticle, extra *Exte
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -257,8 +257,8 @@ func SendExternalContactMPNews(agentID int64, articles []*MPNewsArticle, extra *
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -286,8 +286,8 @@ func SendExternalContactMiniprogram(agentID int64, minip *Miniprogram, extra *Ex
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

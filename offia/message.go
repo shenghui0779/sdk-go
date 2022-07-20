@@ -39,8 +39,8 @@ type ResultIndustryGet struct {
 // GetIndustry 基础消息能力 - 模板消息 - 获取设置的行业信息
 func GetIndustry(result *ResultIndustryGet) wx.Action {
 	return wx.NewGetAction(urls.OffiaGetIndustry,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -63,8 +63,8 @@ func AddTemplate(templIDShort string, result *ResultTemplAdd) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -86,8 +86,8 @@ type ResultAllPrivateTemplate struct {
 // GetAllPrivateTemplate 基础消息能力 - 模板消息 - 获取模板列表
 func GetAllPrivateTemplate(result *ResultAllPrivateTemplate) wx.Action {
 	return wx.NewGetAction(urls.OffiaGetAllPrivateTemplate,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

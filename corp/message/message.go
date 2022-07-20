@@ -142,8 +142,8 @@ func SendText(agentidID int64, content string, extra *MsgExtra, result *ResultMs
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -172,8 +172,8 @@ func SendImage(agentidID int64, mediaID string, extra *MsgExtra, result *ResultM
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -202,8 +202,8 @@ func SendVoice(agentidID int64, mediaID string, extra *MsgExtra, result *ResultM
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -230,8 +230,8 @@ func SendVideo(agentidID int64, video *Video, extra *MsgExtra, result *ResultMsg
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -260,8 +260,8 @@ func SendFile(agentidID int64, mediaID string, extra *MsgExtra, result *ResultMs
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -288,8 +288,8 @@ func SendTextCard(agentidID int64, card *TextCard, extra *MsgExtra, result *Resu
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -318,8 +318,8 @@ func SendNews(agentidID int64, articles []*NewsArticle, extra *MsgExtra, result 
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -348,8 +348,8 @@ func SendMPNews(agentidID int64, articles []*MPNewsArticle, extra *MsgExtra, res
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -378,8 +378,8 @@ func SendMarkdown(agentidID int64, content string, extra *MsgExtra, result *Resu
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -405,8 +405,8 @@ func SendMinipNotice(notice *MinipNotice, extra *MsgExtra, result *ResultMsgSend
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -445,8 +445,8 @@ func SendTextNoticeCard(agentidID int64, taskID string, card *TextNoticeCard, ex
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -486,8 +486,8 @@ func SendNewsNoticeCard(agentidID int64, taskID string, card *NewsNoticeCard, ex
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -527,8 +527,8 @@ func SendButtonInteractionCard(agentidID int64, taskID string, card *ButtonInter
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -563,8 +563,8 @@ func SendVoteInteractionCard(agentidID int64, taskID string, card *VoteInteracti
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -599,8 +599,8 @@ func SendMultipleInteractionCard(agentidID int64, taskID string, card *MultipleI
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

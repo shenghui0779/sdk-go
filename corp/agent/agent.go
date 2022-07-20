@@ -44,8 +44,8 @@ type AllowTags struct {
 func GetAgent(agentID int64, result *ResultAgentGet) wx.Action {
 	return wx.NewGetAction(urls.CorpAgentGet,
 		wx.WithQuery("agentid", strconv.FormatInt(agentID, 10)),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -63,8 +63,8 @@ type AgentListData struct {
 // ListAgent 获取access_token对应的应用列表
 func ListAgent(result *ResultAgentList) wx.Action {
 	return wx.NewGetAction(urls.CorpAgentList,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

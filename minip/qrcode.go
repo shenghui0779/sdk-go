@@ -34,9 +34,9 @@ func CreateQRCode(pagepath string, width int, qrcode *QRCode) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			qrcode.Buffer = make([]byte, len(resp))
-			copy(qrcode.Buffer, resp)
+		wx.WithDecode(func(b []byte) error {
+			qrcode.Buffer = make([]byte, len(b))
+			copy(qrcode.Buffer, b)
 
 			return nil
 		}),
@@ -64,9 +64,9 @@ func GetQRCode(params *ParamsQRCodeGet, qrcode *QRCode) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			qrcode.Buffer = make([]byte, len(resp))
-			copy(qrcode.Buffer, resp)
+		wx.WithDecode(func(b []byte) error {
+			qrcode.Buffer = make([]byte, len(b))
+			copy(qrcode.Buffer, b)
 
 			return nil
 		}),
@@ -90,9 +90,9 @@ func GetUnlimitQRCode(params *ParamsQRCodeUnlimit, qrcode *QRCode) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			qrcode.Buffer = make([]byte, len(resp))
-			copy(qrcode.Buffer, resp)
+		wx.WithDecode(func(b []byte) error {
+			qrcode.Buffer = make([]byte, len(b))
+			copy(qrcode.Buffer, b)
 
 			return nil
 		}),

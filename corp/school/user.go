@@ -40,8 +40,8 @@ type ResultUserGet struct {
 func GetUser(userID string, result *ResultUserGet) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolUserGet,
 		wx.WithQuery("userid", userID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -55,8 +55,8 @@ func ListUser(departmentID int64, fetchChild int, result *ResultUserList) wx.Act
 	return wx.NewGetAction(urls.CorpSchoolUserList,
 		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),
 		wx.WithQuery("fetch_child", strconv.Itoa(fetchChild)),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -86,8 +86,8 @@ type ResultParentList struct {
 func ListParent(departmentID int64, result *ResultParentList) wx.Action {
 	return wx.NewGetAction(urls.CorpSchoolParentList,
 		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

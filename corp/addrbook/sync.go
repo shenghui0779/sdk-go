@@ -43,8 +43,8 @@ func BatchSyncUser(mediaID string, toInvite bool, callback *BatchCallback, resul
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -67,8 +67,8 @@ func BatchReplaceUser(mediaID string, toInvite bool, callback *BatchCallback, re
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -89,21 +89,21 @@ func BatchReplaceParty(mediaID string, callback *BatchCallback, result *ResultBa
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
 
-type ResultBatchResult struct {
-	Status     int            `json:"status"`
-	Type       BatchType      `json:"type"`
-	Total      int            `json:"total"`
-	Percentage int            `json:"percentage"`
-	Result     []*BatchResult `json:"result"`
+type ResultBatchRet struct {
+	Status     int         `json:"status"`
+	Type       BatchType   `json:"type"`
+	Total      int         `json:"total"`
+	Percentage int         `json:"percentage"`
+	Result     []*BatchRet `json:"result"`
 }
 
-type BatchResult struct {
+type BatchRet struct {
 	UserID  string `json:"userid"`
 	Action  int    `json:"action"`
 	PartyID int    `json:"partyid"`
@@ -112,11 +112,11 @@ type BatchResult struct {
 }
 
 // GetBatchResult 获取异步任务结果
-func GetBatchResult(jobID string, result *ResultBatchResult) wx.Action {
+func GetBatchResult(jobID string, result *ResultBatchRet) wx.Action {
 	return wx.NewGetAction(urls.CorpUserGetBatchResult,
 		wx.WithQuery("jobid", jobID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

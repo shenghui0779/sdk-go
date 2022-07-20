@@ -61,8 +61,8 @@ func SendLinkedcorpText(agentID int64, content string, extra *LinkedcorpExtra, r
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -88,8 +88,8 @@ func SendLinkedcorpImage(agentID int64, mediaID string, extra *LinkedcorpExtra, 
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -115,8 +115,8 @@ func SendLinkedcorpVoice(agentID int64, mediaID string, extra *LinkedcorpExtra, 
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -140,8 +140,8 @@ func SendLinkedcorpVideo(agentID int64, video *Video, extra *LinkedcorpExtra, re
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -167,8 +167,8 @@ func SendLinkedcorpFile(agentID int64, mediaID string, extra *LinkedcorpExtra, r
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -192,8 +192,8 @@ func SendLinkedcorpTextCard(agentID int64, card *TextCard, extra *LinkedcorpExtr
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -219,8 +219,8 @@ func SendLinkedcorpNews(agentID int64, articles []*NewsArticle, extra *Linkedcor
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -246,8 +246,8 @@ func SendLinkedcorpMPNews(agentID int64, articles []*MPNewsArticle, extra *Linke
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -273,8 +273,8 @@ func SendLinkedcorpMarkdown(agentID int64, content string, extra *LinkedcorpExtr
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -297,8 +297,8 @@ func SendLinkedcorpMinipNotice(notice *MinipNotice, extra *LinkedcorpExtra, resu
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(msg)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

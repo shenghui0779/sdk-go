@@ -29,32 +29,32 @@ func TransferCustomer(params *ParamsCustomerTranster, result *ResultCustomerTran
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
 
-type ParamsTransferResult struct {
+type ParamsTransferRet struct {
 	HandoverUserID string `json:"handover_userid"`
 	TakeoverUserID string `json:"takeover_userid"`
 	Cursor         string `json:"cursor,omitempty"`
 }
 
-type ResultTransferResult struct {
-	Customer   []*TransferResult `json:"customer"`
-	NextCursor string            `json:"next_cursor"`
+type ResultTransferRet struct {
+	Customer   []*TransferRet `json:"customer"`
+	NextCursor string         `json:"next_cursor"`
 }
 
-type TransferResult struct {
+type TransferRet struct {
 	ExternalUserID string `json:"external_userid"`
 	Status         int    `json:"status"`
 	TakeoverTime   int64  `json:"takeover_time"`
 }
 
 // GetTransferResult 查询客户接替状态
-func GetTransferResult(handoverUserID, takeoverUserID, cursor string, result *ResultTransferResult) wx.Action {
-	params := &ParamsTransferResult{
+func GetTransferResult(handoverUserID, takeoverUserID, cursor string, result *ResultTransferRet) wx.Action {
+	params := &ParamsTransferRet{
 		HandoverUserID: handoverUserID,
 		TakeoverUserID: takeoverUserID,
 		Cursor:         cursor,
@@ -64,8 +64,8 @@ func GetTransferResult(handoverUserID, takeoverUserID, cursor string, result *Re
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -100,8 +100,8 @@ func ListUnassigned(pageID, pageSize int, cursor string, result *ResultUnassigne
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -128,32 +128,32 @@ func TransferResignedCustomer(handoverUserID, takeoverUserID string, externalUse
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
 
-type ParamsResignedTransferResult struct {
+type ParamsResignedTransferRet struct {
 	HandoverUserID string `json:"handover_userid"`
 	TakeoverUserID string `json:"takeover_userid"`
 	Cursor         string `json:"cursor,omitempty"`
 }
 
-type ResultResignedTransferResult struct {
-	Customer   []*ResignedTransferResult `json:"customer"`
-	NextCursor string                    `json:"next_cursor"`
+type ResultResignedTransferRet struct {
+	Customer   []*ResignedTransferRet `json:"customer"`
+	NextCursor string                 `json:"next_cursor"`
 }
 
-type ResignedTransferResult struct {
+type ResignedTransferRet struct {
 	ExternalUserID string `json:"external_userid"`
 	Status         int    `json:"status"`
 	TakeoverTime   int64  `json:"takeover_time"`
 }
 
 // GetResignedTransferResult 查询客户接替状态
-func GetResignedTransferResult(handoverUserID, takeoverUserID, cursor string, result *ResultResignedTransferResult) wx.Action {
-	params := &ParamsResignedTransferResult{
+func GetResignedTransferResult(handoverUserID, takeoverUserID, cursor string, result *ResultResignedTransferRet) wx.Action {
+	params := &ParamsResignedTransferRet{
 		HandoverUserID: handoverUserID,
 		TakeoverUserID: takeoverUserID,
 		Cursor:         cursor,
@@ -163,8 +163,8 @@ func GetResignedTransferResult(handoverUserID, takeoverUserID, cursor string, re
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -195,8 +195,8 @@ func TransferGroupChat(chatIDs []string, newOwner string, result *ResultGroupCha
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

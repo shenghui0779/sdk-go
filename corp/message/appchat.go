@@ -25,8 +25,8 @@ func CreateAppchat(params *ParamsAppchatCreate, result *ResultAppchartCreate) wx
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -63,8 +63,8 @@ type AppchatInfo struct {
 func GetAppchat(chatID string, result *ResultAppchatGet) wx.Action {
 	return wx.NewGetAction(urls.CorpAppchatGet,
 		wx.WithQuery("chatid", chatID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

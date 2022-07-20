@@ -64,8 +64,8 @@ func OCRIDCardFront(mode OCRMode, imgPath string, result *ResultIDCardFrontOCR) 
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -75,8 +75,8 @@ func OCRIDCardFrontByURL(mode OCRMode, imgURL string, result *ResultIDCardFrontO
 	return wx.NewPostAction(urls.OffiaOCRIDCard,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -117,8 +117,8 @@ func OCRIDCardBack(mode OCRMode, imgPath string, result *ResultIDCardBackOCR) wx
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -128,8 +128,8 @@ func OCRIDCardBackByURL(mode OCRMode, imgURL string, result *ResultIDCardBackOCR
 	return wx.NewPostAction(urls.OffiaOCRIDCard,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -170,8 +170,8 @@ func OCRBankCard(mode OCRMode, imgPath string, result *ResultBankCardOCR) wx.Act
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -181,8 +181,8 @@ func OCRBankCardByURL(mode OCRMode, imgURL string, result *ResultBankCardOCR) wx
 	return wx.NewPostAction(urls.OffiaOCRBankCard,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -223,8 +223,8 @@ func OCRPlateNumber(mode OCRMode, imgPath string, result *ResultPlateNumberOCR) 
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -234,8 +234,8 @@ func OCRPlateNumberByURL(mode OCRMode, imgURL string, result *ResultPlateNumberO
 	return wx.NewPostAction(urls.OffiaOCRPlateNumber,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -286,8 +286,8 @@ func OCRDriverLicense(mode OCRMode, imgPath string, result *ResultDriverLicenseO
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -297,8 +297,8 @@ func OCRDriverLicenseByURL(mode OCRMode, imgURL string, result *ResultDriverLice
 	return wx.NewPostAction(urls.OffiaOCRDriverLicense,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -356,8 +356,8 @@ func OCRVehicleLicense(mode OCRMode, imgPath string, result *ResultVehicleLicens
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -367,8 +367,8 @@ func OCRVehicleLicenseByURL(mode OCRMode, imgURL string, result *ResultVehicleLi
 	return wx.NewPostAction(urls.OffiaOCRVehicleLicense,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -422,8 +422,8 @@ func OCRBusinessLicense(mode OCRMode, imgPath string, result *ResultBusinessLice
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -433,8 +433,8 @@ func OCRBusinessLicenseByURL(mode OCRMode, imgURL string, result *ResultBusiness
 	return wx.NewPostAction(urls.OffiaOCRBusinessLicense,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -482,8 +482,8 @@ func OCRComm(mode OCRMode, imgPath string, result *ResultCommOCR) wx.Action {
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -493,8 +493,8 @@ func OCRCommByURL(mode OCRMode, imgURL string, result *ResultCommOCR) wx.Action 
 	return wx.NewPostAction(urls.OffiaOCRComm,
 		wx.WithQuery("type", string(mode)),
 		wx.WithQuery("img_url", imgURL),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

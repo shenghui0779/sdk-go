@@ -27,16 +27,16 @@ type ResultIP struct {
 
 func GetAPIDomainIP(result *ResultIP) wx.Action {
 	return wx.NewGetAction(urls.CorpCgiBinAPIDomainIP,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
 
 func GetCallbackIP(result *ResultIP) wx.Action {
 	return wx.NewGetAction(urls.CorpCgiBinCallbackIP,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -52,8 +52,8 @@ type ResultOAuthUser struct {
 func GetOAuthUser(code string, result *ResultOAuthUser) wx.Action {
 	return wx.NewGetAction(urls.CorpCgiBinUserInfo,
 		wx.WithQuery("code", code),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

@@ -43,8 +43,8 @@ func AddInterceptRule(params *ParamsInterceptRuleAdd, result *ResultInterceptRul
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -81,8 +81,8 @@ type ResultInterceptRuleList struct {
 // ListInterceptRule 获取敏感词规则列表
 func ListInterceptRule(result *ResultInterceptRuleList) wx.Action {
 	return wx.NewGetAction(urls.CorpExternalContactInterceptRuleList,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -105,8 +105,8 @@ func GetInterceptRule(ruleID string, result *ResultInterceptRuleGet) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

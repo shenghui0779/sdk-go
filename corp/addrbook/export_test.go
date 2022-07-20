@@ -171,12 +171,12 @@ func TestGetExportResult(t *testing.T) {
 	cp := corp.New("CORPID")
 	cp.SetClient(wx.WithHTTPClient(client))
 
-	result := new(ResultExportResult)
+	result := new(ResultExportRet)
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetExportResult("jobid_xxxxxxxxxxxxxxx", result))
 
 	assert.Nil(t, err)
-	assert.Equal(t, &ResultExportResult{
+	assert.Equal(t, &ResultExportRet{
 		Status: 2,
 		DataList: []*ExportData{
 			{

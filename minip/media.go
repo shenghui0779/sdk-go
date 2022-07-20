@@ -55,8 +55,8 @@ func UploadTempMedia(mediaType MediaType, mediaPath string, result *ResultMediaU
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -84,8 +84,8 @@ func UploadTempMediaByURL(mediaType MediaType, filename, url string, result *Res
 				}),
 			), nil
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -99,10 +99,10 @@ type Media struct {
 func GetTempMedia(mediaID string, media *Media) wx.Action {
 	return wx.NewGetAction(urls.MinipMediaGet,
 		wx.WithQuery("media_id", mediaID),
-		wx.WithDecode(func(resp []byte) error {
-			media.Buffer = make([]byte, len(resp))
+		wx.WithDecode(func(b []byte) error {
+			media.Buffer = make([]byte, len(b))
 
-			copy(media.Buffer, resp)
+			copy(media.Buffer, b)
 
 			return nil
 		}),

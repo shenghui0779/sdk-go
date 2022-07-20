@@ -58,8 +58,8 @@ type Session struct {
 func GetSession(openid string, result *Session) wx.Action {
 	return wx.NewGetAction(urls.OffiaKFSessionGet,
 		wx.WithQuery("openid", openid),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -73,8 +73,8 @@ type ResultSessionList struct {
 func GetSessionList(account string, result *ResultSessionList) wx.Action {
 	return wx.NewGetAction(urls.OffiaKFSessionList,
 		wx.WithQuery("kf_account", account),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -89,8 +89,8 @@ type WaitCase struct {
 // 最多返回100条数据，按照来访顺序
 func GetWaitCase(result *WaitCase) wx.Action {
 	return wx.NewGetAction(urls.OffiaKFWaitCase,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -131,8 +131,8 @@ func GetMsgRecordList(msgID, starttime, endtime int64, number int, result *Resul
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

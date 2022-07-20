@@ -45,7 +45,7 @@ func DeleteStudent(userID string) wx.Action {
 	)
 }
 
-type StudentErrResult struct {
+type StudentErrRet struct {
 	StudentUserID string `json:"student_userid"`
 	ErrCode       int    `json:"errcode"`
 	ErrMsg        string `json:"errmsg"`
@@ -56,7 +56,7 @@ type ParamsStudentBatchCreate struct {
 }
 
 type ResultStudentBatchCreate struct {
-	ResultList []*StudentErrResult `json:"result_list"`
+	ResultList []*StudentErrRet `json:"result_list"`
 }
 
 // BatchCreateStudent 批量创建学生
@@ -65,8 +65,8 @@ func BatchCreateStudent(params *ParamsStudentBatchCreate, result *ResultStudentB
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -76,7 +76,7 @@ type ParamsStudentBatchUpdate struct {
 }
 
 type ResultStudentBatchUpdate struct {
-	ResultList []*StudentErrResult `json:"result_list"`
+	ResultList []*StudentErrRet `json:"result_list"`
 }
 
 // BatchUpdateStudent 批量更新学生
@@ -85,8 +85,8 @@ func BatchUpdateStudent(params *ParamsStudentBatchUpdate, result *ResultStudentB
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -96,7 +96,7 @@ type ParamsStudentBatchDelete struct {
 }
 
 type ResultStudentBatchDelete struct {
-	ResultList []*StudentErrResult `json:"result_list"`
+	ResultList []*StudentErrRet `json:"result_list"`
 }
 
 // BatchDeleteStudent 批量删除学生
@@ -109,8 +109,8 @@ func BatchDeleteStudent(userIDs []string, result *ResultStudentBatchDelete) wx.A
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

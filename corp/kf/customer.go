@@ -34,8 +34,8 @@ func BatchGetCustomer(externalUserIDs []string, result *ResultCustomerBatchGet) 
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -57,8 +57,8 @@ type GroupChatRange struct {
 // GetUpgradeServiceConfig 获取配置的专员与客户群
 func GetUpgradeServiceConfig(result *ResultServiceUpgradeConfig) wx.Action {
 	return wx.NewGetAction(urls.CorpKFGetUpgradeServiceConfig,
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

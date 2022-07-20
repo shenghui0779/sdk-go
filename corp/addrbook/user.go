@@ -141,8 +141,8 @@ type User struct {
 func GetUser(userID string, result *User) wx.Action {
 	return wx.NewGetAction(urls.CorpUserGet,
 		wx.WithQuery("userid", userID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -187,8 +187,8 @@ func ListSimpleUser(departmentID int64, fetchChild int, result *ResultSimipleUse
 	return wx.NewGetAction(urls.CorpUserSimpleList,
 		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),
 		wx.WithQuery("fetch_child", strconv.Itoa(fetchChild)),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -202,8 +202,8 @@ func ListUser(departmentID int64, fetchChild int, result *ResultUserList) wx.Act
 	return wx.NewGetAction(urls.CorpUserList,
 		wx.WithQuery("department_id", strconv.FormatInt(departmentID, 10)),
 		wx.WithQuery("fetch_child", strconv.Itoa(fetchChild)),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -226,8 +226,8 @@ func ConvertToOpenID(userID string, result *ResultOpenIDConvert) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -250,8 +250,8 @@ func ConvertToUserID(openid string, result *ResultUserIDConvert) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -280,8 +280,8 @@ func BatchInvite(userIDs []string, partyIDs, tagIDs []int64, result *ResultBatch
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -298,8 +298,8 @@ type JoinQRCode struct {
 // 4 - 2052 x 2052
 func GetJoinQRCode(size int, result *JoinQRCode) wx.Action {
 	options := []wx.ActionOption{
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	}
 
@@ -328,8 +328,8 @@ func GetActiveStat(date string, result *ResultActiveStat) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -352,8 +352,8 @@ func GetUserID(mobile string, result *ResultUserID) wx.Action {
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

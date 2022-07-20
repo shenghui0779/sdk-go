@@ -95,8 +95,8 @@ type ResultList struct {
 func List(userID string, result *ResultList) wx.Action {
 	return wx.NewGetAction(urls.CorpExternalContactList,
 		wx.WithQuery("userid", userID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -111,8 +111,8 @@ type ResultGet struct {
 func Get(externalUserID, cursor string, result *ResultGet) wx.Action {
 	options := []wx.ActionOption{
 		wx.WithQuery("external_userid", externalUserID),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	}
 
@@ -151,8 +151,8 @@ func BatchGetByUser(userIDs []string, cursor string, limit int, result *ResultBa
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }

@@ -51,7 +51,7 @@ func DeleteParent(userID string) wx.Action {
 	)
 }
 
-type ParentErrResult struct {
+type ParentErrRet struct {
 	ParentUserID string `json:"parent_userid"`
 	ErrCode      int    `json:"errcode"`
 	ErrMsg       string `json:"errmsg"`
@@ -62,7 +62,7 @@ type ParamsParentBatchCreate struct {
 }
 
 type ResultParentBatchCreate struct {
-	ResultList []*ParentErrResult `json:"result_list"`
+	ResultList []*ParentErrRet `json:"result_list"`
 }
 
 // BatchCreateParent 批量创建家长
@@ -71,8 +71,8 @@ func BatchCreateParent(params *ParamsParentBatchCreate, result *ResultParentBatc
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -82,7 +82,7 @@ type ParamsParentBatchUpdate struct {
 }
 
 type ResultParentBatchUpdate struct {
-	ResultList []*ParentErrResult `json:"result_list"`
+	ResultList []*ParentErrRet `json:"result_list"`
 }
 
 // BatchUpdateParent 批量更新家长
@@ -91,8 +91,8 @@ func BatchUpdateParent(params *ParamsParentBatchUpdate, result *ResultParentBatc
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
@@ -102,7 +102,7 @@ type ParamsParentBatchDelete struct {
 }
 
 type ResultParentBatchDelete struct {
-	ResultList []*ParentErrResult `json:"result_list"`
+	ResultList []*ParentErrRet `json:"result_list"`
 }
 
 // BatchDeleteParent 批量删除家长
@@ -115,8 +115,8 @@ func BatchDeleteParent(userIDs []string, result *ResultParentBatchDelete) wx.Act
 		wx.WithBody(func() ([]byte, error) {
 			return wx.MarshalNoEscapeHTML(params)
 		}),
-		wx.WithDecode(func(resp []byte) error {
-			return json.Unmarshal(resp, result)
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
 		}),
 	)
 }
