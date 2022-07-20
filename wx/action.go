@@ -40,7 +40,7 @@ type action struct {
 	wxml       func(mchid, apikey, nonce string) (WXML, error)
 	body       func() ([]byte, error)
 	uploadform func() (UploadForm, error)
-	decode     func(resp []byte) error
+	decode     func(b []byte) error
 	upload     bool
 	tls        bool
 }
@@ -85,9 +85,9 @@ func (a *action) UploadForm() (UploadForm, error) {
 	return NewUploadForm(), nil
 }
 
-func (a *action) Decode(resp []byte) error {
+func (a *action) Decode(b []byte) error {
 	if a.decode != nil {
-		return a.decode(resp)
+		return a.decode(b)
 	}
 
 	return nil
