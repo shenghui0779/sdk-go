@@ -3,14 +3,18 @@ package offia
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
+	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/mock"
+	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
 )
 
@@ -55,6 +59,34 @@ func TestCreateQRCode(t *testing.T) {
 		ExpireSeconds: 60,
 		URL:           "http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI",
 	}, result)
+}
+
+func TestShowQRCode(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader([]byte("BUFFER"))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=TICKET", nil).Return(resp, nil)
+
+	r, err := client.Do(context.TODO(), http.MethodGet, fmt.Sprintf("%s?ticket=%s", urls.OffiaQRCodeShow, url.QueryEscape("TICKET")), nil)
+
+	assert.Nil(t, err)
+
+	defer r.Body.Close()
+
+	buf := bytes.NewBuffer(nil)
+
+	if _, err = io.Copy(buf, resp.Body); err != nil {
+		assert.Nil(t, err)
+	}
+
+	assert.Equal(t, "QlVGRkVS", base64.StdEncoding.EncodeToString(buf.Bytes()))
 }
 
 func TestShortURL(t *testing.T) {

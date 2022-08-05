@@ -1,7 +1,13 @@
 package offia
 
 import (
+	"bytes"
+	"context"
+	"encoding/base64"
 	"encoding/json"
+	"fmt"
+	"io"
+	"net/url"
 
 	"github.com/shenghui0779/gochat/urls"
 	"github.com/shenghui0779/gochat/wx"
@@ -47,6 +53,25 @@ func CreateQRCode(params *ParamsQRCodeCreate, result *ResultQRCodeCreate) wx.Act
 			return json.Unmarshal(b, result)
 		}),
 	)
+}
+
+// ShowQRCode 通过 ticket 换取二维码 (base64)
+func ShowQRCode(ctx context.Context, ticket string) (string, error) {
+	resp, err := wx.HTTPGet(ctx, fmt.Sprintf("%s?ticket=%s", urls.OffiaQRCodeShow, url.QueryEscape(ticket)))
+
+	if err != nil {
+		return "", err
+	}
+
+	defer resp.Body.Close()
+
+	buf := bytes.NewBuffer(make([]byte, 0, 20<<10)) // 20kb
+
+	if _, err = io.Copy(buf, resp.Body); err != nil {
+		return "", nil
+	}
+
+	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
 }
 
 type ParamsShortURL struct {
