@@ -17,7 +17,7 @@ type QRCodeAction string
 
 const (
 	QRScene         QRCodeAction = "QR_SCENE"           // 临时的整型参数值
-	QRStrScene      QRCodeAction = "QR_SCENE"           // 临时的字符串参数值
+	QRStrScene      QRCodeAction = "QR_STR_SCENE"       // 临时的字符串参数值
 	QRLimitScene    QRCodeAction = "QR_LIMIT_SCENE"     // 永久的整型参数值
 	QRLimitStrScene QRCodeAction = "QR_LIMIT_STR_SCENE" // 永久的字符串参数值
 )
