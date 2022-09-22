@@ -241,9 +241,9 @@ func DecodeBytesToUint32(b []byte) uint32 {
 
 // MarshalNoEscapeHTML marshal with no escape HTML
 func MarshalNoEscapeHTML(v interface{}) ([]byte, error) {
-	var buf bytes.Buffer
+	buf := bytes.NewBuffer(nil)
 
-	jsonEncoder := json.NewEncoder(&buf)
+	jsonEncoder := json.NewEncoder(buf)
 	jsonEncoder.SetEscapeHTML(false)
 
 	if err := jsonEncoder.Encode(v); err != nil {
