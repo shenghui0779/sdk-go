@@ -41,13 +41,24 @@ func (c CDATA) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 type SignType string
 
 func (st SignType) Do(key string, m WXML, toUpper bool) string {
+	data := make([]string, 0, len(m))
+
+	for k, v := range m {
+		if k != "sign" && len(v) != 0 {
+			data = append(data, k+"="+v)
+		}
+	}
+
+	sort.Strings(data)
+
+	data = append(data, "key="+key)
+
 	sign := ""
-	str := st.buildStr(key, m)
 
 	if st == SignHMacSHA256 {
-		sign = HMacSHA256(str, key)
+		sign = HMacSHA256(strings.Join(data, "&"), key)
 	} else {
-		sign = MD5(str)
+		sign = MD5(strings.Join(data, "&"))
 	}
 
 	if toUpper {
@@ -55,33 +66,6 @@ func (st SignType) Do(key string, m WXML, toUpper bool) string {
 	}
 
 	return sign
-}
-
-func (st SignType) buildStr(key string, m WXML) string {
-	l := len(m)
-
-	ks := make([]string, 0, l)
-	kvs := make([]string, 0, l)
-
-	for k := range m {
-		if k == "sign" {
-			continue
-		}
-
-		ks = append(ks, k)
-	}
-
-	sort.Strings(ks)
-
-	for _, k := range ks {
-		if v, ok := m[k]; ok && v != "" {
-			kvs = append(kvs, fmt.Sprintf("%s=%s", k, v))
-		}
-	}
-
-	kvs = append(kvs, fmt.Sprintf("key=%s", key))
-
-	return strings.Join(kvs, "&")
 }
 
 const (
@@ -129,13 +113,13 @@ func FormatMap2XML(m WXML) ([]byte, error) {
 	builder.WriteString("<xml>")
 
 	for k, v := range m {
-		builder.WriteString(fmt.Sprintf("<%s>", k))
+		builder.WriteString("<" + k + ">")
 
 		if err := xml.EscapeText(&builder, []byte(v)); err != nil {
 			return nil, err
 		}
 
-		builder.WriteString(fmt.Sprintf("</%s>", k))
+		builder.WriteString("</" + k + ">")
 	}
 
 	builder.WriteString("</xml>")
@@ -158,13 +142,13 @@ func FormatMap2XMLForTest(m WXML) ([]byte, error) {
 	builder.WriteString("<xml>")
 
 	for _, k := range ks {
-		builder.WriteString(fmt.Sprintf("<%s>", k))
+		builder.WriteString("<" + k + ">")
 
 		if err := xml.EscapeText(&builder, []byte(m[k])); err != nil {
 			return nil, err
 		}
 
-		builder.WriteString(fmt.Sprintf("</%s>", k))
+		builder.WriteString("</" + k + ">")
 	}
 
 	builder.WriteString("</xml>")
