@@ -155,6 +155,7 @@ func (mch *Mch) JSAPI(appid, prepayID string) wx.WXML {
 // MinipRedpackJSAPI 小程序领取红包
 func (mch *Mch) MinipRedpackJSAPI(appid, pkg string) wx.WXML {
 	m := wx.WXML{
+		"appId":     appid,
 		"nonceStr":  mch.nonce(),
 		"package":   url.QueryEscape(pkg),
 		"timeStamp": strconv.FormatInt(time.Now().Unix(), 10),
