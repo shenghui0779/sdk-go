@@ -28,7 +28,7 @@ const (
 	TradeStatePaying  = "USERPAYING" // 用户支付中
 	TradeStateAccept  = "ACCEPT"     // 已接收，等待扣款
 	TradeStateError   = "PAYERROR"   // 支付失败
-	TradeStatePayFail = "PAY_FAIL"   // 支付失败(其他原因，如银行返回失败)
+	TradeStatePayFail = "PAY_FAIL"   // 支付失败（其他原因，如银行返回失败）
 )
 
 const (
