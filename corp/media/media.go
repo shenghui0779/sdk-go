@@ -1,6 +1,7 @@
 package media
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -79,6 +80,28 @@ func UploadByURL(mediaType MediaType, filename, url string, result *ResultUpload
 					defer resp.Body.Close()
 
 					if _, err = io.Copy(w, resp.Body); err != nil {
+						return err
+					}
+
+					return nil
+				}),
+			), nil
+		}),
+		wx.WithDecode(func(b []byte) error {
+			return json.Unmarshal(b, result)
+		}),
+	)
+}
+
+// UploadByByte 上传临时素材
+func UploadByByte(mediaType MediaType, filename string, fileByte []byte, result *ResultUpload) wx.Action {
+	return wx.NewPostAction(urls.CorpMediaUpload,
+		wx.WithQuery("type", string(mediaType)),
+		wx.WithUpload(func() (wx.UploadForm, error) {
+			return wx.NewUploadForm(
+				wx.WithFormFile("media", filename, func(w io.Writer) error {
+					f := bytes.NewBuffer(fileByte)
+					if _, err := io.Copy(w, f); err != nil {
 						return err
 					}
 
