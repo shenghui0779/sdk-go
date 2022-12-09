@@ -3,7 +3,7 @@ package mch
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
+	"log"
 	"net/http"
 	"testing"
 
@@ -241,6 +241,7 @@ func TestDecryptWithAES256ECB(t *testing.T) {
 
 var (
 	p12cert tls.Certificate
+
 	// rsa key
 	publicKey  []byte
 	privateKey []byte
@@ -249,10 +250,10 @@ var (
 func TestMain(m *testing.M) {
 	var err error
 
-	p12cert, _ = wx.LoadP12Cert("../mock/p12test.p12", "10000100")
+	p12cert, err = wx.LoadCertFromPfxFile("../mock/p12test.p12", "10000100")
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	publicKey = []byte(`-----BEGIN PUBLIC KEY-----
