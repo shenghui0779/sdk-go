@@ -1,9 +1,7 @@
 package externalcontact
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -13,22 +11,18 @@ import (
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAddMsgTemplate(t *testing.T) {
 	body := []byte(`{"chat_type":"single","external_userid":["woAJ2GCAAAXtWyujaWJHDDGi0mACAAAA","wmqfasd1e1927831123109rBAAAA"],"sender":"zhangsan","text":{"content":"文本消息内容"},"attachments":[{"msgtype":"image","image":{"media_id":"MEDIA_ID","pic_url":"http://p.qpic.cn/pic_wework/3474110808/7a6344sdadfwehe42060/0"}},{"msgtype":"link","link":{"title":"消息标题","picurl":"https://example.pic.com/path","desc":"消息描述","url":"https://example.link.com/path"}},{"msgtype":"miniprogram","miniprogram":{"title":"消息标题","pic_media_id":"MEDIA_ID","appid":"wx8bd80126147dfAAA","page":"/path/index.html"}},{"msgtype":"video","video":{"media_id":"MEDIA_ID"}},{"msgtype":"file","file":{"media_id":"MEDIA_ID"}}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"fail_list": [
 		"wmqfasd1e1927831123109rBAAAA"
 	],
 	"msgid": "msgGCAAAXtWyujaWJHDDGi0mAAAA"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -37,8 +31,7 @@ func TestAddMsgTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_msg_template?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMsgTemplateAdd{
 		ChatType:       "single",
@@ -101,9 +94,7 @@ func TestAddMsgTemplate(t *testing.T) {
 
 func TestListGroupMsg(t *testing.T) {
 	body := []byte(`{"chat_type":"single","start_time":1605171726,"end_time":1605172726,"creator":"zhangshan","filter_type":1,"limit":50,"cursor":"CURSOR"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "next_cursor": "CURSOR",
@@ -157,8 +148,7 @@ func TestListGroupMsg(t *testing.T) {
             ]
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -167,8 +157,7 @@ func TestListGroupMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_groupmsg_list_v2?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsGroupMsgList{
 		ChatType:   ChatSingle,
@@ -242,9 +231,7 @@ func TestListGroupMsg(t *testing.T) {
 
 func TestGetGroupMsgTask(t *testing.T) {
 	body := []byte(`{"msgid":"msgGCAAAXtWyujaWJHDDGi0mACAAAA","limit":50,"cursor":"CURSOR"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"next_cursor": "CURSOR",
@@ -255,8 +242,7 @@ func TestGetGroupMsgTask(t *testing.T) {
 			"send_time": 1552536375
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -265,8 +251,7 @@ func TestGetGroupMsgTask(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_groupmsg_task?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsGroupMsgTask{
 		MsgID:  "msgGCAAAXtWyujaWJHDDGi0mACAAAA",
@@ -293,9 +278,7 @@ func TestGetGroupMsgTask(t *testing.T) {
 
 func TestGetGroupMsgSendResult(t *testing.T) {
 	body := []byte(`{"msgid":"msgGCAAAXtWyujaWJHDDGi0mACAAAA","userid":"zhangsan","limit":50,"cursor":"CURSOR"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"next_cursor": "CURSOR",
@@ -308,8 +291,7 @@ func TestGetGroupMsgSendResult(t *testing.T) {
 			"send_time": 1552536375
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -318,8 +300,7 @@ func TestGetGroupMsgSendResult(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_groupmsg_send_result?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsGroupMsgSendRet{
 		MsgID:  "msgGCAAAXtWyujaWJHDDGi0mACAAAA",
@@ -349,13 +330,10 @@ func TestGetGroupMsgSendResult(t *testing.T) {
 
 func TestSendWelcomeMsg(t *testing.T) {
 	body := []byte(`{"welcome_code":"CALLBACK_CODE","text":{"content":"文本消息内容"},"attachments":[{"msgtype":"image","image":{"media_id":"MEDIA_ID","pic_url":"http://p.qpic.cn/pic_wework/3474110808/7a6344sdadfwehe42060/0"}},{"msgtype":"link","link":{"title":"消息标题","picurl":"https://example.pic.com/path","desc":"消息描述","url":"https://example.link.com/path"}},{"msgtype":"miniprogram","miniprogram":{"title":"消息标题","pic_media_id":"MEDIA_ID","appid":"wx8bd80126147dfAAA","page":"/path/index.html"}},{"msgtype":"video","video":{"media_id":"MEDIA_ID"}},{"msgtype":"file","file":{"media_id":"MEDIA_ID"}}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -364,8 +342,7 @@ func TestSendWelcomeMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/send_welcome_msg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsWelcomeMsgSend{
 		WelcomeCode: "CALLBACK_CODE",
@@ -420,14 +397,11 @@ func TestSendWelcomeMsg(t *testing.T) {
 
 func TestAddGroupWelcomeTemplate(t *testing.T) {
 	body := []byte(`{"text":{"content":"亲爱的%NICKNAME%用户，你好"},"image":{"media_id":"MEDIA_ID","pic_url":"http://p.qpic.cn/pic_wework/3474110808/7a6344sdadfwehe42060/0"},"link":{"title":"消息标题","picurl":"https://example.pic.com/path","desc":"消息描述","url":"https://example.link.com/path"},"miniprogram":{"title":"消息标题","pic_media_id":"MEDIA_ID","appid":"wx8bd80126147dfAAA","page":"/path/index"},"file":{"media_id":"1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o"},"video":{"media_id":"MEDIA_ID"},"agentid":1000014,"notify":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"template_id": "msgXXXXXX"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -436,8 +410,7 @@ func TestAddGroupWelcomeTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/group_welcome_template/add?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsGroupWelcomeTemplateAdd{
 		Text: &GroupText{
@@ -481,13 +454,10 @@ func TestAddGroupWelcomeTemplate(t *testing.T) {
 
 func TestEditGroupWelcomeTemplate(t *testing.T) {
 	body := []byte(`{"template_id":"msgXXXXXXX","text":{"content":"文本消息内容"},"image":{"media_id":"MEDIA_ID","pic_url":"http://p.qpic.cn/pic_wework/3474110808/7a6344sdadfwehe42060/0"},"link":{"title":"消息标题","picurl":"https://example.pic.com/path","desc":"消息描述","url":"https://example.link.com/path"},"miniprogram":{"title":"消息标题","pic_media_id":"MEDIA_ID","appid":"wx8bd80126147df384","page":"/path/index"},"file":{"media_id":"1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o"},"video":{"media_id":"MEDIA_ID"},"agentid":1000014}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -496,8 +466,7 @@ func TestEditGroupWelcomeTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/group_welcome_template/edit?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsGroupWelcomeTemplateEdit{
 		TemplateID: "msgXXXXXXX",
@@ -536,9 +505,7 @@ func TestEditGroupWelcomeTemplate(t *testing.T) {
 
 func TestGetGroupWelcomeTemplate(t *testing.T) {
 	body := []byte(`{"template_id":"msgXXXXXXX"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"text": {
@@ -565,8 +532,7 @@ func TestGetGroupWelcomeTemplate(t *testing.T) {
 	"video": {
 		"media_id": "MEDIA_ID"
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -575,8 +541,7 @@ func TestGetGroupWelcomeTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/group_welcome_template/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultGroupWelcomeTemplateGet)
 
@@ -613,13 +578,10 @@ func TestGetGroupWelcomeTemplate(t *testing.T) {
 
 func TestDeleteGroupWelcomeTemplate(t *testing.T) {
 	body := []byte(`{"template_id":"msgXXXXXXX","agentid":1000014}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -628,8 +590,7 @@ func TestDeleteGroupWelcomeTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/group_welcome_template/del?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteGroupWelcomeTemplate("msgXXXXXXX", 1000014))
 

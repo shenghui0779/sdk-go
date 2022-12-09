@@ -1,9 +1,7 @@
 package addrbook
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,19 +10,15 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCreateDepartment(t *testing.T) {
 	body := []byte(`{"name":"广州研发中心","name_en":"RDGZ","parentid":1,"order":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "created",
     "id": 2
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,8 +27,7 @@ func TestCreateDepartment(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/department/create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsDepartmentCreate{
 		Name:     "广州研发中心",
@@ -54,13 +47,10 @@ func TestCreateDepartment(t *testing.T) {
 
 func TestUpdateDepartment(t *testing.T) {
 	body := []byte(`{"id":2,"name":"广州研发中心","name_en":"RDGZ","parentid":1,"order":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -69,8 +59,7 @@ func TestUpdateDepartment(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/department/update?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsDepartmentUpdate{
 		ID:       2,
@@ -86,13 +75,10 @@ func TestUpdateDepartment(t *testing.T) {
 }
 
 func TestDeleteDepartment(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -101,8 +87,7 @@ func TestDeleteDepartment(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/department/delete?access_token=ACCESS_TOKEN&id=1", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteDepartment(1))
 
@@ -110,9 +95,7 @@ func TestDeleteDepartment(t *testing.T) {
 }
 
 func TestListDepartment(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "department": [
@@ -139,8 +122,7 @@ func TestListDepartment(t *testing.T) {
             "order": 40
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -149,8 +131,7 @@ func TestListDepartment(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/department/list?access_token=ACCESS_TOKEN&id=1", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultDepartmentList)
 
@@ -180,9 +161,7 @@ func TestListDepartment(t *testing.T) {
 }
 
 func TestListSimpleDepartment(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "department_id": [
@@ -197,8 +176,7 @@ func TestListSimpleDepartment(t *testing.T) {
             "order": 40
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -207,8 +185,7 @@ func TestListSimpleDepartment(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/department/simplelist?access_token=ACCESS_TOKEN&id=1", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultSimpleDepartmentList)
 
@@ -232,9 +209,7 @@ func TestListSimpleDepartment(t *testing.T) {
 }
 
 func TestGetDepartment(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "department": {
@@ -248,8 +223,7 @@ func TestGetDepartment(t *testing.T) {
         "parentid": 1,
         "order": 10
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -258,8 +232,7 @@ func TestGetDepartment(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/department/get?access_token=ACCESS_TOKEN&id=1", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultDepartmentGet)
 

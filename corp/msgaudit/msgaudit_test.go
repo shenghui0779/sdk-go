@@ -1,9 +1,7 @@
 package msgaudit
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestListPermitUser(t *testing.T) {
 	body := []byte(`{"type":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"ids": [
@@ -27,8 +22,7 @@ func TestListPermitUser(t *testing.T) {
 		"userid_222",
 		"userid_333"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -37,8 +31,7 @@ func TestListPermitUser(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/get_permit_user_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultPermitUserList)
 
@@ -52,9 +45,7 @@ func TestListPermitUser(t *testing.T) {
 
 func TestCheckSingleAgree(t *testing.T) {
 	body := []byte(`{"info":[{"userid":"XuJinSheng","exteranalopenid":"wmeDKaCQAAGd9oGiQWxVsAKwV2HxNAAA"},{"userid":"XuJinSheng","exteranalopenid":"wmeDKaCQAAIQ_p7ACn_jpLVBJSGocAAA"},{"userid":"XuJinSheng","exteranalopenid":"wmeDKaCQAAPE_p7ABnxkpLBBJSGocAAA"}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"agreeinfo": [
@@ -77,8 +68,7 @@ func TestCheckSingleAgree(t *testing.T) {
 			"agree_status": "Agree"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -87,8 +77,7 @@ func TestCheckSingleAgree(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/check_single_agree?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	agrees := []*ParamsSingleAgree{
 		{
@@ -136,9 +125,7 @@ func TestCheckSingleAgree(t *testing.T) {
 
 func TestCheckRoomAgree(t *testing.T) {
 	body := []byte(`{"roomid":"wrjc7bDwAASxc8tZvBErFE02BtPWyAAA"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"agreeinfo": [
@@ -158,8 +145,7 @@ func TestCheckRoomAgree(t *testing.T) {
 			"agree_status": "Agree"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -168,8 +154,7 @@ func TestCheckRoomAgree(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/check_room_agree?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultRoomAgreeCheck)
 
@@ -199,9 +184,7 @@ func TestCheckRoomAgree(t *testing.T) {
 
 func TestGetGroupChat(t *testing.T) {
 	body := []byte(`{"roomid":"wrNplhCgAAIVZohLe57zKnvIV7xBKrig"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"roomname": "蓦然回首",
 	"creator": "ZhangWenChao",
 	"room_create_time": 1592361604,
@@ -218,8 +201,7 @@ func TestGetGroupChat(t *testing.T) {
 	],
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -228,8 +210,7 @@ func TestGetGroupChat(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/msgaudit/groupchat/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultGroupChat)
 

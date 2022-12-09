@@ -28,42 +28,13 @@ const (
 
 // Offia 微信公众号
 type Offia struct {
-	appid          string
-	appsecret      string
-	originid       string
-	token          string
-	encodingAESKey string
-	nonce          func() string
-	client         wx.Client
-}
-
-// New returns new Offia
-func New(appid, appsecret string) *Offia {
-	return &Offia{
-		appid:     appid,
-		appsecret: appsecret,
-		nonce: func() string {
-			return wx.Nonce(16)
-		},
-		client: wx.DefaultClient(),
-	}
-}
-
-// SetOriginID 设置原始ID（开发者微信号）
-func (oa *Offia) SetOriginID(originid string) {
-	oa.originid = originid
-}
-
-// SetServerConfig 设置服务器配置
-// [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
-func (oa *Offia) SetServerConfig(token, encodingAESKey string) {
-	oa.token = token
-	oa.encodingAESKey = encodingAESKey
-}
-
-// SetClient sets options for wechat client
-func (oa *Offia) SetClient(options ...wx.ClientOption) {
-	oa.client.Set(options...)
+	appid     string
+	appsecret string
+	originid  string
+	token     string
+	aeskey    string
+	nonce     func() string
+	client    wx.HTTPClient
 }
 
 // AppID returns appid
@@ -207,7 +178,7 @@ func (oa *Offia) VerifyEventSign(signature string, items ...string) bool {
 
 // DecryptEventMessage 事件消息解密
 func (oa *Offia) DecryptEventMessage(encrypt string) (wx.WXML, error) {
-	b, err := event.Decrypt(oa.appid, oa.encodingAESKey, encrypt)
+	b, err := event.Decrypt(oa.appid, oa.aeskey, encrypt)
 
 	if err != nil {
 		return nil, err
@@ -225,7 +196,7 @@ func (oa *Offia) Reply(openid string, reply event.Reply) (*event.ReplyMessage, e
 	}
 
 	// 消息加密
-	cipherText, err := event.Encrypt(oa.appid, oa.encodingAESKey, oa.nonce(), body)
+	cipherText, err := event.Encrypt(oa.appid, oa.aeskey, oa.nonce(), body)
 
 	if err != nil {
 		return nil, err
@@ -247,4 +218,61 @@ func (oa *Offia) JSSDKSign(ticket, url string) *JSSDKSign {
 		Noncestr:  noncestr,
 		Timestamp: now,
 	}
+}
+
+type OffiaOption func(oa *Offia)
+
+// WithOriginID 设置原始ID（开发者微信号）
+func WithOriginID(id string) OffiaOption {
+	return func(oa *Offia) {
+		oa.originid = id
+	}
+}
+
+// WithServerConfig 设置服务器配置
+// [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
+func WithServerConfig(token, aeskey string) OffiaOption {
+	return func(oa *Offia) {
+		oa.token = token
+		oa.aeskey = aeskey
+	}
+}
+
+// WithNonce 设置 Nonce（加密随机串）
+func WithNonce(f func() string) OffiaOption {
+	return func(oa *Offia) {
+		oa.nonce = f
+	}
+}
+
+// WithClient 设置 HTTP Client
+func WithClient(c *http.Client) OffiaOption {
+	return func(oa *Offia) {
+		oa.client = wx.NewHTTPClient(c)
+	}
+}
+
+// WithMockClient 设置 Mock Client
+func WithMockClient(c wx.HTTPClient) OffiaOption {
+	return func(oa *Offia) {
+		oa.client = c
+	}
+}
+
+// New returns new Offia
+func New(appid, appsecret string, options ...OffiaOption) *Offia {
+	oa := &Offia{
+		appid:     appid,
+		appsecret: appsecret,
+		nonce: func() string {
+			return wx.Nonce(16)
+		},
+		client: wx.NewDefaultClient(),
+	}
+
+	for _, f := range options {
+		f(oa)
+	}
+
+	return oa
 }

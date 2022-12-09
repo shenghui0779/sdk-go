@@ -1,9 +1,7 @@
 package externalcontact
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,19 +10,15 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAddProductAlbum(t *testing.T) {
 	body := []byte(`{"description":"世界上最好的商品","price":30000,"product_sn":"xxxxxxxx","attachments":[{"type":"image","image":{"media_id":"MEDIA_ID"}}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "product_id": "xxxxxxxxxx"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,8 +27,7 @@ func TestAddProductAlbum(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_product_album?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsProductAlbumAdd{
 		Description: "世界上最好的商品",
@@ -62,13 +55,10 @@ func TestAddProductAlbum(t *testing.T) {
 
 func TestUpdateProductAlbum(t *testing.T) {
 	body := []byte(`{"product_id":"xxxxxxxxxx","description":"世界上最好的商品","price":30000,"product_sn":"xxxxxx","attachments":[{"type":"image","image":{"media_id":"MEDIA_ID"}}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -77,8 +67,7 @@ func TestUpdateProductAlbum(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/update_product_album?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsProductAlbumUpdate{
 		ProductID:   "xxxxxxxxxx",
@@ -102,9 +91,7 @@ func TestUpdateProductAlbum(t *testing.T) {
 
 func TestGetProductAlbum(t *testing.T) {
 	body := []byte(`{"product_id":"xxxxxxxxxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "product": {
@@ -122,8 +109,7 @@ func TestGetProductAlbum(t *testing.T) {
             }
         ]
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -132,8 +118,7 @@ func TestGetProductAlbum(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_product_album?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultProductAlbumGet)
 
@@ -161,9 +146,7 @@ func TestGetProductAlbum(t *testing.T) {
 
 func TestListProductAlbum(t *testing.T) {
 	body := []byte(`{"limit":50,"cursor":"CURSOR"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "next_cursor": "CURSOR",
@@ -183,8 +166,7 @@ func TestListProductAlbum(t *testing.T) {
             ]
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -193,8 +175,7 @@ func TestListProductAlbum(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_product_album_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultProductAlbumList)
 
@@ -224,13 +205,10 @@ func TestListProductAlbum(t *testing.T) {
 
 func TestDeleteProductAlbum(t *testing.T) {
 	body := []byte(`{"product_id":"xxxxxxxxxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -239,8 +217,7 @@ func TestDeleteProductAlbum(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/delete_product_album?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteProductAlbum("xxxxxxxxxx"))
 

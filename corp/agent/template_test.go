@@ -1,28 +1,22 @@
 package agent
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSetWorkbenchNormalTemplate(t *testing.T) {
 	body := []byte(`{"agentid":1000005,"type":"normal","replace_user_data":true}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -31,8 +25,7 @@ func TestSetWorkbenchNormalTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_template?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", SetWorkbenchNormalTemplate(1000005, true))
 
@@ -41,13 +34,10 @@ func TestSetWorkbenchNormalTemplate(t *testing.T) {
 
 func TestSetWorkbenchKeyDataTemplate(t *testing.T) {
 	body := []byte(`{"agentid":1000005,"type":"keydata","keydata":{"items":[{"key":"待审批","data":"2","jump_url":"http://www.qq.com","pagepath":"pages/index"},{"key":"带批阅作业","data":"4","jump_url":"http://www.qq.com","pagepath":"pages/index"},{"key":"成绩录入","data":"45","jump_url":"http://www.qq.com","pagepath":"pages/index"},{"key":"综合评价","data":"98","jump_url":"http://www.qq.com","pagepath":"pages/index"}]},"replace_user_data":true}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -56,8 +46,7 @@ func TestSetWorkbenchKeyDataTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_template?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	keydata := &WorkbenchKeyData{
 		Items: []*KeyDataItem{
@@ -95,13 +84,10 @@ func TestSetWorkbenchKeyDataTemplate(t *testing.T) {
 
 func TestSetWorkbenchImageTemplate(t *testing.T) {
 	body := []byte(`{"agentid":1000005,"type":"image","image":{"url":"xxxx","jump_url":"http://www.qq.com","pagepath":"pages/index"},"replace_user_data":true}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -110,8 +96,7 @@ func TestSetWorkbenchImageTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_template?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	image := &WorkbenchImage{
 		URL:      "xxxx",
@@ -126,13 +111,10 @@ func TestSetWorkbenchImageTemplate(t *testing.T) {
 
 func TestSetWorkbenchListTemplate(t *testing.T) {
 	body := []byte(`{"agentid":1000005,"type":"list","list":{"items":[{"title":"智慧校园新版设计的小程序要来啦","jump_url":"http://www.qq.com","pagepath":"pages/index"},{"title":"植物百科，这是什么花","jump_url":"http://www.qq.com","pagepath":"pages/index"},{"title":"周一升旗通知，全体学生必须穿校服","jump_url":"http://www.qq.com","pagepath":"pages/index"}]},"replace_user_data":true}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -141,8 +123,7 @@ func TestSetWorkbenchListTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_template?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	list := &WorkbenchList{
 		Items: []*ListItem{
@@ -171,13 +152,10 @@ func TestSetWorkbenchListTemplate(t *testing.T) {
 
 func TestSetWorkbenchWebViewTemplate(t *testing.T) {
 	body := []byte(`{"agentid":1000005,"type":"webview","webview":{"url":"http://www.qq.com","jump_url":"http://www.qq.com","pagepath":"pages/index"},"replace_user_data":true}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -186,8 +164,7 @@ func TestSetWorkbenchWebViewTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_template?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	webview := &WorkbenchWebView{
 		URL:      "http://www.qq.com",
@@ -202,9 +179,7 @@ func TestSetWorkbenchWebViewTemplate(t *testing.T) {
 
 func TestGetWorkbenchTemplate(t *testing.T) {
 	body := []byte(`{"agentid":1000005}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"type": "image",
@@ -214,8 +189,7 @@ func TestGetWorkbenchTemplate(t *testing.T) {
 		"pagepath": "pages/index"
 	},
 	"replace_user_data": true
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -224,8 +198,7 @@ func TestGetWorkbenchTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/agent/get_workbench_template?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultWorkbenchTemplateGet)
 
@@ -245,13 +218,10 @@ func TestGetWorkbenchTemplate(t *testing.T) {
 
 func TestSetWorkbenchKeyData(t *testing.T) {
 	body := []byte(`{"agentid":1000005,"userid":"test","type":"keydata","keydata":{"items":[{"key":"待审批","data":"2","jump_url":"http://www.qq.com","pagepath":"pages/index"},{"key":"带批阅作业","data":"4","jump_url":"http://www.qq.com","pagepath":"pages/index"},{"key":"成绩录入","data":"45","jump_url":"http://www.qq.com","pagepath":"pages/index"},{"key":"综合评价","data":"98","jump_url":"http://www.qq.com","pagepath":"pages/index"}]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -260,8 +230,7 @@ func TestSetWorkbenchKeyData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_data?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	keydata := &WorkbenchKeyData{
 		Items: []*KeyDataItem{
@@ -299,13 +268,10 @@ func TestSetWorkbenchKeyData(t *testing.T) {
 
 func TestSetWorkbenchImageData(t *testing.T) {
 	body := []byte(`{"agentid":1000005,"userid":"test","type":"image","image":{"url":"xxxx","jump_url":"http://www.qq.com","pagepath":"pages/index"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -314,8 +280,7 @@ func TestSetWorkbenchImageData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_data?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	image := &WorkbenchImage{
 		URL:      "xxxx",
@@ -330,13 +295,10 @@ func TestSetWorkbenchImageData(t *testing.T) {
 
 func TestSetWorkbenchListData(t *testing.T) {
 	body := []byte(`{"agentid":1000005,"userid":"test","type":"list","list":{"items":[{"title":"智慧校园新版设计的小程序要来啦","jump_url":"http://www.qq.com","pagepath":"pages/index"},{"title":"植物百科，这是什么花","jump_url":"http://www.qq.com","pagepath":"pages/index"},{"title":"周一升旗通知，全体学生必须穿校服","jump_url":"http://www.qq.com","pagepath":"pages/index"}]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -345,8 +307,7 @@ func TestSetWorkbenchListData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_data?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	list := &WorkbenchList{
 		Items: []*ListItem{
@@ -375,13 +336,10 @@ func TestSetWorkbenchListData(t *testing.T) {
 
 func TestSetWorkbenchWebViewData(t *testing.T) {
 	body := []byte(`{"agentid":1000005,"userid":"test","type":"webview","webview":{"url":"http://www.qq.com","jump_url":"http://www.qq.com","pagepath":"pages/index"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -390,8 +348,7 @@ func TestSetWorkbenchWebViewData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/agent/set_workbench_data?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	webview := &WorkbenchWebView{
 		URL:      "http://www.qq.com",

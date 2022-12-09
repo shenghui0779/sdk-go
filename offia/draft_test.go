@@ -1,9 +1,7 @@
 package offia
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -11,15 +9,11 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAddDraft(t *testing.T) {
 	body := []byte(`{"articles":[{"title":"TITLE","author":"AUTHOR","digest":"DIGEST","content":"CONTENT","content_source_url":"CONTENT_SOURCE_URL","thumb_media_id":"THUMB_MEDIA_ID"}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"media_id":"MEDIA_ID"}`))),
-	}
+	resp := []byte(`{"media_id":"MEDIA_ID"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -29,7 +23,6 @@ func TestAddDraft(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/draft/add?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsDraftAdd{
 		Articles: []*DraftArticle{
@@ -55,10 +48,7 @@ func TestAddDraft(t *testing.T) {
 
 func TestUpdateDraft(t *testing.T) {
 	body := []byte(`{"media_id":"MEDIA_ID","index":1,"articles":{"title":"TITLE","author":"AUTHOR","digest":"DIGEST","content":"CONTENT","content_source_url":"CONTENT_SOURCE_URL","thumb_media_id":"THUMB_MEDIA_ID","show_cover_pic":1}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -68,7 +58,6 @@ func TestUpdateDraft(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/draft/update?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	article := &DraftArticle{
 		Title:            "TITLE",
@@ -87,9 +76,7 @@ func TestUpdateDraft(t *testing.T) {
 
 func TestGetDraft(t *testing.T) {
 	body := []byte(`{"media_id":"MEDIA_ID"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"news_item": [
 		{
 			"title": "TITLE",
@@ -104,8 +91,7 @@ func TestGetDraft(t *testing.T) {
 			"url": "URL"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -115,7 +101,6 @@ func TestGetDraft(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/draft/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultDraftGet)
 
@@ -142,10 +127,7 @@ func TestGetDraft(t *testing.T) {
 
 func TestDeleteDraft(t *testing.T) {
 	body := []byte(`{"media_id":"MEDIA_ID"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -155,7 +137,6 @@ func TestDeleteDraft(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/draft/delete?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteDraft("MEDIA_ID"))
 
@@ -163,10 +144,7 @@ func TestDeleteDraft(t *testing.T) {
 }
 
 func TestGetDraftCount(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"total_count":10}`))),
-	}
+	resp := []byte(`{"total_count":10}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -176,7 +154,6 @@ func TestGetDraftCount(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/draft/count?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultDraftCount)
 
@@ -190,9 +167,7 @@ func TestGetDraftCount(t *testing.T) {
 
 func TestBatchGetDraft(t *testing.T) {
 	body := []byte(`{"offset":1,"count":10,"no_content":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"total_count": 10,
 	"item_count": 1,
 	"item": [
@@ -217,8 +192,7 @@ func TestBatchGetDraft(t *testing.T) {
 			"update_time": 1645685624
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -228,7 +202,6 @@ func TestBatchGetDraft(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/draft/batchget?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultDraftBatchGet)
 

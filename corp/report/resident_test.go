@@ -1,9 +1,7 @@
 package report
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,13 +10,10 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestGetResidentGridInfo(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"grid_list": [
@@ -31,8 +26,7 @@ func TestGetResidentGridInfo(t *testing.T) {
 			]
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -41,8 +35,7 @@ func TestGetResidentGridInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_grid_info?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultResidentGridInfo)
 
@@ -62,9 +55,7 @@ func TestGetResidentGridInfo(t *testing.T) {
 
 func TestGetResidentCorpStatus(t *testing.T) {
 	body := []byte(`{"grid_id":"grid_id"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"processing": 1,
@@ -74,8 +65,7 @@ func TestGetResidentCorpStatus(t *testing.T) {
 	"total_case": 1,
 	"total_accepted": 1,
 	"total_solved": 1
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -84,8 +74,7 @@ func TestGetResidentCorpStatus(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_corp_status?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultResidentCorpStatus)
 
@@ -105,17 +94,14 @@ func TestGetResidentCorpStatus(t *testing.T) {
 
 func TestGetResidentUserStatus(t *testing.T) {
 	body := []byte(`{"userid":"zhangsan"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"processing": 1,
 	"added_today": 1,
 	"solved_today": 1,
 	"pending": 1
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -124,8 +110,7 @@ func TestGetResidentUserStatus(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_user_status?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultResidentUserStatus)
 
@@ -142,9 +127,7 @@ func TestGetResidentUserStatus(t *testing.T) {
 
 func TestGetResidentCategoryStatistic(t *testing.T) {
 	body := []byte(`{"category_id":"category_id"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"dashboard_list": [
@@ -157,8 +140,7 @@ func TestGetResidentCategoryStatistic(t *testing.T) {
 			"category_type": 1
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -167,8 +149,7 @@ func TestGetResidentCategoryStatistic(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/resident/category_statistic?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultResidentCategoryStatistic)
 
@@ -191,9 +172,7 @@ func TestGetResidentCategoryStatistic(t *testing.T) {
 
 func TestListResidentOrder(t *testing.T) {
 	body := []byte(`{"begin_create_time":12345678,"begin_modify_time":12345678,"cursor":"cursor","limit":20}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"next_cursor": "next_cursor",
@@ -246,8 +225,7 @@ func TestListResidentOrder(t *testing.T) {
 			]
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -256,8 +234,7 @@ func TestListResidentOrder(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_order_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultResidentOrderList)
 
@@ -305,9 +282,7 @@ func TestListResidentOrder(t *testing.T) {
 
 func TestGetResidentOrderInfo(t *testing.T) {
 	body := []byte(`{"order_id":"order_id"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"order_info": {
@@ -357,8 +332,7 @@ func TestGetResidentOrderInfo(t *testing.T) {
 			}
 		]
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -367,8 +341,7 @@ func TestGetResidentOrderInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/resident/get_order_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultResidentOrderInfo)
 

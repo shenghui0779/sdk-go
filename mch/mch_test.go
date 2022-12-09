@@ -1,11 +1,9 @@
 package mch
 
 import (
-	"bytes"
 	"context"
 	"crypto/tls"
 	"fmt"
-	"io"
 	"net/http"
 	"testing"
 
@@ -17,7 +15,7 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d")
 
 	assert.Equal(t, "10000100", mch.MchID())
 	assert.Equal(t, "192006250b4c09247ec02edce69f6a2d", mch.ApiKey())
@@ -95,14 +93,11 @@ func TestDownloadBill(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`交易时间,公众账号ID,商户号,子商户号,设备号,微信订单号,商户订单号,用户标识,交易类型,交易状态,付款银行,货币种类,总金额,代金券或立减优惠金额,微信退款单号,商户退款单号,退款金额,代金券或立减优惠退款金额,退款类型,退款状态,商品名称,商户数据包,手续费,费率
+	resp := []byte(`交易时间,公众账号ID,商户号,子商户号,设备号,微信订单号,商户订单号,用户标识,交易类型,交易状态,付款银行,货币种类,总金额,代金券或立减优惠金额,微信退款单号,商户退款单号,退款金额,代金券或立减优惠退款金额,退款类型,退款状态,商品名称,商户数据包,手续费,费率
 2014-11-10 16:33:45,wx2421b1c4370ec43b,10000100,0,1000,1001690740201411100005734289,1415640626,085e9858e3ba5186aafcbaed1,MICROPAY,SUCCESS,OTHERS,CNY,0.01,0.0,0,0,0,0,,,被扫支付测试,订单额外描述,0,0.60%
 2014-11-10 16:46:14,wx2421b1c4370ec43b,10000100,0,1000,1002780740201411100005729794,1415635270,085e9858e90ca40c0b5aee463,MICROPAY,SUCCESS,OTHERS,CNY,0.01,0.0,0,0,0,0,,,被扫支付测试,订单额外描述,0,0.60%
 总交易单数,总交易额,总退款金额,总代金券或立减优惠退款金额,手续费总金额
-2,0.02,0.0,0.0,0`))),
-	}
+2,0.02,0.0,0.0,0`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -111,13 +106,9 @@ func TestDownloadBill(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/downloadbill", body, gomock.AssignableToTypeOf(wx.WithHTTPClose())).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "21df7dc9cd8616b56919f20d9f679233"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	b, err := mch.DownloadBill(context.TODO(), "wx2421b1c4370ec43b", "20141110", BillTypeAll)
 
@@ -141,14 +132,11 @@ func TestDownloadFundFlow(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`交易时间,公众账号ID,商户号,子商户号,设备号,微信订单号,商户订单号,用户标识,交易类型,交易状态,付款银行,货币种类,总金额,代金券或立减优惠金额,微信退款单号,商户退款单号,退款金额,代金券或立减优惠退款金额,退款类型,退款状态,商品名称,商户数据包,手续费,费率
+	resp := []byte(`交易时间,公众账号ID,商户号,子商户号,设备号,微信订单号,商户订单号,用户标识,交易类型,交易状态,付款银行,货币种类,总金额,代金券或立减优惠金额,微信退款单号,商户退款单号,退款金额,代金券或立减优惠退款金额,退款类型,退款状态,商品名称,商户数据包,手续费,费率
 2014-11-10 16:33:45,wx2421b1c4370ec43b,10000100,0,1000,1001690740201411100005734289,1415640626,085e9858e3ba5186aafcbaed1,MICROPAY,SUCCESS,OTHERS,CNY,0.01,0.0,0,0,0,0,,,被扫支付测试,订单额外描述,0,0.60%
 2014-11-10 16:46:14,wx2421b1c4370ec43b,10000100,0,1000,1002780740201411100005729794,1415635270,085e9858e90ca40c0b5aee463,MICROPAY,SUCCESS,OTHERS,CNY,0.01,0.0,0,0,0,0,,,被扫支付测试,订单额外描述,0,0.60%
 总交易单数,总交易额,总退款金额,总代金券或立减优惠退款金额,手续费总金额
-2,0.02,0.0,0.0,0`))),
-	}
+2,0.02,0.0,0.0,0`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -157,13 +145,9 @@ func TestDownloadFundFlow(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/downloadfundflow", body, gomock.AssignableToTypeOf(wx.WithHTTPClose())).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "21df7dc9cd8616b56919f20d9f679233"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	b, err := mch.DownloadFundFlow(context.TODO(), "wx2421b1c4370ec43b", "20141110", AccountTypeBasic)
 
@@ -189,13 +173,10 @@ func TestBatchQueryComment(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`100
+	resp := []byte(`100
 2017-07-01 10:00:05,1001690740201411100005734289,5,赞，水果很新鲜
 2017-07-01 11:00:05,1001690740201411100005734278,5,不错，支付渠道很方便
-2017-07-01 11:30:05,1001690740201411100005734250,4,东西还算符合预期`))),
-	}
+2017-07-01 11:30:05,1001690740201411100005734250,4,东西还算符合预期`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -204,13 +185,9 @@ func TestBatchQueryComment(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/billcommentsp/batchquerycomment", body, gomock.AssignableToTypeOf(wx.WithHTTPClose())).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	b, err := mch.BatchQueryComment(context.TODO(), "wx2421b1c4370ec43b", "20170724000000", "20170725000000", 0, 100)
 
@@ -222,7 +199,7 @@ func TestBatchQueryComment(t *testing.T) {
 }
 
 func TestVerifyWXMLResult(t *testing.T) {
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d")
 
 	m := wx.WXML{
 		"return_code": "SUCCESS",
@@ -240,7 +217,7 @@ func TestVerifyWXMLResult(t *testing.T) {
 }
 
 func TestDecryptWithAES256ECB(t *testing.T) {
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d")
 
 	info, err := mch.DecryptWithAES256ECB("4gS8kbcHysCW7bHqyEU0M4GTNkgJQP6/zKHbA/E3CvwLlNgCKUkGRy0OpONZjd4saggSnB6Fr7dHRYn6tvu8XDRU6t9IC3GuUKHs3SXmFKkm5cy3YR0oWIZFU4C5LV9LU7U3hwvUSZNx1QcFQXX9yZz68Wq8pwf/DeZ6iOXy/XRulylo75C7n0p3dMm/yJamZ44ir2iwWwEis3Tiif9Y6foLxrFA+fESQK1aH/OEZhIrJPIlnrtoxGJVJfoWAOYrC13a52BaR7CHKmNhAtw60n+XBUPLx5VzwpHKf3zZB1EpCngiVGcxmEAy3I59wotsScP4iaUeObWqPs7RYdQCiFQ9oRo4/c6bUWocW6HfOJGyWXj3VNfZtjTp1J6R05bP/1PCNV9FIMlt+owfcjTPO4pmRx0SpuKPy7j80APUCyC4g/0FU2ppbw/jN3faXAOV/1+Vl5vrDWxg2hiWm9JCttJ5kAHD/9XB6hfM0BH4iwf/Z/FZO+ECvO2A9buqnpCeOYWsOZNN1Z2Ow9kfJXhiDs/N0UICa2lodyl44nBrbP3amju/Zm6yyyFr74jl2GUsGO3PBrqfP1mbX96WiG09BcjQp1PAw40kfw32o7LW8ZT7DakPEGf0Khhuy+xbdusziU/CihrSEIUJP2qlK2/WrM3MtKE7qMqGBMDTG/n/BB1B82zfpNEh1py0CKTS+ezCKQp4IlRnMZhAMtyOfcKLbMEwOF1u3TdfNh+GSXPbEdydvKTcrMddQ5bbUosAT0d+dcPSPlM8Ckq6OPWJfyaySg8x1PM39psr2UqhJGFQ/kcDLzCYt1gVX+qjOdMC0v0IBG+YszRCIvJkNGues9wip94bkBWQeHdtuES+XZS9wIR0jwIA5G+mJJD3tRW/JpCXeIVgW84XStyaniaekKdo/Q6lkmNwtztmzB0Ub6ct/rQPMdTzN/abK9lKoSRhUP5Hq3yjxpWFegmV3TtECOaAtSj8cubVTONJL2m2vzF7RpOCXbPq7TuRyVqYF1fTBJH50z8YV7B5zZ5f1JU2tCMvRaIe1jZ0yyZLytG/dONZ+ee7rjV3lKvcHiHEASz1EtvM")
 

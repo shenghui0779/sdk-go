@@ -1,9 +1,7 @@
 package addrbook
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,19 +10,15 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestBatchSyncUser(t *testing.T) {
 	body := []byte(`{"media_id":"xxxxxx","to_invite":true,"callback":{"url":"xxx","token":"xxx","encodingaeskey":"xxx"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "jobid": "xxxxx"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,8 +27,7 @@ func TestBatchSyncUser(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/batch/syncuser?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	callback := &BatchCallback{
 		URL:            "xxx",
@@ -54,14 +47,11 @@ func TestBatchSyncUser(t *testing.T) {
 
 func TestBatchReplaceUser(t *testing.T) {
 	body := []byte(`{"media_id":"xxxxxx","to_invite":true,"callback":{"url":"xxx","token":"xxx","encodingaeskey":"xxx"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "jobid": "xxxxx"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -70,8 +60,7 @@ func TestBatchReplaceUser(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceuser?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	callback := &BatchCallback{
 		URL:            "xxx",
@@ -91,14 +80,11 @@ func TestBatchReplaceUser(t *testing.T) {
 
 func TestBatchReplaceParty(t *testing.T) {
 	body := []byte(`{"media_id":"xxxxxx","callback":{"url":"xxx","token":"xxx","encodingaeskey":"xxx"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "jobid": "xxxxx"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -107,8 +93,7 @@ func TestBatchReplaceParty(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/batch/replaceparty?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultBatch)
 
@@ -127,9 +112,7 @@ func TestBatchReplaceParty(t *testing.T) {
 }
 
 func TestGetBatchResult(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "status": 1,
@@ -149,8 +132,7 @@ func TestGetBatchResult(t *testing.T) {
             "errmsg": "ok"
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -159,8 +141,7 @@ func TestGetBatchResult(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/batch/getresult?access_token=ACCESS_TOKEN&jobid=JOBID", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultBatchRet)
 

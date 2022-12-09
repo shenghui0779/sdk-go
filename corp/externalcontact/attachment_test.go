@@ -1,10 +1,7 @@
 package externalcontact
 
 import (
-	"bytes"
 	"context"
-	"io"
-	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -16,16 +13,13 @@ import (
 )
 
 func TestUploadAttachment(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"type": "image",
 	"media_id": "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
 	"created_at": 1380000000
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -34,8 +28,7 @@ func TestUploadAttachment(t *testing.T) {
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/upload_attachment?access_token=ACCESS_TOKEN&attachment_type=1&media_type=image", gomock.AssignableToTypeOf(wx.NewUploadForm())).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultAttachmentUpload)
 
@@ -50,16 +43,13 @@ func TestUploadAttachment(t *testing.T) {
 }
 
 func TestUploadAttachmentByURL(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"type": "image",
 	"media_id": "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
 	"created_at": 1380000000
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -68,8 +58,7 @@ func TestUploadAttachmentByURL(t *testing.T) {
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/upload_attachment?access_token=ACCESS_TOKEN&attachment_type=1&media_type=image", gomock.AssignableToTypeOf(wx.NewUploadForm())).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultAttachmentUpload)
 

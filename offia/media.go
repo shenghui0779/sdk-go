@@ -1,6 +1,7 @@
 package offia
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -80,9 +81,7 @@ func UploadMediaByURL(mediaType MediaType, filename, url string, result *ResultM
 						return err
 					}
 
-					defer resp.Body.Close()
-
-					if _, err = io.Copy(w, resp.Body); err != nil {
+					if _, err = io.Copy(w, bytes.NewReader(resp)); err != nil {
 						return err
 					}
 
@@ -152,9 +151,7 @@ func AddMaterialByURL(mediaType MediaType, filename, url string, result *ResultM
 						return err
 					}
 
-					defer resp.Body.Close()
-
-					if _, err = io.Copy(w, resp.Body); err != nil {
+					if _, err = io.Copy(w, bytes.NewReader(resp)); err != nil {
 						return err
 					}
 
@@ -305,9 +302,7 @@ func UploadImgByURL(filename, url string, result *ResultMaterialAdd) wx.Action {
 						return err
 					}
 
-					defer resp.Body.Close()
-
-					if _, err = io.Copy(w, resp.Body); err != nil {
+					if _, err = io.Copy(w, bytes.NewReader(resp)); err != nil {
 						return err
 					}
 
@@ -372,9 +367,7 @@ func UploadVideoByURL(filename, videoURL, title, description string, result *Res
 						return err
 					}
 
-					defer resp.Body.Close()
-
-					if _, err = io.Copy(w, resp.Body); err != nil {
+					if _, err = io.Copy(w, bytes.NewReader(resp)); err != nil {
 						return err
 					}
 

@@ -1,9 +1,7 @@
 package tools
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,19 +10,15 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCreateLiving(t *testing.T) {
 	body := []byte(`{"anchor_userid":"zhangsan","theme":"theme","living_start":1600000000,"living_duration":3600,"description":"test description","type":4,"agentid":1000014,"remind_time":60,"activity_cover_mediaid":"MEDIA_ID","activity_share_mediaid":"MEDIA_ID","activity_detail":{"description":"活动描述，非活动类型的直播不用传","image_list":["MEDIA_ID_1","MEDIA_ID_2"]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "livingid": "XXXXXXXXX"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,8 +27,7 @@ func TestCreateLiving(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/living/create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsLivingCreate{
 		AnchorUserID:         "zhangsan",
@@ -64,13 +57,10 @@ func TestCreateLiving(t *testing.T) {
 
 func TestModifyLiving(t *testing.T) {
 	body := []byte(`{"livingid":"XXXXXXXXX","theme":"theme","living_start":1600100000,"living_duration":3600,"description":"test description","type":1,"remind_time":60}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -79,8 +69,7 @@ func TestModifyLiving(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/living/modify?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsLivingModify{
 		LivingID:       "XXXXXXXXX",
@@ -99,13 +88,10 @@ func TestModifyLiving(t *testing.T) {
 
 func TestCancelLiving(t *testing.T) {
 	body := []byte(`{"livingid":"XXXXXXXXX"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -114,8 +100,7 @@ func TestCancelLiving(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/living/cancel?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", CancelLiving("XXXXXXXXX"))
 
@@ -124,13 +109,10 @@ func TestCancelLiving(t *testing.T) {
 
 func TestDeleteLivingReplayData(t *testing.T) {
 	body := []byte(`{"livingid":"XXXXXXXXX"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -139,8 +121,7 @@ func TestDeleteLivingReplayData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/living/delete_replay_data?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteLivingReplayData("XXXXXXXXX"))
 
@@ -149,14 +130,11 @@ func TestDeleteLivingReplayData(t *testing.T) {
 
 func TestGetLivingCode(t *testing.T) {
 	body := []byte(`{"livingid":"XXXXXXXXX","openid":"abcopenid"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "living_code": "abcdef"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -165,8 +143,7 @@ func TestGetLivingCode(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/living/get_living_code?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultLivingCode)
 
@@ -180,9 +157,7 @@ func TestGetLivingCode(t *testing.T) {
 
 func TestGetUserAllLivingID(t *testing.T) {
 	body := []byte(`{"userid":"USERID","cursor":"NEXT_KEY","limit":20}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "next_cursor": "next_cursor",
@@ -190,8 +165,7 @@ func TestGetUserAllLivingID(t *testing.T) {
         "livingid1",
         "livingid2"
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -200,8 +174,7 @@ func TestGetUserAllLivingID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/living/get_user_all_livingid?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultUserAllLivingID)
 
@@ -215,9 +188,7 @@ func TestGetUserAllLivingID(t *testing.T) {
 }
 
 func TestGetLivingInfo(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "living_info": {
@@ -240,8 +211,7 @@ func TestGetLivingInfo(t *testing.T) {
         "online_count": 1,
         "subscribe_count": 1
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -250,8 +220,7 @@ func TestGetLivingInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/living/get_living_info?access_token=ACCESS_TOKEN&livingid=LIVINGID", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultLivingInfo)
 
@@ -284,9 +253,7 @@ func TestGetLivingInfo(t *testing.T) {
 
 func TestGetLivingWatchStat(t *testing.T) {
 	body := []byte(`{"livingid":"livingid1","next_key":"NEXT_KEY"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "ending": 1,
@@ -319,8 +286,7 @@ func TestGetLivingWatchStat(t *testing.T) {
             }
         ]
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -329,8 +295,7 @@ func TestGetLivingWatchStat(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/living/get_watch_stat?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultLivingWatchStat)
 
@@ -373,9 +338,7 @@ func TestGetLivingWatchStat(t *testing.T) {
 
 func TestGetLivingShareInfo(t *testing.T) {
 	body := []byte(`{"ww_share_code":"CODE"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "livingid": "livingid",
@@ -383,8 +346,7 @@ func TestGetLivingShareInfo(t *testing.T) {
     "viewer_external_userid": "viewer_external_userid",
     "invitor_userid": "invitor_userid",
     "invitor_external_userid": "invitor_external_userid"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -393,8 +355,7 @@ func TestGetLivingShareInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/living/get_living_share_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultLivingShareInfo)
 

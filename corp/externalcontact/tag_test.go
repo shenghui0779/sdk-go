@@ -1,9 +1,7 @@
 package externalcontact
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestListCorpTag(t *testing.T) {
 	body := []byte(`{"tag_id":["etXXXXXXXXXX","etYYYYYYYYYY"],"group_id":["etZZZZZZZZZZZZZ","etYYYYYYYYYYYYY"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "tag_group": [
@@ -47,8 +42,7 @@ func TestListCorpTag(t *testing.T) {
             ]
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -57,8 +51,7 @@ func TestListCorpTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_corp_tag_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	tagIDs := []string{"etXXXXXXXXXX", "etYYYYYYYYYY"}
 	groupIDs := []string{"etZZZZZZZZZZZZZ", "etYYYYYYYYYYYYY"}
@@ -99,9 +92,7 @@ func TestListCorpTag(t *testing.T) {
 
 func TestAddCorpTag(t *testing.T) {
 	body := []byte(`{"group_id":"GROUP_ID","group_name":"GROUP_NAME","order":1,"tag":[{"name":"TAG_NAME_1","order":1},{"name":"TAG_NAME_2","order":2}],"agentid":1000014}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "tag_group": {
@@ -124,8 +115,7 @@ func TestAddCorpTag(t *testing.T) {
             }
         ]
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -134,8 +124,7 @@ func TestAddCorpTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsCorpTagAdd{
 		GroupID:   "GROUP_ID",
@@ -185,13 +174,10 @@ func TestAddCorpTag(t *testing.T) {
 
 func TestEditCorpTag(t *testing.T) {
 	body := []byte(`{"id":"TAG_ID","name":"NEW_TAG_NAME","order":1,"agentid":1000014}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -200,8 +186,7 @@ func TestEditCorpTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_corp_tag?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsCorpTagEdit{
 		ID:      "TAG_ID",
@@ -217,13 +202,10 @@ func TestEditCorpTag(t *testing.T) {
 
 func TestDeleteCorpTag(t *testing.T) {
 	body := []byte(`{"tag_id":["TAG_ID_1","TAG_ID_2"],"group_id":["GROUP_ID_1","GROUP_ID_2"],"agentid":1000014}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -232,8 +214,7 @@ func TestDeleteCorpTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	tagIDs := []string{"TAG_ID_1", "TAG_ID_2"}
 	groupIDs := []string{"GROUP_ID_1", "GROUP_ID_2"}
@@ -245,9 +226,7 @@ func TestDeleteCorpTag(t *testing.T) {
 
 func TestListStrategyTag(t *testing.T) {
 	body := []byte(`{"strategy_id":1,"tag_id":["etXXXXXXXXXX","etYYYYYYYYYY"],"group_id":["etZZZZZZZZZZZZZ","etYYYYYYYYYYYYY"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "tag_group": [
@@ -273,8 +252,7 @@ func TestListStrategyTag(t *testing.T) {
             ]
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -283,8 +261,7 @@ func TestListStrategyTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_strategy_tag_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	tagIDs := []string{"etXXXXXXXXXX", "etYYYYYYYYYY"}
 	groupIDs := []string{"etZZZZZZZZZZZZZ", "etYYYYYYYYYYYYY"}
@@ -323,9 +300,7 @@ func TestListStrategyTag(t *testing.T) {
 
 func TestAddStrategyTag(t *testing.T) {
 	body := []byte(`{"strategy_id":1,"group_id":"GROUP_ID","group_name":"GROUP_NAME","order":1,"tag":[{"name":"TAG_NAME_1","order":1},{"name":"TAG_NAME_2","order":2}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "tag_group": {
@@ -348,8 +323,7 @@ func TestAddStrategyTag(t *testing.T) {
             }
         ]
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -358,8 +332,7 @@ func TestAddStrategyTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_strategy_tag?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsStrategyTagAdd{
 		StrategyID: 1,
@@ -409,13 +382,10 @@ func TestAddStrategyTag(t *testing.T) {
 
 func TestEditStrategyTag(t *testing.T) {
 	body := []byte(`{"id":"TAG_ID","name":"NEW_TAG_NAME","order":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -424,8 +394,7 @@ func TestEditStrategyTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_strategy_tag?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsStrategyTagEdit{
 		ID:    "TAG_ID",
@@ -440,13 +409,10 @@ func TestEditStrategyTag(t *testing.T) {
 
 func TestDeleteStrategyTag(t *testing.T) {
 	body := []byte(`{"tag_id":["TAG_ID_1","TAG_ID_2"],"group_id":["GROUP_ID_1","GROUP_ID_2"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -455,8 +421,7 @@ func TestDeleteStrategyTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_strategy_tag?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	tagIDs := []string{"TAG_ID_1", "TAG_ID_2"}
 	groupIDs := []string{"GROUP_ID_1", "GROUP_ID_2"}
@@ -468,13 +433,10 @@ func TestDeleteStrategyTag(t *testing.T) {
 
 func TestMarkTag(t *testing.T) {
 	body := []byte(`{"userid":"zhangsan","external_userid":"woAJ2GCAAAd1NPGHKSD4wKmE8Aabj9AAA","add_tag":["TAGID1","TAGID2"],"remove_tag":["TAGID3","TAGID4"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -483,8 +445,7 @@ func TestMarkTag(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/mark_tag?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsTagMark{
 		UserID:         "zhangsan",

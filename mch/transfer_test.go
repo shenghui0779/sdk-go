@@ -1,9 +1,7 @@
 package mch
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -31,9 +29,7 @@ func TestTransferToBalance(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<mch_appid>wx2421b1c4370ec43b</mch_appid>
 	<mchid>10000100</mchid>
@@ -42,8 +38,7 @@ func TestTransferToBalance(t *testing.T) {
 	<partner_trade_no>10013574201505191526582441</partner_trade_no>
 	<payment_no>1000018301201505190181489473</payment_no>
 	<payment_time>2015-05-19 15:26:59</payment_time>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -52,13 +47,9 @@ func TestTransferToBalance(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "3PG2J4ILTKCH16CQ2502SI8ZNMTM67VS"
-	}
-
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), TransferToBalance("wx2421b1c4370ec43b", &ParamsTransferBalance{
 		PartnerTradeNO: "100000982014120919616",
@@ -94,9 +85,7 @@ func TestQueryTransferBalance(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<appid>wx2421b1c4370ec43b</appid>
 	<mch_id>10000100</mch_id>
@@ -109,8 +98,7 @@ func TestQueryTransferBalance(t *testing.T) {
 	<transfer_name>测试</transfer_name>
 	<transfer_time>2015-04-21 20:00:00</transfer_time>
 	<desc>福利测试</desc>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -119,13 +107,9 @@ func TestQueryTransferBalance(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
-	}
-
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryTransferBalance("wx2421b1c4370ec43b", "1000005901201407261446939628"))
 
@@ -147,62 +131,64 @@ func TestQueryTransferBalance(t *testing.T) {
 }
 
 // RSA-OAEP每次加密结果不同，导致签名会变化
-// func TestTransferToBankCard(t *testing.T) {
-// 	ctrl := gomock.NewController(t)
-// 	defer ctrl.Finish()
+func TestTransferToBankCard(t *testing.T) {
+	body, err := wx.FormatMap2XMLForTest(wx.WXML{
+		"mch_id":           "10000100",
+		"partner_trade_no": "1212121221278",
+		"amount":           "500",
+		"bank_code":        "1002",
+		"enc_bank_no":      "en4Y1l7D0dK+cRuLLDquRuswp9bsuB6MQke+bn0S+MF9sDKIDp4Tkiml9v90uSQof3nIaOZ/q1UTFFV7/bvrkQc6+PKxbx/Y9YcdmrUAS2HCB7uFRVmsu4xBtbDzAR0wnnTuUcr6DJz/HxgE9EUpXyhHUpNgXB4/GOxgJA5uBimBKA6z46AmGxLcgOkvOU9bo9+hgYDCrOOEwRiN1XC18llAsqjZPAJqkZibv9cEZ5zvmrT8zRBoi+L1N9ZUGuxvq1GpbsBOFE0PP4IFP60R216pz9/nhFBKi3rF0ohF3mnjBmycOVaOK0xm8lcEQQEV+94/4bqnIJOSg8UmHrArRQ==",
+		"enc_true_name":    "ABpj6B97My6jKc2TwbkXM/W55LmlxmldJHhKr3n2cr36UeQCGOKlc3Cc1sQytng4hKrDd+qrXT3fmoRvxc10mnViGKdwq1G6XAmGYMMs2Pm0edzqWicrTi8/dcXoVaxLj4ZwCBm+8OtCpJefxGi9xZjpnXpUvEa2hzlPbghFNoPMHIOdECwzvYMqAM2OoRwqicTZgroRS0jI88NhM5UTn00ZwFSoN3VeFkkDSeKXZ25232l51WjBqyg6JLRGltPtiKwaNhCd5cxkPrCJrMJAzJ8PVQmBrEfRnyHDJiYGIQZ1bGoB9eKTN/+cjcGWuxyXDrpdIc0DJzCy/5Yswrv+qg==",
+		"desc":             "test",
+		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
+		"sign":             "93FD9CF5C2D3F2D6016A168F69D221D5",
+	})
 
-// 	client := mock.NewMockHTTPClient(ctrl)
+	assert.Nil(t, err)
 
-// 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), "https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank", wx.WXML{
-// 		"mch_id":           "10000100",
-// 		"partner_trade_no": "1212121221278",
-// 		"amount":           "500",
-// 		"bank_code":        "1002",
-// 		"enc_bank_no":      "en4Y1l7D0dK+cRuLLDquRuswp9bsuB6MQke+bn0S+MF9sDKIDp4Tkiml9v90uSQof3nIaOZ/q1UTFFV7/bvrkQc6+PKxbx/Y9YcdmrUAS2HCB7uFRVmsu4xBtbDzAR0wnnTuUcr6DJz/HxgE9EUpXyhHUpNgXB4/GOxgJA5uBimBKA6z46AmGxLcgOkvOU9bo9+hgYDCrOOEwRiN1XC18llAsqjZPAJqkZibv9cEZ5zvmrT8zRBoi+L1N9ZUGuxvq1GpbsBOFE0PP4IFP60R216pz9/nhFBKi3rF0ohF3mnjBmycOVaOK0xm8lcEQQEV+94/4bqnIJOSg8UmHrArRQ==",
-// 		"enc_true_name":    "ABpj6B97My6jKc2TwbkXM/W55LmlxmldJHhKr3n2cr36UeQCGOKlc3Cc1sQytng4hKrDd+qrXT3fmoRvxc10mnViGKdwq1G6XAmGYMMs2Pm0edzqWicrTi8/dcXoVaxLj4ZwCBm+8OtCpJefxGi9xZjpnXpUvEa2hzlPbghFNoPMHIOdECwzvYMqAM2OoRwqicTZgroRS0jI88NhM5UTn00ZwFSoN3VeFkkDSeKXZ25232l51WjBqyg6JLRGltPtiKwaNhCd5cxkPrCJrMJAzJ8PVQmBrEfRnyHDJiYGIQZ1bGoB9eKTN/+cjcGWuxyXDrpdIc0DJzCy/5Yswrv+qg==",
-// 		"desc":             "test",
-// 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
-// 		"sign":             "93FD9CF5C2D3F2D6016A168F69D221D5",
-// 	}).Return(wx.WXML{
-// 		"return_code":      "SUCCESS",
-// 		"mch_id":           "10000100",
-// 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
-// 		"result_code":      "SUCCESS",
-// 		"partner_trade_no": "1212121221278",
-// 		"amount":           "500",
-// 		"payment_no":       "10000600500852017030900000020006012",
-// 		"cmms_amt":         "0",
-// 	}, nil)
+	resp := []byte(`<xml>
+	<return_code>SUCCESS</return_code>
+	<mch_id>10000100</mch_id>
+	<nonce_str>50780e0cca98c8c8e814883e5caa672e</nonce_str>
+	<result_code>SUCCESS</result_code>
+	<partner_trade_no>1212121221278</partner_trade_no>
+	<amount>500</amount>
+	<payment_no>10000600500852017030900000020006012</payment_no>
+	<cmms_amt>0</cmms_amt>
+</xml>`)
 
-// 	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d")
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-// 	mch.nonce = func() string {
-// 		return "50780e0cca98c8c8e814883e5caa672e"
-// 	}
+	client := mock.NewMockHTTPClient(ctrl)
 
-// 	mch.SetTLSClient(wx.WithHTTPClient(client))
+	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank", body).Return(resp, nil)
 
-// 	r, err := mch.Do(context.TODO(), TransferToBankCard("wx2421b1c4370ec43b", &ParamsTransferBankCard{
-// 		PartnerTradeNO: "1212121221278",
-// 		EncBankNO:      "6221882600114166800",
-// 		EncTrueName:    "张三",
-// 		BankCode:       "1002",
-// 		Amount:         500,
-// 		Desc:           "test",
-// 	}, publicKey))
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
+		return "50780e0cca98c8c8e814883e5caa672e"
+	}), WithMockClient(client))
 
-// 	assert.Nil(t, err)
-// 	assert.Equal(t, wx.WXML{
-// 		"return_code":      "SUCCESS",
-// 		"mch_id":           "10000100",
-// 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
-// 		"result_code":      "SUCCESS",
-// 		"partner_trade_no": "1212121221278",
-// 		"amount":           "500",
-// 		"payment_no":       "10000600500852017030900000020006012",
-// 		"cmms_amt":         "0",
-// 	}, r)
-// }
+	r, err := mch.Do(context.TODO(), TransferToBankCard("wx2421b1c4370ec43b", &ParamsTransferBankCard{
+		PartnerTradeNO: "1212121221278",
+		EncBankNO:      "6221882600114166800",
+		EncTrueName:    "张三",
+		BankCode:       "1002",
+		Amount:         500,
+		Desc:           "test",
+	}, publicKey))
+
+	assert.Nil(t, err)
+	assert.Equal(t, wx.WXML{
+		"return_code":      "SUCCESS",
+		"mch_id":           "10000100",
+		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
+		"result_code":      "SUCCESS",
+		"partner_trade_no": "1212121221278",
+		"amount":           "500",
+		"payment_no":       "10000600500852017030900000020006012",
+		"cmms_amt":         "0",
+	}, r)
+}
 
 func TestQueryTransferBankCard(t *testing.T) {
 	body, err := wx.FormatMap2XMLForTest(wx.WXML{
@@ -214,9 +200,7 @@ func TestQueryTransferBankCard(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<mch_id>10000100</mch_id>
 	<result_code>SUCCESS</result_code>
@@ -229,8 +213,7 @@ func TestQueryTransferBankCard(t *testing.T) {
 	<cmms_amt>0</cmms_amt>
 	<create_time>2017-03-09 15:04:04</create_time>
 	<reason>福利测试</reason>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -239,13 +222,9 @@ func TestQueryTransferBankCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
-	}
-
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryTransferBankCard("wx2421b1c4370ec43b", "1212121221278"))
 
@@ -276,9 +255,7 @@ func TestRSAPublicKey(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<mch_id>10000100</mch_id>
 	<result_code>SUCCESS</result_code>
@@ -291,8 +268,7 @@ wvGYLBSAn+oNw/uSAu6B3c6dh+pslgORCzrIRs68GWsARGZkI/lmOJWEgzQ9KC7b
 yHVqEnDDaWQFyQpq30JdP6YTXR/xlKyo8f1DingoSDXAhKMGRKaT4oIFkE6OA3jt
 DQIDAQAB
 -----END PUBLIC KEY-----</pub_key>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -301,13 +277,9 @@ DQIDAQAB
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://fraud.mch.weixin.qq.com/risk/getpublickey", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
-	}
-
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), RSAPublicKey())
 

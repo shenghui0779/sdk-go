@@ -1,9 +1,7 @@
 package kf
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAddServicer(t *testing.T) {
 	body := []byte(`{"open_kfid":"kfxxxxxxxxxxxxxx","userid_list":["zhangsan","lisi"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "result_list": [
@@ -34,8 +29,7 @@ func TestAddServicer(t *testing.T) {
             "errmsg": "ignored"
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -44,8 +38,7 @@ func TestAddServicer(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/add?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"zhangsan", "lisi"}
 
@@ -72,9 +65,7 @@ func TestAddServicer(t *testing.T) {
 
 func TestDeleteServicer(t *testing.T) {
 	body := []byte(`{"open_kfid":"kfxxxxxxxxxxxxxx","userid_list":["zhangsan","lisi"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "result_list": [
@@ -89,8 +80,7 @@ func TestDeleteServicer(t *testing.T) {
             "errmsg": "ignored"
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -99,8 +89,7 @@ func TestDeleteServicer(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/del?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"zhangsan", "lisi"}
 
@@ -126,9 +115,7 @@ func TestDeleteServicer(t *testing.T) {
 }
 
 func TestListServicer(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "servicer_list": [
@@ -141,8 +128,7 @@ func TestListServicer(t *testing.T) {
             "status": 1
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -151,8 +137,7 @@ func TestListServicer(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/list?access_token=ACCESS_TOKEN&open_kfid=XXX", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultServicerList)
 
@@ -175,15 +160,12 @@ func TestListServicer(t *testing.T) {
 
 func TestGetServiceState(t *testing.T) {
 	body := []byte(`{"open_kfid":"wkxxxxxxxxxxxxxxxxxx","external_userid":"wmxxxxxxxxxxxxxxxxxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "service_state": 3,
     "servicer_userid": "zhangsan"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -192,8 +174,7 @@ func TestGetServiceState(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/service_state/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultServiceState)
 
@@ -208,14 +189,11 @@ func TestGetServiceState(t *testing.T) {
 
 func TestTransferServiceState(t *testing.T) {
 	body := []byte(`{"open_kfid":"wkxxxxxxxxxxxxxxxxxx","external_userid":"wmxxxxxxxxxxxxxxxxxx","service_state":3,"servicer_userid":"zhangsan"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msg_code": "MSG_CODE"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -224,8 +202,7 @@ func TestTransferServiceState(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/service_state/trans?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsServiceStateTransfer{
 		OpenKFID:       "wkxxxxxxxxxxxxxxxxxx",

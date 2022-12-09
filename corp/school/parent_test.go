@@ -1,9 +1,7 @@
 package school
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,18 +10,14 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCreateParent(t *testing.T) {
 	body := []byte(`{"parent_userid":"zhangsan_parent_userid","mobile":"10000000000","to_invite":false,"children":[{"student_userid":"zhangsan","relation":"爸爸"},{"student_userid":"lisi","relation":"伯父"}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -32,8 +26,7 @@ func TestCreateParent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/create_parent?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsParentCreate{
 		ParentUserID: "zhangsan_parent_userid",
@@ -58,13 +51,10 @@ func TestCreateParent(t *testing.T) {
 
 func TestUpdateParent(t *testing.T) {
 	body := []byte(`{"parent_userid":"zhangsan_parent_userid","new_parent_userid":"NEW_ID","mobile":"18000000000","children":[{"student_userid":"zhangsan","relation":"爸爸"},{"student_userid":"lisi","relation":"伯父"}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -73,8 +63,7 @@ func TestUpdateParent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/update_parent?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsParentUpdate{
 		ParentUserID:    "zhangsan_parent_userid",
@@ -98,13 +87,10 @@ func TestUpdateParent(t *testing.T) {
 }
 
 func TestDeleteParent(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -113,8 +99,7 @@ func TestDeleteParent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/school/user/delete_parent?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteParent("USERID"))
 
@@ -123,9 +108,7 @@ func TestDeleteParent(t *testing.T) {
 
 func TestBatchCreateParent(t *testing.T) {
 	body := []byte(`{"parents":[{"parent_userid":"zhangsan_parent_userid","mobile":"18000000000","to_invite":false,"children":[{"student_userid":"zhangsan","relation":"爸爸"},{"student_userid":"lisi","relation":"伯父"}]},{"parent_userid":"lisi_parent_userid","mobile":"18000000001","children":[{"student_userid":"lisi","relation":"爸爸"},{"student_userid":"zhangsan","relation":"伯父"}]}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "result_list": [
@@ -135,8 +118,7 @@ func TestBatchCreateParent(t *testing.T) {
             "errmsg": "invalid parent_userid: lisi_parent_userid"
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -145,8 +127,7 @@ func TestBatchCreateParent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_create_parent?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsParentBatchCreate{
 		Parents: []*ParamsParentCreate{
@@ -199,9 +180,7 @@ func TestBatchCreateParent(t *testing.T) {
 
 func TestBatchUpdateParent(t *testing.T) {
 	body := []byte(`{"parents":[{"parent_userid":"zhangsan_baba","new_parent_userid":"zhangsan_baba_new","mobile":"10000000000","children":[{"student_userid":"zhangsan","relation":"爸爸"}]},{"parent_userid":"lisi_mama","mobile":"10000000001","children":[{"student_userid":"lisi","relation":"妈妈"}]}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "result_list": [
@@ -211,8 +190,7 @@ func TestBatchUpdateParent(t *testing.T) {
             "errmsg": "invalid parent_userid: lisi_parent_userid"
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -221,8 +199,7 @@ func TestBatchUpdateParent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_update_parent?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsParentBatchUpdate{
 		Parents: []*ParamsParentUpdate{
@@ -267,9 +244,7 @@ func TestBatchUpdateParent(t *testing.T) {
 
 func TestBatchDeleteParent(t *testing.T) {
 	body := []byte(`{"useridlist":["zhangsan","lisi"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"result_list": [
@@ -279,8 +254,7 @@ func TestBatchDeleteParent(t *testing.T) {
 			"errmsg": "userid not found"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -289,8 +263,7 @@ func TestBatchDeleteParent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_delete_parent?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"zhangsan", "lisi"}
 

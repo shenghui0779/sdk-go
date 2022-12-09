@@ -1,9 +1,7 @@
 package minip
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -11,14 +9,11 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestGetPhoneNumber(t *testing.T) {
 	body := []byte(`{"code":"e31968a7f94cc5ee25fafc2aef2773f0bb8c3937b22520eb8ee345274d00c144"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"phone_info": {
@@ -30,8 +25,7 @@ func TestGetPhoneNumber(t *testing.T) {
 			"appid": "xxxx"
 		}
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -40,8 +34,7 @@ func TestGetPhoneNumber(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultPhoneNumber)
 
@@ -63,15 +56,12 @@ func TestGetPhoneNumber(t *testing.T) {
 
 func TestCheckEncryptedData(t *testing.T) {
 	body := []byte(`{"encrypted_msg_hash":"657edd868c9715a9bebe42b833269a557a48498785397a796f1568c29a200b2c"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"vaild": true,
 	"create_time": 1629121902
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -80,8 +70,7 @@ func TestCheckEncryptedData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/business/checkencryptedmsg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultEncryptedDataCheck)
 
@@ -95,14 +84,11 @@ func TestCheckEncryptedData(t *testing.T) {
 }
 
 func TestGetPaidUnionIDByTransactionID(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"unionid": "oTmHYjg-tElZ68xxxxxxxxhy1Rgk"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -111,8 +97,7 @@ func TestGetPaidUnionIDByTransactionID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxa/getpaidunionid?access_token=ACCESS_TOKEN&openid=OPENID&transaction_id=TRANSACTION_ID", nil).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultPaidUnionID)
 
@@ -125,14 +110,11 @@ func TestGetPaidUnionIDByTransactionID(t *testing.T) {
 }
 
 func TestGetPaidUnionIDByOutTradeNO(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"unionid": "oTmHYjg-tElZ68xxxxxxxxhy1Rgk"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -141,8 +123,7 @@ func TestGetPaidUnionIDByOutTradeNO(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxa/getpaidunionid?access_token=ACCESS_TOKEN&mch_id=MCH_ID&openid=OPENID&out_trade_no=OUT_TRADE_NO", nil).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultPaidUnionID)
 

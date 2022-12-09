@@ -1,9 +1,7 @@
 package externalcontact
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,21 +10,17 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestList(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"external_userid": [
 		"woAJ2GCAAAXtWyujaWJHDDGi0mACAAA",
 		"wmqfasd1e1927831291723123109rAAA"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -35,8 +29,7 @@ func TestList(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/list?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultList)
 
@@ -52,9 +45,7 @@ func TestList(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"external_contact": {
@@ -140,8 +131,7 @@ func TestGet(t *testing.T) {
 		}
 	],
 	"next_cursor": "NEXT_CURSOR"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -150,8 +140,7 @@ func TestGet(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get?access_token=ACCESS_TOKEN&cursor=CURSOR&external_userid=EXTERNAL_USERID", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultGet)
 
@@ -244,9 +233,7 @@ func TestGet(t *testing.T) {
 
 func TestBatchGetByUser(t *testing.T) {
 	body := []byte(`{"userid_list":["zhangsan","lisi"],"limit":100}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"external_contact_list": [
@@ -335,8 +322,7 @@ func TestBatchGetByUser(t *testing.T) {
 		}
 	],
 	"next_cursor": "r9FqSqsI8fgNbHLHE5QoCP50UIg2cFQbfma3l2QsmwI"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -345,8 +331,7 @@ func TestBatchGetByUser(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/batch/get_by_user?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"zhangsan", "lisi"}
 
@@ -442,13 +427,10 @@ func TestBatchGetByUser(t *testing.T) {
 
 func TestRemark(t *testing.T) {
 	body := []byte(`{"userid":"zhangsan","external_userid":"woAJ2GCAAAd1asdasdjO4wKmE8Aabj9AAA","remark":"备注信息","description":"描述信息","remark_company":"腾讯科技","remark_mobiles":["13800000001","13800000002"],"remark_pic_mediaid":"MEDIAID"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -457,8 +439,7 @@ func TestRemark(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/remark?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsRemark{
 		UserID:           "zhangsan",

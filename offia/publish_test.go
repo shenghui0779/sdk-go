@@ -1,9 +1,7 @@
 package offia
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -11,19 +9,15 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestSubmitPublish(t *testing.T) {
 	body := []byte(`{"media_id":"MEDIA_ID"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"publish_id": "100000001"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,7 +27,6 @@ func TestSubmitPublish(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/freepublish/submit?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultPublishSubmit)
 
@@ -47,9 +40,7 @@ func TestSubmitPublish(t *testing.T) {
 
 func TestGetPublish(t *testing.T) {
 	body := []byte(`{"publish_id":"100000001"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"publish_id": "100000001",
 	"publish_status": 1,
 	"article_id": "ARTICLE_ID",
@@ -66,8 +57,7 @@ func TestGetPublish(t *testing.T) {
 		1,
 		2
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -77,7 +67,6 @@ func TestGetPublish(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/freepublish/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultPublishGet)
 
@@ -103,10 +92,7 @@ func TestGetPublish(t *testing.T) {
 
 func TestDeletePublish(t *testing.T) {
 	body := []byte(`{"article_id":"ARTICLE_ID","index":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -116,7 +102,6 @@ func TestDeletePublish(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/freepublish/delete?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeletePublish("ARTICLE_ID", 1))
 
@@ -125,9 +110,7 @@ func TestDeletePublish(t *testing.T) {
 
 func TestGetPublishArticle(t *testing.T) {
 	body := []byte(`{"article_id":"ARTICLE_ID"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"news_item": [
 		{
 			"title": "TITLE",
@@ -143,8 +126,7 @@ func TestGetPublishArticle(t *testing.T) {
 			"is_deleted": false
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -154,7 +136,6 @@ func TestGetPublishArticle(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/freepublish/getarticle?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultPublishArticle)
 
@@ -182,9 +163,7 @@ func TestGetPublishArticle(t *testing.T) {
 
 func TestBatchGetPublish(t *testing.T) {
 	body := []byte(`{"offset":1,"count":10,"no_content":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"total_count": 10,
 	"item_count": 1,
 	"item": [
@@ -210,8 +189,7 @@ func TestBatchGetPublish(t *testing.T) {
 			"update_time": 1645685624
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -221,7 +199,6 @@ func TestBatchGetPublish(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/freepublish/batchget?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultPublishBatchGet)
 

@@ -15,20 +15,16 @@ import (
 
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/urls"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCreateQRCode(t *testing.T) {
 	body := []byte(`{"action_name":"QR_SCENE","action_info":{"scene":{"scene_id":123}},"expire_seconds":60}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"ticket": "gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm3sUw==",
 	"expire_seconds": 60,
 	"url": "http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -38,7 +34,6 @@ func TestCreateQRCode(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsQRCodeCreate{
 		ActionName: QRScene,
@@ -62,10 +57,7 @@ func TestCreateQRCode(t *testing.T) {
 }
 
 func TestShowQRCode(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte("BUFFER"))),
-	}
+	resp := []byte("BUFFER")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -74,15 +66,13 @@ func TestShowQRCode(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=TICKET", nil).Return(resp, nil)
 
-	r, err := client.Do(context.TODO(), http.MethodGet, fmt.Sprintf("%s?ticket=%s", urls.OffiaQRCodeShow, url.QueryEscape("TICKET")), nil)
+	b, err := client.Do(context.TODO(), http.MethodGet, fmt.Sprintf("%s?ticket=%s", urls.OffiaQRCodeShow, url.QueryEscape("TICKET")), nil)
 
 	assert.Nil(t, err)
 
-	defer r.Body.Close()
-
 	buf := bytes.NewBuffer(nil)
 
-	if _, err = io.Copy(buf, resp.Body); err != nil {
+	if _, err = io.Copy(buf, bytes.NewReader(b)); err != nil {
 		assert.Nil(t, err)
 	}
 
@@ -92,14 +82,11 @@ func TestShowQRCode(t *testing.T) {
 func TestShortURL(t *testing.T) {
 	body := []byte(`{"action":"long2short","long_url":"http://wap.koudaitong.com/v2/showcase/goods?alias=128wi9shh&spm=h56083&redirect_count=1"}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"short_url": "http:\/\/w.url.cn\/s\/AvCo6Ih"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -109,7 +96,6 @@ func TestShortURL(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/shorturl?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultShortURL)
 

@@ -1,6 +1,7 @@
 package minip
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -74,9 +75,7 @@ func UploadTempMediaByURL(mediaType MediaType, filename, url string, result *Res
 						return err
 					}
 
-					defer resp.Body.Close()
-
-					if _, err = io.Copy(w, resp.Body); err != nil {
+					if _, err = io.Copy(w, bytes.NewReader(resp)); err != nil {
 						return err
 					}
 

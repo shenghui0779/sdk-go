@@ -1,29 +1,5 @@
 package wx
 
-// ClientOption configures how we set up the wechat client.
-type ClientOption func(c *wxclient)
-
-// WithHTTPClient sets http client for wechat client.
-func WithHTTPClient(client HTTPClient) ClientOption {
-	return func(c *wxclient) {
-		c.client = client
-	}
-}
-
-// WithLogger sets logger for wechat client.
-func WithLogger(logger Logger) ClientOption {
-	return func(c *wxclient) {
-		c.logger = logger
-	}
-}
-
-// WithDebug sets debug mode for wechat client.
-func WithDebug() ClientOption {
-	return func(c *wxclient) {
-		c.debug = true
-	}
-}
-
 // ActionOption configures how we set up the action
 type ActionOption func(a *action)
 

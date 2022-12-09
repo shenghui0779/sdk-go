@@ -1,9 +1,7 @@
 package externalcontact
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,19 +10,15 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAddInterceptRule(t *testing.T) {
 	body := []byte(`{"rule_name":"rulename","word_list":["敏感词1","敏感词2"],"semantics_list":[1,2,3],"intercept_type":1,"applicable_range":{"user_list":["zhangshan"],"department_list":[2,3]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"rule_id": "xxx"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,8 +27,7 @@ func TestAddInterceptRule(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_intercept_rule?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsInterceptRuleAdd{
 		RuleName:      "rulename",
@@ -59,13 +52,10 @@ func TestAddInterceptRule(t *testing.T) {
 
 func TestUpdateInterceptRule(t *testing.T) {
 	body := []byte(`{"rule_id":"xxxx","rule_name":"rulename","word_list":["敏感词1","敏感词2"],"extra_rule":{"semantics_list":[1,2,3]},"intercept_type":1,"add_applicable_range":{"user_list":["zhangshan"],"department_list":[2,3]},"remove_applicable_range":{"user_list":["zhangshan"],"department_list":[2,3]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -74,8 +64,7 @@ func TestUpdateInterceptRule(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/update_intercept_rule?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsInterceptRuleUpdate{
 		RuleID:   "xxxx",
@@ -101,9 +90,7 @@ func TestUpdateInterceptRule(t *testing.T) {
 }
 
 func TestListInterceptRule(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"rule_list": [
@@ -113,8 +100,7 @@ func TestListInterceptRule(t *testing.T) {
 			"create_time": 1600000000
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -123,8 +109,7 @@ func TestListInterceptRule(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_intercept_rule_list?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultInterceptRuleList)
 
@@ -144,9 +129,7 @@ func TestListInterceptRule(t *testing.T) {
 
 func TestGetInterceptRule(t *testing.T) {
 	body := []byte(`{"rule_id":"xxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"rule": {
@@ -174,8 +157,7 @@ func TestGetInterceptRule(t *testing.T) {
 			]
 		}
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -184,8 +166,7 @@ func TestGetInterceptRule(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_intercept_rule?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultInterceptRuleGet)
 
@@ -211,13 +192,10 @@ func TestGetInterceptRule(t *testing.T) {
 
 func TestDeleteInterceptRule(t *testing.T) {
 	body := []byte(`{"rule_id":"xxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -226,8 +204,7 @@ func TestDeleteInterceptRule(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_intercept_rule?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteInterceptRule("xxx"))
 

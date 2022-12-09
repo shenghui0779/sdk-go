@@ -5,7 +5,9 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"net"
 	"net/http"
@@ -131,18 +133,18 @@ func NewUploadForm(fields ...UploadField) UploadForm {
 type HTTPClient interface {
 	// Do sends an HTTP request and returns an HTTP response.
 	// Should use context to specify the timeout for request.
-	Do(ctx context.Context, method, reqURL string, body []byte, options ...HTTPOption) (*http.Response, error)
+	Do(ctx context.Context, method, reqURL string, body []byte, options ...HTTPOption) ([]byte, error)
 
 	// Upload issues a UPLOAD to the specified URL.
 	// Should use context to specify the timeout for request.
-	Upload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) (*http.Response, error)
+	Upload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) ([]byte, error)
 }
 
 type httpclient struct {
 	client *http.Client
 }
 
-func (c *httpclient) Do(ctx context.Context, method, reqURL string, body []byte, options ...HTTPOption) (*http.Response, error) {
+func (c *httpclient) Do(ctx context.Context, method, reqURL string, body []byte, options ...HTTPOption) ([]byte, error) {
 	req, err := http.NewRequestWithContext(ctx, method, reqURL, bytes.NewReader(body))
 
 	if err != nil {
@@ -190,10 +192,24 @@ func (c *httpclient) Do(ctx context.Context, method, reqURL string, body []byte,
 		return nil, err
 	}
 
-	return resp, nil
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= http.StatusBadRequest {
+		io.Copy(ioutil.Discard, resp.Body)
+
+		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
+	}
+
+	b, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
 }
 
-func (c *httpclient) Upload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) (*http.Response, error) {
+func (c *httpclient) Upload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) ([]byte, error) {
 	buf := bytes.NewBuffer(make([]byte, 0, 20<<10)) // 20kb
 	w := multipart.NewWriter(buf)
 
@@ -219,49 +235,57 @@ func NewHTTPClient(client *http.Client) HTTPClient {
 	}
 }
 
-// defaultHTTPClient default http client
-var defaultHTTPClient = NewHTTPClient(&http.Client{
-	Transport: &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-		DialContext: (&net.Dialer{
-			Timeout:   30 * time.Second,
-			KeepAlive: 60 * time.Second,
-		}).DialContext,
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
+// NewDefaultClient returns a default http client
+func NewDefaultClient(certs ...tls.Certificate) HTTPClient {
+	return &httpclient{
+		client: &http.Client{
+			Transport: &http.Transport{
+				Proxy: http.ProxyFromEnvironment,
+				DialContext: (&net.Dialer{
+					Timeout:   30 * time.Second,
+					KeepAlive: 60 * time.Second,
+				}).DialContext,
+				TLSClientConfig: &tls.Config{
+					Certificates:       certs,
+					InsecureSkipVerify: true,
+				},
+				MaxIdleConns:          0,
+				MaxIdleConnsPerHost:   1000,
+				MaxConnsPerHost:       1000,
+				IdleConnTimeout:       60 * time.Second,
+				TLSHandshakeTimeout:   10 * time.Second,
+				ExpectContinueTimeout: 1 * time.Second,
+			},
 		},
-		MaxIdleConns:          0,
-		MaxIdleConnsPerHost:   1000,
-		MaxConnsPerHost:       1000,
-		IdleConnTimeout:       60 * time.Second,
-		TLSHandshakeTimeout:   10 * time.Second,
-		ExpectContinueTimeout: 1 * time.Second,
-	},
-})
+	}
+}
+
+// defaultHTTPClient default http client
+var defaultHTTPClient = NewDefaultClient()
 
 // HTTPGet issues a GET to the specified URL.
-func HTTPGet(ctx context.Context, reqURL string, options ...HTTPOption) (*http.Response, error) {
+func HTTPGet(ctx context.Context, reqURL string, options ...HTTPOption) ([]byte, error) {
 	return defaultHTTPClient.Do(ctx, http.MethodGet, reqURL, nil, options...)
 }
 
 // HTTPPost issues a POST to the specified URL.
-func HTTPPost(ctx context.Context, reqURL string, body []byte, options ...HTTPOption) (*http.Response, error) {
+func HTTPPost(ctx context.Context, reqURL string, body []byte, options ...HTTPOption) ([]byte, error) {
 	return defaultHTTPClient.Do(ctx, http.MethodPost, reqURL, body, options...)
 }
 
 // HTTPPostForm issues a POST to the specified URL, with data's keys and values URL-encoded as the request body.
-func HTTPPostForm(ctx context.Context, reqURL string, data url.Values, options ...HTTPOption) (*http.Response, error) {
+func HTTPPostForm(ctx context.Context, reqURL string, data url.Values, options ...HTTPOption) ([]byte, error) {
 	options = append(options, WithHTTPHeader("Content-Type", "application/x-www-form-urlencoded"))
 
 	return defaultHTTPClient.Do(ctx, http.MethodPost, reqURL, []byte(data.Encode()), options...)
 }
 
 // HTTPUpload issues a UPLOAD to the specified URL.
-func HTTPUpload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) (*http.Response, error) {
+func HTTPUpload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) ([]byte, error) {
 	return defaultHTTPClient.Upload(ctx, reqURL, form, options...)
 }
 
 // HTTPDo sends an HTTP request and returns an HTTP response
-func HTTPDo(ctx context.Context, method, reqURL string, body []byte, options ...HTTPOption) (*http.Response, error) {
+func HTTPDo(ctx context.Context, method, reqURL string, body []byte, options ...HTTPOption) ([]byte, error) {
 	return defaultHTTPClient.Do(ctx, method, reqURL, body, options...)
 }

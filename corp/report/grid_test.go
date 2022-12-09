@@ -1,9 +1,7 @@
 package report
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,22 +10,18 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAddGrid(t *testing.T) {
 	body := []byte(`{"grid_name":"grid_name","grid_parent_id":"grid_id","grid_admin":["zhangsan"],"grid_member":["lisi","invaliduser"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"grid_id": "grid_id",
 	"invalid_userids": [
 		"invaliduser"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -36,8 +30,7 @@ func TestAddGrid(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/grid/add?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsGridAdd{
 		GridName:     "grid_name",
@@ -58,16 +51,13 @@ func TestAddGrid(t *testing.T) {
 
 func TestUpdateGrid(t *testing.T) {
 	body := []byte(`{"grid_id":"grid_id","grid_name":"grid_name","grid_parent_id":"grid_id","grid_admin":["zhangsan"],"grid_member":["lisi","invaliduser"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invalid_userids": [
 		"invaliduser"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -76,8 +66,7 @@ func TestUpdateGrid(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/grid/update?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsGridUpdate{
 		GridID:       "grid_id",
@@ -98,13 +87,10 @@ func TestUpdateGrid(t *testing.T) {
 
 func TestDeleteGrid(t *testing.T) {
 	body := []byte(`{"grid_id":"grid_id"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -113,8 +99,7 @@ func TestDeleteGrid(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/grid/delete?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteGrid("grid_id"))
 
@@ -123,9 +108,7 @@ func TestDeleteGrid(t *testing.T) {
 
 func TestListGrid(t *testing.T) {
 	body := []byte(`{"grid_id":"grid_id"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"grid_list": [
@@ -142,8 +125,7 @@ func TestListGrid(t *testing.T) {
 			]
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -152,8 +134,7 @@ func TestListGrid(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/grid/list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultGridList)
 
@@ -175,9 +156,7 @@ func TestListGrid(t *testing.T) {
 
 func TestGetUserGridInfo(t *testing.T) {
 	body := []byte(`{"userid":"zhangsan"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"manage_grids": [
@@ -200,8 +179,7 @@ func TestGetUserGridInfo(t *testing.T) {
 			"grid_name": "grid_name2"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -210,8 +188,7 @@ func TestGetUserGridInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/grid/get_user_grid_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultUserGridInfo)
 

@@ -1,9 +1,7 @@
 package minip
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -17,10 +15,7 @@ import (
 func TestApplyPlugin(t *testing.T) {
 	body := []byte(`{"action":"apply","plugin_appid":"aaaa","reason":"hello"}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -29,8 +24,7 @@ func TestApplyPlugin(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", ApplyPlugin("aaaa", "hello"))
 
@@ -40,9 +34,7 @@ func TestApplyPlugin(t *testing.T) {
 func TestListPluginDevApply(t *testing.T) {
 	body := []byte(`{"action":"dev_apply_list","page":1,"num":10}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"apply_list": [{
@@ -58,8 +50,7 @@ func TestListPluginDevApply(t *testing.T) {
 			"second": "硬件与设备"
 		}]
 	}]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -68,8 +59,7 @@ func TestListPluginDevApply(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultPluginDevApplyList)
 
@@ -100,9 +90,7 @@ func TestListPluginDevApply(t *testing.T) {
 func TestListPlugin(t *testing.T) {
 	body := []byte(`{"action":"list"}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"plugin_list": [{
@@ -111,8 +99,7 @@ func TestListPlugin(t *testing.T) {
 		"nickname": "插件昵称",
 		"headimgurl": "http://plugin.qq.com"
 	}]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -121,8 +108,7 @@ func TestListPlugin(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultPluginList)
 
@@ -144,10 +130,7 @@ func TestListPlugin(t *testing.T) {
 func TestSetDevPluginApplyStatus(t *testing.T) {
 	body := []byte(`{"action":"dev_agree","appid":"APPID"}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -156,8 +139,7 @@ func TestSetDevPluginApplyStatus(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/devplugin?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", SetDevPluginApplyStatus(PluginDevAgree, "APPID", ""))
 
@@ -167,10 +149,7 @@ func TestSetDevPluginApplyStatus(t *testing.T) {
 func TestUnbindPlugin(t *testing.T) {
 	body := []byte(`{"action":"unbind","plugin_appid":"APPID"}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -179,8 +158,7 @@ func TestUnbindPlugin(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/plugin?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	err := mp.Do(context.TODO(), "ACCESS_TOKEN", UnbindPlugin("APPID"))
 

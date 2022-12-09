@@ -1,9 +1,7 @@
 package kf
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,16 +10,12 @@ import (
 
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/offia"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestSendTextMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","msgtype":"text","text":{"content":"Hello World"},"customservice":{"kf_account":"test1@kftest"}}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -30,8 +24,7 @@ func TestSendTextMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendTextMsg("OPENID", "Hello World", "test1@kftest"))
 
@@ -41,10 +34,7 @@ func TestSendTextMsg(t *testing.T) {
 func TestSendImageMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","msgtype":"image","image":{"media_id":"MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -53,8 +43,7 @@ func TestSendImageMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendImageMsg("OPENID", "MEDIA_ID", "test1@kftest"))
 
@@ -64,10 +53,7 @@ func TestSendImageMsg(t *testing.T) {
 func TestSendVoiceMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","msgtype":"voice","voice":{"media_id":"MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -76,8 +62,7 @@ func TestSendVoiceMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendVoiceMsg("OPENID", "MEDIA_ID", "test1@kftest"))
 
@@ -87,10 +72,7 @@ func TestSendVoiceMsg(t *testing.T) {
 func TestSendVideoMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","msgtype":"video","video":{"media_id":"MEDIA_ID","thumb_media_id":"THUMB_MEDIA_ID","title":"TITLE","description":"DESCRIPTION"},"customservice":{"kf_account":"test1@kftest"}}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -99,8 +81,7 @@ func TestSendVideoMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	video := &MsgVideo{
 		MediaID:      "MEDIA_ID",
@@ -117,10 +98,7 @@ func TestSendVideoMsg(t *testing.T) {
 func TestSendMusicMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","msgtype":"music","music":{"title":"MUSIC_TITLE","description":"MUSIC_DESCRIPTION","musicurl":"MUSIC_URL","hqmusicurl":"HQ_MUSIC_URL","thumb_media_id":"THUMB_MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -129,8 +107,7 @@ func TestSendMusicMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	music := &MsgMusic{
 		Title:        "MUSIC_TITLE",
@@ -148,10 +125,7 @@ func TestSendMusicMsg(t *testing.T) {
 func TestSendNewsMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","msgtype":"news","news":{"articles":[{"title":"Happy Day","description":"Is Really A Happy Day","url":"URL","picurl":"PIC_URL"}]},"customservice":{"kf_account":"test1@kftest"}}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -160,8 +134,7 @@ func TestSendNewsMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	articles := []*MsgArticle{
 		{
@@ -180,10 +153,7 @@ func TestSendNewsMsg(t *testing.T) {
 func TestSendMPNewsMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","msgtype":"mpnews","mpnews":{"media_id":"MEDIA_ID"},"customservice":{"kf_account":"test1@kftest"}}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -192,8 +162,7 @@ func TestSendMPNewsMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendMPNewsMsg("OPENID", "MEDIA_ID", "test1@kftest"))
 
@@ -203,10 +172,7 @@ func TestSendMPNewsMsg(t *testing.T) {
 func TestSendMenuMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","msgtype":"msgmenu","msgmenu":{"head_content":"您对本次服务是否满意呢? ","tail_content":"欢迎再次光临","list":[{"id":"101","content":"满意"},{"id":"102","content":"不满意"}]},"customservice":{"kf_account":"test1@kftest"}}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -215,8 +181,7 @@ func TestSendMenuMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	menu := &MsgMenu{
 		HeadContent: "您对本次服务是否满意呢? ",
@@ -241,10 +206,7 @@ func TestSendMenuMsg(t *testing.T) {
 func TestSendCardMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","msgtype":"wxcard","wxcard":{"card_id":"123dsdajkasd231jhksad"},"customservice":{"kf_account":"test1@kftest"}}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -253,8 +215,7 @@ func TestSendCardMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendWXCardMsg("OPENID", "123dsdajkasd231jhksad", "test1@kftest"))
 
@@ -264,10 +225,7 @@ func TestSendCardMsg(t *testing.T) {
 func TestSendMinipMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","msgtype":"miniprogrampage","miniprogrampage":{"title":"title","appid":"appid","pagepath":"pagepath","thumb_media_id":"thumb_media_id"}}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -276,8 +234,7 @@ func TestSendMinipMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	msg := &MsgMinipPage{
 		Title:        "title",
@@ -294,10 +251,7 @@ func TestSendMinipMsg(t *testing.T) {
 func TestSetTyping(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","command":"Typing"}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -306,8 +260,7 @@ func TestSetTyping(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/custom/typing?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SendTyping("OPENID", Typing))
 

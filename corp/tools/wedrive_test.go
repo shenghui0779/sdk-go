@@ -1,9 +1,7 @@
 package tools
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,19 +10,15 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCreateWedriveSpace(t *testing.T) {
 	body := []byte(`{"userid":"USERID","space_name":"SPACE_NAME","auth_info":[{"type":1,"userid":"USERID","auth":2},{"type":2,"departmentid":1,"auth":1}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "spaceid": "SPACEID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,8 +27,7 @@ func TestCreateWedriveSpace(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsWedriveSpaceCreate{
 		UserID:    "USERID",
@@ -64,13 +57,10 @@ func TestCreateWedriveSpace(t *testing.T) {
 
 func TestRenameWedriveSpace(t *testing.T) {
 	body := []byte(`{"userid":"USERID","spaceid":"SPACEID","space_name":"SPACE_NAME"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -79,8 +69,7 @@ func TestRenameWedriveSpace(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_rename?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", RenameWedriveSpace("USERID", "SPACEID", "SPACE_NAME"))
 
@@ -89,13 +78,10 @@ func TestRenameWedriveSpace(t *testing.T) {
 
 func TestDismissWedriveSpace(t *testing.T) {
 	body := []byte(`{"userid":"USERID","spaceid":"SPACEID"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -104,8 +90,7 @@ func TestDismissWedriveSpace(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_dismiss?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DismissWedriveSpace("USERID", "SPACEID"))
 
@@ -114,9 +99,7 @@ func TestDismissWedriveSpace(t *testing.T) {
 
 func TestGetWedriveSpaceInfo(t *testing.T) {
 	body := []byte(`{"userid":"USERID","spaceid":"SPACEID"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "space_info": {
@@ -146,8 +129,7 @@ func TestGetWedriveSpaceInfo(t *testing.T) {
             ]
         }
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -156,8 +138,7 @@ func TestGetWedriveSpaceInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultWedriveSpaceInfo)
 
@@ -194,13 +175,10 @@ func TestGetWedriveSpaceInfo(t *testing.T) {
 
 func TestAddWedriveSpaceAcl(t *testing.T) {
 	body := []byte(`{"userid":"USERID","spaceid":"SPACEID","auth_info":[{"type":1,"userid":"USERID1","auth":2},{"type":2,"departmentid":1,"auth":2}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -209,8 +187,7 @@ func TestAddWedriveSpaceAcl(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_acl_add?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	acls := []*WedriveAuthInfo{
 		{
@@ -232,13 +209,10 @@ func TestAddWedriveSpaceAcl(t *testing.T) {
 
 func TestDeleteWedriveSpaceAcl(t *testing.T) {
 	body := []byte(`{"userid":"USERID","spaceid":"SPACEID","auth_info":[{"type":1,"userid":"USERID1"},{"type":2,"departmentid":1}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -247,8 +221,7 @@ func TestDeleteWedriveSpaceAcl(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_acl_del?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	acls := []*WedriveAuthInfo{
 		{
@@ -268,13 +241,10 @@ func TestDeleteWedriveSpaceAcl(t *testing.T) {
 
 func TestSetWedriveSpace(t *testing.T) {
 	body := []byte(`{"userid":"USERID","spaceid":"SPACEID","enable_watermark":true,"add_member_only_admin":true,"enable_share_url":false,"share_url_no_approve":true,"share_url_no_approve_default_auth":4}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -283,8 +253,7 @@ func TestSetWedriveSpace(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_setting?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	enable := new(bool)
 	*enable = true
@@ -306,14 +275,11 @@ func TestSetWedriveSpace(t *testing.T) {
 
 func TestShareWedriveSpace(t *testing.T) {
 	body := []byte(`{"userid":"USERID","spaceid":"SPACEID"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "space_share_url": "SPACE_SHARE_URL"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -322,8 +288,7 @@ func TestShareWedriveSpace(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/space_share?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultWedriveSpaceShare)
 
@@ -337,9 +302,7 @@ func TestShareWedriveSpace(t *testing.T) {
 
 func TestListWedriveFile(t *testing.T) {
 	body := []byte(`{"userid":"USERID","spaceid":"SPACEID","fatherid":"FATHERID","sort_type":6,"start":0,"limit":100}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "has_more": true,
@@ -368,8 +331,7 @@ func TestListWedriveFile(t *testing.T) {
             }
         ]
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -378,8 +340,7 @@ func TestListWedriveFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsWedriveFileList{
 		UserID:   "USERID",
@@ -426,14 +387,11 @@ func TestListWedriveFile(t *testing.T) {
 
 func TestUploadWedriveFile(t *testing.T) {
 	body := []byte(`{"userid":"USERID","spaceid":"SPACEID","fatherid":"FATHERID","file_name":"FILE_NAME","file_base64_content":"FILE_BASE64_CONTENT"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "fileid": "FILEID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -442,8 +400,7 @@ func TestUploadWedriveFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_upload?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsWedriveFileUpload{
 		UserID:            "USERID",
@@ -464,16 +421,13 @@ func TestUploadWedriveFile(t *testing.T) {
 
 func TestDownloadWedriveFile(t *testing.T) {
 	body := []byte(`{"userid":"USERID","fileid":"FILEID"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "download_url": "DOWNLOAD_URL",
     "cookie_name": "COOKIE_NAME",
     "cookie_value": "COOKIE_VALUE"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -482,8 +436,7 @@ func TestDownloadWedriveFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_download?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultWedriveFileDownload)
 
@@ -499,15 +452,12 @@ func TestDownloadWedriveFile(t *testing.T) {
 
 func TestCreateWedriveFile(t *testing.T) {
 	body := []byte(`{"userid":"USERID","spaceid":"SPACEID","fatherid":"FATHERID","file_type":"FILE_TYPE","file_name":"FILE_NAME"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "fileid": "FILEID",
     "url": "URL"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -516,8 +466,7 @@ func TestCreateWedriveFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsWedriveFileCreate{
 		UserID:   "USERID",
@@ -539,9 +488,7 @@ func TestCreateWedriveFile(t *testing.T) {
 
 func TestRenameWedriveFile(t *testing.T) {
 	body := []byte(`{"userid":"USERID","fileid":"FILEID","new_name":"NEW_NAME"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "file": {
@@ -559,8 +506,7 @@ func TestRenameWedriveFile(t *testing.T) {
         "sha": "SHA",
         "md5": "MD5"
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -569,8 +515,7 @@ func TestRenameWedriveFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_rename?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultWedriveFileRename)
 
@@ -598,9 +543,7 @@ func TestRenameWedriveFile(t *testing.T) {
 
 func TestMoveWedriveFile(t *testing.T) {
 	body := []byte(`{"userid":"USERID","fatherid":"FATHERID","replace":true,"fileid":["FILEID1","FILEID2"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "file_list": {
@@ -622,8 +565,7 @@ func TestMoveWedriveFile(t *testing.T) {
             }
         ]
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -632,8 +574,7 @@ func TestMoveWedriveFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_move?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsWedriveFileMove{
 		UserID:   "USERID",
@@ -671,13 +612,10 @@ func TestMoveWedriveFile(t *testing.T) {
 
 func TestDeleteWedriveFile(t *testing.T) {
 	body := []byte(`{"userid":"USERID","fileid":["FILEID1","FILEID2"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -686,8 +624,7 @@ func TestDeleteWedriveFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_delete?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteWedriveFile("USERID", "FILEID1", "FILEID2"))
 
@@ -696,9 +633,7 @@ func TestDeleteWedriveFile(t *testing.T) {
 
 func TestGetWedriveFileInfo(t *testing.T) {
 	body := []byte(`{"userid":"USERID","fileid":"FILEID"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "file_info": {
@@ -717,8 +652,7 @@ func TestGetWedriveFileInfo(t *testing.T) {
         "md5": "MD5",
         "url": "URL"
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -727,8 +661,7 @@ func TestGetWedriveFileInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultWedriveFileInfo)
 
@@ -757,13 +690,10 @@ func TestGetWedriveFileInfo(t *testing.T) {
 
 func TestAddWedriveFileAcl(t *testing.T) {
 	body := []byte(`{"userid":"USERID","fileid":"FILEID","auth_info":[{"type":1,"userid":"USERID1","auth":1},{"type":2,"departmentid":1,"auth":1}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -772,8 +702,7 @@ func TestAddWedriveFileAcl(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_acl_add?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	acls := []*WedriveAuthInfo{
 		{
@@ -795,13 +724,10 @@ func TestAddWedriveFileAcl(t *testing.T) {
 
 func TestDeleteWedriveFileAcl(t *testing.T) {
 	body := []byte(`{"userid":"USERID","fileid":"FILEID","auth_info":[{"type":1,"userid":"USERID1"},{"type":2,"departmentid":1}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -810,8 +736,7 @@ func TestDeleteWedriveFileAcl(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_acl_del?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	acls := []*WedriveAuthInfo{
 		{
@@ -831,13 +756,10 @@ func TestDeleteWedriveFileAcl(t *testing.T) {
 
 func TestSetWedriveFile(t *testing.T) {
 	body := []byte(`{"userid":"USERID","fileid":"FILDID","auth_scope":1,"auth":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -846,8 +768,7 @@ func TestSetWedriveFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_setting?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsWedriveFileSetting{
 		UserID:    "USERID",
@@ -863,14 +784,11 @@ func TestSetWedriveFile(t *testing.T) {
 
 func TestShareWedriveFile(t *testing.T) {
 	body := []byte(`{"userid":"USERID","fileid":"FILEID"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "share_url": "SHARE_URL"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -879,8 +797,7 @@ func TestShareWedriveFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/wedrive/file_share?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultWedriveFileShare)
 

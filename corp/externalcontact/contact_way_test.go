@@ -1,9 +1,7 @@
 package externalcontact
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,21 +10,17 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestListFollowUser(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"follow_user": [
 		"zhangsan",
 		"lissi"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -35,8 +29,7 @@ func TestListFollowUser(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_follow_user_list?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultFollowUserList)
 
@@ -50,15 +43,12 @@ func TestListFollowUser(t *testing.T) {
 
 func TestAddContactWay(t *testing.T) {
 	body := []byte(`{"type":1,"scene":1,"style":1,"remark":"渠道客户","skip_verify":true,"state":"teststate","user":["zhangsan","lisi","wangwu"],"party":[2,3],"is_temp":true,"expires_in":86400,"chat_expires_in":86400,"unionid":"oxTWIuGaIt6gTKsQRLau2M0AAAA","conclusions":{"text":{"content":"文本消息内容"},"image":{"media_id":"MEDIA_ID"},"link":{"title":"消息标题","picurl":"https://example.pic.com/path","desc":"消息描述","url":"https://example.link.com/path"},"miniprogram":{"title":"消息标题","pic_media_id":"MEDIA_ID","appid":"wx8bd80126147dfAAA","page":"/path/index.html"}}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"config_id": "42b34949e138eb6e027c123cba77fAAA",
 	"qr_code": "http://p.qpic.cn/wwhead/duc2TvpEgSdicZ9RrdUtBkv2UiaA/0"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -67,8 +57,7 @@ func TestAddContactWay(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_contact_way?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsContactWayAdd{
 		Type:          1,
@@ -118,13 +107,10 @@ func TestAddContactWay(t *testing.T) {
 
 func TestUpdateContactWay(t *testing.T) {
 	body := []byte(`{"config_id":"42b34949e138eb6e027c123cba77fAAA","remark":"渠道客户","skip_verify":true,"style":1,"state":"teststate","user":["zhangsan","lisi","wangwu"],"party":[2,3],"expires_in":86400,"chat_expires_in":86400,"unionid":"oxTWIuGaIt6gTKsQRLau2M0AAAA","conclusions":{"text":{"content":"文本消息内容"},"image":{"media_id":"MEDIA_ID"},"link":{"title":"消息标题","picurl":"https://example.pic.com/path","desc":"消息描述","url":"https://example.link.com/path"},"miniprogram":{"title":"消息标题","pic_media_id":"MEDIA_ID","appid":"wx8bd80126147dfAAA","page":"/path/index"}}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -133,8 +119,7 @@ func TestUpdateContactWay(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/update_contact_way?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsContactWayUpdate{
 		ConfigID:      "42b34949e138eb6e027c123cba77fAAA",
@@ -176,9 +161,7 @@ func TestUpdateContactWay(t *testing.T) {
 
 func TestGetContactWay(t *testing.T) {
 	body := []byte(`{"config_id":"42b34949e138eb6e027c123cba77fad7"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"contact_way": {
@@ -224,8 +207,7 @@ func TestGetContactWay(t *testing.T) {
 			}
 		}
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -234,8 +216,7 @@ func TestGetContactWay(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_contact_way?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultContactWayGet)
 
@@ -284,9 +265,7 @@ func TestGetContactWay(t *testing.T) {
 
 func TestListContactWay(t *testing.T) {
 	body := []byte(`{"start_time":1622476800,"end_time":1625068800,"cursor":"CURSOR","limit":1000}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"contact_way": [
@@ -298,8 +277,7 @@ func TestListContactWay(t *testing.T) {
 		}
 	],
 	"next_cursor": "NEXT_CURSOR"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -308,8 +286,7 @@ func TestListContactWay(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/list_contact_way?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsContactWayList{
 		StartTime: 1622476800,
@@ -338,13 +315,10 @@ func TestListContactWay(t *testing.T) {
 
 func TestDeleteContactWay(t *testing.T) {
 	body := []byte(`{"config_id":"42b34949e138eb6e027c123cba77fAAA"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -353,8 +327,7 @@ func TestDeleteContactWay(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_contact_way?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteContactWay("42b34949e138eb6e027c123cba77fAAA"))
 
@@ -363,13 +336,10 @@ func TestDeleteContactWay(t *testing.T) {
 
 func TestCloseTempChat(t *testing.T) {
 	body := []byte(`{"userid":"zhangyisheng","external_userid":"woAJ2GCAAAXtWyujaWJHDDGi0mACHAAA"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -378,8 +348,7 @@ func TestCloseTempChat(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/close_temp_chat?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", CloseTempChat("zhangyisheng", "woAJ2GCAAAXtWyujaWJHDDGi0mACHAAA"))
 

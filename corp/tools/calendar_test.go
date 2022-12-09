@@ -1,9 +1,7 @@
 package tools
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,19 +10,15 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAddCalendar(t *testing.T) {
 	body := []byte(`{"calendar":{"organizer":"userid1","readonly":1,"set_as_default":1,"summary":"test_summary","color":"#FF3030","description":"test_describe","shares":[{"userid":"userid2"},{"userid":"userid3","readonly":1}]},"agentid":1000014}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "cal_id": "wcjgewCwAAqeJcPI1d8Pwbjt7nttzAAA"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,8 +27,7 @@ func TestAddCalendar(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/add?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	readonly := new(int)
 	*readonly = 1
@@ -71,13 +64,10 @@ func TestAddCalendar(t *testing.T) {
 
 func TestUpdateCalendar(t *testing.T) {
 	body := []byte(`{"calendar":{"cal_id":"wcjgewCwAAqeJcPI1d8Pwbjt7nttzAAA","readonly":1,"summary":"test_summary","color":"#FF3030","description":"test_describe_1","shares":[{"userid":"userid1"},{"userid":"userid2","readonly":1}]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -86,8 +76,7 @@ func TestUpdateCalendar(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/update?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	readonly := new(int)
 	*readonly = 1
@@ -118,9 +107,7 @@ func TestUpdateCalendar(t *testing.T) {
 
 func TestGetCalendar(t *testing.T) {
 	body := []byte(`{"cal_id_list":["wcjgewCwAAqeJcPI1d8Pwbjt7nttzAAA"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "calendar_list": [
@@ -142,8 +129,7 @@ func TestGetCalendar(t *testing.T) {
             ]
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -152,8 +138,7 @@ func TestGetCalendar(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultCalendarGet)
 
@@ -188,13 +173,10 @@ func TestGetCalendar(t *testing.T) {
 
 func TestDeleteCalendar(t *testing.T) {
 	body := []byte(`{"cal_id":"wcjgewCwAAqeJcPI1d8Pwbjt7nttzAAA"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -203,8 +185,7 @@ func TestDeleteCalendar(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/calendar/del?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteCalendar("wcjgewCwAAqeJcPI1d8Pwbjt7nttzAAA"))
 

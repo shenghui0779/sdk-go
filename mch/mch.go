@@ -23,32 +23,8 @@ type Mch struct {
 	mchid  string
 	apikey string
 	nonce  func() string
-	client wx.Client
-	tlscli wx.Client
-}
-
-// New returns new wechat pay
-// [证书参考](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=4_3)
-func New(mchid, apikey string, certs ...tls.Certificate) *Mch {
-	return &Mch{
-		mchid:  mchid,
-		apikey: apikey,
-		nonce: func() string {
-			return wx.Nonce(16)
-		},
-		client: wx.DefaultClient(),
-		tlscli: wx.DefaultClient(certs...),
-	}
-}
-
-// SetClient sets options for wechat client
-func (mch *Mch) SetClient(options ...wx.ClientOption) {
-	mch.client.Set(options...)
-}
-
-// SetTLSClient sets options for wechat tls client
-func (mch *Mch) SetTLSClient(options ...wx.ClientOption) {
-	mch.tlscli.Set(options...)
+	client wx.HTTPClient
+	tlscli wx.HTTPClient
 }
 
 // MchID returns mchid
@@ -338,4 +314,62 @@ func (mch *Mch) DecryptWithAES256ECB(encrypt string) (wx.WXML, error) {
 	}
 
 	return wx.ParseXML2Map(plainText)
+}
+
+type MchOption func(mch *Mch)
+
+// WithTLSCert 设置TLS证书
+func WithTLSCert(cert tls.Certificate) MchOption {
+	return func(mch *Mch) {
+		mch.tlscli = wx.NewDefaultClient(cert)
+	}
+}
+
+// WithNonce 设置 Nonce（加密随机串）
+func WithNonce(f func() string) MchOption {
+	return func(mch *Mch) {
+		mch.nonce = f
+	}
+}
+
+// WithClient 设置 HTTP Client
+func WithClient(c *http.Client) MchOption {
+	return func(mch *Mch) {
+		mch.client = wx.NewHTTPClient(c)
+	}
+}
+
+// WithTLSClient 设置 TLS HTTP Client（带证书）
+func WithTLSClient(c *http.Client) MchOption {
+	return func(mch *Mch) {
+		mch.tlscli = wx.NewHTTPClient(c)
+	}
+}
+
+// WithMockClient 设置 Mock Client
+func WithMockClient(c wx.HTTPClient) MchOption {
+	return func(mch *Mch) {
+		mch.client = c
+		mch.tlscli = c
+	}
+}
+
+// New returns new wechat pay
+// [证书参考](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=4_3)
+func New(mchid, apikey string, options ...MchOption) *Mch {
+	mch := &Mch{
+		mchid:  mchid,
+		apikey: apikey,
+		nonce: func() string {
+			return wx.Nonce(16)
+		},
+		client: wx.NewDefaultClient(),
+		tlscli: wx.NewDefaultClient(),
+	}
+
+	for _, f := range options {
+		f(mch)
+	}
+
+	return mch
 }

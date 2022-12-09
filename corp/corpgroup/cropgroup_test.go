@@ -1,24 +1,19 @@
 package corpgroup
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestListAppShareInfo(t *testing.T) {
 	body := []byte(`{"agentid":1111,"business_type":1,"corpid":"wwcorp","limit":100,"cursor":"xxxxxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"ending": 0,
@@ -35,8 +30,7 @@ func TestListAppShareInfo(t *testing.T) {
 		}
 	],
 	"next_cursor": "next_cursor1111"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -45,8 +39,7 @@ func TestListAppShareInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/list_app_share_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsAppShareInfoList{
 		AgentID:      1111,
@@ -81,15 +74,12 @@ func TestListAppShareInfo(t *testing.T) {
 
 func TestGetCorpAccessToken(t *testing.T) {
 	body := []byte(`{"corpid":"wwabc","business_type":1,"agentid":1111}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"access_token": "accesstoken000001",
 	"expires_in": 7200
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -98,8 +88,7 @@ func TestGetCorpAccessToken(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/gettoken?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsCorpAccessToken{
 		CorpID:       "wwabc",
@@ -120,15 +109,12 @@ func TestGetCorpAccessToken(t *testing.T) {
 
 func TestTransferMinipSession(t *testing.T) {
 	body := []byte(`{"userid":"wmAoNVCwAAUrSqEqz7oQpEIEMVWDrPeg","session_key":"n8cnNEoyW1pxSRz6/Lwjwg=="}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"userid": "abcdef",
 	"session_key": "DGAuy2KVaGcnsUrXk8ERgw==",
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -137,8 +123,7 @@ func TestTransferMinipSession(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/miniprogram/transfer_session?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMinipSessionTransfer{
 		UserID:     "wmAoNVCwAAUrSqEqz7oQpEIEMVWDrPeg",
@@ -157,9 +142,7 @@ func TestTransferMinipSession(t *testing.T) {
 }
 
 func TestListChain(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"chains": [
@@ -172,8 +155,7 @@ func TestListChain(t *testing.T) {
 			"chain_name": "原材料供应链"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -182,8 +164,7 @@ func TestListChain(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/get_chain_list?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultChainList)
 
@@ -206,9 +187,7 @@ func TestListChain(t *testing.T) {
 
 func TestGetChainGroup(t *testing.T) {
 	body := []byte(`{"chain_id":"Chxxxxxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"groups": [
@@ -225,8 +204,7 @@ func TestGetChainGroup(t *testing.T) {
 			"order": 3
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -235,8 +213,7 @@ func TestGetChainGroup(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/get_chain_group?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultChainGroup)
 
@@ -263,9 +240,7 @@ func TestGetChainGroup(t *testing.T) {
 
 func TestListChainCorpInfo(t *testing.T) {
 	body := []byte(`{"chain_id":"Chxxxxxx","groupid":1,"fetch_child":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"group_corps": [
@@ -276,8 +251,7 @@ func TestListChainCorpInfo(t *testing.T) {
 			"custom_id": "wof3du51quo5sl1is"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -286,8 +260,7 @@ func TestListChainCorpInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/corp/get_chain_corpinfo_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultChainCorpInfoList)
 
@@ -308,9 +281,7 @@ func TestListChainCorpInfo(t *testing.T) {
 
 func TestUnionIDToExternalUserID(t *testing.T) {
 	body := []byte(`{"unionid":"xxxxx","openid":"xxxxx","corpid":"xxxxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"external_userid_info": [
@@ -323,8 +294,7 @@ func TestUnionIDToExternalUserID(t *testing.T) {
 			"external_userid": "DDDDD"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -333,8 +303,7 @@ func TestUnionIDToExternalUserID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/corpgroup/unionid_to_external_userid?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultUnionIDToExternalUserID)
 

@@ -16,36 +16,12 @@ import (
 
 // Minip 微信小程序
 type Minip struct {
-	appid          string
-	appsecret      string
-	token          string
-	encodingAESKey string
-	nonce          func() string
-	client         wx.Client
-}
-
-// New returns new wechat mini program
-func New(appid, appsecret string) *Minip {
-	return &Minip{
-		appid:     appid,
-		appsecret: appsecret,
-		nonce: func() string {
-			return wx.Nonce(16)
-		},
-		client: wx.DefaultClient(),
-	}
-}
-
-// SetServerConfig 设置服务器配置
-// [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
-func (mp *Minip) SetServerConfig(token, encodingAESKey string) {
-	mp.token = token
-	mp.encodingAESKey = encodingAESKey
-}
-
-// SetClient sets options for wechat client
-func (mp *Minip) SetClient(options ...wx.ClientOption) {
-	mp.client.Set(options...)
+	appid     string
+	appsecret string
+	token     string
+	aeskey    string
+	nonce     func() string
+	client    wx.HTTPClient
 }
 
 // AppID returns appid
@@ -186,11 +162,61 @@ func (mp *Minip) VerifyEventSign(signature string, items ...string) bool {
 
 // DecryptEventMessage 事件消息解密
 func (mp *Minip) DecryptEventMessage(encrypt string) (wx.WXML, error) {
-	b, err := event.Decrypt(mp.appid, mp.encodingAESKey, encrypt)
+	b, err := event.Decrypt(mp.appid, mp.aeskey, encrypt)
 
 	if err != nil {
 		return nil, err
 	}
 
 	return wx.ParseXML2Map(b)
+}
+
+type MinipOption func(mp *Minip)
+
+// WithServerConfig 设置服务器配置
+// [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
+func WithServerConfig(token, aeskey string) MinipOption {
+	return func(mp *Minip) {
+		mp.token = token
+		mp.aeskey = aeskey
+	}
+}
+
+// WithNonce 设置 Nonce（加密随机串）
+func WithNonce(f func() string) MinipOption {
+	return func(mp *Minip) {
+		mp.nonce = f
+	}
+}
+
+// WithClient 设置 HTTP Client
+func WithClient(c *http.Client) MinipOption {
+	return func(mp *Minip) {
+		mp.client = wx.NewHTTPClient(c)
+	}
+}
+
+// WithMockClient 设置 Mock Client
+func WithMockClient(c wx.HTTPClient) MinipOption {
+	return func(mp *Minip) {
+		mp.client = c
+	}
+}
+
+// New returns new wechat mini program
+func New(appid, appsecret string, options ...MinipOption) *Minip {
+	mp := &Minip{
+		appid:     appid,
+		appsecret: appsecret,
+		nonce: func() string {
+			return wx.Nonce(16)
+		},
+		client: wx.NewDefaultClient(),
+	}
+
+	for _, f := range options {
+		f(mp)
+	}
+
+	return mp
 }

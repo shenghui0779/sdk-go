@@ -1,9 +1,7 @@
 package report
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestListSiteCode(t *testing.T) {
 	body := []byte(`{"cursor":"CURSOR","limit":100}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"site_code_infos": [
@@ -37,8 +32,7 @@ func TestListSiteCode(t *testing.T) {
 		}
 	],
 	"next_cursor": "NEXT_CURSOR"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -47,8 +41,7 @@ func TestListSiteCode(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/sitecode/list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultSiteCodeList)
 
@@ -73,9 +66,7 @@ func TestListSiteCode(t *testing.T) {
 
 func TestGetSiteCodeReportInfo(t *testing.T) {
 	body := []byte(`{"siteid":"xxxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"question_templates": [
@@ -102,8 +93,7 @@ func TestGetSiteCodeReportInfo(t *testing.T) {
 			]
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -112,8 +102,7 @@ func TestGetSiteCodeReportInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/sitecode/get_site_report_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultSiteCodeReportInfo)
 
@@ -150,9 +139,7 @@ func TestGetSiteCodeReportInfo(t *testing.T) {
 
 func TestGetSiteCodeReportAnswer(t *testing.T) {
 	body := []byte(`{"siteid":"siteid","date":"2020-03-27","cursor":"cursor","limit":100}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"answers": [
@@ -179,8 +166,7 @@ func TestGetSiteCodeReportAnswer(t *testing.T) {
 	],
 	"next_cursor": "NEXT_CURSOR",
 	"has_more": 0
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -189,8 +175,7 @@ func TestGetSiteCodeReportAnswer(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/sitecode/get_report_answer?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultSiteCodeReportAnswer)
 

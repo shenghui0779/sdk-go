@@ -1,9 +1,7 @@
 package offia
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -11,19 +9,15 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAddSubscribeTemplate(t *testing.T) {
 	body := []byte(`{"tid":"401","kidList":[1,2],"sceneDesc":"测试数据"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errmsg": "ok",
 	"errcode": 0,
 	"priTmplId": "9Aw5ZV1j9xdWTFEkqCpZ7jWySL7aGN6rQom4gXINfJs"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,7 +27,6 @@ func TestAddSubscribeTemplate(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxaapi/newtmpl/addtemplate?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	params := &ParamsSubscribeTemplAdd{
 		TID:       "401",
@@ -52,10 +45,7 @@ func TestAddSubscribeTemplate(t *testing.T) {
 
 func TestDeleteSubscribeTemplate(t *testing.T) {
 	body := []byte(`{"priTmplId":"wDYzYZVxobJivW9oMpSCpuvACOfJXQIoKUm0PY397Tc"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -65,7 +55,6 @@ func TestDeleteSubscribeTemplate(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxaapi/newtmpl/deltemplate?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteSubscribeTemplate("wDYzYZVxobJivW9oMpSCpuvACOfJXQIoKUm0PY397Tc"))
 
@@ -73,9 +62,7 @@ func TestDeleteSubscribeTemplate(t *testing.T) {
 }
 
 func TestGetSubscribeCategory(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"data": [
@@ -84,8 +71,7 @@ func TestGetSubscribeCategory(t *testing.T) {
 			"name": "公交"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -95,7 +81,6 @@ func TestGetSubscribeCategory(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxaapi/newtmpl/getcategory?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultSubscribeCategory)
 
@@ -113,9 +98,7 @@ func TestGetSubscribeCategory(t *testing.T) {
 }
 
 func TestGetPubTemplateKeywords(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"data": [
@@ -126,8 +109,7 @@ func TestGetPubTemplateKeywords(t *testing.T) {
 			"rule": "thing"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -137,7 +119,6 @@ func TestGetPubTemplateKeywords(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxaapi/newtmpl/getpubtemplatekeywords?access_token=ACCESS_TOKEN&tid=99", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultPubTemplKeywords)
 
@@ -157,9 +138,7 @@ func TestGetPubTemplateKeywords(t *testing.T) {
 }
 
 func TestGetPubTemplateTitles(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"count": 55,
@@ -171,8 +150,7 @@ func TestGetPubTemplateTitles(t *testing.T) {
 			"categoryId": "616"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -182,7 +160,6 @@ func TestGetPubTemplateTitles(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxaapi/newtmpl/getpubtemplatetitles?access_token=ACCESS_TOKEN&ids=616&limit=1&start=0", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultPubTemplTitles)
 
@@ -203,9 +180,7 @@ func TestGetPubTemplateTitles(t *testing.T) {
 }
 
 func TestListSubscribeTemplate(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"data": [
@@ -217,8 +192,7 @@ func TestListSubscribeTemplate(t *testing.T) {
 			"type": 2
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -228,7 +202,6 @@ func TestListSubscribeTemplate(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxaapi/newtmpl/gettemplate?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	result := new(ResultSubscribeTemplList)
 
@@ -250,10 +223,7 @@ func TestListSubscribeTemplate(t *testing.T) {
 
 func TestSendSubscribePageMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","template_id":"TEMPLATEID","page":"mp.weixin.qq.com","data":{"name1":{"value":"广州腾讯科技有限公司"},"thing8":{"value":"广州腾讯科技有限公司"},"time7":{"value":"2019年8月8日"}}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -263,7 +233,6 @@ func TestSendSubscribePageMsg(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/subscribe/bizsend?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	data := MsgTemplData{
 		"name1": &MsgTemplValue{
@@ -284,10 +253,7 @@ func TestSendSubscribePageMsg(t *testing.T) {
 
 func TestSendSubscribeMinipMsg(t *testing.T) {
 	body := []byte(`{"touser":"OPENID","template_id":"TEMPLATEID","miniprogram":{"appid":"APPID","pagepath":"index?foo=bar"},"data":{"name1":{"value":"广州腾讯科技有限公司"},"thing8":{"value":"广州腾讯科技有限公司"},"time7":{"value":"2019年8月8日"}}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -297,7 +263,6 @@ func TestSendSubscribeMinipMsg(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/subscribe/bizsend?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
 	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
 
 	minip := &MsgMinip{
 		AppID:    "APPID",

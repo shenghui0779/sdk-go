@@ -1,9 +1,7 @@
 package kf
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestBatchGetCustomer(t *testing.T) {
 	body := []byte(`{"external_userid_list":["wmxxxxxxxxxxxxxxxxxxxxxx","zhangsan"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "customer_list": [
@@ -34,8 +29,7 @@ func TestBatchGetCustomer(t *testing.T) {
     "invalid_external_userid": [
         "zhangsan"
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -44,8 +38,7 @@ func TestBatchGetCustomer(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/batchget?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	externalUserIDs := []string{"wmxxxxxxxxxxxxxxxxxxxxxx", "zhangsan"}
 
@@ -69,9 +62,7 @@ func TestBatchGetCustomer(t *testing.T) {
 }
 
 func TestGetUpgradeServiceConfig(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "member_range": {
@@ -90,8 +81,7 @@ func TestGetUpgradeServiceConfig(t *testing.T) {
             "wrbbbbbbbbbbbbbbb"
         ]
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -100,8 +90,7 @@ func TestGetUpgradeServiceConfig(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/get_upgrade_service_config?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultServiceUpgradeConfig)
 
@@ -121,13 +110,10 @@ func TestGetUpgradeServiceConfig(t *testing.T) {
 
 func TestUpgradeMemberService(t *testing.T) {
 	body := []byte(`{"open_kfid":"kfxxxxxxxxxxxxxx","external_userid":"wmxxxxxxxxxxxxxxxxxx","type":1,"member":{"userid":"zhangsan","wording":"你好，我是你的专属服务专员zhangsan"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -136,8 +122,7 @@ func TestUpgradeMemberService(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/upgrade_service?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	member := &Member{
 		UserID:  "zhangsan",
@@ -151,13 +136,10 @@ func TestUpgradeMemberService(t *testing.T) {
 
 func TestUpgradeGroupChatService(t *testing.T) {
 	body := []byte(`{"open_kfid":"kfxxxxxxxxxxxxxx","external_userid":"wmxxxxxxxxxxxxxxxxxx","type":2,"groupchat":{"chat_id":"wraaaaaaaaaaaaaaaa","wording":"欢迎加入你的专属服务群"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -166,8 +148,7 @@ func TestUpgradeGroupChatService(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/upgrade_service?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	groupChat := &GroupChat{
 		ChatID:  "wraaaaaaaaaaaaaaaa",
@@ -181,13 +162,10 @@ func TestUpgradeGroupChatService(t *testing.T) {
 
 func TestCancelUpgradeService(t *testing.T) {
 	body := []byte(`{"open_kfid":"kfxxxxxxxxxxxxxx","external_userid":"wmxxxxxxxxxxxxxxxxxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -196,8 +174,7 @@ func TestCancelUpgradeService(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/customer/cancel_upgrade_service?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", CancelUpgradeService("kfxxxxxxxxxxxxxx", "wmxxxxxxxxxxxxxxxxxx"))
 

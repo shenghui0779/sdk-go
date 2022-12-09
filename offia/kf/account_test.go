@@ -1,9 +1,7 @@
 package kf
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -16,29 +14,26 @@ import (
 )
 
 func TestGetAccountList(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"kf_list" : [
-		{
-			"kf_account": "test1@test",
-			"kf_headimgurl": "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
-			"kf_id": "1001",
-			"kf_nick": "ntest1",
-			"kf_wx": "kfwx1"
-		},
-		{
-			"kf_account": "test2@test",
-			"kf_headimgurl": "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
-			"kf_id": "1002",
-			"kf_nick": "ntest2",
-			"invite_wx": "kfwx2",
-			"invite_expire_time": 123456789,
-			"invite_status": "waiting"
-		}
-	]
-}`))),
-	}
+	resp := []byte(`{
+		"kf_list" : [
+			{
+				"kf_account": "test1@test",
+				"kf_headimgurl": "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
+				"kf_id": "1001",
+				"kf_nick": "ntest1",
+				"kf_wx": "kfwx1"
+			},
+			{
+				"kf_account": "test2@test",
+				"kf_headimgurl": "http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjfUS8Ym0GSaLic0FD3vN0V8PILcibEGb2fPfEOmw/0",
+				"kf_id": "1002",
+				"kf_nick": "ntest2",
+				"invite_wx": "kfwx2",
+				"invite_expire_time": 123456789,
+				"invite_status": "waiting"
+			}
+		]
+	}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -47,8 +42,7 @@ func TestGetAccountList(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/customservice/getkflist?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	result := new(ResultAccountList)
 
@@ -78,25 +72,22 @@ func TestGetAccountList(t *testing.T) {
 }
 
 func TestGetOnlineList(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
-	"kf_online_list": [
-		{
-			"kf_account": "test1@test",
-			"status": 1,
-			"kf_id": "1001",
-			"accepted_case": 1
-		},
-		{
-			"kf_account": "test2@test",
-			"status": 1,
-			"kf_id": "1002",
-			"accepted_case": 2
-		}
-	]
-}`))),
-	}
+	resp := []byte(`{
+		"kf_online_list": [
+			{
+				"kf_account": "test1@test",
+				"status": 1,
+				"kf_id": "1001",
+				"accepted_case": 1
+			},
+			{
+				"kf_account": "test2@test",
+				"status": 1,
+				"kf_id": "1002",
+				"accepted_case": 2
+			}
+		]
+	}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -105,8 +96,7 @@ func TestGetOnlineList(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/customservice/getonlinekflist?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	result := new(ResultOnlineList)
 
@@ -133,11 +123,7 @@ func TestGetOnlineList(t *testing.T) {
 
 func TestAddAccount(t *testing.T) {
 	body := []byte(`{"kf_account":"test1@test","nickname":"客服1"}`)
-
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -146,8 +132,7 @@ func TestAddAccount(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/customservice/kfaccount/add?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", AddAccount("test1@test", "客服1"))
 
@@ -156,11 +141,7 @@ func TestAddAccount(t *testing.T) {
 
 func TestUpdateAccount(t *testing.T) {
 	body := []byte(`{"kf_account":"test1@test","nickname":"客服1"}`)
-
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -169,8 +150,7 @@ func TestUpdateAccount(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/customservice/kfaccount/update?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UpdateAccount("test1@test", "客服1"))
 
@@ -179,11 +159,7 @@ func TestUpdateAccount(t *testing.T) {
 
 func TestInviteWorker(t *testing.T) {
 	body := []byte(`{"kf_account":"test1@test","invite_wx":"test_kfwx"}`)
-
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -192,8 +168,7 @@ func TestInviteWorker(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/customservice/kfaccount/inviteworker?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", InviteWorker("test1@test", "test_kfwx"))
 
@@ -201,10 +176,7 @@ func TestInviteWorker(t *testing.T) {
 }
 
 func TestUploadAvatar(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -213,8 +185,7 @@ func TestUploadAvatar(t *testing.T) {
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/customservice/kfaccount/uploadheadimg?access_token=ACCESS_TOKEN&kf_account=ACCOUNT", gomock.AssignableToTypeOf(wx.NewUploadForm())).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", UploadAvatar("ACCOUNT", "../../mock/test.jpg"))
 
@@ -222,10 +193,7 @@ func TestUploadAvatar(t *testing.T) {
 }
 
 func TestDeleteAccount(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -234,8 +202,7 @@ func TestDeleteAccount(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/customservice/kfaccount/del?access_token=ACCESS_TOKEN&kf_account=ACCOUNT", nil).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteAccount("ACCOUNT"))
 

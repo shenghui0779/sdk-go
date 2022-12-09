@@ -1,9 +1,7 @@
 package minip
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -16,15 +14,11 @@ import (
 
 func TestInvokeService(t *testing.T) {
 	body := []byte(`{"service":"wx79ac3de8be320b71","api":"OcrAllInOne","data":{"data_type":3,"img_url":"http://mmbiz.qpic.cn/mmbiz_jpg/7UFjuNbYxibu66xSqsQqKcuoGBZM77HIyibdiczeWibdMeA2XMt5oibWVQMgDibriazJSOibLqZxcO6DVVcZMxDKgeAtbQ/0","ocr_type":1},"client_msg_id":"id123"}`)
-
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"data": "{\"idcard_res\":{\"type\":0,\"name\":{\"text\":\"abc\",\"pos\"…0312500}}},\"image_width\":480,\"image_height\":304}}"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,8 +27,7 @@ func TestInvokeService(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/servicemarket?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	params := &ParamsServiceInvoke{
 		Service: "wx79ac3de8be320b71",
@@ -60,14 +53,11 @@ func TestInvokeService(t *testing.T) {
 func TestSoterVerify(t *testing.T) {
 	body := []byte(`{"openid":"$openid","json_string":"$resultJSON","json_signature":"$resultJSONSignature"}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"is_ok": true
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -76,8 +66,7 @@ func TestSoterVerify(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/soter/verify_signature?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultSoterVerify)
 
@@ -91,14 +80,11 @@ func TestSoterVerify(t *testing.T) {
 
 func TestGenerateShortLink(t *testing.T) {
 	body := []byte(`{"page_url":"/pages/publishHomework/publishHomework?query1=q1","page_title":"Homework title","is_permanent":false}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "link": "Short Link"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -107,8 +93,7 @@ func TestGenerateShortLink(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/genwxashortlink?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultShortLink)
 
@@ -122,14 +107,11 @@ func TestGenerateShortLink(t *testing.T) {
 
 func TestGenerateScheme(t *testing.T) {
 	body := []byte(`{"jump_wxa":{"path":"/pages/publishHomework/publishHomework"},"is_expire":true,"expire_time":1606737600}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"openlink": "Scheme"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -138,8 +120,7 @@ func TestGenerateScheme(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/generatescheme?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	params := &ParamsSchemeGenerate{
 		JumpWxa: &SchemeJumpWxa{
@@ -160,9 +141,7 @@ func TestGenerateScheme(t *testing.T) {
 
 func TestQueryScheme(t *testing.T) {
 	body := []byte(`{"scheme":"weixin://dl/business/?t=XTSkBZlzqmn"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"scheme_info": {
@@ -177,8 +156,7 @@ func TestQueryScheme(t *testing.T) {
 		"long_time_used": 100,
 		"long_time_limit": 100000
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -187,8 +165,7 @@ func TestQueryScheme(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/queryscheme?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultSchemeQuery)
 
@@ -213,14 +190,11 @@ func TestQueryScheme(t *testing.T) {
 
 func TestGenerateURLLink(t *testing.T) {
 	body := []byte(`{"path":"/pages/publishHomework/publishHomework","is_expire":true,"expire_type":1,"expire_interval":1,"env_version":"release","cloud_base":{"env":"xxx","domain":"xxx.xx","path":"/jump-wxa.html","query":"a=1&b=2"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"url_link": "URL Link"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -229,8 +203,7 @@ func TestGenerateURLLink(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/generate_urllink?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	params := &ParamsURLLinkGenerate{
 		Path:           "/pages/publishHomework/publishHomework",
@@ -257,9 +230,7 @@ func TestGenerateURLLink(t *testing.T) {
 
 func TestQueryURLLink(t *testing.T) {
 	body := []byte(`{"url_link":"https://wxaurl.cn/BQZRrcFCPvg"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"url_link_info": {
@@ -281,8 +252,7 @@ func TestQueryURLLink(t *testing.T) {
 		"long_time_used": 100,
 		"long_time_limit": 100000
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -291,8 +261,7 @@ func TestQueryURLLink(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/query_urllink?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultURLLinkQuery)
 

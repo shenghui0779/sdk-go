@@ -1,9 +1,7 @@
 package oa
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestListJouralRecord(t *testing.T) {
 	body := []byte(`{"starttime":1606230000,"endtime":1606361304,"cursor":0,"limit":10,"filters":[{"key":"creator","value":"kele"},{"key":"department","value":"1"},{"key":"template_id","value":"3TmALk1ogfgKiQE3e3jRwnTUhMTh8vca1N8zUVNUx"}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"journaluuid_list": [
@@ -36,8 +31,7 @@ func TestListJouralRecord(t *testing.T) {
 	],
 	"next_cursor": 34,
 	"endflag": 0
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -46,8 +40,7 @@ func TestListJouralRecord(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/journal/get_record_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsJournalRecordList{
 		StartTime: 1606230000,
@@ -94,9 +87,7 @@ func TestListJouralRecord(t *testing.T) {
 
 func TestGetJournalRecordDetail(t *testing.T) {
 	body := []byte(`{"journaluuid":"41eJejN57EJNzr8HrZfmKyCN7xwKw1qRxCZUxCVuo9fsWVMSKac6nk4q8rARTDaVNdx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"info": {
@@ -155,8 +146,7 @@ func TestGetJournalRecordDetail(t *testing.T) {
 			}
 		]
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -165,8 +155,7 @@ func TestGetJournalRecordDetail(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/journal/get_record_detail?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultJournalRecordDetail)
 
@@ -235,9 +224,7 @@ func TestGetJournalRecordDetail(t *testing.T) {
 
 func TestListJournalStat(t *testing.T) {
 	body := []byte(`{"template_id":"3TmALk1ogfgKiQE3e3jRwnTUhMTh8vca1N8zUVNUx","starttime":1604160000,"endtime":1606363092}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"stat_list": [
@@ -318,8 +305,7 @@ func TestListJournalStat(t *testing.T) {
 			"report_type": 2
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -328,8 +314,7 @@ func TestListJournalStat(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/journal/get_stat_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultJournalStatList)
 

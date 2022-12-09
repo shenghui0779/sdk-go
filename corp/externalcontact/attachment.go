@@ -1,6 +1,7 @@
 package externalcontact
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -85,9 +86,7 @@ func UploadAttachmentByURL(mediaType MediaType, attachmentType AttachmentType, f
 						return err
 					}
 
-					defer resp.Body.Close()
-
-					if _, err = io.Copy(w, resp.Body); err != nil {
+					if _, err = io.Copy(w, bytes.NewReader(resp)); err != nil {
 						return err
 					}
 

@@ -1,9 +1,7 @@
 package mch
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -31,9 +29,7 @@ func TestAPPEntrust(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -42,8 +38,7 @@ func TestAPPEntrust(t *testing.T) {
 	<sign>A07C2571BA6F4FBFDB82490C97776AB4</sign>
 	<result_code>SUCCESS</result_code>
 	<pre_entrustweb_id>5778aadY9nltAsZzXixCkFIGYnV2V</pre_entrustweb_id>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -52,15 +47,11 @@ func TestAPPEntrust(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/papay/preentrustweb", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
+		return "IITRi8Iabbblz1Jc"
+	}), WithMockClient(client))
 
 	assert.Nil(t, err)
-
-	mch.nonce = func() string {
-		return "IITRi8Iabbblz1Jc"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
 
 	r, err := mch.Do(context.TODO(), APPEntrust("wx2421b1c4370ec43b", &ParamsContract{
 		PlanID:                 "12535",
@@ -86,11 +77,9 @@ func TestAPPEntrust(t *testing.T) {
 }
 
 func TestOAEntrust(t *testing.T) {
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "IITRi8Iabbblz1Jc"
-	}
+	}))
 
 	r, err := mch.Do(context.TODO(), OAEntrust("wx2421b1c4370ec43b", &ParamsContract{
 		PlanID:                 "106",
@@ -106,11 +95,9 @@ func TestOAEntrust(t *testing.T) {
 }
 
 func TestMinipEntrust(t *testing.T) {
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "IITRi8Iabbblz1Jc"
-	}
+	}))
 
 	r, err := mch.Do(context.TODO(), MinipEntrust("wx2421b1c4370ec43b", &ParamsContract{
 		PlanID:                 "106",
@@ -136,11 +123,9 @@ func TestMinipEntrust(t *testing.T) {
 }
 
 func TestH5Entrust(t *testing.T) {
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "IITRi8Iabbblz1Jc"
-	}
+	}))
 
 	r, err := mch.Do(context.TODO(), H5Entrust("wx2421b1c4370ec43b", &ParamsContract{
 		PlanID:                 "106",
@@ -183,9 +168,7 @@ func TestEntrustInPay(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<result_code>SUCCESS</result_code>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -197,8 +180,7 @@ func TestEntrustInPay(t *testing.T) {
 	<code_url>weixin://wxpay/s/An4baqw</code_url>
 	<plan_id>123</plan_id>
 	<out_trade_no>123456</out_trade_no>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -207,13 +189,9 @@ func TestEntrustInPay(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/contractorder", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), EntrustInPay("wx2421b1c4370ec43b", &ParamsContractInPay{
 		OutTradeNO:             "123456",
@@ -258,9 +236,7 @@ func TestQueryContractByID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<result_code>SUCCESS</result_code>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -278,8 +254,7 @@ func TestQueryContractByID(t *testing.T) {
 	<contract_termination_mode>3</contract_termination_mode>
 	<contract_termination_remark>delete ....</contract_termination_remark>
 	<sign>35B3B9261A6A4E75BFB560FE0D6EA8CE</sign>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -288,13 +263,9 @@ func TestQueryContractByID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/papay/querycontract", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "IITRi8Iabbblz1Jc"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryContractByID("wx2421b1c4370ec43b", "201509160000028648"))
 
@@ -332,9 +303,7 @@ func TestQueryContractByCode(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<result_code>SUCCESS</result_code>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -352,8 +321,7 @@ func TestQueryContractByCode(t *testing.T) {
 	<contract_termination_mode>3</contract_termination_mode>
 	<contract_termination_remark>delete ....</contract_termination_remark>
 	<sign>35B3B9261A6A4E75BFB560FE0D6EA8CE</sign>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -362,13 +330,9 @@ func TestQueryContractByCode(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/papay/querycontract", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "IITRi8Iabbblz1Jc"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryContractByCode("wx2421b1c4370ec43b", "123", "1023658866"))
 
@@ -412,9 +376,7 @@ func TestPappayApply(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -422,8 +384,7 @@ func TestPappayApply(t *testing.T) {
 	<nonce_str>IITRi8Iabbblz1Jc</nonce_str>
 	<sign>1D001A3A187A984976FDB371813F898F</sign>
 	<result_code>SUCCESS</result_code>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -432,13 +393,9 @@ func TestPappayApply(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/pappayapply", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "5K8264ILTKCH16CQ2502SI8ZNMTM67VS"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), PappayApply("wx2421b1c4370ec43b", &ParamsPappay{
 		OutTradeNO:     "217752501201407033233368018",
@@ -473,17 +430,14 @@ func TestDeleteContractByID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<result_code>SUCCESS</result_code>
 	<appid>wx2421b1c4370ec43b</appid>
 	<mch_id>10000100</mch_id>
 	<contract_id>100005698</contract_id>
 	<sign>D1F898877B9FC523A6F2FC993BE5B78F</sign>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -492,13 +446,9 @@ func TestDeleteContractByID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/papay/deletecontract", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "IITRi8Iabbblz1Jc"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), DeleteContractByID("wx2421b1c4370ec43b", "100005698", "原因"))
 
@@ -526,17 +476,14 @@ func TestDeleteContractByCode(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<result_code>SUCCESS</result_code>
 	<appid>wx2421b1c4370ec43b</appid>
 	<mch_id>10000100</mch_id>
 	<contract_id>100005698</contract_id>
 	<sign>D1F898877B9FC523A6F2FC993BE5B78F</sign>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -545,13 +492,9 @@ func TestDeleteContractByCode(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/papay/deletecontract", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "IITRi8Iabbblz1Jc"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), DeleteContractByCode("wx2421b1c4370ec43b", "12251", "1234", "原因"))
 
@@ -577,9 +520,7 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -599,8 +540,7 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 	<trade_state>SUCCESS</trade_state>
 	<nonce_str>TN55wO9Pba5yENl8</nonce_str>
 	<sign>9C2A03FD2D080D1B9618946C73C7608D</sign>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -609,13 +549,9 @@ func TestQueryPappayByTransactionID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/paporderquery", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryPappayByTransactionID("wx2421b1c4370ec43b", "1008450740201411110005820873"))
 
@@ -654,9 +590,7 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -676,8 +610,7 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 	<trade_state>SUCCESS</trade_state>
 	<nonce_str>TN55wO9Pba5yENl8</nonce_str>
 	<sign>9C2A03FD2D080D1B9618946C73C7608D</sign>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -686,13 +619,9 @@ func TestQueryPappayByOutTradeNO(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/paporderquery", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
-	}
-	mch.SetClient(wx.WithHTTPClient(client))
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryPappayByOutTradeNO("wx2421b1c4370ec43b", "1415757673"))
 

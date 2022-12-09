@@ -1,9 +1,7 @@
 package oa
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestGetCorpCheckinOption(t *testing.T) {
 	body := []byte(`{}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"group": [
@@ -255,8 +250,7 @@ func TestGetCorpCheckinOption(t *testing.T) {
 			"offwork_interval_time": 300
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -265,8 +259,7 @@ func TestGetCorpCheckinOption(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcorpcheckinoption?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultCorpCheckinOption)
 
@@ -499,9 +492,7 @@ func TestGetCorpCheckinOption(t *testing.T) {
 
 func TestGetCheckinOption(t *testing.T) {
 	body := []byte(`{"datetime":1511971200,"useridlist":["james","paul"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"info": [
@@ -631,8 +622,7 @@ func TestGetCheckinOption(t *testing.T) {
 			}
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -641,8 +631,7 @@ func TestGetCheckinOption(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckinoption?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"james", "paul"}
 
@@ -778,9 +767,7 @@ func TestGetCheckinOption(t *testing.T) {
 
 func TestGetCheckinData(t *testing.T) {
 	body := []byte(`{"opencheckindatatype":3,"starttime":1492617600,"endtime":1492790400,"useridlist":["james","paul"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 "errcode": 0,
 "errmsg": "ok",
 "checkindata": [
@@ -826,8 +813,7 @@ func TestGetCheckinData(t *testing.T) {
 		"timeline_id": 1
 	}
 ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -836,8 +822,7 @@ func TestGetCheckinData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"james", "paul"}
 
@@ -891,9 +876,7 @@ func TestGetCheckinData(t *testing.T) {
 
 func TestGetCheckinDayData(t *testing.T) {
 	body := []byte(`{"starttime":1599062400,"endtime":1599062400,"useridlist":["ZhangSan"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"datas": [
@@ -1003,8 +986,7 @@ func TestGetCheckinDayData(t *testing.T) {
 			]
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -1013,8 +995,7 @@ func TestGetCheckinDayData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckin_daydata?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"ZhangSan"}
 
@@ -1136,9 +1117,7 @@ func TestGetCheckinDayData(t *testing.T) {
 
 func TestGetCheckinMonthData(t *testing.T) {
 	body := []byte(`{"starttime":1599062400,"endtime":1599408000,"useridlist":["ZhangSan"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"datas": [
@@ -1200,8 +1179,7 @@ func TestGetCheckinMonthData(t *testing.T) {
 			}
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -1210,8 +1188,7 @@ func TestGetCheckinMonthData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckin_monthdata?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"ZhangSan"}
 
@@ -1285,9 +1262,7 @@ func TestGetCheckinMonthData(t *testing.T) {
 
 func TestGetCheckinScheduleList(t *testing.T) {
 	body := []byte(`{"starttime":1492617600,"endtime":1492790400,"useridlist":["james","paul"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"schedule_list": [
 		{
 			"userid": "james",
@@ -1342,8 +1317,7 @@ func TestGetCheckinScheduleList(t *testing.T) {
 	],
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -1352,8 +1326,7 @@ func TestGetCheckinScheduleList(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckinschedulist?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"james", "paul"}
 
@@ -1420,13 +1393,10 @@ func TestGetCheckinScheduleList(t *testing.T) {
 
 func TestSetCheckinScheduleList(t *testing.T) {
 	body := []byte(`{"groupid":226,"yearmonth":202012,"items":[{"userid":"james","day":5,"schedule_id":234}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -1435,8 +1405,7 @@ func TestSetCheckinScheduleList(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/checkin/setcheckinschedulist?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	items := []*ScheduleListItem{
 		{
@@ -1453,13 +1422,10 @@ func TestSetCheckinScheduleList(t *testing.T) {
 
 func TestAddCheckinUserFace(t *testing.T) {
 	body := []byte(`{"userid":"james","userface":"PLACE_HOLDER"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -1468,8 +1434,7 @@ func TestAddCheckinUserFace(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/checkin/addcheckinuserface?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", AddCheckinUserFace("james", "PLACE_HOLDER"))
 
@@ -1478,9 +1443,7 @@ func TestAddCheckinUserFace(t *testing.T) {
 
 func TestGetHardwareCheckinData(t *testing.T) {
 	body := []byte(`{"filter_type":1,"starttime":1492617600,"endtime":1492790400,"useridlist":["james","paul"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"checkindata": [
@@ -1497,8 +1460,7 @@ func TestGetHardwareCheckinData(t *testing.T) {
 			"device_name": "yyyy门店"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -1507,8 +1469,7 @@ func TestGetHardwareCheckinData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/hardware/get_hardware_checkin_data?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"james", "paul"}
 

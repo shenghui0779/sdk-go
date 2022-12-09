@@ -1,9 +1,7 @@
 package oa
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestGetTemplateDetail(t *testing.T) {
 	body := []byte(`{"template_id":"ZLqk8pcsAoXZ1eYa6vpAgfX28MPdYU3ayMaSPHaaa"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"template_names": [
@@ -77,8 +72,7 @@ func TestGetTemplateDetail(t *testing.T) {
 			}
 		]
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -87,8 +81,7 @@ func TestGetTemplateDetail(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/gettemplatedetail?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultTemplateDetail)
 
@@ -156,14 +149,11 @@ func TestGetTemplateDetail(t *testing.T) {
 
 func TestApplyEvent(t *testing.T) {
 	body := []byte(`{"creator_userid":"WangXiaoMing","template_id":"3Tka1eD6v6JfzhDMqPd3aMkFdxqtJMc2ZRioeFXkaaa","use_template_approver":0,"choose_department":2,"approver":[{"attr":2,"userid":["WuJunJie","WangXiaoMing"]},{"attr":1,"userid":["LiuXiaoGang"]}],"notifyer":["WuJunJie","WangXiaoMing"],"notify_type":1,"apply_data":{"contents":[{"control":"Text","id":"Text-15111111111","value":{"text":"文本填写的内容"}}]},"summary_list":[{"summary_info":[{"text":"摘要第1行","lang":"zh_CN"}]},{"summary_info":[{"text":"摘要第2行","lang":"zh_CN"}]},{"summary_info":[{"text":"摘要第3行","lang":"zh_CN"}]}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"sp_no": "202001010001"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -172,8 +162,7 @@ func TestApplyEvent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/applyevent?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsApplyEvent{
 		CreatorUserID:       "WangXiaoMing",
@@ -243,9 +232,7 @@ func TestApplyEvent(t *testing.T) {
 
 func TestGetApprovalInfo(t *testing.T) {
 	body := []byte(`{"starttime":"1569546000","endtime":"1569718800","cursor":0,"size":100,"filters":[{"key":"template_id","value":"ZLqk8pcsAoaXZ1eY56vpAgfX28MPdYU3ayMaSPHaaa"},{"key":"creator","value":"WuJunJie"},{"key":"department","value":"1"},{"key":"sp_status","value":"1"}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"sp_no_list": [
@@ -253,8 +240,7 @@ func TestGetApprovalInfo(t *testing.T) {
 		"201909270002",
 		"201909270003"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -263,8 +249,7 @@ func TestGetApprovalInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/getapprovalinfo?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsApprovalInfo{
 		StartTime: "1569546000",
@@ -307,9 +292,7 @@ func TestGetApprovalInfo(t *testing.T) {
 
 func TestGetApprovalDetail(t *testing.T) {
 	body := []byte(`{"sp_no":"201909270001"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"info": {
@@ -390,8 +373,7 @@ func TestGetApprovalDetail(t *testing.T) {
 			}
 		]
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -400,8 +382,7 @@ func TestGetApprovalDetail(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/getapprovaldetail?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultApprovalDetail)
 
@@ -490,9 +471,7 @@ func TestGetApprovalDetail(t *testing.T) {
 
 func TestGetOpenApprovalData(t *testing.T) {
 	body := []byte(`{"thirdNo":"thirdNoxxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"data": {
@@ -539,8 +518,7 @@ func TestGetOpenApprovalData(t *testing.T) {
 		},
 		"ApproverStep": 0
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -549,8 +527,7 @@ func TestGetOpenApprovalData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/corp/getopenapprovaldata?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultOpenApprovalData)
 

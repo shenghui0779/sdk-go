@@ -1,9 +1,7 @@
 package report
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,13 +10,10 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestGetPatrolGridInfo(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"grid_list": [
@@ -31,8 +26,7 @@ func TestGetPatrolGridInfo(t *testing.T) {
 			]
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -41,8 +35,7 @@ func TestGetPatrolGridInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_grid_info?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultPatrolGridInfo)
 
@@ -62,9 +55,7 @@ func TestGetPatrolGridInfo(t *testing.T) {
 
 func TestGetPatrolCorpStatus(t *testing.T) {
 	body := []byte(`{"grid_id":"grid_id"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"processing": 1,
@@ -73,8 +64,7 @@ func TestGetPatrolCorpStatus(t *testing.T) {
 	"total_case": 1,
 	"to_be_assigned": 1,
 	"total_solved": 1
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -83,8 +73,7 @@ func TestGetPatrolCorpStatus(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_corp_status?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultPatrolCorpStatus)
 
@@ -103,16 +92,13 @@ func TestGetPatrolCorpStatus(t *testing.T) {
 
 func TestGetPatrolUserStatus(t *testing.T) {
 	body := []byte(`{"userid":"zhangsan"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"processing": 1,
 	"added_today": 1,
 	"solved_today": 1
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -121,8 +107,7 @@ func TestGetPatrolUserStatus(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_user_status?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultPatrolUserStatus)
 
@@ -138,9 +123,7 @@ func TestGetPatrolUserStatus(t *testing.T) {
 
 func TestGetPatrolCategoryStatistic(t *testing.T) {
 	body := []byte(`{"category_id":"category_id"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"dashboard_list": [
@@ -153,8 +136,7 @@ func TestGetPatrolCategoryStatistic(t *testing.T) {
 			"category_type": 1
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -163,8 +145,7 @@ func TestGetPatrolCategoryStatistic(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/category_statistic?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultPatrolCategoryStatistic)
 
@@ -187,9 +168,7 @@ func TestGetPatrolCategoryStatistic(t *testing.T) {
 
 func TestListPatrolOrder(t *testing.T) {
 	body := []byte(`{"begin_create_time":12345678,"begin_modify_time":12345678,"cursor":"cursor","limit":20}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"next_cursor": "next_cursor",
@@ -239,8 +218,7 @@ func TestListPatrolOrder(t *testing.T) {
 			]
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -249,8 +227,7 @@ func TestListPatrolOrder(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_order_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultPatrolOrderList)
 
@@ -295,9 +272,7 @@ func TestListPatrolOrder(t *testing.T) {
 
 func TestGetPatrolOrderInfo(t *testing.T) {
 	body := []byte(`{"order_id":"order_id"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"order_info": {
@@ -344,8 +319,7 @@ func TestGetPatrolOrderInfo(t *testing.T) {
 			}
 		]
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -354,8 +328,7 @@ func TestGetPatrolOrderInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/report/patrol/get_order_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultPatrolOrderInfo)
 

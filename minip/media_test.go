@@ -1,9 +1,7 @@
 package minip
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -15,16 +13,13 @@ import (
 )
 
 func TestUploadMedia(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"type": "image",
 	"media_id": "MEDIA_ID",
 	"created_at": 1606717010
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,8 +28,7 @@ func TestUploadMedia(t *testing.T) {
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(wx.NewUploadForm())).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultMediaUpload)
 
@@ -49,16 +43,13 @@ func TestUploadMedia(t *testing.T) {
 }
 
 func TestUploadMediaByURL(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"type": "image",
 	"media_id": "MEDIA_ID",
 	"created_at": 1606717010
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -67,8 +58,7 @@ func TestUploadMediaByURL(t *testing.T) {
 
 	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=image", gomock.AssignableToTypeOf(wx.NewUploadForm())).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultMediaUpload)
 
@@ -83,10 +73,7 @@ func TestUploadMediaByURL(t *testing.T) {
 }
 
 func TestGetMedia(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte("BUFFER"))),
-	}
+	resp := []byte("BUFFER")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -95,8 +82,7 @@ func TestGetMedia(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID", nil).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(Media)
 

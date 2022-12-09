@@ -7,7 +7,6 @@ package mock
 import (
 	context "context"
 	multipart "mime/multipart"
-	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -75,14 +74,14 @@ func (m *MockHTTPClient) EXPECT() *MockHTTPClientMockRecorder {
 }
 
 // Do mocks base method.
-func (m *MockHTTPClient) Do(ctx context.Context, method, reqURL string, body []byte, options ...wx.HTTPOption) (*http.Response, error) {
+func (m *MockHTTPClient) Do(ctx context.Context, method, reqURL string, body []byte, options ...wx.HTTPOption) ([]byte, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, method, reqURL, body}
 	for _, a := range options {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Do", varargs...)
-	ret0, _ := ret[0].(*http.Response)
+	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -95,14 +94,14 @@ func (mr *MockHTTPClientMockRecorder) Do(ctx, method, reqURL, body interface{}, 
 }
 
 // Upload mocks base method.
-func (m *MockHTTPClient) Upload(ctx context.Context, reqURL string, form wx.UploadForm, options ...wx.HTTPOption) (*http.Response, error) {
+func (m *MockHTTPClient) Upload(ctx context.Context, reqURL string, form wx.UploadForm, options ...wx.HTTPOption) ([]byte, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, reqURL, form}
 	for _, a := range options {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Upload", varargs...)
-	ret0, _ := ret[0].(*http.Response)
+	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

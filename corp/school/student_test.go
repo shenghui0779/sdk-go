@@ -1,9 +1,7 @@
 package school
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,18 +10,14 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCreateStudent(t *testing.T) {
 	body := []byte(`{"student_userid":"zhangsan","name":"张三","department":[1,2]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -32,8 +26,7 @@ func TestCreateStudent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/create_student?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsStudentCreate{
 		StudentUserID: "zhangsan",
@@ -48,13 +41,10 @@ func TestCreateStudent(t *testing.T) {
 
 func TestUpdateStudent(t *testing.T) {
 	body := []byte(`{"student_userid":"zhangsan","new_student_userid":"NEW_ID","name":"张三","department":[1,2]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -63,8 +53,7 @@ func TestUpdateStudent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/update_student?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsStudentUpdate{
 		StudentUserID:    "zhangsan",
@@ -79,13 +68,10 @@ func TestUpdateStudent(t *testing.T) {
 }
 
 func TestDeleteStudent(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -94,8 +80,7 @@ func TestDeleteStudent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/school/user/delete_student?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteStudent("USERID"))
 
@@ -104,9 +89,7 @@ func TestDeleteStudent(t *testing.T) {
 
 func TestBatchCreateStudent(t *testing.T) {
 	body := []byte(`{"students":[{"student_userid":"zhangsan","name":"张三","department":[1,2]},{"student_userid":"lisi","name":"李四","department":[3,4]}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "result_list": [
@@ -116,8 +99,7 @@ func TestBatchCreateStudent(t *testing.T) {
             "errmsg": "invalid student_userid: zhangsan"
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -126,8 +108,7 @@ func TestBatchCreateStudent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_create_student?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsStudentBatchCreate{
 		Students: []*ParamsStudentCreate{
@@ -161,9 +142,7 @@ func TestBatchCreateStudent(t *testing.T) {
 
 func TestBatchUpdateStudent(t *testing.T) {
 	body := []byte(`{"students":[{"student_userid":"zhangsan","new_student_userid":"zhangsan_new","name":"张三","department":[1,2]},{"student_userid":"lisi","name":"李四","department":[3,4]}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "result_list": [
@@ -173,8 +152,7 @@ func TestBatchUpdateStudent(t *testing.T) {
             "errmsg": "invalid student_userid: zhangsan"
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -183,8 +161,7 @@ func TestBatchUpdateStudent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_update_student?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsStudentBatchUpdate{
 		Students: []*ParamsStudentUpdate{
@@ -219,9 +196,7 @@ func TestBatchUpdateStudent(t *testing.T) {
 
 func TestBatchDeleteStudent(t *testing.T) {
 	body := []byte(`{"useridlist":["zhangsan","lisi"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "result_list": [
@@ -231,8 +206,7 @@ func TestBatchDeleteStudent(t *testing.T) {
             "errmsg": "userid not found"
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -241,8 +215,7 @@ func TestBatchDeleteStudent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/batch_delete_student?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"zhangsan", "lisi"}
 

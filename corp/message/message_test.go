@@ -1,9 +1,7 @@
 package message
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestSendText(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"text","agentid":1,"text":{"content":"你的快递已到，请携带工卡前往邮件中心领取。\n出发前可查看<a href=\"http://work.weixin.qq.com\">邮件中心视频实况</a>，聪明避开排队。"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -27,8 +22,7 @@ func TestSendText(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -37,8 +31,7 @@ func TestSendText(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &MsgExtra{
 		ToUser:                 "UserID1|UserID2|UserID3",
@@ -63,9 +56,7 @@ func TestSendText(t *testing.T) {
 
 func TestSendImage(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"image","agentid":1,"image":{"media_id":"MEDIA_ID"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -73,8 +64,7 @@ func TestSendImage(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -83,8 +73,7 @@ func TestSendImage(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &MsgExtra{
 		ToUser:                 "UserID1|UserID2|UserID3",
@@ -109,9 +98,7 @@ func TestSendImage(t *testing.T) {
 
 func TestSendVoice(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"voice","agentid":1,"voice":{"media_id":"MEDIA_ID"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -119,8 +106,7 @@ func TestSendVoice(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -129,8 +115,7 @@ func TestSendVoice(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &MsgExtra{
 		ToUser:                 "UserID1|UserID2|UserID3",
@@ -155,9 +140,7 @@ func TestSendVoice(t *testing.T) {
 
 func TestSendVideo(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"video","agentid":1,"video":{"media_id":"MEDIA_ID","title":"Title","description":"Description"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -165,8 +148,7 @@ func TestSendVideo(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -175,8 +157,7 @@ func TestSendVideo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	video := &Video{
 		MediaID:     "MEDIA_ID",
@@ -207,9 +188,7 @@ func TestSendVideo(t *testing.T) {
 
 func TestSendFile(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"file","agentid":1,"file":{"media_id":"1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -217,8 +196,7 @@ func TestSendFile(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -227,8 +205,7 @@ func TestSendFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &MsgExtra{
 		ToUser:                 "UserID1|UserID2|UserID3",
@@ -253,9 +230,7 @@ func TestSendFile(t *testing.T) {
 
 func TestSendTextCard(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"textcard","agentid":1,"textcard":{"title":"领奖通知","description":"<div class=\"gray\">2016年9月26日</div> <div class=\"normal\">恭喜你抽中iPhone 7一台，领奖码：xxxx</div><div class=\"highlight\">请于2016年10月10日前联系行政同事领取</div>","url":"URL","btntxt":"更多"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -263,8 +238,7 @@ func TestSendTextCard(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -273,8 +247,7 @@ func TestSendTextCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &TextCard{
 		Title:       "领奖通知",
@@ -306,9 +279,7 @@ func TestSendTextCard(t *testing.T) {
 
 func TestSendNews(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"news","agentid":1,"news":{"articles":[{"title":"中秋节礼品领取","description":"今年中秋节公司有豪礼相送","url":"URL","picurl":"http://res.mail.qq.com/node/ww/wwopenmng/images/independent/doc/test_pic_msg1.png","appid":"wx123123123123123","pagepath":"pages/index?userid=zhangsan&orderid=123123123"}]},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -316,8 +287,7 @@ func TestSendNews(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -326,8 +296,7 @@ func TestSendNews(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	articles := []*NewsArticle{
 		{
@@ -363,9 +332,7 @@ func TestSendNews(t *testing.T) {
 
 func TestSendMPNews(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"mpnews","agentid":1,"mpnews":{"articles":[{"title":"Title","thumb_media_id":"MEDIA_ID","author":"Author","content_source_url":"URL","content":"Content","digest":"Digest description"}]},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -373,8 +340,7 @@ func TestSendMPNews(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -383,8 +349,7 @@ func TestSendMPNews(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	articles := []*MPNewsArticle{
 		{
@@ -420,9 +385,7 @@ func TestSendMPNews(t *testing.T) {
 
 func TestSendMarkdown(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"markdown","agentid":1,"markdown":{"content":"您的会议室已经预定，稍后会同步到邮箱\n>**事项详情**\n>事　项：<font color=\"info\">开会</font>\n>组织者：@miglioguan\n>参与者：@miglioguan、@kunliu、@jamdeezhou、@kanexiong、@kisonwang\n>\n>会议室：<font color=\"info\">广州TIT 1楼 301</font>\n>日　期：<font color=\"warning\">2018年5月18日</font>\n>时　间：<font color=\"comment\">上午9:00-11:00</font>\n>\n>请准时参加会议。\n>\n>如需修改会议信息，请点击：[修改会议信息](https://work.weixin.qq.com)"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -430,8 +393,7 @@ func TestSendMarkdown(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -440,8 +402,7 @@ func TestSendMarkdown(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &MsgExtra{
 		ToUser:                 "UserID1|UserID2|UserID3",
@@ -466,9 +427,7 @@ func TestSendMarkdown(t *testing.T) {
 
 func TestSendMinipNotice(t *testing.T) {
 	body := []byte(`{"touser":"zhangsan|lisi","toparty":"1|2","totag":"1|2","msgtype":"miniprogram_notice","miniprogram_notice":{"appid":"wx123123123123123","page":"pages/index?userid=zhangsan&orderid=123123123","title":"会议室预订成功通知","description":"4月27日 16:16","emphasis_first_item":true,"content_item":[{"key":"会议室","value":"402"},{"key":"会议地点","value":"广州TIT-402会议室"},{"key":"会议时间","value":"2018年8月1日 09:00-09:30"},{"key":"参与人员","value":"周剑轩"}]},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -476,8 +435,7 @@ func TestSendMinipNotice(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -486,8 +444,7 @@ func TestSendMinipNotice(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	notice := &MinipNotice{
 		AppID:             "wx123123123123123",
@@ -538,9 +495,7 @@ func TestSendMinipNotice(t *testing.T) {
 
 func TestSendTextNoticeCard(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"template_card","agentid":1,"template_card":{"card_type":"text_notice","task_id":"task_id","source":{"icon_url":"图片的url","desc":"企业微信","desc_color":1},"action_menu":{"desc":"卡片副交互辅助文本说明","action_list":[{"text":"接受推送","key":"A"},{"text":"不再推送","key":"B"}]},"main_title":{"title":"欢迎使用企业微信","desc":"您的好友正在邀请您加入企业微信"},"quote_area":{"type":1,"url":"https://work.weixin.qq.com","title":"企业微信的引用样式","quote_text":"企业微信真好用呀真好用"},"emphasis_content":{"title":"100","desc":"核心数据"},"sub_title_text":"下载企业微信还能抢红包！","horizontal_content_list":[{"keyname":"邀请人","value":"张三"},{"type":1,"keyname":"企业微信官网","value":"点击访问","url":"https://work.weixin.qq.com"},{"type":2,"keyname":"企业微信下载","value":"企业微信.apk","media_id":"文件的media_id"},{"type":3,"keyname":"员工信息","value":"点击查看","userid":"zhangsan"}],"jump_list":[{"type":1,"title":"企业微信官网","url":"https://work.weixin.qq.com"},{"type":2,"title":"跳转小程序","appid":"小程序的appid","pagepath":"/index.html"}],"card_action":{"type":2,"url":"https://work.weixin.qq.com","appid":"小程序的appid","pagepath":"/index.html"}},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -548,8 +503,7 @@ func TestSendTextNoticeCard(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -558,8 +512,7 @@ func TestSendTextNoticeCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &TextNoticeCard{
 		Source: &CardSource{
@@ -663,9 +616,7 @@ func TestSendTextNoticeCard(t *testing.T) {
 
 func TestSendNewsNoticeCard(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"template_card","agentid":1,"template_card":{"card_type":"news_notice","task_id":"task_id","source":{"icon_url":"图片的url","desc":"企业微信","desc_color":1},"action_menu":{"desc":"卡片副交互辅助文本说明","action_list":[{"text":"接受推送","key":"A"},{"text":"不再推送","key":"B"}]},"main_title":{"title":"欢迎使用企业微信","desc":"您的好友正在邀请您加入企业微信"},"quote_area":{"type":1,"url":"https://work.weixin.qq.com","title":"企业微信的引用样式","quote_text":"企业微信真好用呀真好用"},"image_text_area":{"type":1,"url":"https://work.weixin.qq.com","title":"企业微信的左图右文样式","desc":"企业微信真好用呀真好用","image_url":"https://img.iplaysoft.com/wp-content/uploads/2019/free-images/free_stock_photo_2x.jpg"},"card_image":{"url":"图片的url","aspect_ratio":1.3},"vertical_content_list":[{"title":"惊喜红包等你来拿","desc":"下载企业微信还能抢红包！"}],"horizontal_content_list":[{"keyname":"邀请人","value":"张三"},{"type":1,"keyname":"企业微信官网","value":"点击访问","url":"https://work.weixin.qq.com"},{"type":2,"keyname":"企业微信下载","value":"企业微信.apk","media_id":"文件的media_id"},{"type":3,"keyname":"员工信息","value":"点击查看","userid":"zhangsan"}],"jump_list":[{"type":1,"title":"企业微信官网","url":"https://work.weixin.qq.com"},{"type":2,"title":"跳转小程序","appid":"小程序的appid","pagepath":"/index.html"}],"card_action":{"type":2,"url":"https://work.weixin.qq.com","appid":"小程序的appid","pagepath":"/index.html"}},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -673,8 +624,7 @@ func TestSendNewsNoticeCard(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -683,8 +633,7 @@ func TestSendNewsNoticeCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &NewsNoticeCard{
 		Source: &CardSource{
@@ -800,9 +749,7 @@ func TestSendNewsNoticeCard(t *testing.T) {
 
 func TestSendButtonInteractionCard(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"template_card","agentid":1,"template_card":{"card_type":"button_interaction","task_id":"task_id","source":{"icon_url":"图片的url","desc":"企业微信","desc_color":1},"action_menu":{"desc":"卡片副交互辅助文本说明","action_list":[{"text":"接受推送","key":"A"},{"text":"不再推送","key":"B"}]},"main_title":{"title":"欢迎使用企业微信","desc":"您的好友正在邀请您加入企业微信"},"quote_area":{"type":1,"url":"https://work.weixin.qq.com","title":"企业微信的引用样式","quote_text":"企业微信真好用呀真好用"},"sub_title_text":"下载企业微信还能抢红包！","horizontal_content_list":[{"keyname":"邀请人","value":"张三"},{"type":1,"keyname":"企业微信官网","value":"点击访问","url":"https://work.weixin.qq.com"},{"type":2,"keyname":"企业微信下载","value":"企业微信.apk","media_id":"文件的media_id"},{"type":3,"keyname":"员工信息","value":"点击查看","userid":"zhangsan"}],"card_action":{"type":2,"url":"https://work.weixin.qq.com","appid":"小程序的appid","pagepath":"/index.html"},"button_selection":{"question_key":"btn_question_key1","title":"企业微信评分","option_list":[{"id":"btn_selection_id1","text":"100分"},{"id":"btn_selection_id2","text":"101分"}],"selected_id":"btn_selection_id1"},"button_list":[{"text":"按钮1","style":1,"key":"button_key_1"},{"text":"按钮2","style":2,"key":"button_key_2"}]},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -810,8 +757,7 @@ func TestSendButtonInteractionCard(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -820,8 +766,7 @@ func TestSendButtonInteractionCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &ButtonInteractionCard{
 		Source: &CardSource{
@@ -935,9 +880,7 @@ func TestSendButtonInteractionCard(t *testing.T) {
 
 func TestSendVoteInteractionCard(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"template_card","agentid":1,"template_card":{"card_type":"vote_interaction","task_id":"task_id","source":{"icon_url":"图片的url","desc":"企业微信"},"main_title":{"title":"欢迎使用企业微信","desc":"您的好友正在邀请您加入企业微信"},"checkbox":{"question_key":"question_key1","option_list":[{"id":"option_id1","text":"选择题选项1","is_checked":true},{"id":"option_id2","text":"选择题选项2","is_checked":false}],"mode":1},"submit_button":{"text":"提交","key":"key"}},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -945,8 +888,7 @@ func TestSendVoteInteractionCard(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -955,8 +897,7 @@ func TestSendVoteInteractionCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &VoteInteractionCard{
 		Source: &CardSource{
@@ -1012,9 +953,7 @@ func TestSendVoteInteractionCard(t *testing.T) {
 
 func TestSendMultipleInteractionCard(t *testing.T) {
 	body := []byte(`{"touser":"UserID1|UserID2|UserID3","toparty":"PartyID1|PartyID2","totag":"TagID1|TagID2","msgtype":"template_card","agentid":1,"template_card":{"card_type":"multiple_interaction","task_id":"task_id","source":{"icon_url":"图片的url","desc":"企业微信"},"main_title":{"title":"欢迎使用企业微信","desc":"您的好友正在邀请您加入企业微信"},"select_list":[{"question_key":"question_key1","title":"选择器标签1","option_list":[{"id":"selection_id1","text":"选择器选项1"},{"id":"selection_id2","text":"选择器选项2"}],"selected_id":"selection_id1"},{"question_key":"question_key2","title":"选择器标签2","option_list":[{"id":"selection_id3","text":"选择器选项3"},{"id":"selection_id4","text":"选择器选项4"}],"selected_id":"selection_id3"}],"submit_button":{"text":"提交","key":"key"}},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": "userid1|userid2",
@@ -1022,8 +961,7 @@ func TestSendMultipleInteractionCard(t *testing.T) {
 	"invalidtag": "tagid1|tagid2",
 	"msgid": "xxxx",
 	"response_code": "xyzxyz"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -1032,8 +970,7 @@ func TestSendMultipleInteractionCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &MultipleInteractionCard{
 		Source: &CardSource{
@@ -1105,13 +1042,10 @@ func TestSendMultipleInteractionCard(t *testing.T) {
 
 func TestRecall(t *testing.T) {
 	body := []byte(`{"msgid":"vcT8gGc-7dFb4bxT35ONjBDz901sLlXPZw1DAMC_Gc26qRpK-AK5sTJkkb0128t"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -1120,8 +1054,7 @@ func TestRecall(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/recall?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", Recall("vcT8gGc-7dFb4bxT35ONjBDz901sLlXPZw1DAMC_Gc26qRpK-AK5sTJkkb0128t"))
 

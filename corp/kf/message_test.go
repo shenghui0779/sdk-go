@@ -1,9 +1,7 @@
 package kf
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -13,14 +11,11 @@ import (
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestSyncMsg(t *testing.T) {
 	body := []byte(`{"cursor":"4gw7MepFLfgF2VC5npN","token":"ENCApHxnGDNAVNY4AaSJKj4Tb5mwsEMzxhFmHVGcra996NR","limit":1000}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "next_cursor": "4gw7MepFLfgF2VC5npN",
@@ -255,8 +250,7 @@ func TestSyncMsg(t *testing.T) {
             }
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -265,8 +259,7 @@ func TestSyncMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMsgSync{
 		Cursor: "4gw7MepFLfgF2VC5npN",
@@ -517,14 +510,11 @@ func TestSyncMsg(t *testing.T) {
 
 func TestSendTextMsg(t *testing.T) {
 	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"text","text":{"content":"你购买的物品已发货，可点击链接查看物流状态http://work.weixin.qq.com/xxxxxx"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msgid": "MSG_ID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -533,8 +523,7 @@ func TestSendTextMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMsgSend)
 
@@ -548,14 +537,11 @@ func TestSendTextMsg(t *testing.T) {
 
 func TestSendImageMsg(t *testing.T) {
 	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"image","image":{"media_id":"MEDIA_ID"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msgid": "MSG_ID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -564,8 +550,7 @@ func TestSendImageMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMsgSend)
 
@@ -579,14 +564,11 @@ func TestSendImageMsg(t *testing.T) {
 
 func TestSendVoiceMsg(t *testing.T) {
 	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"voice","voice":{"media_id":"MEDIA_ID"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msgid": "MSG_ID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -595,8 +577,7 @@ func TestSendVoiceMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMsgSend)
 
@@ -610,14 +591,11 @@ func TestSendVoiceMsg(t *testing.T) {
 
 func TestSendVideoMsg(t *testing.T) {
 	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"video","video":{"media_id":"MEDIA_ID"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msgid": "MSG_ID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -626,8 +604,7 @@ func TestSendVideoMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMsgSend)
 
@@ -641,14 +618,11 @@ func TestSendVideoMsg(t *testing.T) {
 
 func TestSendFileMsg(t *testing.T) {
 	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"file","file":{"media_id":"1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msgid": "MSG_ID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -657,8 +631,7 @@ func TestSendFileMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMsgSend)
 
@@ -672,14 +645,11 @@ func TestSendFileMsg(t *testing.T) {
 
 func TestSendLinkMsg(t *testing.T) {
 	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"link","link":{"title":"企业如何增长？企业微信给出3个答案","desc":"今年中秋节公司有豪礼相送","url":"URL","thumb_media_id":"MEDIA_ID"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msgid": "MSG_ID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -688,8 +658,7 @@ func TestSendLinkMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	link := &Link{
 		Title:        "企业如何增长？企业微信给出3个答案",
@@ -710,14 +679,11 @@ func TestSendLinkMsg(t *testing.T) {
 
 func TestSendMinipMsg(t *testing.T) {
 	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"miniprogram","miniprogram":{"title":"欢迎报名夏令营","appid":"APPID","pagepath":"PAGE_PATH","thumb_media_id":"MEDIA_ID"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msgid": "MSG_ID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -726,8 +692,7 @@ func TestSendMinipMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	minip := &Minip{
 		Title:        "欢迎报名夏令营",
@@ -748,14 +713,11 @@ func TestSendMinipMsg(t *testing.T) {
 
 func TestSendMenuMsg(t *testing.T) {
 	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"msgmenu","msgmenu":{"head_content":"您对本次服务是否满意呢？","tail_content":"欢迎再次光临","list":[{"type":"click","click":{"id":"101","content":"满意"}},{"type":"click","click":{"id":"102","content":"不满意"}},{"type":"view","view":{"url":"https://work.weixin.qq.com","content":"点击跳转到自助查询页面"}},{"type":"miniprogram","miniprogram":{"appid":"wx123123123123123","pagepath":"pages/index?userid=zhangsan","content":"点击打开小程序查询更多"}}]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msgid": "MSG_ID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -764,8 +726,7 @@ func TestSendMenuMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	menu := &Menu{
 		HeadContent: "您对本次服务是否满意呢？",
@@ -815,14 +776,11 @@ func TestSendMenuMsg(t *testing.T) {
 
 func TestSendLocationMsg(t *testing.T) {
 	body := []byte(`{"touser":"EXTERNAL_USERID","open_kfid":"OPEN_KFID","msgtype":"location","location":{"name":"测试小区","address":"实例小区，不真实存在，经纬度无意义","latitude":0,"longitude":0}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msgid": "MSG_ID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -831,8 +789,7 @@ func TestSendLocationMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	location := &Location{
 		Name:      "测试小区",
@@ -853,14 +810,11 @@ func TestSendLocationMsg(t *testing.T) {
 
 func TestSendTextMsgOnEvent(t *testing.T) {
 	body := []byte(`{"code":"CODE","msgtype":"text","text":{"content":"欢迎咨询"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msgid": "MSG_ID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -869,8 +823,7 @@ func TestSendTextMsgOnEvent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg_on_event?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMsgSend)
 
@@ -884,14 +837,11 @@ func TestSendTextMsgOnEvent(t *testing.T) {
 
 func TestSendMenuMsgOnEvent(t *testing.T) {
 	body := []byte(`{"code":"CODE","msgtype":"msgmenu","msgmenu":{"head_content":"欢迎咨询","tail_content":"如有问题，随时转人工服务","list":[{"type":"click","click":{"id":"101","content":"接入人工"}},{"type":"click","click":{"id":"102","content":"继续跟机器人聊天"}},{"type":"view","view":{"url":"https://work.weixin.qq.com","content":"点击跳转到自助查询页面"}},{"type":"miniprogram","miniprogram":{"appid":"wx123123123123123","pagepath":"pages/index?userid=zhangsan&orderid=123123123","content":"点击打开小程序查询更多"}}]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "msgid": "MSG_ID"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -900,8 +850,7 @@ func TestSendMenuMsgOnEvent(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg_on_event?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	menu := &Menu{
 		HeadContent: "欢迎咨询",

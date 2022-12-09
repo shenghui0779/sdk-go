@@ -1,9 +1,7 @@
 package externalcontact
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestListCustomerStrategy(t *testing.T) {
 	body := []byte(`{"cursor":"CURSOR","limit":1000}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"strategy": [
@@ -31,8 +26,7 @@ func TestListCustomerStrategy(t *testing.T) {
 		}
 	],
 	"next_cursor": "NEXT_CURSOR"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -41,8 +35,7 @@ func TestListCustomerStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/customer_strategy/list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultCustomerStrategyList)
 
@@ -64,9 +57,7 @@ func TestListCustomerStrategy(t *testing.T) {
 
 func TestGetCustomerStrategy(t *testing.T) {
 	body := []byte(`{"strategy_id":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"strategy": {
@@ -102,8 +93,7 @@ func TestGetCustomerStrategy(t *testing.T) {
 			"manage_customer_tag": true
 		}
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -112,8 +102,7 @@ func TestGetCustomerStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/customer_strategy/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultCustomerStrategyGet)
 
@@ -156,14 +145,11 @@ func TestGetCustomerStrategy(t *testing.T) {
 
 func TestCreateCustomerStrategy(t *testing.T) {
 	body := []byte(`{"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"view_customer_list":true,"view_customer_data":true,"view_room_list":true,"contact_me":true,"join_room":true,"share_customer":false,"oper_resign_customer":true,"oper_resign_group":true,"send_customer_msg":true,"edit_welcome_msg":true,"view_behavior_data":true,"view_room_data":true,"send_group_msg":true,"room_deduplication":true,"rapid_reply":true,"onjob_customer_transfer":true,"edit_anti_spam_rule":true,"export_customer_list":true,"export_customer_data":true,"export_customer_group_list":true,"manage_customer_tag":true},"range":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"strategy_id": 1
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -172,8 +158,7 @@ func TestCreateCustomerStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/customer_strategy/create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsCustomerStrategyCreate{
 		StrategyName: "NAME",
@@ -225,9 +210,7 @@ func TestCreateCustomerStrategy(t *testing.T) {
 
 func TestGetCustomerStrategyRange(t *testing.T) {
 	body := []byte(`{"strategy_id":1,"cursor":"CURSOR","limit":1000}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"range": [
@@ -241,8 +224,7 @@ func TestGetCustomerStrategyRange(t *testing.T) {
 		}
 	],
 	"next_cursor": "NEXT_CURSOR"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -251,8 +233,7 @@ func TestGetCustomerStrategyRange(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/customer_strategy/get_range?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultCustomerStrategyRange)
 
@@ -275,13 +256,10 @@ func TestGetCustomerStrategyRange(t *testing.T) {
 
 func TestEditCustomerStrategy(t *testing.T) {
 	body := []byte(`{"strategy_id":1,"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"view_customer_list":true,"view_customer_data":true,"view_room_list":true,"contact_me":true,"join_room":true,"share_customer":false,"oper_resign_customer":true,"oper_resign_group":true,"send_customer_msg":true,"edit_welcome_msg":true,"view_behavior_data":true,"view_room_data":true,"send_group_msg":true,"room_deduplication":true,"rapid_reply":true,"onjob_customer_transfer":true,"edit_anti_spam_rule":true,"export_customer_list":true,"export_customer_data":true,"export_customer_group_list":true,"manage_customer_tag":true},"range_add":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}],"range_del":[{"type":1,"userid":"lisi"},{"type":2,"partyid":2}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -290,8 +268,7 @@ func TestEditCustomerStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/customer_strategy/edit?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsCustomerStrategyEdit{
 		StrategyID:   1,
@@ -349,13 +326,10 @@ func TestEditCustomerStrategy(t *testing.T) {
 
 func TestDeleteCustomerStrategy(t *testing.T) {
 	body := []byte(`{"strategy_id":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -364,8 +338,7 @@ func TestDeleteCustomerStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/customer_strategy/del?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteCustomerStrategy(1))
 
@@ -374,9 +347,7 @@ func TestDeleteCustomerStrategy(t *testing.T) {
 
 func TestListMomentStrategy(t *testing.T) {
 	body := []byte(`{"cursor":"CURSOR","limit":1000}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"strategy": [
@@ -388,8 +359,7 @@ func TestListMomentStrategy(t *testing.T) {
 		}
 	],
 	"next_cursor": "NEXT_CURSOR"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -398,8 +368,7 @@ func TestListMomentStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMomentStrategyList)
 
@@ -421,9 +390,7 @@ func TestListMomentStrategy(t *testing.T) {
 
 func TestGetMomentStrategy(t *testing.T) {
 	body := []byte(`{"strategy_id":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"strategy": {
@@ -441,8 +408,7 @@ func TestGetMomentStrategy(t *testing.T) {
 			"manage_moment_cover_and_sign": true
 		}
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -451,8 +417,7 @@ func TestGetMomentStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMomentStrategyGet)
 
@@ -477,9 +442,7 @@ func TestGetMomentStrategy(t *testing.T) {
 
 func TestGetMomentStrategyRange(t *testing.T) {
 	body := []byte(`{"strategy_id":1,"cursor":"CURSOR","limit":1000}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"range": [
@@ -493,8 +456,7 @@ func TestGetMomentStrategyRange(t *testing.T) {
 		}
 	],
 	"next_cursor": "NEXT_CURSOR"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -503,8 +465,7 @@ func TestGetMomentStrategyRange(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/get_range?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMomentStrategyRange)
 
@@ -527,14 +488,11 @@ func TestGetMomentStrategyRange(t *testing.T) {
 
 func TestCreateMomentStrategy(t *testing.T) {
 	body := []byte(`{"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"send_moment":true,"view_moment_list":true,"manage_moment_cover_and_sign":true},"range":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"strategy_id": 1
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -543,8 +501,7 @@ func TestCreateMomentStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMomentStrategyCreate{
 		StrategyName: "NAME",
@@ -578,13 +535,10 @@ func TestCreateMomentStrategy(t *testing.T) {
 
 func TestEditMomentStrategy(t *testing.T) {
 	body := []byte(`{"strategy_id":1,"strategy_name":"NAME","admin_list":["zhangsan","lisi"],"privilege":{"send_moment":true,"view_moment_list":true,"manage_moment_cover_and_sign":true},"range_add":[{"type":1,"userid":"zhangsan"},{"type":2,"partyid":1}],"range_del":[{"type":1,"userid":"lisi"},{"type":2,"partyid":2}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -593,8 +547,7 @@ func TestEditMomentStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/edit?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMomentStrategyEdit{
 		StrategyID:   1,
@@ -634,13 +587,10 @@ func TestEditMomentStrategy(t *testing.T) {
 
 func TestDeleteMomentStrategy(t *testing.T) {
 	body := []byte(`{"strategy_id":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -649,8 +599,7 @@ func TestDeleteMomentStrategy(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/moment_strategy/del?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteMomentStrategy(1))
 

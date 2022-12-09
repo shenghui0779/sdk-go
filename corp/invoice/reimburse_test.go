@@ -1,9 +1,7 @@
 package invoice
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestGetInvoiceInfo(t *testing.T) {
 	body := []byte(`{"card_id":"CARDID","encrypt_code":"ENCRYPTCODE"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "card_id": "CARDID",
@@ -51,8 +46,7 @@ func TestGetInvoiceInfo(t *testing.T) {
         "reimburse_status": "INVOICE_REIMBURSE_INIT",
         "check_code": "check_code"
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -61,8 +55,7 @@ func TestGetInvoiceInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/getinvoiceinfo?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultInvoiceInfo)
 
@@ -104,13 +97,10 @@ func TestGetInvoiceInfo(t *testing.T) {
 
 func TestUpdateInvoiceStatus(t *testing.T) {
 	body := []byte(`{"card_id":"CARDID","encrypt_code":"ENCRYPTCODE","reimburse_status":"INVOICE_REIMBURSE_INIT"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -119,8 +109,7 @@ func TestUpdateInvoiceStatus(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updateinvoicestatus?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UpdateInvoiceStatus("CARDID", "ENCRYPTCODE", InvioceReimburseInit))
 
@@ -129,9 +118,7 @@ func TestUpdateInvoiceStatus(t *testing.T) {
 
 func TestBatchGetInvoiceInfo(t *testing.T) {
 	body := []byte(`{"item_list":[{"card_id":"CARDID1","encrypt_code":"ENCRYPTCODE1"},{"card_id":"CARDID2","encrypt_code":"ENCRYPTCODE2"}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "item_list": [
@@ -169,8 +156,7 @@ func TestBatchGetInvoiceInfo(t *testing.T) {
             }
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -179,8 +165,7 @@ func TestBatchGetInvoiceInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/getinvoiceinfobatch?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	invoices := []*ParamsInvoice{
 		{
@@ -239,13 +224,10 @@ func TestBatchGetInvoiceInfo(t *testing.T) {
 
 func TestBatchUpdateInvoiceStatus(t *testing.T) {
 	body := []byte(`{"openid":"OPENID","reimburse_status":"INVOICE_REIMBURSE_INIT","invoice_list":[{"card_id":"cardid_1","encrypt_code":"encrypt_code_1"},{"card_id":"cardid_2","encrypt_code":"encrypt_code_2"}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -254,8 +236,7 @@ func TestBatchUpdateInvoiceStatus(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/card/invoice/reimburse/updatestatusbatch?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	invoices := []*ParamsInvoice{
 		{

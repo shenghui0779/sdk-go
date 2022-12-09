@@ -1,9 +1,7 @@
 package externalcontact
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestGetUserBehaviorData(t *testing.T) {
 	body := []byte(`{"userid":["zhangsan","lisi"],"partyid":[1001,1002],"start_time":1536508800,"end_time":1536595200}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "behavior_data": [
@@ -44,8 +39,7 @@ func TestGetUserBehaviorData(t *testing.T) {
             "new_contact_cnt": 5
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -54,8 +48,7 @@ func TestGetUserBehaviorData(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_user_behavior_data?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsUserBehaviorData{
 		UserID:    []string{"zhangsan", "lisi"},
@@ -97,9 +90,7 @@ func TestGetUserBehaviorData(t *testing.T) {
 
 func TestGetGroupChatStatistic(t *testing.T) {
 	body := []byte(`{"day_begin_time":1600272000,"day_end_time":1600444800,"owner_filter":{"userid_list":["zhangsan"]},"order_by":2,"limit":1000}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "total": 2,
@@ -132,8 +123,7 @@ func TestGetGroupChatStatistic(t *testing.T) {
             }
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -142,8 +132,7 @@ func TestGetGroupChatStatistic(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/groupchat/statistic?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsGroupChatStatistic{
 		DayBeginTime: 1600272000,
@@ -189,9 +178,7 @@ func TestGetGroupChatStatistic(t *testing.T) {
 
 func TestGetGroupChatStatisticByDay(t *testing.T) {
 	body := []byte(`{"day_begin_time":1600272000,"day_end_time":1600358400,"owner_filter":{"userid_list":["zhangsan"]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "items": [
@@ -222,8 +209,7 @@ func TestGetGroupChatStatisticByDay(t *testing.T) {
             }
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -232,8 +218,7 @@ func TestGetGroupChatStatisticByDay(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/groupchat/statistic_group_by_day?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsGroupChatStatisticByDay{
 		DayBeginTime: 1600272000,

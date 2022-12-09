@@ -1,9 +1,7 @@
 package message
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,22 +10,18 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestUpdateButtonDisable(t *testing.T) {
 	body := []byte(`{"userids":["userid1","userid2"],"partyids":[2,3],"tagids":[44,55],"agentid":1,"response_code":"response_code","button":{"replace_name":"replace_name"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
 		"userid1",
 		"userid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -36,8 +30,7 @@ func TestUpdateButtonDisable(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/update_template_card?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &CardExtra{
 		UserIDs:  []string{"userid1", "userid2"},
@@ -57,17 +50,14 @@ func TestUpdateButtonDisable(t *testing.T) {
 
 func TestUpdateToTextNoticeCard(t *testing.T) {
 	body := []byte(`{"userids":["userid1","userid2"],"partyids":[2,3],"agentid":1,"response_code":"response_code","template_card":{"card_type":"text_notice","source":{"icon_url":"图片的url","desc":"企业微信","desc_color":1},"action_menu":{"desc":"卡片副交互辅助文本说明","action_list":[{"text":"接受推送","key":"A"},{"text":"不再推送","key":"B"}]},"main_title":{"title":"欢迎使用企业微信","desc":"您的好友正在邀请您加入企业微信"},"quote_area":{"type":1,"url":"https://work.weixin.qq.com","title":"企业微信的引用样式","quote_text":"企业微信真好用呀真好用"},"emphasis_content":{"title":"100","desc":"核心数据"},"sub_title_text":"下载企业微信还能抢红包！","horizontal_content_list":[{"keyname":"邀请人","value":"张三"},{"type":1,"keyname":"企业微信官网","value":"点击访问","url":"https://work.weixin.qq.com"},{"type":2,"keyname":"企业微信下载","value":"企业微信.apk","media_id":"文件的media_id"},{"type":3,"keyname":"员工信息","value":"点击查看","userid":"zhangsan"}],"jump_list":[{"type":1,"title":"企业微信官网","url":"https://work.weixin.qq.com"},{"type":2,"title":"跳转小程序","appid":"小程序的appid","pagepath":"/index.html"}],"card_action":{"type":2,"url":"https://work.weixin.qq.com","appid":"小程序的appid","pagepath":"/index.html"}}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
 		"userid1",
 		"userid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -76,8 +66,7 @@ func TestUpdateToTextNoticeCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/update_template_card?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &TextNoticeCard{
 		Source: &CardSource{
@@ -175,17 +164,14 @@ func TestUpdateToTextNoticeCard(t *testing.T) {
 
 func TestUpdateToNewsNoticeCard(t *testing.T) {
 	body := []byte(`{"userids":["userid1","userid2"],"partyids":[2,3],"agentid":1,"response_code":"response_code","template_card":{"card_type":"news_notice","source":{"icon_url":"图片的url","desc":"企业微信","desc_color":1},"action_menu":{"desc":"卡片副交互辅助文本说明","action_list":[{"text":"接受推送","key":"A"},{"text":"不再推送","key":"B"}]},"main_title":{"title":"欢迎使用企业微信","desc":"您的好友正在邀请您加入企业微信"},"quote_area":{"type":1,"url":"https://work.weixin.qq.com","title":"企业微信的引用样式","quote_text":"企业微信真好用呀真好用"},"image_text_area":{"type":1,"url":"https://work.weixin.qq.com","title":"企业微信的左图右文样式","desc":"企业微信真好用呀真好用","image_url":"https://img.iplaysoft.com/wp-content/uploads/2019/free-images/free_stock_photo_2x.jpg"},"card_image":{"url":"图片的url","aspect_ratio":1.3},"vertical_content_list":[{"title":"惊喜红包等你来拿","desc":"下载企业微信还能抢红包！"}],"horizontal_content_list":[{"keyname":"邀请人","value":"张三"},{"type":1,"keyname":"企业微信官网","value":"点击访问","url":"https://work.weixin.qq.com"},{"type":2,"keyname":"企业微信下载","value":"企业微信.apk","media_id":"文件的media_id"},{"type":3,"keyname":"员工信息","value":"点击查看","userid":"zhangsan"}],"jump_list":[{"type":1,"title":"企业微信官网","url":"https://work.weixin.qq.com"},{"type":2,"title":"跳转小程序","appid":"小程序的appid","pagepath":"/index.html"}],"card_action":{"type":2,"url":"https://work.weixin.qq.com","appid":"小程序的appid","pagepath":"/index.html"}}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
 		"userid1",
 		"userid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -194,8 +180,7 @@ func TestUpdateToNewsNoticeCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/update_template_card?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &NewsNoticeCard{
 		Source: &CardSource{
@@ -305,17 +290,14 @@ func TestUpdateToNewsNoticeCard(t *testing.T) {
 
 func TestUpdateToButtonInteractionCard(t *testing.T) {
 	body := []byte(`{"userids":["userid1","userid2"],"partyids":[2,3],"agentid":1,"response_code":"response_code","template_card":{"card_type":"button_interaction","source":{"icon_url":"图片的url","desc":"企业微信","desc_color":1},"action_menu":{"desc":"卡片副交互辅助文本说明","action_list":[{"text":"接受推送","key":"A"},{"text":"不再推送","key":"B"}]},"main_title":{"title":"欢迎使用企业微信","desc":"您的好友正在邀请您加入企业微信"},"quote_area":{"type":1,"url":"https://work.weixin.qq.com","title":"企业微信的引用样式","quote_text":"企业微信真好用呀真好用"},"sub_title_text":"下载企业微信还能抢红包！","horizontal_content_list":[{"keyname":"邀请人","value":"张三"},{"type":1,"keyname":"企业微信官网","value":"点击访问","url":"https://work.weixin.qq.com"},{"type":2,"keyname":"企业微信下载","value":"企业微信.apk","media_id":"文件的media_id"},{"type":3,"keyname":"员工信息","value":"点击查看","userid":"zhangsan"}],"card_action":{"type":2,"url":"https://work.weixin.qq.com","appid":"小程序的appid","pagepath":"/index.html"},"button_selection":{"question_key":"btn_question_key1","title":"企业微信评分","option_list":[{"id":"btn_selection_id1","text":"100分"},{"id":"btn_selection_id2","text":"101分"}],"selected_id":"btn_selection_id1"},"button_list":[{"text":"按钮1","style":1,"key":"button_key_1"},{"text":"按钮2","style":2,"key":"button_key_2"}],"replace_text":"已提交"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
 		"userid1",
 		"userid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -324,8 +306,7 @@ func TestUpdateToButtonInteractionCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/update_template_card?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &ButtonInteractionCard{
 		Source: &CardSource{
@@ -434,17 +415,14 @@ func TestUpdateToButtonInteractionCard(t *testing.T) {
 
 func TestUpdateToVoteInteractionCard(t *testing.T) {
 	body := []byte(`{"userids":["userid1","userid2"],"partyids":[2,3],"agentid":1,"response_code":"response_code","template_card":{"card_type":"vote_interaction","source":{"icon_url":"图片的url","desc":"企业微信"},"main_title":{"title":"欢迎使用企业微信","desc":"您的好友正在邀请您加入企业微信"},"checkbox":{"question_key":"question_key1","option_list":[{"id":"option_id1","text":"选择题选项1","is_checked":true},{"id":"option_id2","text":"选择题选项2","is_checked":false}],"mode":1},"submit_button":{"text":"提交","key":"key"},"replace_text":"已提交"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
 		"userid1",
 		"userid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -453,8 +431,7 @@ func TestUpdateToVoteInteractionCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/update_template_card?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &VoteInteractionCard{
 		Source: &CardSource{
@@ -505,17 +482,14 @@ func TestUpdateToVoteInteractionCard(t *testing.T) {
 
 func TestUpdateToMultipleInteractionCard(t *testing.T) {
 	body := []byte(`{"userids":["userid1","userid2"],"partyids":[2,3],"tagids":[44,55],"agentid":1,"response_code":"response_code","template_card":{"card_type":"multiple_interaction","source":{"icon_url":"图片的url","desc":"企业微信"},"main_title":{"title":"欢迎使用企业微信","desc":"您的好友正在邀请您加入企业微信"},"select_list":[{"question_key":"question_key1","title":"选择器标签1","option_list":[{"id":"selection_id1","text":"选择器选项1"},{"id":"selection_id2","text":"选择器选项2"}],"selected_id":"selection_id1"},{"question_key":"question_key2","title":"选择器标签2","option_list":[{"id":"selection_id3","text":"选择器选项3"},{"id":"selection_id4","text":"选择器选项4"}],"selected_id":"selection_id3"}],"submit_button":{"text":"提交","key":"key"},"replace_text":"已提交"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
 		"userid1",
 		"userid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -524,8 +498,7 @@ func TestUpdateToMultipleInteractionCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/message/update_template_card?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &MultipleInteractionCard{
 		Source: &CardSource{

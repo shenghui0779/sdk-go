@@ -1,9 +1,7 @@
 package minip
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -11,16 +9,12 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCreateQRCode(t *testing.T) {
 	body := []byte(`{"path":"page/index/index","width":430}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte("BUFFER"))),
-	}
+	resp := []byte("BUFFER")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -29,8 +23,7 @@ func TestCreateQRCode(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	qrcode := new(QRCode)
 
@@ -43,10 +36,7 @@ func TestCreateQRCode(t *testing.T) {
 func TestGetQRCode(t *testing.T) {
 	body := []byte(`{"path":"page/index/index","width":430}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte("BUFFER"))),
-	}
+	resp := []byte("BUFFER")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -55,8 +45,7 @@ func TestGetQRCode(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/getwxacode?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	params := &ParamsQRCodeGet{
 		Path:  "page/index/index",
@@ -73,10 +62,7 @@ func TestGetQRCode(t *testing.T) {
 func TestGetUnlimitQRCode(t *testing.T) {
 	body := []byte(`{"scene":"a=1"}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte("BUFFER"))),
-	}
+	resp := []byte("BUFFER")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -85,8 +71,7 @@ func TestGetUnlimitQRCode(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	mp := New("APPID", "APPSECRET")
-	mp.SetClient(wx.WithHTTPClient(client))
+	mp := New("APPID", "APPSECRET", WithMockClient(client))
 
 	params := &ParamsQRCodeUnlimit{
 		Scene: "a=1",

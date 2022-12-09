@@ -14,31 +14,11 @@ import (
 )
 
 type Corp struct {
-	corpid         string
-	token          string
-	encodingAESKey string
-	nonce          func(size uint) string
-	client         wx.Client
-}
-
-func New(corpid string) *Corp {
-	return &Corp{
-		corpid: corpid,
-		nonce:  wx.Nonce,
-		client: wx.DefaultClient(),
-	}
-}
-
-// SetServerConfig 设置服务器配置
-// [参考](https://open.work.weixin.qq.com/api/doc/90000/90135/90930)
-func (corp *Corp) SetServerConfig(token, encodingAESKey string) {
-	corp.token = token
-	corp.encodingAESKey = encodingAESKey
-}
-
-// SetClient sets options for wechat client
-func (corp *Corp) SetClient(options ...wx.ClientOption) {
-	corp.client.Set(options...)
+	corpid string
+	token  string
+	aeskey string
+	nonce  func() string
+	client wx.HTTPClient
 }
 
 func (corp *Corp) CorpID() string {
@@ -133,11 +113,59 @@ func (corp *Corp) VerifyEventSign(signature string, items ...string) bool {
 
 // DecryptEventMessage 事件消息解密
 func (corp *Corp) DecryptEventMessage(encrypt string) (wx.WXML, error) {
-	b, err := event.Decrypt(corp.corpid, corp.encodingAESKey, encrypt)
+	b, err := event.Decrypt(corp.corpid, corp.aeskey, encrypt)
 
 	if err != nil {
 		return nil, err
 	}
 
 	return wx.ParseXML2Map(b)
+}
+
+type CorpOption func(corp *Corp)
+
+// WithServerConfig 设置服务器配置
+// [参考](https://open.work.weixin.qq.com/api/doc/90000/90135/90930)
+func WithServerConfig(token, aeskey string) CorpOption {
+	return func(corp *Corp) {
+		corp.token = token
+		corp.aeskey = aeskey
+	}
+}
+
+// WithNonce 设置 Nonce（加密随机串）
+func WithNonce(f func() string) CorpOption {
+	return func(corp *Corp) {
+		corp.nonce = f
+	}
+}
+
+// WithClient 设置 HTTP Client
+func WithClient(c *http.Client) CorpOption {
+	return func(corp *Corp) {
+		corp.client = wx.NewHTTPClient(c)
+	}
+}
+
+// WithMockClient 设置 Mock Client
+func WithMockClient(c wx.HTTPClient) CorpOption {
+	return func(corp *Corp) {
+		corp.client = c
+	}
+}
+
+func New(corpid string, options ...CorpOption) *Corp {
+	corp := &Corp{
+		corpid: corpid,
+		nonce: func() string {
+			return wx.Nonce(16)
+		},
+		client: wx.NewDefaultClient(),
+	}
+
+	for _, f := range options {
+		f(corp)
+	}
+
+	return corp
 }

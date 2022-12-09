@@ -63,11 +63,9 @@ func ShowQRCode(ctx context.Context, ticket string) (string, error) {
 		return "", err
 	}
 
-	defer resp.Body.Close()
-
 	buf := bytes.NewBuffer(make([]byte, 0, 20<<10)) // 20kb
 
-	if _, err = io.Copy(buf, resp.Body); err != nil {
+	if _, err = io.Copy(buf, bytes.NewReader(resp)); err != nil {
 		return "", nil
 	}
 

@@ -1,9 +1,7 @@
 package mch
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -28,9 +26,7 @@ func TestRefundByTransactionID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -43,8 +39,7 @@ func TestRefundByTransactionID(t *testing.T) {
 	<out_refund_no>1415701182</out_refund_no>
 	<refund_id>2008450740201411110000174436</refund_id>
 	<refund_fee>1</refund_fee>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -53,13 +48,9 @@ func TestRefundByTransactionID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/secapi/pay/refund", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
-	}
-
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), RefundByTransactionID("wx2421b1c4370ec43b", "4008450740201411110005820873", &ParamsRefund{
 		OutRefundNO: "1415701182",
@@ -98,9 +89,7 @@ func TestRefundByOutTradeNO(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -113,8 +102,7 @@ func TestRefundByOutTradeNO(t *testing.T) {
 	<out_refund_no>1415701182</out_refund_no>
 	<refund_id>2008450740201411110000174436</refund_id>
 	<refund_fee>1</refund_fee>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -123,13 +111,9 @@ func TestRefundByOutTradeNO(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/secapi/pay/refund", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "6cefdb308e1e2e8aabd48cf79e546a02"
-	}
-
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), RefundByOutTradeNO("wx2421b1c4370ec43b", "1415757673", &ParamsRefund{
 		OutRefundNO: "1415701182",
@@ -165,9 +149,7 @@ func TestQueryRefundByRefundID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -182,8 +164,7 @@ func TestQueryRefundByRefundID(t *testing.T) {
 	<refund_id_0>2008450740201411110000174436</refund_id_0>
 	<refund_status_0>PROCESSING</refund_status_0>
 	<transaction_id>1008450740201411110005820873</transaction_id>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -192,13 +173,9 @@ func TestQueryRefundByRefundID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/refundquery", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
-	}
-
-	mch.SetClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryRefundByRefundID("wx2421b1c4370ec43b", "2008450740201411110000174436"))
 
@@ -232,9 +209,7 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -249,8 +224,7 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 	<refund_id_0>2008450740201411110000174436</refund_id_0>
 	<refund_status_0>PROCESSING</refund_status_0>
 	<transaction_id>1008450740201411110005820873</transaction_id>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -259,13 +233,9 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/refundquery", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
-	}
-
-	mch.SetClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryRefundByOutRefundNO("wx2421b1c4370ec43b", "1415701182"))
 
@@ -299,9 +269,7 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -316,8 +284,7 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 	<refund_id_0>2008450740201411110000174436</refund_id_0>
 	<refund_status_0>PROCESSING</refund_status_0>
 	<transaction_id>1008450740201411110005820873</transaction_id>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -326,13 +293,9 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/refundquery", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
-	}
-
-	mch.SetClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryRefundByTransactionID("wx2421b1c4370ec43b", "1008450740201411110005820873"))
 
@@ -366,9 +329,7 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<return_msg>OK</return_msg>
 	<appid>wx2421b1c4370ec43b</appid>
@@ -383,8 +344,7 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 	<refund_id_0>2008450740201411110000174436</refund_id_0>
 	<refund_status_0>PROCESSING</refund_status_0>
 	<transaction_id>1008450740201411110005820873</transaction_id>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -393,13 +353,9 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/pay/refundquery", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "0b9f35f484df17a732e537c37708d1d0"
-	}
-
-	mch.SetClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryRefundByOutTradeNO("wx2421b1c4370ec43b", "1415757673"))
 

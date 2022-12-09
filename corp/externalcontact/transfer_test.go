@@ -1,9 +1,7 @@
 package externalcontact
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestTransferCustomer(t *testing.T) {
 	body := []byte(`{"handover_userid":"zhangsan","takeover_userid":"lisi","external_userid":["woAJ2GCAAAXtWyujaWJHDDGi0mACAAAA","woAJ2GCAAAXtWyujaWJHDDGi0mACBBBB"],"transfer_success_msg":"您好，您的服务已升级，后续将由我的同事李四@腾讯接替我的工作，继续为您服务。"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "customer": [
@@ -32,8 +27,7 @@ func TestTransferCustomer(t *testing.T) {
             "errcode": 0
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -42,8 +36,7 @@ func TestTransferCustomer(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/transfer_customer?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsCustomerTranster{
 		HandoverUserID:     "zhangsan",
@@ -73,9 +66,7 @@ func TestTransferCustomer(t *testing.T) {
 
 func TestGetTransferResult(t *testing.T) {
 	body := []byte(`{"handover_userid":"zhangsan","takeover_userid":"lisi","cursor":"CURSOR"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "customer": [
@@ -96,8 +87,7 @@ func TestGetTransferResult(t *testing.T) {
         }
     ],
     "next_cursor": "NEXT_CURSOR"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -106,8 +96,7 @@ func TestGetTransferResult(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/transfer_result?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultTransferRet)
 
@@ -138,9 +127,7 @@ func TestGetTransferResult(t *testing.T) {
 
 func TestListUnassigned(t *testing.T) {
 	body := []byte(`{"page_size":100}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "info": [
@@ -157,8 +144,7 @@ func TestListUnassigned(t *testing.T) {
     ],
     "is_last": false,
     "next_cursor": "aSfwejksvhToiMMfFeIGZZ"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -167,8 +153,7 @@ func TestListUnassigned(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_unassigned_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultUnassignedList)
 
@@ -195,9 +180,7 @@ func TestListUnassigned(t *testing.T) {
 
 func TestTransferResignedCustomer(t *testing.T) {
 	body := []byte(`{"handover_userid":"zhangsan","takeover_userid":"lisi","external_userid":["woAJ2GCAAAXtWyujaWJHDDGi0mACBBBB","woAJ2GCAAAXtWyujaWJHDDGi0mACAAAA"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "customer": [
@@ -210,8 +193,7 @@ func TestTransferResignedCustomer(t *testing.T) {
             "errcode": 40096
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -220,8 +202,7 @@ func TestTransferResignedCustomer(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/resigned/transfer_customer?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	externalUserIDs := []string{"woAJ2GCAAAXtWyujaWJHDDGi0mACBBBB", "woAJ2GCAAAXtWyujaWJHDDGi0mACAAAA"}
 
@@ -246,9 +227,7 @@ func TestTransferResignedCustomer(t *testing.T) {
 
 func TestGetResignedTransferResult(t *testing.T) {
 	body := []byte(`{"handover_userid":"zhangsan","takeover_userid":"lisi","cursor":"CURSOR"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "customer": [
@@ -269,8 +248,7 @@ func TestGetResignedTransferResult(t *testing.T) {
         }
     ],
     "next_cursor": "NEXT_CURSOR"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -279,8 +257,7 @@ func TestGetResignedTransferResult(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/resigned/transfer_result?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultResignedTransferRet)
 
@@ -311,9 +288,7 @@ func TestGetResignedTransferResult(t *testing.T) {
 
 func TestTransferGroupChat(t *testing.T) {
 	body := []byte(`{"chat_id_list":["wrOgQhDgAAcwMTB7YmDkbeBsgT_AAAA","wrOgQhDgAAMYQiS5ol9G7gK9JVQUAAAA"],"new_owner":"zhangsan"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "failed_chat_list": [
@@ -323,8 +298,7 @@ func TestTransferGroupChat(t *testing.T) {
             "errmsg": "the owner of this chat is not resigned"
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -333,8 +307,7 @@ func TestTransferGroupChat(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/groupchat/transfer?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultGroupChatTransfer)
 

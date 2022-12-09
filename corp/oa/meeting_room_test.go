@@ -1,9 +1,7 @@
 package oa
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,19 +10,15 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAddMeetingRoom(t *testing.T) {
 	body := []byte(`{"name":"18F-会议室","capacity":10,"city":"深圳","building":"腾讯大厦","floor":"18F","equipment":[1,2,3],"coordinate":{"latitude":"22.540503","longitude":"113.934528"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"meetingroom_id": 1
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,8 +27,7 @@ func TestAddMeetingRoom(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/add?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMeetingRoomAdd{
 		Name:      "18F-会议室",
@@ -60,9 +53,7 @@ func TestAddMeetingRoom(t *testing.T) {
 
 func TestListMeetingRoom(t *testing.T) {
 	body := []byte(`{"city":"深圳","building":"腾讯大厦","floor":"18F","equipment":[1,2,3]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"meetingroom_list": [
@@ -101,8 +92,7 @@ func TestListMeetingRoom(t *testing.T) {
 			}
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -111,8 +101,7 @@ func TestListMeetingRoom(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMeetingRoomList{
 		City:      "深圳",
@@ -160,13 +149,10 @@ func TestListMeetingRoom(t *testing.T) {
 
 func TestEditMeetingRoom(t *testing.T) {
 	body := []byte(`{"meetingroom_id":2,"name":"18F-会议室","capacity":10,"city":"深圳","building":"腾讯大厦","floor":"18F","equipment":[1,2,3],"coordinate":{"latitude":"22.540503","longitude":"113.934528"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -175,8 +161,7 @@ func TestEditMeetingRoom(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/edit?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMeetingRoomEdit{
 		MeetingRoomID: 2,
@@ -199,13 +184,10 @@ func TestEditMeetingRoom(t *testing.T) {
 
 func TestDeleteMeetingRoom(t *testing.T) {
 	body := []byte(`{"meetingroom_id":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -214,8 +196,7 @@ func TestDeleteMeetingRoom(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/del?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteMeetingRoom(1))
 
@@ -224,9 +205,7 @@ func TestDeleteMeetingRoom(t *testing.T) {
 
 func TestGetMeetingRoomBookingInfo(t *testing.T) {
 	body := []byte(`{"meetingroom_id":1,"start_time":1593532800,"end_time":1593619200,"city":"深圳","building":"腾讯大厦","floor":"18F"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"booking_list": [
@@ -247,8 +226,7 @@ func TestGetMeetingRoomBookingInfo(t *testing.T) {
 			"schedule": []
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -257,8 +235,7 @@ func TestGetMeetingRoomBookingInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/get_booking_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMeetingRoomBookingInfo{
 		MeetingRoomID: 1,
@@ -297,15 +274,12 @@ func TestGetMeetingRoomBookingInfo(t *testing.T) {
 
 func TestBookMeetingRoom(t *testing.T) {
 	body := []byte(`{"meetingroom_id":1,"subject":"周会","start_time":1593532800,"end_time":1593619200,"booker":"zhangsan","attendees":["lisi","wangwu"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"meeting_id": "mtgsaseb6e027c123cbafAAA",
 	"schedule_id": "17c7d2bd9f20d652840f72f59e796AAA"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -314,8 +288,7 @@ func TestBookMeetingRoom(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/book?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMeetingRoomBook{
 		MeetingRoomID: 1,
@@ -338,13 +311,10 @@ func TestBookMeetingRoom(t *testing.T) {
 
 func TestCancelBookMeetingRoom(t *testing.T) {
 	body := []byte(`{"meeting_id":"mt42b34949gsaseb6e027c123cbafAAA","keep_schedule":1}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -353,8 +323,7 @@ func TestCancelBookMeetingRoom(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/cancel_book?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", CancelBookMeetingRoom("mt42b34949gsaseb6e027c123cbafAAA", 1))
 
@@ -363,9 +332,7 @@ func TestCancelBookMeetingRoom(t *testing.T) {
 
 func TestGetMeetingRoomBookingInfoByID(t *testing.T) {
 	body := []byte(`{"meetingroom_id":1,"meeting_id":"mtebsada6e027c123cbafAAA"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"meetingroom_id": 1,
@@ -378,8 +345,7 @@ func TestGetMeetingRoomBookingInfoByID(t *testing.T) {
 			"booker": "zhangsan"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -388,8 +354,7 @@ func TestGetMeetingRoomBookingInfoByID(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/meetingroom/get_booking_info_by_meeting_id?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(MeetingRoomBookingInfo)
 

@@ -1,6 +1,7 @@
 package media
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -76,9 +77,7 @@ func UploadByURL(mediaType MediaType, filename, url string, result *ResultUpload
 						return err
 					}
 
-					defer resp.Body.Close()
-
-					if _, err = io.Copy(w, resp.Body); err != nil {
+					if _, err = io.Copy(w, bytes.NewReader(resp)); err != nil {
 						return err
 					}
 
@@ -144,9 +143,7 @@ func UploadImgByURL(filename, url string, result *ResultUploadImg) wx.Action {
 						return err
 					}
 
-					defer resp.Body.Close()
-
-					if _, err = io.Copy(w, resp.Body); err != nil {
+					if _, err = io.Copy(w, bytes.NewReader(resp)); err != nil {
 						return err
 					}
 

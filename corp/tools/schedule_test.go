@@ -1,9 +1,7 @@
 package tools
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,19 +10,15 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAddSchedule(t *testing.T) {
 	body := []byte(`{"schedule":{"organizer":"userid1","start_time":1571274600,"end_time":1571320210,"attendees":[{"userid":"userid2"}],"summary":"需求评审会议","description":"2.0版本需求初步评审","reminders":{"is_remind":1,"remind_before_event_secs":3600,"is_repeat":1,"repeat_type":7,"repeat_until":1606976813,"is_custom_repeat":1,"repeat_interval":1,"repeat_day_of_week":[3,7],"repeat_day_of_month":[10,21],"timezone":8},"location":"广州国际媒体港10楼1005会议室","cal_id":"wcjgewCwAAqeJcPI1d8Pwbjt7nttzAAA"},"agentid":1000014}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "schedule_id": "17c7d2bd9f20d652840f72f59e796AAA"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -33,8 +27,7 @@ func TestAddSchedule(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/add?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsScheduleAdd{
 		Schedule: &ScheduleAddData{
@@ -77,13 +70,10 @@ func TestAddSchedule(t *testing.T) {
 
 func TestUpdateSchedule(t *testing.T) {
 	body := []byte(`{"schedule":{"organizer":"userid1","schedule_id":"17c7d2bd9f20d652840f72f59e796AAA","start_time":1571274600,"end_time":1571320210,"attendees":[{"userid":"userid2"}],"summary":"test_summary","description":"test_description","reminders":{"is_remind":1,"remind_before_event_secs":3600,"is_repeat":1,"repeat_type":7,"repeat_until":1606976813,"is_custom_repeat":1,"repeat_interval":1,"repeat_day_of_week":[3,7],"repeat_day_of_month":[10,21],"timezone":8},"location":"test_place","skip_attendees":false}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -92,8 +82,7 @@ func TestUpdateSchedule(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/update?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsScheduleUpdate{
 		Schedule: &ScheduleUpdateData{
@@ -132,9 +121,7 @@ func TestUpdateSchedule(t *testing.T) {
 
 func TestGetSchedule(t *testing.T) {
 	body := []byte(`{"schedule_id_list":["17c7d2bd9f20d652840f72f59e796AAA"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "schedule_list": [
@@ -182,8 +169,7 @@ func TestGetSchedule(t *testing.T) {
             "status": 1
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -192,8 +178,7 @@ func TestGetSchedule(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultScheduleGet)
 
@@ -243,13 +228,10 @@ func TestGetSchedule(t *testing.T) {
 
 func TestDeleteSchedule(t *testing.T) {
 	body := []byte(`{"schedule_id":"17c7d2bd9f20d652840f72f59e796AAA"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -258,8 +240,7 @@ func TestDeleteSchedule(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/del?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteSchedule("17c7d2bd9f20d652840f72f59e796AAA"))
 
@@ -268,9 +249,7 @@ func TestDeleteSchedule(t *testing.T) {
 
 func TestGetSchduleByCalendar(t *testing.T) {
 	body := []byte(`{"cal_id":"wcjgewCwAAqeJcPI1d8Pwbjt7nttzAAA","offset":100,"limit":1000}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "schedule_list": [
@@ -310,8 +289,7 @@ func TestGetSchduleByCalendar(t *testing.T) {
             "cal_id": "wcjgewCwAAqeJcPI1d8Pwbjt7nttzAAA"
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -320,8 +298,7 @@ func TestGetSchduleByCalendar(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/get_by_calendar?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultScheduleGetByCalendar)
 
@@ -364,13 +341,10 @@ func TestGetSchduleByCalendar(t *testing.T) {
 
 func TestAddScheduleAttendee(t *testing.T) {
 	body := []byte(`{"schedule_id":"17c7d2bd9f20d652840f72f59e796AAA","attendees":[{"userid":"userid2"}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -379,8 +353,7 @@ func TestAddScheduleAttendee(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/add_attendees?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", AddScheduleAttendee("17c7d2bd9f20d652840f72f59e796AAA", "userid2"))
 
@@ -389,13 +362,10 @@ func TestAddScheduleAttendee(t *testing.T) {
 
 func TestDeleteScheduleAttendee(t *testing.T) {
 	body := []byte(`{"schedule_id":"17c7d2bd9f20d652840f72f59e796AAA","attendees":[{"userid":"userid2"}]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -404,8 +374,7 @@ func TestDeleteScheduleAttendee(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/oa/schedule/del_attendees?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", DeleteScheduleAttendee("17c7d2bd9f20d652840f72f59e796AAA", "userid2"))
 

@@ -1,9 +1,7 @@
 package message
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestSendLinkedcorpText(t *testing.T) {
 	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"msgtype":"text","agentid":1,"text":{"content":"你的快递已到，请携带工卡前往邮件中心领取。\n出发前可查看<a href=\"http://work.weixin.qq.com\">邮件中心视频实况</a>，聪明避开排队。"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
@@ -38,8 +33,7 @@ func TestSendLinkedcorpText(t *testing.T) {
 		"tagid1",
 		"tagid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -48,8 +42,7 @@ func TestSendLinkedcorpText(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &LinkedcorpExtra{
 		ToUser:  []string{"userid1", "userid2", "CorpId1/userid1", "CorpId2/userid2"},
@@ -71,9 +64,7 @@ func TestSendLinkedcorpText(t *testing.T) {
 
 func TestSendLinkedcorpImage(t *testing.T) {
 	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"msgtype":"image","agentid":1,"image":{"media_id":"MEDIA_ID"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
@@ -92,8 +83,7 @@ func TestSendLinkedcorpImage(t *testing.T) {
 		"tagid1",
 		"tagid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -102,8 +92,7 @@ func TestSendLinkedcorpImage(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &LinkedcorpExtra{
 		ToUser:  []string{"userid1", "userid2", "CorpId1/userid1", "CorpId2/userid2"},
@@ -125,9 +114,7 @@ func TestSendLinkedcorpImage(t *testing.T) {
 
 func TestSendLinkedcorpVoice(t *testing.T) {
 	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"msgtype":"voice","agentid":1,"voice":{"media_id":"MEDIA_ID"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
@@ -146,8 +133,7 @@ func TestSendLinkedcorpVoice(t *testing.T) {
 		"tagid1",
 		"tagid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -156,8 +142,7 @@ func TestSendLinkedcorpVoice(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &LinkedcorpExtra{
 		ToUser:  []string{"userid1", "userid2", "CorpId1/userid1", "CorpId2/userid2"},
@@ -179,9 +164,7 @@ func TestSendLinkedcorpVoice(t *testing.T) {
 
 func TestSendLinkedcorpVideo(t *testing.T) {
 	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"msgtype":"video","agentid":1,"video":{"media_id":"MEDIA_ID","title":"Title","description":"Description"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
@@ -200,8 +183,7 @@ func TestSendLinkedcorpVideo(t *testing.T) {
 		"tagid1",
 		"tagid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -210,8 +192,7 @@ func TestSendLinkedcorpVideo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	video := &Video{
 		MediaID:     "MEDIA_ID",
@@ -239,9 +220,7 @@ func TestSendLinkedcorpVideo(t *testing.T) {
 
 func TestSendLinkedcorpFile(t *testing.T) {
 	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"msgtype":"file","agentid":1,"file":{"media_id":"1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
@@ -260,8 +239,7 @@ func TestSendLinkedcorpFile(t *testing.T) {
 		"tagid1",
 		"tagid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -270,8 +248,7 @@ func TestSendLinkedcorpFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &LinkedcorpExtra{
 		ToUser:  []string{"userid1", "userid2", "CorpId1/userid1", "CorpId2/userid2"},
@@ -293,9 +270,7 @@ func TestSendLinkedcorpFile(t *testing.T) {
 
 func TestSendLinkedcorpTextCard(t *testing.T) {
 	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"msgtype":"textcard","agentid":1,"textcard":{"title":"领奖通知","description":"<div class=\"gray\">2016年9月26日</div> <div class=\"normal\">恭喜你抽中iPhone 7一台，领奖码：xxxx</div><div class=\"highlight\">请于2016年10月10日前联系行政同事领取</div>","url":"URL","btntxt":"更多"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
@@ -314,8 +289,7 @@ func TestSendLinkedcorpTextCard(t *testing.T) {
 		"tagid1",
 		"tagid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -324,8 +298,7 @@ func TestSendLinkedcorpTextCard(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	card := &TextCard{
 		Title:       "领奖通知",
@@ -354,9 +327,7 @@ func TestSendLinkedcorpTextCard(t *testing.T) {
 
 func TestSendLinkedcorpNews(t *testing.T) {
 	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"msgtype":"news","agentid":1,"news":{"articles":[{"title":"中秋节礼品领取","description":"今年中秋节公司有豪礼相送","url":"URL","picurl":"http://res.mail.qq.com/node/ww/wwopenmng/images/independent/doc/test_pic_msg1.png","btntxt":"更多"}]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
@@ -375,8 +346,7 @@ func TestSendLinkedcorpNews(t *testing.T) {
 		"tagid1",
 		"tagid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -385,8 +355,7 @@ func TestSendLinkedcorpNews(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	articles := []*NewsArticle{
 		{
@@ -418,9 +387,7 @@ func TestSendLinkedcorpNews(t *testing.T) {
 
 func TestSendLinkedcorpMPNews(t *testing.T) {
 	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"msgtype":"mpnews","agentid":1,"mpnews":{"articles":[{"title":"Title","thumb_media_id":"MEDIA_ID","author":"Author","content_source_url":"URL","content":"Content","digest":"Digest description"}]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
@@ -439,8 +406,7 @@ func TestSendLinkedcorpMPNews(t *testing.T) {
 		"tagid1",
 		"tagid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -449,8 +415,7 @@ func TestSendLinkedcorpMPNews(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	articles := []*MPNewsArticle{
 		{
@@ -483,9 +448,7 @@ func TestSendLinkedcorpMPNews(t *testing.T) {
 
 func TestSendLinkedcorpMarkdown(t *testing.T) {
 	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"msgtype":"markdown","agentid":1,"markdown":{"content":"您的会议室已经预定，稍后会同步到邮箱\n>**事项详情**\n>事　项：<font color=\"info\">开会</font>\n>组织者：@miglioguan\n>参与者：@miglioguan、@kunliu、@jamdeezhou、@kanexiong、@kisonwang\n>\n>会议室：<font color=\"info\">广州TIT 1楼 301</font>\n>日　期：<font color=\"warning\">2018年5月18日</font>\n>时　间：<font color=\"comment\">上午9:00-11:00</font>\n>\n>请准时参加会议。\n>\n>如需修改会议信息，请点击：[修改会议信息](https://work.weixin.qq.com)"}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
@@ -504,8 +467,7 @@ func TestSendLinkedcorpMarkdown(t *testing.T) {
 		"tagid1",
 		"tagid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -514,8 +476,7 @@ func TestSendLinkedcorpMarkdown(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &LinkedcorpExtra{
 		ToUser:  []string{"userid1", "userid2", "CorpId1/userid1", "CorpId2/userid2"},
@@ -537,9 +498,7 @@ func TestSendLinkedcorpMarkdown(t *testing.T) {
 
 func TestSendLinkedcorpMinipNotice(t *testing.T) {
 	body := []byte(`{"touser":["userid1","userid2","CorpId1/userid1","CorpId2/userid2"],"toparty":["partyid1","partyid2","LinkedId1/partyid1","LinkedId2/partyid2"],"totag":["tagid1","tagid2"],"msgtype":"miniprogram_notice","miniprogram_notice":{"appid":"wx123123123123123","page":"pages/index?userid=zhangsan&orderid=123123123","title":"会议室预订成功通知","description":"4月27日 16:16","emphasis_first_item":true,"content_item":[{"key":"会议室","value":"402"},{"key":"会议地点","value":"广州TIT-402会议室"},{"key":"会议时间","value":"2018年8月1日 09:00-09:30"},{"key":"参与人员","value":"周剑轩"}]}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invaliduser": [
@@ -558,8 +517,7 @@ func TestSendLinkedcorpMinipNotice(t *testing.T) {
 		"tagid1",
 		"tagid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -568,8 +526,7 @@ func TestSendLinkedcorpMinipNotice(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/linkedcorp/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	notice := &MinipNotice{
 		AppID:             "wx123123123123123",

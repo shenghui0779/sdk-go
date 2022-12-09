@@ -1,15 +1,12 @@
 package corp
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,15 +27,12 @@ func TestQRCodeAuthURL(t *testing.T) {
 }
 
 func TestAccessToken(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"access_token": "accesstoken000001",
 	"expires_in": 7200
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -48,7 +42,6 @@ func TestAccessToken(t *testing.T) {
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=CORPID&corpsecret=SECRET", nil).Return(resp, nil)
 
 	cp := New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
 
 	accessToken, err := cp.AccessToken(context.TODO(), "SECRET")
 

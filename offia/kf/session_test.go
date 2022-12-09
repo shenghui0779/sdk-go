@@ -1,9 +1,7 @@
 package kf
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,16 +10,12 @@ import (
 
 	"github.com/shenghui0779/gochat/mock"
 	"github.com/shenghui0779/gochat/offia"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestCreateSession(t *testing.T) {
 	body := []byte(`{"kf_account":"test1@test","openid":"OPENID"}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -30,8 +24,7 @@ func TestCreateSession(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/customservice/kfsession/create?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CreateSession("test1@test", "OPENID"))
 
@@ -41,10 +34,7 @@ func TestCreateSession(t *testing.T) {
 func TestCloseSession(t *testing.T) {
 	body := []byte(`{"kf_account":"test1@test","openid":"OPENID"}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       io.NopCloser(bytes.NewReader([]byte(`{"errcode":0,"errmsg":"ok"}`))),
-	}
+	resp := []byte(`{"errcode":0,"errmsg":"ok"}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -53,8 +43,7 @@ func TestCloseSession(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/customservice/kfsession/close?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CloseSession("test1@test", "OPENID"))
 
@@ -62,13 +51,10 @@ func TestCloseSession(t *testing.T) {
 }
 
 func TestGetSession(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"createtime": 123456789,
 	"kf_account": "test1@test"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -77,8 +63,7 @@ func TestGetSession(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/customservice/kfsession/getsession?access_token=ACCESS_TOKEN&openid=OPENID", nil).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	result := new(Session)
 
@@ -92,9 +77,7 @@ func TestGetSession(t *testing.T) {
 }
 
 func TestGetSessionList(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"sessionlist": [
 		{
 			"createtime": 123456789,
@@ -105,8 +88,7 @@ func TestGetSessionList(t *testing.T) {
 			"openid": "OPENID2"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -115,8 +97,7 @@ func TestGetSessionList(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/customservice/kfsession/getsessionlist?access_token=ACCESS_TOKEN&kf_account=ACCOUNT", nil).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	result := new(ResultSessionList)
 
@@ -138,9 +119,7 @@ func TestGetSessionList(t *testing.T) {
 }
 
 func TestGetWaitCase(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"count": 150,
 	"waitcaselist": [
 		{
@@ -152,8 +131,7 @@ func TestGetWaitCase(t *testing.T) {
 				"openid": "OPENID2"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -162,8 +140,7 @@ func TestGetWaitCase(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/customservice/kfsession/getwaitcase?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	result := new(WaitCase)
 
@@ -188,9 +165,7 @@ func TestGetWaitCase(t *testing.T) {
 func TestGetMsgRecordList(t *testing.T) {
 	body := []byte(`{"msgid":1,"starttime":987654321,"endtime":987654321,"number":10000}`)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"recordlist": [
 		{
 			"openid": "oDF3iY9WMaswOPWjCIp_f3Bnpljk",
@@ -209,8 +184,7 @@ func TestGetMsgRecordList(t *testing.T) {
 	],
 	"number": 2,
 	"msgid": 20165267
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -219,8 +193,7 @@ func TestGetMsgRecordList(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/customservice/msgrecord/getmsglist?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := offia.New("APPID", "APPSECRET")
-	oa.SetClient(wx.WithHTTPClient(client))
+	oa := offia.New("APPID", "APPSECRET", offia.WithMockClient(client))
 
 	result := new(ResultMsgRecordList)
 

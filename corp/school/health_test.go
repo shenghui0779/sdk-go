@@ -1,9 +1,7 @@
 package school
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,20 +10,16 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestGetHealthReportStat(t *testing.T) {
 	body := []byte(`{"date":"2020-03-27"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"pv": 100,
 	"uv": 50
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -34,8 +28,7 @@ func TestGetHealthReportStat(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/health/get_health_report_stat?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultHealthReportStat)
 
@@ -50,9 +43,7 @@ func TestGetHealthReportStat(t *testing.T) {
 
 func TestGetHealthReportJobIDs(t *testing.T) {
 	body := []byte(`{"offset":1,"limit":100}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"ending": 1,
@@ -60,8 +51,7 @@ func TestGetHealthReportJobIDs(t *testing.T) {
 		"jobid1",
 		"jobid2"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -70,8 +60,7 @@ func TestGetHealthReportJobIDs(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/health/get_report_jobids?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultHealthReportJobIDs)
 
@@ -86,9 +75,7 @@ func TestGetHealthReportJobIDs(t *testing.T) {
 
 func TestGetHealthReportJobInfo(t *testing.T) {
 	body := []byte(`{"jobid":"jobid1","date":"2020-03-27"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"job_info": {
@@ -139,8 +126,7 @@ func TestGetHealthReportJobInfo(t *testing.T) {
 			}
 		]
 	}
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -149,8 +135,7 @@ func TestGetHealthReportJobInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/health/get_report_job_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultHealthReportJobInfo)
 
@@ -202,9 +187,7 @@ func TestGetHealthReportJobInfo(t *testing.T) {
 
 func TestGetHealthReportAnswer(t *testing.T) {
 	body := []byte(`{"jobid":"jobid1","date":"2020-03-27","offset":1,"limit":100}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"answers": [
@@ -267,8 +250,7 @@ func TestGetHealthReportAnswer(t *testing.T) {
 			]
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -277,8 +259,7 @@ func TestGetHealthReportAnswer(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/health/get_report_answer?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultHealthReportAnswer)
 
@@ -340,9 +321,7 @@ func TestGetHealthReportAnswer(t *testing.T) {
 
 func TestGetTeacherCustomizeHealthInfo(t *testing.T) {
 	body := []byte(`{"date":"2020-03-27","next_key":"NEXT_KEY","limit":100}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"health_infos": [
@@ -402,8 +381,7 @@ func TestGetTeacherCustomizeHealthInfo(t *testing.T) {
 	"template_id": "XXXXXXXXXXXXXXXXX",
 	"ending": 1,
 	"next_key": "NEXT_KEY"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -412,8 +390,7 @@ func TestGetTeacherCustomizeHealthInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/get_teacher_customize_health_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultCustomizeHealthInfo)
 
@@ -483,9 +460,7 @@ func TestGetTeacherCustomizeHealthInfo(t *testing.T) {
 
 func TestGetStudentCustomizeHealthInfo(t *testing.T) {
 	body := []byte(`{"date":"2020-03-27","next_key":"NEXT_KEY","limit":100}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"health_infos": [
@@ -545,8 +520,7 @@ func TestGetStudentCustomizeHealthInfo(t *testing.T) {
 	"template_id": "XXXXXXXXXXXXXXXXX",
 	"ending": 1,
 	"next_key": "NEXT_KEY"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -555,8 +529,7 @@ func TestGetStudentCustomizeHealthInfo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/get_student_customize_health_info?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultCustomizeHealthInfo)
 
@@ -626,9 +599,7 @@ func TestGetStudentCustomizeHealthInfo(t *testing.T) {
 
 func TestGetHealthQRCode(t *testing.T) {
 	body := []byte(`{"type":1,"userids":["userid1","userid2"]}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"result_list": [
@@ -644,8 +615,7 @@ func TestGetHealthQRCode(t *testing.T) {
 			"userid": "userid1"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -654,8 +624,7 @@ func TestGetHealthQRCode(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/school/user/get_health_qrcode?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	userIDs := []string{"userid1", "userid2"}
 

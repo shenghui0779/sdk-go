@@ -1,9 +1,7 @@
 package mch
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -35,9 +33,7 @@ func TestSendNormalRedpack(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<result_code>SUCCESS</result_code>
 	<wxappid>wx2421b1c4370ec43b</wxappid>
@@ -45,8 +41,7 @@ func TestSendNormalRedpack(t *testing.T) {
 	<mch_billno>0010010404201411170000046545</mch_billno>
 	<re_openid>onqOjjmM1tad-3ROpncN-yUfa6uI</re_openid>
 	<total_amount>1</total_amount>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -55,13 +50,9 @@ func TestSendNormalRedpack(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
-	}
-
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), SendNormalRedpack("wx2421b1c4370ec43b", &ParamsRedpack{
 		MchBillNO:   "0010010404201411170000046545",
@@ -110,9 +101,7 @@ func TestSendGroupRedpack(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<result_code>SUCCESS</result_code>
 	<wxappid>wx2421b1c4370ec43b</wxappid>
@@ -120,8 +109,7 @@ func TestSendGroupRedpack(t *testing.T) {
 	<mch_billno>0010010404201411170000046545</mch_billno>
 	<re_openid>onqOjjmM1tad-3ROpncN-yUfa6uI</re_openid>
 	<total_amount>1</total_amount>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -130,13 +118,9 @@ func TestSendGroupRedpack(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
-	}
-
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), SendGroupRedpack("wx2421b1c4370ec43b", &ParamsRedpack{
 		MchBillNO:   "0010010404201411170000046545",
@@ -182,9 +166,7 @@ func TestSendMinipRedpack(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<result_code>SUCCESS</result_code>
 	<wxappid>wx2421b1c4370ec43b</wxappid>
@@ -194,8 +176,7 @@ func TestSendMinipRedpack(t *testing.T) {
 	<total_amount>10</total_amount>
 	<send_listid>1000041701201609263000000204000</send_listid>
 	<package>sendid=242e8abd163d300019b2cae74ba8e8c06e3f0e51ab84d16b3c80decd22a5b672&ver=8&sign=4110d649a5aef52dd6b95654ddf91ca7d5411ac159ace4e1a766b7d3967a1c3dfe1d256811445a4abda2d9cfa4a9b377a829258bd00d90313c6c346f2349fe5d&mchid=11475856&appid=wxd27ebc41b85ce36d</package>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -204,13 +185,9 @@ func TestSendMinipRedpack(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendminiprogramhb", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
-	}
-
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), SendMinipRedpack("wx2421b1c4370ec43b", &ParamsRedpack{
 		MchBillNO:   "2334580734271081478888000026",
@@ -249,9 +226,7 @@ func TestQueryRedpack(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`<xml>
+	resp := []byte(`<xml>
 	<return_code>SUCCESS</return_code>
 	<result_code>SUCCESS</result_code>
 	<mch_id>10000100</mch_id>
@@ -263,8 +238,7 @@ func TestQueryRedpack(t *testing.T) {
 	<total_amount>100</total_amount>
 	<total_num>1</total_num>
 	<send_time>2016-08-08 21:49:22</send_time>
-</xml>`))),
-	}
+</xml>`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -273,13 +247,9 @@ func TestQueryRedpack(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo", body).Return(resp, nil)
 
-	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", p12cert)
-
-	mch.nonce = func() string {
+	mch := New("10000100", "192006250b4c09247ec02edce69f6a2d", WithNonce(func() string {
 		return "50780e0cca98c8c8e814883e5caa672e"
-	}
-
-	mch.SetTLSClient(wx.WithHTTPClient(client))
+	}), WithMockClient(client))
 
 	r, err := mch.Do(context.TODO(), QueryRedpack("wx2421b1c4370ec43b", "9010080799701411170000046603"))
 

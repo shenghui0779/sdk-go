@@ -1,9 +1,7 @@
 package message
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -12,14 +10,11 @@ import (
 
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestSendExternalContactText(t *testing.T) {
 	body := []byte(`{"to_external_user":["external_userid1","external_userid2"],"to_parent_userid":["parent_userid1","parent_userid2"],"to_student_userid":["student_userid1","student_userid2"],"to_party":["partyid1","partyid2"],"msgtype":"text","agentid":1,"text":{"content":"你的快递已到，请携带工卡前往邮件中心领取。\n出发前可查看<a href=\"http://work.weixin.qq.com\">邮件中心视频实况</a>，聪明避开排队。"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invalid_external_user": [
@@ -34,8 +29,7 @@ func TestSendExternalContactText(t *testing.T) {
 	"invalid_party": [
 		"party1"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -44,8 +38,7 @@ func TestSendExternalContactText(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &ExternalContactExtra{
 		ToExternalUser:         []string{"external_userid1", "external_userid2"},
@@ -70,9 +63,7 @@ func TestSendExternalContactText(t *testing.T) {
 
 func TestSendExternalContactImage(t *testing.T) {
 	body := []byte(`{"to_external_user":["external_userid1","external_userid2"],"to_parent_userid":["parent_userid1","parent_userid2"],"to_student_userid":["student_userid1","student_userid2"],"to_party":["partyid1","partyid2"],"msgtype":"image","agentid":1,"image":{"media_id":"MEDIA_ID"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invalid_external_user": [
@@ -87,8 +78,7 @@ func TestSendExternalContactImage(t *testing.T) {
 	"invalid_party": [
 		"party1"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -97,8 +87,7 @@ func TestSendExternalContactImage(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &ExternalContactExtra{
 		ToExternalUser:         []string{"external_userid1", "external_userid2"},
@@ -123,9 +112,7 @@ func TestSendExternalContactImage(t *testing.T) {
 
 func TestSendExternalContactVoice(t *testing.T) {
 	body := []byte(`{"to_external_user":["external_userid1","external_userid2"],"to_parent_userid":["parent_userid1","parent_userid2"],"to_student_userid":["student_userid1","student_userid2"],"to_party":["partyid1","partyid2"],"msgtype":"voice","agentid":1,"voice":{"media_id":"MEDIA_ID"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invalid_external_user": [
@@ -140,8 +127,7 @@ func TestSendExternalContactVoice(t *testing.T) {
 	"invalid_party": [
 		"party1"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -150,8 +136,7 @@ func TestSendExternalContactVoice(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &ExternalContactExtra{
 		ToExternalUser:         []string{"external_userid1", "external_userid2"},
@@ -176,9 +161,7 @@ func TestSendExternalContactVoice(t *testing.T) {
 
 func TestSendExternalContactVideo(t *testing.T) {
 	body := []byte(`{"to_external_user":["external_userid1","external_userid2"],"to_parent_userid":["parent_userid1","parent_userid2"],"to_student_userid":["student_userid1","student_userid2"],"to_party":["partyid1","partyid2"],"msgtype":"video","agentid":1,"video":{"media_id":"MEDIA_ID","title":"Title","description":"Description"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invalid_external_user": [
@@ -193,8 +176,7 @@ func TestSendExternalContactVideo(t *testing.T) {
 	"invalid_party": [
 		"party1"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -203,8 +185,7 @@ func TestSendExternalContactVideo(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	video := &Video{
 		MediaID:     "MEDIA_ID",
@@ -235,9 +216,7 @@ func TestSendExternalContactVideo(t *testing.T) {
 
 func TestSendExternalContactFile(t *testing.T) {
 	body := []byte(`{"to_external_user":["external_userid1","external_userid2"],"to_parent_userid":["parent_userid1","parent_userid2"],"to_student_userid":["student_userid1","student_userid2"],"to_party":["partyid1","partyid2"],"msgtype":"file","agentid":1,"file":{"media_id":"1Yv-zXfHjSjU-7LH-GwtYqDGS-zz6w22KmWAT5COgP7o"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invalid_external_user": [
@@ -252,8 +231,7 @@ func TestSendExternalContactFile(t *testing.T) {
 	"invalid_party": [
 		"party1"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -262,8 +240,7 @@ func TestSendExternalContactFile(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	extra := &ExternalContactExtra{
 		ToExternalUser:         []string{"external_userid1", "external_userid2"},
@@ -288,9 +265,7 @@ func TestSendExternalContactFile(t *testing.T) {
 
 func TestSendExternalContactNews(t *testing.T) {
 	body := []byte(`{"to_external_user":["external_userid1","external_userid2"],"to_parent_userid":["parent_userid1","parent_userid2"],"to_student_userid":["student_userid1","student_userid2"],"to_party":["partyid1","partyid2"],"msgtype":"news","agentid":1,"news":{"articles":[{"title":"中秋节礼品领取","description":"今年中秋节公司有豪礼相送","url":"URL","picurl":"http://res.mail.qq.com/node/ww/wwopenmng/images/independent/doc/test_pic_msg1.png"}]},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invalid_external_user": [
@@ -305,8 +280,7 @@ func TestSendExternalContactNews(t *testing.T) {
 	"invalid_party": [
 		"party1"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -315,8 +289,7 @@ func TestSendExternalContactNews(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	articles := []*NewsArticle{
 		{
@@ -350,9 +323,7 @@ func TestSendExternalContactNews(t *testing.T) {
 
 func TestSendExternalContactMPNews(t *testing.T) {
 	body := []byte(`{"to_external_user":["external_userid1","external_userid2"],"to_parent_userid":["parent_userid1","parent_userid2"],"to_student_userid":["student_userid1","student_userid2"],"to_party":["partyid1","partyid2"],"msgtype":"mpnews","agentid":1,"mpnews":{"articles":[{"title":"Title","thumb_media_id":"MEDIA_ID","author":"Author","content_source_url":"URL","content":"Content","digest":"Digest description"}]},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invalid_external_user": [
@@ -367,8 +338,7 @@ func TestSendExternalContactMPNews(t *testing.T) {
 	"invalid_party": [
 		"party1"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -377,8 +347,7 @@ func TestSendExternalContactMPNews(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	articles := []*MPNewsArticle{
 		{
@@ -414,9 +383,7 @@ func TestSendExternalContactMPNews(t *testing.T) {
 
 func TestSendExternalContactMiniprogram(t *testing.T) {
 	body := []byte(`{"to_external_user":["external_userid1","external_userid2"],"to_parent_userid":["parent_userid1","parent_userid2"],"to_student_userid":["student_userid1","student_userid2"],"to_party":["partyid1","partyid2"],"msgtype":"miniprogram","agentid":1,"miniprogram":{"appid":"APPID","title":"欢迎报名夏令营","thumb_media_id":"MEDIA_ID","pagepath":"PAGE_PATH"},"duplicate_check_interval":1800}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
 	"invalid_external_user": [
@@ -431,8 +398,7 @@ func TestSendExternalContactMiniprogram(t *testing.T) {
 	"invalid_party": [
 		"party1"
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -441,8 +407,7 @@ func TestSendExternalContactMiniprogram(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/message/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	minip := &Miniprogram{
 		AppID:        "APPID",

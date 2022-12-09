@@ -1,9 +1,7 @@
 package externalcontact
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -13,19 +11,15 @@ import (
 	"github.com/shenghui0779/gochat/corp"
 	"github.com/shenghui0779/gochat/event"
 	"github.com/shenghui0779/gochat/mock"
-	"github.com/shenghui0779/gochat/wx"
 )
 
 func TestAddMomentTask(t *testing.T) {
 	body := []byte(`{"text":{"content":"文本消息内容"},"attachments":[{"msgtype":"image","image":{"media_id":"MEDIA_ID"}},{"msgtype":"video","video":{"media_id":"MEDIA_ID"}},{"msgtype":"link","link":{"title":"消息标题","url":"https://example.link.com/path","media_id":"MEDIA_ID"}}],"visible_range":{"sender_list":{"user_list":["zhangshan","lisi"],"department_list":[2,3]},"external_contact_list":{"tag_list":["etXXXXXXXXXX","etYYYYYYYYYY"]}}}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "jobid": "xxxx"
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -34,8 +28,7 @@ func TestAddMomentTask(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_moment_task?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMomentTaskAdd{
 		Text: &MomentText{
@@ -85,9 +78,7 @@ func TestAddMomentTask(t *testing.T) {
 }
 
 func TestGetMomentTaskResult(t *testing.T) {
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "status": 1,
@@ -112,8 +103,7 @@ func TestGetMomentTaskResult(t *testing.T) {
             ]
         }
     }
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -122,8 +112,7 @@ func TestGetMomentTaskResult(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_moment_task_result?access_token=ACCESS_TOKEN&jobid=JOBID", nil).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMomentTaskRet)
 
@@ -150,9 +139,7 @@ func TestGetMomentTaskResult(t *testing.T) {
 
 func TestListMoment(t *testing.T) {
 	body := []byte(`{"start_time":1605000000,"end_time":1605172726,"creator":"zhangsan","filter_type":1,"cursor":"CURSOR","limit":10}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "next_cursor": "CURSOR",
@@ -186,8 +173,7 @@ func TestListMoment(t *testing.T) {
             }
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -196,8 +182,7 @@ func TestListMoment(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_moment_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	params := &ParamsMomentList{
 		StartTime:  1605000000,
@@ -250,9 +235,7 @@ func TestListMoment(t *testing.T) {
 
 func TestGetMomentTask(t *testing.T) {
 	body := []byte(`{"moment_id":"momxxx","cursor":"CURSOR","limit":10}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "next_cursor": "CURSOR",
@@ -262,8 +245,7 @@ func TestGetMomentTask(t *testing.T) {
             "publish_status": 1
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -272,8 +254,7 @@ func TestGetMomentTask(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_moment_task?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMomentTaskGet)
 
@@ -293,9 +274,7 @@ func TestGetMomentTask(t *testing.T) {
 
 func TestListMomentCustomer(t *testing.T) {
 	body := []byte(`{"moment_id":"momxxx","userid":"xxx","cursor":"CURSOR","limit":10}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
 	"errcode":0,
 	"errmsg":"ok",
 	"next_cursor":"CURSOR",
@@ -305,8 +284,7 @@ func TestListMomentCustomer(t *testing.T) {
 			"external_userid":"woAJ2GCAAAXtWyujaWJHDDGi0mACCCC"
 		}
 	]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -315,8 +293,7 @@ func TestListMomentCustomer(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_moment_customer_list?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMomentCustomerList)
 
@@ -336,9 +313,7 @@ func TestListMomentCustomer(t *testing.T) {
 
 func TestGetMomentSendResult(t *testing.T) {
 	body := []byte(`{"moment_id":"momxxx","userid":"xxx","cursor":"CURSOR","limit":100}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "next_cursor": "CURSOR",
@@ -347,8 +322,7 @@ func TestGetMomentSendResult(t *testing.T) {
             "external_userid": "woAJ2GCAAAXtWyujaWJHDDGi0mACCCC"
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -357,8 +331,7 @@ func TestGetMomentSendResult(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_moment_send_result?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMomentSendRet)
 
@@ -377,9 +350,7 @@ func TestGetMomentSendResult(t *testing.T) {
 
 func TestGetMomentComments(t *testing.T) {
 	body := []byte(`{"moment_id":"momxxx","userid":"xxx"}`)
-	resp := &http.Response{
-		StatusCode: http.StatusOK,
-		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	resp := []byte(`{
     "errcode": 0,
     "errmsg": "ok",
     "comment_list": [
@@ -402,8 +373,7 @@ func TestGetMomentComments(t *testing.T) {
             "create_time": 1605172720
         }
     ]
-}`))),
-	}
+}`)
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -412,8 +382,7 @@ func TestGetMomentComments(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_moment_comments?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	cp := corp.New("CORPID")
-	cp.SetClient(wx.WithHTTPClient(client))
+	cp := corp.New("CORPID", corp.WithMockClient(client))
 
 	result := new(ResultMomentComments)
 
