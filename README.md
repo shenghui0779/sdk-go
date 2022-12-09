@@ -4,12 +4,12 @@
 
 📦 微信 Go SDK
 
-| 模块             | 功能                                                                                          |
-| --------------- | --------------------------------------------------------------------------------------------- |
-| 支付 > mch      | 下单 . 支付 . 退款 . 查询 . 委托代扣 . 红包 . 企业付款 . 账单 . 评价数据 . 验签 . 解密 |
+| 模块            | 功能                                                                                         |
+| --------------- | -------------------------------------------------------------------------------------------- |
+| 支付 > mch      | 下单 . 支付 . 退款 . 查询 . 委托代扣 . 红包 . 企业付款 . 账单 . 评价数据 . 验签 . 解密       |
 | 公众号 > offia  | 授权 . 用户 . 消息 . 素材 . 菜单 . 发布能力 . 草稿箱 . 客服 . 二维码 . OCR . 回复 . 事件处理 |
-| 小程序 > minip  | 授权 . 解密 . 二维码 . 消息 . 客服 . 素材 . 插件 . URL Scheme . URL Link . OCR . 事件处理  |
-| 企业微信 > corp | 支持几乎所有服务端API                                                                             |
+| 小程序 > minip  | 授权 . 解密 . 二维码 . 消息 . 客服 . 素材 . 插件 . URL Scheme . URL Link . OCR . 事件处理    |
+| 企业微信 > corp | 支持几乎所有服务端API                                                                        |
 
 ## 获取
 
@@ -33,7 +33,7 @@ go get -u github.com/shenghui0779/gochat
 - 所有API均采用Mock单元测试（Mock数据来源于官方文档，如遇问题，欢迎提[Issue](https://github.com/shenghui0779/gochat/issues)）
 
 > - 执行单元测试时，有些不能通过（比如：因时间戳导致等），需要看代码注释说明
-> - 执行 `mch` 单元测试时，还需要使用用于单元测试的 `FormatMap2XML`
+> - 执行 `mch` 单元测试时，还需要使用用于单元测试的 `FormatMap2XMLForTest`
 
 ## 支付
 
@@ -48,24 +48,21 @@ import (
 )
 
 // 创建实例
-pay := gochat.NewMch("mchid", "apikey", tls.Certificate...)
+pay := gochat.NewMch("mchid", "apikey", options...)
 
-// 设置 debug 模式（支持自定义日志）
-pay.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
-
-// --------- 统一下单 -------------------------------
+// --------------- 统一下单 -------------------------------
 action := mch.UnifyOrder("appid", &mch.ParamsUnifyOrder{...})
 result, err := pay.Do(ctx, action)
 
 if err != nil {
-    log.Println(err)
+    log.Fatal(err)
 
     return
 }
 
 fmt.Println(result)
 
-// --------- 拉起支付 -------------------------------
+// --------------- 拉起支付 -------------------------------
 
 // APP支付
 pay.APPAPI("appid", "prepayID")
@@ -87,53 +84,41 @@ import (
 )
 
 // 创建实例
-oa := gochat.NewOffia("appid", "appsecret")
+oa := gochat.NewOffia("appid", "appsecret", options...)
 
-// 设置服务器配置
-oa.SetServerConfig("token", "encodingAESKey")
-
-// 设置 debug 模式（支持自定义日志）
-oa.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
-
-// --------- 生成网页授权URL -------------------------------
+// --------------- 生成网页授权URL -------------------------------
 
 url := oa.OAuth2URL(offia.ScopeSnsapiBase, "redirectURL", "state")
 
 fmt.Println(url)
 
-// --------- 获取网页授权Token -------------------------------
+// --------------- 获取网页授权Token -------------------------------
 
 result, err := oa.Code2OAuthToken(ctx, "code")
 
 if err != nil {
-    log.Println(err)
-
-    return
+    log.Fatal(err)
 }
 
 fmt.Println(result)
 
-// --------- 获取AccessToken -------------------------------
+// --------------- 获取AccessToken -------------------------------
 
 result, err := oa.AccessToken(ctx)
 
 if err != nil {
-    log.Println(err)
-
-    return
+    log.Fatal(err)
 }
 
 fmt.Println(result)
 
-// --------- 获取关注的用户列表 -------------------------------
+// --------------- 获取关注的用户列表 -------------------------------
 
 result := new(offia.ResultUserList)
 action := offia.GetUserList("nextOpenID", result)
 
 if err := oa.Do(ctx, action); err != nil {
-    log.Println(err)
-
-    return
+    log.Fatal(err)
 }
 
 fmt.Println(result)
@@ -149,71 +134,55 @@ import (
 )
 
 // 创建实例
-mp := gochat.NewMinip("appid", "appsecret")
+mp := gochat.NewMinip("appid", "appsecret", options...)
 
-// 设置服务器配置
-mp.SetServerConfig("token", "encodingAESKey")
-
-// 设置 debug 模式（支持自定义日志）
-mp.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
-
-// --------- 获取授权SessionKey -------------------------------
+// --------------- 获取授权SessionKey -------------------------------
 
 result, err := mp.Code2Session(ctx, "code")
 
 if err != nil {
-    log.Println(err)
-
-    return
+    log.Fatal(err)
 }
 
 fmt.Println(result)
 
-// --------- 获取AccessToken -------------------------------
+// --------------- 获取AccessToken -------------------------------
 
 result, err := mp.AccessToken(ctx)
 
 if err != nil {
-    log.Println(err)
-
-    return
+    log.Fatal(err)
 }
 
 fmt.Println(result)
 
-// --------- 解密授权的用户信息 -------------------------------
+// --------------- 解密授权的用户信息 -------------------------------
 
 result := new(minip.UserInfo)
 
 if err := mp.DecryptAuthInfo("sessionKey", "iv", "encryptedData", result); err != nil {
-    log.Println(err)
-
-    return
+    log.Fatal(err)
 }
 
 fmt.Println(result)
 
-// --------- 获取用户手机号 -------------------------------
+// --------------- 获取用户手机号 -------------------------------
 
 result := new(minip.ResultPhoneNumber)
 
 if err := minip.GetPhoneNumber("code", result); err != nil {
-    log.Println(err)
-
-    return
+    log.Fatal(err)
 }
 
 fmt.Println(result)
 
-// --------- 创建小程序二维码 -------------------------------
+// --------------- 创建小程序二维码 -------------------------------
 
 qrcode := new(minip.QRCode)
 action := minip.CreateQRCode("pagepath", 120, qrcode)
 
 if err := minip.Do(ctx, action); err != nil {
-    log.Println(err)
-
-    return
+    log.Fatal(err)
 }
 
 fmt.Println(base64.StdEncoding.EncodeToString(qrcode.Buffer))
@@ -230,47 +199,37 @@ import (
 )
 
 // 创建实例
-cp := gochat.NewCorp("corpid")
+cp := gochat.NewCorp("corpid", options...)
 
-// 设置服务器配置
-cp.SetServerConfig("token", "encodingAESKey")
-
-// 设置 debug 模式（支持自定义日志）
-cp.SetClient(wx.WithDedug(), wx.WithLogger(wx.Logger))
-
-// --------- 生成网页授权URL -------------------------------
+// --------------- 生成网页授权URL -------------------------------
 
 url := cp.OAuth2URL(corp.ScopeSnsapiBase, "redirectURL", "state")
 
 fmt.Println(url)
 
-// --------- 生成扫码授权URL -------------------------------
+// --------------- 生成扫码授权URL -------------------------------
 
 url := cp.QRCodeAuthURL("agentID", "redirectURL", "state")
 
 fmt.Println(url)
 
-// --------- 获取AccessToken -------------------------------
+// --------------- 获取AccessToken -------------------------------
 
 result, err := cp.AccessToken(ctx, "secret")
 
 if err != nil {
-    log.Println(err)
-
-    return
+    log.Fatal(err)
 }
 
 fmt.Println(result)
 
-// --------- 获取部门列表 -------------------------------
+// --------------- 获取部门列表 -------------------------------
 
 result := new(addrbook.ResultDepartmentList)
 action := addrbook.ListDepartment(0, result)
 
 if err := cp.Do(ctx, action); err != nil {
-    log.Println(err)
-
-    return
+    log.Fatal(err)
 }
 
 fmt.Println(result)
