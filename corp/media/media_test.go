@@ -72,6 +72,40 @@ func TestUploadByURL(t *testing.T) {
 	}, result)
 }
 
+func TestUploadByByte(t *testing.T) {
+	resp := &http.Response{
+		StatusCode: http.StatusOK,
+		Body: io.NopCloser(bytes.NewReader([]byte(`{
+	"errcode": 0,
+	"errmsg": "ok",
+	"type": "image",
+	"media_id": "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
+	"created_at": "1380000000"
+}`))),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	client := mock.NewMockHTTPClient(ctrl)
+
+	client.EXPECT().Upload(gomock.AssignableToTypeOf(context.TODO()), "https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=file", gomock.AssignableToTypeOf(wx.NewUploadForm())).Return(resp, nil)
+
+	cp := corp.New("CORPID")
+	cp.SetClient(wx.WithHTTPClient(client))
+
+	result := new(ResultUpload)
+
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UploadByByte(MediaFile, "test.txt", []byte("test123"), result))
+
+	assert.Nil(t, err)
+	assert.Equal(t, &ResultUpload{
+		Type:      MediaImage,
+		MediaID:   "1G6nrLmr5EC3MMb_-zK1dDdzmd0p7cNliYu9V5w7o8K0",
+		CreatedAt: "1380000000",
+	}, result)
+}
+
 func TestUploadImg(t *testing.T) {
 	resp := []byte(`{
 	"errcode": 0,
