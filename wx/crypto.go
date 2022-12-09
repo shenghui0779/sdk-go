@@ -264,7 +264,7 @@ func NewPrivateKeyFromPemFile(pemFile string) (*PrivateKey, error) {
 
 // NewPrivateKeyFromPfxFile returns private key with pfx(p12) file.
 func NewPrivateKeyFromPfxFile(pfxFile, password string) (*PrivateKey, error) {
-	cert, err := LoadP12Cert(pfxFile, password)
+	cert, err := LoadCertFromPfxFile(pfxFile, password)
 
 	if err != nil {
 		return nil, err

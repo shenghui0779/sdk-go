@@ -261,8 +261,8 @@ func MarshalNoEscapeHTML(v interface{}) ([]byte, error) {
 	return b, nil
 }
 
-// LoadP12Cert 通过p12(pfx)证书文件生成Pem证书
-func LoadP12Cert(pfxfile, mchid string) (tls.Certificate, error) {
+// LoadCertFromPfxFile 通过pfx(p12)证书文件生成TLS证书
+func LoadCertFromPfxFile(pfxfile, mchid string) (tls.Certificate, error) {
 	fail := func(err error) (tls.Certificate, error) { return tls.Certificate{}, err }
 
 	certPath, err := filepath.Abs(filepath.Clean(pfxfile))
