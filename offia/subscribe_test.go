@@ -26,7 +26,7 @@ func TestAddSubscribeTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxaapi/newtmpl/addtemplate?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	params := &ParamsSubscribeTemplAdd{
 		TID:       "401",
@@ -54,7 +54,7 @@ func TestDeleteSubscribeTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/wxaapi/newtmpl/deltemplate?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteSubscribeTemplate("wDYzYZVxobJivW9oMpSCpuvACOfJXQIoKUm0PY397Tc"))
 
@@ -80,7 +80,7 @@ func TestGetSubscribeCategory(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxaapi/newtmpl/getcategory?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultSubscribeCategory)
 
@@ -118,7 +118,7 @@ func TestGetPubTemplateKeywords(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxaapi/newtmpl/getpubtemplatekeywords?access_token=ACCESS_TOKEN&tid=99", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultPubTemplKeywords)
 
@@ -159,7 +159,7 @@ func TestGetPubTemplateTitles(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxaapi/newtmpl/getpubtemplatetitles?access_token=ACCESS_TOKEN&ids=616&limit=1&start=0", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultPubTemplTitles)
 
@@ -201,7 +201,7 @@ func TestListSubscribeTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/wxaapi/newtmpl/gettemplate?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultSubscribeTemplList)
 
@@ -232,7 +232,7 @@ func TestSendSubscribePageMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/subscribe/bizsend?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	data := MsgTemplData{
 		"name1": &MsgTemplValue{
@@ -262,7 +262,7 @@ func TestSendSubscribeMinipMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/subscribe/bizsend?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	minip := &MsgMinip{
 		AppID:    "APPID",

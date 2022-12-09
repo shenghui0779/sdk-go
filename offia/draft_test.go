@@ -22,7 +22,7 @@ func TestAddDraft(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/draft/add?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	params := &ParamsDraftAdd{
 		Articles: []*DraftArticle{
@@ -57,7 +57,7 @@ func TestUpdateDraft(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/draft/update?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	article := &DraftArticle{
 		Title:            "TITLE",
@@ -100,7 +100,7 @@ func TestGetDraft(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/draft/get?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultDraftGet)
 
@@ -136,7 +136,7 @@ func TestDeleteDraft(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/draft/delete?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DeleteDraft("MEDIA_ID"))
 
@@ -153,7 +153,7 @@ func TestGetDraftCount(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/draft/count?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultDraftCount)
 
@@ -201,7 +201,7 @@ func TestBatchGetDraft(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/draft/batchget?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultDraftBatchGet)
 

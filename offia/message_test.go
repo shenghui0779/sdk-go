@@ -22,7 +22,7 @@ func TestSetIndustry(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/template/api_set_industry?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", SetIndustry("1", "4"))
 
@@ -48,7 +48,7 @@ func TestGetIndustry(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/template/get_industry?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultIndustryGet)
 
@@ -82,7 +82,7 @@ func TestAddTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultTemplAdd)
 
@@ -113,7 +113,7 @@ func TestGetAllPrivateTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/template/get_all_private_template?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultAllPrivateTemplate)
 
@@ -146,7 +146,7 @@ func TestDelPrivateTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", DelPrivateTemplate("Dyvp3-Ff0cnail_CDSzk1fIc6-9lOkxsQE7exTJbwUE"))
 
@@ -165,7 +165,7 @@ func TestSendTemplateMsg(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	params := &TemplateMsg{
 		ToUser:     "OPENID",
@@ -208,7 +208,7 @@ func TestSubscribeTemplate(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodPost, "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=ACCESS_TOKEN", body).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	params := &ParamsTemplateSubscribe{
 		ToUser:     "OPENID",

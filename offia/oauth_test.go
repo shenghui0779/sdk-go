@@ -21,7 +21,7 @@ func TestCheckOAuthToken(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/sns/auth?access_token=ACCESS_TOKEN&openid=OPENID", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", CheckOAuthToken("OPENID"))
 
@@ -48,7 +48,7 @@ func TestGetOAuthUser(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&lang=zh_CN&openid=OPENID", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultOAuthUser)
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetOAuthUser("OPENID", result))
@@ -82,7 +82,7 @@ func TestGetApiTicket(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	result := new(ResultApiTicket)
 	err := oa.Do(context.TODO(), "ACCESS_TOKEN", GetApiTicket(JSAPITicket, result))

@@ -200,13 +200,7 @@ func (c *httpclient) Do(ctx context.Context, method, reqURL string, body []byte,
 		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
 	}
 
-	b, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return b, nil
+	return ioutil.ReadAll(resp.Body)
 }
 
 func (c *httpclient) Upload(ctx context.Context, reqURL string, form UploadForm, options ...HTTPOption) ([]byte, error) {

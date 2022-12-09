@@ -171,11 +171,12 @@ func (mp *Minip) DecryptEventMessage(encrypt string) (wx.WXML, error) {
 	return wx.ParseXML2Map(b)
 }
 
-type MinipOption func(mp *Minip)
+// Option 小程序配置项
+type Option func(mp *Minip)
 
 // WithServerConfig 设置服务器配置
 // [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
-func WithServerConfig(token, aeskey string) MinipOption {
+func WithServerConfig(token, aeskey string) Option {
 	return func(mp *Minip) {
 		mp.token = token
 		mp.aeskey = aeskey
@@ -183,28 +184,28 @@ func WithServerConfig(token, aeskey string) MinipOption {
 }
 
 // WithNonce 设置 Nonce（加密随机串）
-func WithNonce(f func() string) MinipOption {
+func WithNonce(f func() string) Option {
 	return func(mp *Minip) {
 		mp.nonce = f
 	}
 }
 
 // WithClient 设置 HTTP Client
-func WithClient(c *http.Client) MinipOption {
+func WithClient(c *http.Client) Option {
 	return func(mp *Minip) {
 		mp.client = wx.NewHTTPClient(c)
 	}
 }
 
 // WithMockClient 设置 Mock Client
-func WithMockClient(c wx.HTTPClient) MinipOption {
+func WithMockClient(c wx.HTTPClient) Option {
 	return func(mp *Minip) {
 		mp.client = c
 	}
 }
 
 // New returns new wechat mini program
-func New(appid, appsecret string, options ...MinipOption) *Minip {
+func New(appid, appsecret string, options ...Option) *Minip {
 	mp := &Minip{
 		appid:     appid,
 		appsecret: appsecret,

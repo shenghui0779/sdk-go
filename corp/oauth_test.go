@@ -27,7 +27,7 @@ func TestGetAPIDomainIP(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/get_api_domain_ip?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	cp := New("CORPID")
+	cp := New("CORPID", WithMockClient(client))
 
 	result := new(ResultIP)
 
@@ -54,7 +54,7 @@ func TestGetCallbackIP(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/getcallbackip?access_token=ACCESS_TOKEN", nil).Return(resp, nil)
 
-	cp := New("CORPID")
+	cp := New("CORPID", WithMockClient(client))
 
 	result := new(ResultIP)
 
@@ -81,7 +81,7 @@ func TestGetOAuthUser(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=ACCESS_TOKEN&code=CODE", nil).Return(resp, nil)
 
-	cp := New("CORPID")
+	cp := New("CORPID", WithMockClient(client))
 
 	result := new(ResultOAuthUser)
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", GetOAuthUser("CODE", result))
@@ -106,7 +106,7 @@ func TestUserAuthSucc(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/user/authsucc?access_token=ACCESS_TOKEN&userid=USERID", nil).Return(resp, nil)
 
-	cp := New("CORPID")
+	cp := New("CORPID", WithMockClient(client))
 
 	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UserAuthSucc("USERID"))
 

@@ -41,7 +41,7 @@ func TestAccessToken(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=CORPID&corpsecret=SECRET", nil).Return(resp, nil)
 
-	cp := New("CORPID")
+	cp := New("CORPID", WithMockClient(client))
 
 	accessToken, err := cp.AccessToken(context.TODO(), "SECRET")
 

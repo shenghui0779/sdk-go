@@ -42,7 +42,7 @@ func TestCode2OAuthToken(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=APPSECRET&code=CODE&grant_type=authorization_code", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	authToken, err := oa.Code2OAuthToken(context.TODO(), "CODE")
 
@@ -72,7 +72,7 @@ func TestRefreshOAuthToken(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=APPID&grant_type=refresh_token&refresh_token=REFRESH_TOKEN", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	authToken, err := oa.RefreshOAuthToken(context.TODO(), "REFRESH_TOKEN")
 
@@ -99,7 +99,7 @@ func TestAccessToken(t *testing.T) {
 
 	client.EXPECT().Do(gomock.AssignableToTypeOf(context.TODO()), http.MethodGet, "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET", nil).Return(resp, nil)
 
-	oa := New("APPID", "APPSECRET")
+	oa := New("APPID", "APPSECRET", WithMockClient(client))
 
 	accessToken, err := oa.AccessToken(context.TODO())
 
@@ -156,7 +156,7 @@ func TestDecryptEventMessage(t *testing.T) {
 
 // 签名涉及时间戳，结果会变化（已通过固定时间戳验证）
 // func TestJSSDKSign(t *testing.T) {
-// 	oa := New("APPID", "APPSECRET")
+// 	oa := New("APPID", "APPSECRET", WithMockClient(client))
 // 	oa.nonce = func(size int) string {
 // 		return "Wm3WZYTPz0wzccnW"
 // 	}

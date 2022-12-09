@@ -122,11 +122,12 @@ func (corp *Corp) DecryptEventMessage(encrypt string) (wx.WXML, error) {
 	return wx.ParseXML2Map(b)
 }
 
-type CorpOption func(corp *Corp)
+// Option 企微配置项
+type Option func(corp *Corp)
 
 // WithServerConfig 设置服务器配置
 // [参考](https://open.work.weixin.qq.com/api/doc/90000/90135/90930)
-func WithServerConfig(token, aeskey string) CorpOption {
+func WithServerConfig(token, aeskey string) Option {
 	return func(corp *Corp) {
 		corp.token = token
 		corp.aeskey = aeskey
@@ -134,27 +135,27 @@ func WithServerConfig(token, aeskey string) CorpOption {
 }
 
 // WithNonce 设置 Nonce（加密随机串）
-func WithNonce(f func() string) CorpOption {
+func WithNonce(f func() string) Option {
 	return func(corp *Corp) {
 		corp.nonce = f
 	}
 }
 
 // WithClient 设置 HTTP Client
-func WithClient(c *http.Client) CorpOption {
+func WithClient(c *http.Client) Option {
 	return func(corp *Corp) {
 		corp.client = wx.NewHTTPClient(c)
 	}
 }
 
 // WithMockClient 设置 Mock Client
-func WithMockClient(c wx.HTTPClient) CorpOption {
+func WithMockClient(c wx.HTTPClient) Option {
 	return func(corp *Corp) {
 		corp.client = c
 	}
 }
 
-func New(corpid string, options ...CorpOption) *Corp {
+func New(corpid string, options ...Option) *Corp {
 	corp := &Corp{
 		corpid: corpid,
 		nonce: func() string {

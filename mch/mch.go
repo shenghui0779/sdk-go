@@ -316,38 +316,39 @@ func (mch *Mch) DecryptWithAES256ECB(encrypt string) (wx.WXML, error) {
 	return wx.ParseXML2Map(plainText)
 }
 
-type MchOption func(mch *Mch)
+// Option 支付商户配置项
+type Option func(mch *Mch)
 
 // WithTLSCert 设置TLS证书
-func WithTLSCert(cert tls.Certificate) MchOption {
+func WithTLSCert(cert tls.Certificate) Option {
 	return func(mch *Mch) {
 		mch.tlscli = wx.NewDefaultClient(cert)
 	}
 }
 
 // WithNonce 设置 Nonce（加密随机串）
-func WithNonce(f func() string) MchOption {
+func WithNonce(f func() string) Option {
 	return func(mch *Mch) {
 		mch.nonce = f
 	}
 }
 
 // WithClient 设置 HTTP Client
-func WithClient(c *http.Client) MchOption {
+func WithClient(c *http.Client) Option {
 	return func(mch *Mch) {
 		mch.client = wx.NewHTTPClient(c)
 	}
 }
 
 // WithTLSClient 设置 TLS HTTP Client（带证书）
-func WithTLSClient(c *http.Client) MchOption {
+func WithTLSClient(c *http.Client) Option {
 	return func(mch *Mch) {
 		mch.tlscli = wx.NewHTTPClient(c)
 	}
 }
 
 // WithMockClient 设置 Mock Client
-func WithMockClient(c wx.HTTPClient) MchOption {
+func WithMockClient(c wx.HTTPClient) Option {
 	return func(mch *Mch) {
 		mch.client = c
 		mch.tlscli = c
@@ -356,7 +357,7 @@ func WithMockClient(c wx.HTTPClient) MchOption {
 
 // New returns new wechat pay
 // [证书参考](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=4_3)
-func New(mchid, apikey string, options ...MchOption) *Mch {
+func New(mchid, apikey string, options ...Option) *Mch {
 	mch := &Mch{
 		mchid:  mchid,
 		apikey: apikey,
