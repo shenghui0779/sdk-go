@@ -19,6 +19,7 @@ const (
 	SystemError   = "SYSTEMERROR" // 系统繁忙，请稍后再试
 )
 
+// 交易状态
 const (
 	TradeStateSuccess = "SUCCESS"    // 支付成功
 	TradeStateRefund  = "REFUND"     // 转入退款
@@ -45,10 +46,10 @@ const (
 )
 
 const (
-	RefundChannelOriginal      = "ORIGINAL"       // 原路退款
-	RefundChannelBalance       = "BALANCE"        // 退回到余额
-	RefundChannelOtherBalance  = "OTHER_BALANCE"  // 原账户异常退到其他余额账户
-	RefundChannelOtherBankCard = "OTHER_BANKCARD" // 原银行卡异常退到其他银行卡
+	RefundToOriginal      = "ORIGINAL"       // 原路退款
+	RefundToBalance       = "BALANCE"        // 退回到余额
+	RefundToOtherBalance  = "OTHER_BALANCE"  // 原账户异常退到其他余额账户
+	RefundToOtherBankCard = "OTHER_BANKCARD" // 原银行卡异常退到其他银行卡
 )
 
 const (
