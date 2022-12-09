@@ -56,8 +56,6 @@ result, err := pay.Do(ctx, action)
 
 if err != nil {
     log.Fatal(err)
-
-    return
 }
 
 fmt.Println(result)
