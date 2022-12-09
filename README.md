@@ -21,7 +21,7 @@ go get -u github.com/shenghui0779/gochat
 
 - 微信API被封装成 `Action` 接口（授权 和 AccessToken 等部分API除外）
 - 每个API对应一个 `Action`，统一由 `Do` 方法执行
-- 除支付（mch）外，返回结果均以 `Result` 为前缀的结构体指针接收
+- 除支付 (mch) 外，返回结果均以 `Result` 为前缀的结构体指针接收
 - 对于微信支付的回调通知处理，提供了两个方法：
   - 验签 - `VerifyWXMLResult`
   - 解密 - `DecryptWithAES256ECB` (退款)
@@ -32,7 +32,7 @@ go get -u github.com/shenghui0779/gochat
 - 企业微信按照不同功能模块划分了相应的目录，根据URL可以找到对应的目录和文件
 - 所有API均采用Mock单元测试（Mock数据来源于官方文档，如遇问题，欢迎提[Issue](https://github.com/shenghui0779/gochat/issues)）
 
-> - 执行单元测试时，有些不能通过（比如：因时间戳导致等），代码中有相关注释说明
+> - 执行单元测试时，有些不能通过（如：因时间戳导致等），代码中有相关注释说明
 > - 执行 `mch` 单元测试时，还需要使用用于单元测试的 `FormatMap2XMLForTest`
 
 ## 支付
