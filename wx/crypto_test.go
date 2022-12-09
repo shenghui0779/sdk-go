@@ -1,6 +1,7 @@
 package wx
 
 import (
+	"crypto"
 	"crypto/aes"
 	"testing"
 
@@ -119,12 +120,39 @@ HsIxLjl3+jtjS8cptPO47qFnr7Pnvb7kA8MNVrI+ymny/WG/yfU=
 
 	plainText := "IloveGochat"
 
-	eboaep, err := RSAEncryptOAEP([]byte(plainText), publicKey)
+	pvtKey, err := NewPrivateKeyFromPemBlock(privateKey)
 
 	assert.Nil(t, err)
 
-	dboaep, err := RSADecryptOAEP(eboaep, privateKey)
+	pubKey, err := NewPublicKeyFromPemBlock(publicKey)
 
 	assert.Nil(t, err)
-	assert.Equal(t, plainText, string(dboaep))
+
+	eb, err := pubKey.Encrypt([]byte(plainText))
+
+	assert.Nil(t, err)
+
+	db, err := pvtKey.Decrypt(eb)
+
+	assert.Nil(t, err)
+	assert.Equal(t, plainText, string(db))
+
+	eboeap, err := pubKey.EncryptOAEP([]byte(plainText))
+
+	assert.Nil(t, err)
+
+	dboeap, err := pvtKey.DecryptOAEP(eboeap)
+
+	assert.Nil(t, err)
+	assert.Equal(t, plainText, string(dboeap))
+
+	signSHA256, err := pvtKey.Sign(crypto.SHA256, []byte(plainText))
+
+	assert.Nil(t, err)
+	assert.Nil(t, pubKey.Verify(crypto.SHA256, []byte(plainText), signSHA256))
+
+	signSHA1, err := pvtKey.Sign(crypto.SHA1, []byte(plainText))
+
+	assert.Nil(t, err)
+	assert.Nil(t, pubKey.Verify(crypto.SHA1, []byte(plainText), signSHA1))
 }

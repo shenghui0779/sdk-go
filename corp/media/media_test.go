@@ -72,7 +72,7 @@ func TestUploadByURL(t *testing.T) {
 	}, result)
 }
 
-func TestUploadByBytes(t *testing.T) {
+func TestUploadByBlock(t *testing.T) {
 	resp := []byte(`{
 	"errcode": 0,
 	"errmsg": "ok",
@@ -92,7 +92,7 @@ func TestUploadByBytes(t *testing.T) {
 
 	result := new(ResultUpload)
 
-	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UploadByBytes(MediaFile, "test.txt", []byte("test123"), result))
+	err := cp.Do(context.TODO(), "ACCESS_TOKEN", UploadByBlock(MediaFile, "test.txt", []byte("test123"), result))
 
 	assert.Nil(t, err)
 	assert.Equal(t, &ResultUpload{

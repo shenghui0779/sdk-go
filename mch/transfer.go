@@ -105,8 +105,14 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey 
 				"amount":           strconv.Itoa(params.Amount),
 			}
 
+			pubKey, err := wx.NewPublicKeyFromPemBlock(publicKey)
+
+			if err != nil {
+				return nil, err
+			}
+
 			// 收款方银行卡号加密
-			b, err := wx.RSAEncryptOAEP([]byte(params.EncBankNO), publicKey)
+			b, err := pubKey.EncryptOAEP([]byte(params.EncBankNO))
 
 			if err != nil {
 				return nil, err
@@ -115,7 +121,7 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey 
 			m["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
 
 			// 收款方用户名加密
-			b, err = wx.RSAEncryptOAEP([]byte(params.EncTrueName), publicKey)
+			b, err = pubKey.EncryptOAEP([]byte(params.EncTrueName))
 
 			if err != nil {
 				return nil, err

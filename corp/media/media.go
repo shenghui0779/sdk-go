@@ -91,8 +91,8 @@ func UploadByURL(mediaType MediaType, filename, url string, result *ResultUpload
 	)
 }
 
-// UploadByBytes 上传临时素材
-func UploadByBytes(mediaType MediaType, filename string, content []byte, result *ResultUpload) wx.Action {
+// UploadByBlock 上传临时素材
+func UploadByBlock(mediaType MediaType, filename string, content []byte, result *ResultUpload) wx.Action {
 	return wx.NewPostAction(urls.CorpMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (wx.UploadForm, error) {
