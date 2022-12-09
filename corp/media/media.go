@@ -91,15 +91,14 @@ func UploadByURL(mediaType MediaType, filename, url string, result *ResultUpload
 	)
 }
 
-// UploadByByte 上传临时素材
-func UploadByByte(mediaType MediaType, filename string, fileByte []byte, result *ResultUpload) wx.Action {
+// UploadByBytes 上传临时素材
+func UploadByBytes(mediaType MediaType, filename string, content []byte, result *ResultUpload) wx.Action {
 	return wx.NewPostAction(urls.CorpMediaUpload,
 		wx.WithQuery("type", string(mediaType)),
 		wx.WithUpload(func() (wx.UploadForm, error) {
 			return wx.NewUploadForm(
 				wx.WithFormFile("media", filename, func(w io.Writer) error {
-					f := bytes.NewBuffer(fileByte)
-					if _, err := io.Copy(w, f); err != nil {
+					if _, err := io.Copy(w, bytes.NewReader(content)); err != nil {
 						return err
 					}
 
