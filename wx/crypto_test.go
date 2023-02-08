@@ -14,7 +14,7 @@ func TestCBCCrypto(t *testing.T) {
 	plainText := "Iloveyiigo"
 
 	// ZERO_PADDING
-	zero := NewCBCCrypto(key, iv, ZERO)
+	zero := NewCBCCrypto(key, iv, AES_ZERO)
 
 	e0b, err := zero.Encrypt([]byte(plainText))
 	assert.Nil(t, err)
@@ -24,7 +24,7 @@ func TestCBCCrypto(t *testing.T) {
 	assert.Equal(t, plainText, string(d0b))
 
 	// PKCS5_PADDING
-	pkcs5 := NewCBCCrypto(key, iv, PKCS5)
+	pkcs5 := NewCBCCrypto(key, iv, AES_PKCS5)
 
 	e5b, err := pkcs5.Encrypt([]byte(plainText))
 	assert.Nil(t, err)
@@ -34,7 +34,7 @@ func TestCBCCrypto(t *testing.T) {
 	assert.Equal(t, plainText, string(d5b))
 
 	// PKCS7_PADDING
-	pkcs7 := NewCBCCrypto(key, iv, PKCS7)
+	pkcs7 := NewCBCCrypto(key, iv, AES_PKCS7)
 
 	e7b, err := pkcs7.Encrypt([]byte(plainText))
 	assert.Nil(t, err)
@@ -49,7 +49,7 @@ func TestECBCrypto(t *testing.T) {
 	plainText := "Iloveyiigo"
 
 	// ZERO_PADDING
-	zero := NewECBCrypto(key, ZERO)
+	zero := NewECBCrypto(key, AES_ZERO)
 
 	e0b, err := zero.Encrypt([]byte(plainText))
 	assert.Nil(t, err)
@@ -59,7 +59,7 @@ func TestECBCrypto(t *testing.T) {
 	assert.Equal(t, plainText, string(d0b))
 
 	// PKCS5_PADDING
-	pkcs5 := NewECBCrypto(key, PKCS5)
+	pkcs5 := NewECBCrypto(key, AES_PKCS5)
 
 	e5b, err := pkcs5.Encrypt([]byte(plainText))
 	assert.Nil(t, err)
@@ -69,7 +69,7 @@ func TestECBCrypto(t *testing.T) {
 	assert.Equal(t, plainText, string(d5b))
 
 	// PKCS7_PADDING
-	pkcs7 := NewECBCrypto(key, PKCS7)
+	pkcs7 := NewECBCrypto(key, AES_PKCS7)
 
 	e7b, err := pkcs7.Encrypt([]byte(plainText))
 	assert.Nil(t, err)
@@ -80,51 +80,50 @@ func TestECBCrypto(t *testing.T) {
 }
 
 func TestRSACrypto(t *testing.T) {
-	publicKey := []byte(`-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl1c+37GJSFSqbuHJ/wge
-LzxLp7C2GYrjzVAnEF3xgjJVTltkQzdu3u+fcB3c/dgHX/Zdv5fqVoOqvoOMk4N4
-zdGeaxN+Cm19c1gsxigNJDtm6Qno1s1T/qPph/zRArylM0N9Z3vWVEq4xI4B4NXk
-6IoK/bXc1dwQe5UBzIZyzU5aWfqmTQilWEs7mqro43LTFkhN05QjC7IUFvWEhh6T
-wvGYLBSAn+oNw/uSAu6B3c6dh+pslgORCzrIRs68GWsARGZkI/lmOJWEgzQ9KC7b
-yHVqEnDDaWQFyQpq30JdP6YTXR/xlKyo8f1DingoSDXAhKMGRKaT4oIFkE6OA3jt
-DQIDAQAB
------END PUBLIC KEY-----`)
+	publicKey := []byte(`-----BEGIN RSA PUBLIC KEY-----
+MIIBCgKCAQEAwWVvD3G+O9N1NuBBz44OLb6aq85w8ahoTRepzydJ2qBcaDh+Zj6M
+cybRSGHIGBIG0vyzYiPQhLK+s2kzKJ9rUHkQqRc7zDdVfclJhul1n1oBReyue1q9
+AyZXhWssZodeQPG5SnlwziCuVhP6WCLF0M1bkvJr0+VOAfSHeTeYx/S/nH8JErmY
+1HQTpkPs/fyabzCKoStWg6D62840HA2gn6Xq1MuPFki+BR8xcaM3Tqp2yN2kkIgO
+RcGpTUOMk1L8xXRjTbYT48wyXmeMnR1TtmFE2Xc3sMC8y/mn8V7D4r2alfDHDX4d
+13hBzo0oap7tugnr9yA2lak4Nvah03ZprwIDAQAB
+-----END RSA PUBLIC KEY-----`)
 
 	privateKey := []byte(`-----BEGIN RSA PRIVATE KEY-----
-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
+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
 -----END RSA PRIVATE KEY-----`)
 
 	plainText := "IloveGochat"
 
-	pvtKey, err := NewPrivateKeyFromPemBlock(privateKey)
+	pvtKey, err := NewPrivateKeyFromPemBlock(RSA_PKCS1, privateKey)
 
 	assert.Nil(t, err)
 
-	pubKey, err := NewPublicKeyFromPemBlock(publicKey)
+	pubKey, err := NewPublicKeyFromPemBlock(RSA_PKCS1, publicKey)
 
 	assert.Nil(t, err)
 
@@ -137,11 +136,11 @@ HsIxLjl3+jtjS8cptPO47qFnr7Pnvb7kA8MNVrI+ymny/WG/yfU=
 	assert.Nil(t, err)
 	assert.Equal(t, plainText, string(db))
 
-	eboeap, err := pubKey.EncryptOAEP([]byte(plainText))
+	eboeap, err := pubKey.EncryptOAEP(crypto.SHA256, []byte(plainText))
 
 	assert.Nil(t, err)
 
-	dboeap, err := pvtKey.DecryptOAEP(eboeap)
+	dboeap, err := pvtKey.DecryptOAEP(crypto.SHA256, eboeap)
 
 	assert.Nil(t, err)
 	assert.Equal(t, plainText, string(dboeap))

@@ -26,7 +26,7 @@ func Encrypt(receiveid, encodingAESKey, nonce string, plainText []byte) ([]byte,
 	copy(encryptData[20:], plainText)
 	copy(encryptData[appidOffset:], receiveid)
 
-	cbc := wx.NewCBCCrypto(key, key[:aes.BlockSize], wx.PKCS7)
+	cbc := wx.NewCBCCrypto(key, key[:aes.BlockSize], wx.AES_PKCS7)
 	cipherText, err := cbc.Encrypt(encryptData)
 
 	if err != nil {
@@ -50,7 +50,7 @@ func Decrypt(receiveid, encodingAESKey, cipherText string) ([]byte, error) {
 		return nil, err
 	}
 
-	cbc := wx.NewCBCCrypto(key, key[:aes.BlockSize], wx.PKCS7)
+	cbc := wx.NewCBCCrypto(key, key[:aes.BlockSize], wx.AES_PKCS7)
 	plainText, err := cbc.Decrypt(decryptData)
 
 	if err != nil {

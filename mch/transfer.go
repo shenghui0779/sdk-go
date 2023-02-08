@@ -1,6 +1,7 @@
 package mch
 
 import (
+	"crypto"
 	"encoding/base64"
 	"strconv"
 
@@ -32,6 +33,10 @@ type ParamsTransferBankCard struct {
 	Amount         int    // 付款金额：RMB分（支付总额，不含手续费）注：大于0的整数
 	// 选填参数
 	Desc string // 企业付款到银行卡付款说明，即订单备注（UTF8编码，允许100个字符以内）
+	// 加密参数
+	PublicKey []byte
+	KeyMode   wx.RSAPaddingMode
+	OEAPHash  crypto.Hash
 }
 
 // TransferToBalance 付款到零钱（需要证书）
@@ -93,7 +98,7 @@ func QueryTransferBalance(appid, partnerTradeNO string) wx.Action {
 
 // TransferToBankCard 付款到银行卡（需要证书）
 // 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
-func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey []byte) wx.Action {
+func TransferToBankCard(appid string, params *ParamsTransferBankCard) wx.Action {
 	return wx.NewPostAction(urls.MchTransferToBankCard,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -105,14 +110,14 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey 
 				"amount":           strconv.Itoa(params.Amount),
 			}
 
-			pubKey, err := wx.NewPublicKeyFromPemBlock(publicKey)
+			pubKey, err := wx.NewPublicKeyFromPemBlock(params.KeyMode, params.PublicKey)
 
 			if err != nil {
 				return nil, err
 			}
 
 			// 收款方银行卡号加密
-			b, err := pubKey.EncryptOAEP([]byte(params.EncBankNO))
+			b, err := pubKey.EncryptOAEP(params.OEAPHash, []byte(params.EncBankNO))
 
 			if err != nil {
 				return nil, err
@@ -121,7 +126,7 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard, publicKey 
 			m["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
 
 			// 收款方用户名加密
-			b, err = pubKey.EncryptOAEP([]byte(params.EncTrueName))
+			b, err = pubKey.EncryptOAEP(params.OEAPHash, []byte(params.EncTrueName))
 
 			if err != nil {
 				return nil, err

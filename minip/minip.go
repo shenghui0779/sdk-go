@@ -100,7 +100,7 @@ func (mp *Minip) DecryptAuthInfo(sessionKey, iv, encryptedData string, result *A
 		return err
 	}
 
-	cbc := wx.NewCBCCrypto(key, ivb, wx.PKCS7)
+	cbc := wx.NewCBCCrypto(key, ivb, wx.AES_PKCS7)
 
 	b, err := cbc.Decrypt(cipherText)
 

@@ -305,7 +305,7 @@ func (mch *Mch) DecryptWithAES256ECB(encrypt string) (wx.WXML, error) {
 	h := md5.New()
 	h.Write([]byte(mch.apikey))
 
-	ecb := wx.NewECBCrypto([]byte(hex.EncodeToString(h.Sum(nil))), wx.PKCS7)
+	ecb := wx.NewECBCrypto([]byte(hex.EncodeToString(h.Sum(nil))), wx.AES_PKCS7)
 
 	plainText, err := ecb.Decrypt(cipherText)
 

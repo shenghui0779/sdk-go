@@ -2,6 +2,7 @@ package mch
 
 import (
 	"context"
+	"crypto"
 	"net/http"
 	"testing"
 
@@ -175,7 +176,10 @@ func TestTransferToBankCard(t *testing.T) {
 		BankCode:       "1002",
 		Amount:         500,
 		Desc:           "test",
-	}, publicKey))
+		PublicKey:      publicKey,
+		KeyMode:        wx.RSA_PKCS1,
+		OEAPHash:       crypto.SHA1,
+	}))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
