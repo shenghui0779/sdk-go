@@ -36,7 +36,7 @@ type ParamsTransferBankCard struct {
 	// 加密参数
 	PublicKey []byte
 	KeyMode   wx.RSAPaddingMode
-	OEAPHash  crypto.Hash
+	OAEPHash  crypto.Hash
 }
 
 // TransferToBalance 付款到零钱（需要证书）
@@ -117,7 +117,7 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard) wx.Action 
 			}
 
 			// 收款方银行卡号加密
-			b, err := pubKey.EncryptOAEP(params.OEAPHash, []byte(params.EncBankNO))
+			b, err := pubKey.EncryptOAEP(params.OAEPHash, []byte(params.EncBankNO))
 
 			if err != nil {
 				return nil, err
@@ -126,7 +126,7 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard) wx.Action 
 			m["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
 
 			// 收款方用户名加密
-			b, err = pubKey.EncryptOAEP(params.OEAPHash, []byte(params.EncTrueName))
+			b, err = pubKey.EncryptOAEP(params.OAEPHash, []byte(params.EncTrueName))
 
 			if err != nil {
 				return nil, err

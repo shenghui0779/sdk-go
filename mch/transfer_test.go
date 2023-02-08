@@ -178,7 +178,7 @@ func TestTransferToBankCard(t *testing.T) {
 		Desc:           "test",
 		PublicKey:      publicKey,
 		KeyMode:        wx.RSA_PKCS1,
-		OEAPHash:       crypto.SHA1,
+		OAEPHash:       crypto.SHA1,
 	}))
 
 	assert.Nil(t, err)
