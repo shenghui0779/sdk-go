@@ -1,8 +1,6 @@
 package mch
 
 import (
-	"crypto"
-	"encoding/base64"
 	"strconv"
 
 	"github.com/shenghui0779/gochat/urls"
@@ -27,16 +25,12 @@ type ParamsTransferBalance struct {
 type ParamsTransferBankCard struct {
 	// 必填参数
 	PartnerTradeNO string // 商户订单号，需保持唯一（只允许数字[0~9]或字母[action~Z]和[a~z]，最短8位，最长32位）
-	EncBankNO      string // 收款方银行卡号（采用标准RSA算法，公钥由微信侧提供）
-	EncTrueName    string // 收款方用户名（采用标准RSA算法，公钥由微信侧提供）
+	EncBankNO      string // 收款方银行卡号（采用标准RSA_PKCS1_OAEP加密，公钥由微信侧提供，参考：https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay_yhk.php?chapter=25_7&index=4）
+	EncTrueName    string // 收款方用户名（采用标准RSA_PKCS1_OAEP加密，公钥由微信侧提供，参考：https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay_yhk.php?chapter=25_7&index=4）
 	BankCode       string // 银行卡所在开户行编号，参考：https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay.php?chapter=24_4
 	Amount         int    // 付款金额：RMB分（支付总额，不含手续费）注：大于0的整数
 	// 选填参数
 	Desc string // 企业付款到银行卡付款说明，即订单备注（UTF8编码，允许100个字符以内）
-	// 加密参数
-	PublicKey []byte
-	KeyMode   wx.RSAPaddingMode
-	OAEPHash  crypto.Hash
 }
 
 // TransferToBalance 付款到零钱（需要证书）
@@ -106,33 +100,11 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard) wx.Action 
 				"mch_id":           mchid,
 				"nonce_str":        nonce,
 				"partner_trade_no": params.PartnerTradeNO,
+				"enc_bank_no":      params.EncBankNO,
+				"enc_true_name":    params.EncTrueName,
 				"bank_code":        params.BankCode,
 				"amount":           strconv.Itoa(params.Amount),
 			}
-
-			pubKey, err := wx.NewPublicKeyFromPemBlock(params.KeyMode, params.PublicKey)
-
-			if err != nil {
-				return nil, err
-			}
-
-			// 收款方银行卡号加密
-			b, err := pubKey.EncryptOAEP(params.OAEPHash, []byte(params.EncBankNO))
-
-			if err != nil {
-				return nil, err
-			}
-
-			m["enc_bank_no"] = base64.StdEncoding.EncodeToString(b)
-
-			// 收款方用户名加密
-			b, err = pubKey.EncryptOAEP(params.OAEPHash, []byte(params.EncTrueName))
-
-			if err != nil {
-				return nil, err
-			}
-
-			m["enc_true_name"] = base64.StdEncoding.EncodeToString(b)
 
 			if params.Desc != "" {
 				m["desc"] = params.Desc

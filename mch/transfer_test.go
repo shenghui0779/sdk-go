@@ -2,7 +2,6 @@ package mch
 
 import (
 	"context"
-	"crypto"
 	"net/http"
 	"testing"
 
@@ -131,15 +130,14 @@ func TestQueryTransferBalance(t *testing.T) {
 	}, r)
 }
 
-// RSA-OAEP每次加密结果不同，导致签名会变化
 func TestTransferToBankCard(t *testing.T) {
 	body, err := wx.FormatMap2XMLForTest(wx.WXML{
 		"mch_id":           "10000100",
 		"partner_trade_no": "1212121221278",
-		"amount":           "500",
-		"bank_code":        "1002",
 		"enc_bank_no":      "en4Y1l7D0dK+cRuLLDquRuswp9bsuB6MQke+bn0S+MF9sDKIDp4Tkiml9v90uSQof3nIaOZ/q1UTFFV7/bvrkQc6+PKxbx/Y9YcdmrUAS2HCB7uFRVmsu4xBtbDzAR0wnnTuUcr6DJz/HxgE9EUpXyhHUpNgXB4/GOxgJA5uBimBKA6z46AmGxLcgOkvOU9bo9+hgYDCrOOEwRiN1XC18llAsqjZPAJqkZibv9cEZ5zvmrT8zRBoi+L1N9ZUGuxvq1GpbsBOFE0PP4IFP60R216pz9/nhFBKi3rF0ohF3mnjBmycOVaOK0xm8lcEQQEV+94/4bqnIJOSg8UmHrArRQ==",
 		"enc_true_name":    "ABpj6B97My6jKc2TwbkXM/W55LmlxmldJHhKr3n2cr36UeQCGOKlc3Cc1sQytng4hKrDd+qrXT3fmoRvxc10mnViGKdwq1G6XAmGYMMs2Pm0edzqWicrTi8/dcXoVaxLj4ZwCBm+8OtCpJefxGi9xZjpnXpUvEa2hzlPbghFNoPMHIOdECwzvYMqAM2OoRwqicTZgroRS0jI88NhM5UTn00ZwFSoN3VeFkkDSeKXZ25232l51WjBqyg6JLRGltPtiKwaNhCd5cxkPrCJrMJAzJ8PVQmBrEfRnyHDJiYGIQZ1bGoB9eKTN/+cjcGWuxyXDrpdIc0DJzCy/5Yswrv+qg==",
+		"bank_code":        "1002",
+		"amount":           "500",
 		"desc":             "test",
 		"nonce_str":        "50780e0cca98c8c8e814883e5caa672e",
 		"sign":             "93FD9CF5C2D3F2D6016A168F69D221D5",
@@ -171,14 +169,11 @@ func TestTransferToBankCard(t *testing.T) {
 
 	r, err := mch.Do(context.TODO(), TransferToBankCard("wx2421b1c4370ec43b", &ParamsTransferBankCard{
 		PartnerTradeNO: "1212121221278",
-		EncBankNO:      "6221882600114166800",
-		EncTrueName:    "张三",
+		EncBankNO:      "en4Y1l7D0dK+cRuLLDquRuswp9bsuB6MQke+bn0S+MF9sDKIDp4Tkiml9v90uSQof3nIaOZ/q1UTFFV7/bvrkQc6+PKxbx/Y9YcdmrUAS2HCB7uFRVmsu4xBtbDzAR0wnnTuUcr6DJz/HxgE9EUpXyhHUpNgXB4/GOxgJA5uBimBKA6z46AmGxLcgOkvOU9bo9+hgYDCrOOEwRiN1XC18llAsqjZPAJqkZibv9cEZ5zvmrT8zRBoi+L1N9ZUGuxvq1GpbsBOFE0PP4IFP60R216pz9/nhFBKi3rF0ohF3mnjBmycOVaOK0xm8lcEQQEV+94/4bqnIJOSg8UmHrArRQ==",
+		EncTrueName:    "ABpj6B97My6jKc2TwbkXM/W55LmlxmldJHhKr3n2cr36UeQCGOKlc3Cc1sQytng4hKrDd+qrXT3fmoRvxc10mnViGKdwq1G6XAmGYMMs2Pm0edzqWicrTi8/dcXoVaxLj4ZwCBm+8OtCpJefxGi9xZjpnXpUvEa2hzlPbghFNoPMHIOdECwzvYMqAM2OoRwqicTZgroRS0jI88NhM5UTn00ZwFSoN3VeFkkDSeKXZ25232l51WjBqyg6JLRGltPtiKwaNhCd5cxkPrCJrMJAzJ8PVQmBrEfRnyHDJiYGIQZ1bGoB9eKTN/+cjcGWuxyXDrpdIc0DJzCy/5Yswrv+qg==",
 		BankCode:       "1002",
 		Amount:         500,
 		Desc:           "test",
-		PublicKey:      publicKey,
-		KeyMode:        wx.RSA_PKCS1,
-		OAEPHash:       crypto.SHA1,
 	}))
 
 	assert.Nil(t, err)
