@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/md5"
 	"crypto/rand"
+	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/tls"
 	"encoding/hex"
@@ -84,6 +85,14 @@ func Nonce(size uint) string {
 // MD5 calculates the md5 hash of a string.
 func MD5(s string) string {
 	h := md5.New()
+	h.Write([]byte(s))
+
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+// SHA1 calculates the sha1 hash of a string.
+func SHA1(s string) string {
+	h := sha1.New()
 	h.Write([]byte(s))
 
 	return hex.EncodeToString(h.Sum(nil))

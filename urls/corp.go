@@ -376,3 +376,9 @@ const (
 	CorpReportGetSiteCodeReportInfo     = "https://qyapi.weixin.qq.com/cgi-bin/report/sitecode/get_site_report_info"
 	CorpReportGetSiteCodeReportAnswer   = "https://qyapi.weixin.qq.com/cgi-bin/report/sitecode/get_report_answer"
 )
+
+// jsapi
+const (
+	CorpQYTicket    = "https://qyapi.weixin.qq.com/cgi-bin/get_jsapi_ticket"
+	CorpAgentTicket = "https://qyapi.weixin.qq.com/cgi-bin/ticket/get"
+)

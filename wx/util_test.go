@@ -30,6 +30,10 @@ func TestMD5(t *testing.T) {
 	assert.Equal(t, "483367436bc9a6c5256bfc29a24f955e", MD5("iiinsomnia"))
 }
 
+func TestSHA1(t *testing.T) {
+	assert.Equal(t, "7a4082bd79f2086af2c2b792c5e0ad06e729b9c4", SHA1("iiinsomnia"))
+}
+
 func TestSHA256(t *testing.T) {
 	assert.Equal(t, "efed14231acf19fdca03adfac049171c109c922008e64dbaaf51a0c2cf11306b", SHA256("iiinsomnia"))
 }
