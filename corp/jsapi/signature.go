@@ -19,8 +19,8 @@ func Sign(ticket, url string) *ResultSign {
 		Timestamp: time.Now().Unix(),
 	}
 
-	s := fmt.Sprintf("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s", ticket, ret.NonceStr, ret.Timestamp, url)
-	ret.Signature = wx.SHA1(s)
+	signStr := fmt.Sprintf("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s", ticket, ret.NonceStr, ret.Timestamp, url)
+	ret.Signature = wx.SHA1(signStr)
 
 	return ret
 }

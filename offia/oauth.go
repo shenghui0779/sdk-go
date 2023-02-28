@@ -53,19 +53,19 @@ func GetOAuthUser(openid string, result *ResultOAuthUser) wx.Action {
 	)
 }
 
-// TicketType JS-SDK ticket 类型
+// TicketType JSApi ticket 类型
 type TicketType string
 
-// 微信支持的 JS-SDK ticket
+// 微信支持的 JSApi ticket
 const (
-	APITicket   TicketType = "wx_card"
-	JSAPITicket TicketType = "jsapi"
+	WXCardTicket TicketType = "wx_card"
+	JSAPITicket  TicketType = "jsapi"
 )
 
-// JSSDKSign JS-SDK签名
-type JSSDKSign struct {
+// JSApiSign JSApi签名
+type JSApiSign struct {
 	Signature string `json:"signature"`
-	Noncestr  string `json:"noncestr"`
+	NonceStr  string `json:"noncestr"`
 	Timestamp int64  `json:"timestamp"`
 }
 
@@ -75,7 +75,7 @@ type ResultApiTicket struct {
 	ExpiresIn int64  `json:"expires_in"`
 }
 
-// GetApiTicket 获取 JS-SDK ticket (注意：使用普通access_token)
+// GetApiTicket 获取 JSApi ticket (注意：使用普通access_token)
 func GetApiTicket(ticketType TicketType, result *ResultApiTicket) wx.Action {
 	return wx.NewGetAction(urls.OffiaCgiBinTicket,
 		wx.WithQuery("type", string(ticketType)),

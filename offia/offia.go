@@ -2,9 +2,7 @@ package offia
 
 import (
 	"context"
-	"crypto/sha1"
 	"encoding/base64"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -205,19 +203,17 @@ func (oa *Offia) Reply(openid string, reply event.Reply) (*event.ReplyMessage, e
 	return event.BuildReply(oa.token, oa.nonce(), base64.StdEncoding.EncodeToString(cipherText)), nil
 }
 
-// JSSDKSign 生成 JS-SDK 签名
-func (oa *Offia) JSSDKSign(ticket, url string) *JSSDKSign {
-	noncestr := oa.nonce()
-	now := time.Now().Unix()
-
-	h := sha1.New()
-	h.Write([]byte(fmt.Sprintf("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s", ticket, noncestr, now, url)))
-
-	return &JSSDKSign{
-		Signature: hex.EncodeToString(h.Sum(nil)),
-		Noncestr:  noncestr,
-		Timestamp: now,
+// JSApiSign 生成 JSApi 签名
+func (oa *Offia) JSApiSign(ticket, url string) *JSApiSign {
+	ret := &JSApiSign{
+		NonceStr:  oa.nonce(),
+		Timestamp: time.Now().Unix(),
 	}
+
+	signStr := fmt.Sprintf("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s", ticket, ret.NonceStr, ret.Timestamp, url)
+	ret.Signature = wx.SHA1(signStr)
+
+	return ret
 }
 
 // Option 公众号配置项
