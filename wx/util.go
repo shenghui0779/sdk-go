@@ -75,7 +75,7 @@ const (
 )
 
 // Nonce returns nonce string, param `size` better for even number.
-func Nonce(size uint) string {
+func Nonce(size uint8) string {
 	nonce := make([]byte, size/2)
 	io.ReadFull(rand.Reader, nonce)
 
