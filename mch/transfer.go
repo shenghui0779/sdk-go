@@ -136,22 +136,3 @@ func QueryTransferBankCard(appid, partnerTradeNO string) wx.Action {
 		}),
 	)
 }
-
-// RSAPublicKey 获取RSA加密公钥（需要证书）
-func RSAPublicKey() wx.Action {
-	return wx.NewPostAction(urls.MchRSAPublicKey,
-		wx.WithTLS(),
-		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
-			m := wx.WXML{
-				"mch_id":    mchid,
-				"nonce_str": nonce,
-				"sign_type": "MD5",
-			}
-
-			// 签名
-			m["sign"] = wx.SignMD5.Do(apikey, m, true)
-
-			return m, nil
-		}),
-	)
-}

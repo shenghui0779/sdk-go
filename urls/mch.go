@@ -1,12 +1,22 @@
 package urls
 
-const MchRSAPublicKey = "https://fraud.mch.weixin.qq.com/risk/getpublickey"
+const (
+	MchRSAPublicKey     = "https://fraud.mch.weixin.qq.com/risk/getpublickey"
+	MchToolsShortURL    = "https://api.mch.weixin.qq.com/tools/shorturl"
+	MchAuthCodeToOpenID = "https://api.mch.weixin.qq.com/tools/authcodetoopenid"
+)
 
 // order
 const (
-	MchOrderUnify = "https://api.mch.weixin.qq.com/pay/unifiedorder" // 统一下单
-	MchOrderQuery = "https://api.mch.weixin.qq.com/pay/orderquery"   // 订单查询
-	MchOrderClose = "https://api.mch.weixin.qq.com/pay/closeorder"   // 订单关闭
+	MchOrderUnify   = "https://api.mch.weixin.qq.com/pay/unifiedorder"   // 统一下单
+	MchOrderQuery   = "https://api.mch.weixin.qq.com/pay/orderquery"     // 订单查询
+	MchOrderClose   = "https://api.mch.weixin.qq.com/pay/closeorder"     // 订单关闭
+	MchOrderReverse = "https://api.mch.weixin.qq.com/secapi/pay/reverse" // 撤销订单
+)
+
+// micro
+const (
+	MchMicroPay = "https://api.mch.weixin.qq.com/pay/micropay"
 )
 
 // refund
