@@ -38,7 +38,7 @@ go get -u github.com/shenghui0779/gochat
 ## 支付
 
 > - 版本：v2
-> - 模式：普通商户直连模式
+> - 模式：普通商户 & 服务商
 
 ```go
 import (

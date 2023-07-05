@@ -35,7 +35,7 @@ type ParamsTransferBankCard struct {
 
 // TransferToBalance 付款到零钱（需要证书）
 // 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
-func TransferToBalance(appid string, params *ParamsTransferBalance) wx.Action {
+func TransferToBalance(appid string, params *ParamsTransferBalance, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchTransferToBalance,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -48,6 +48,10 @@ func TransferToBalance(appid string, params *ParamsTransferBalance) wx.Action {
 				"check_name":       params.CheckName,
 				"amount":           strconv.Itoa(params.Amount),
 				"desc":             params.Desc,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if params.ReUserName != "" {
@@ -71,7 +75,7 @@ func TransferToBalance(appid string, params *ParamsTransferBalance) wx.Action {
 }
 
 // QueryTransferBalance 查询付款到零钱结果（需要证书）
-func QueryTransferBalance(appid, partnerTradeNO string) wx.Action {
+func QueryTransferBalance(appid, partnerTradeNO string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchTransferBalanceOrderQuery,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -80,6 +84,10 @@ func QueryTransferBalance(appid, partnerTradeNO string) wx.Action {
 				"mch_id":           mchid,
 				"partner_trade_no": partnerTradeNO,
 				"nonce_str":        nonce,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名
@@ -92,7 +100,7 @@ func QueryTransferBalance(appid, partnerTradeNO string) wx.Action {
 
 // TransferToBankCard 付款到银行卡（需要证书）
 // 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
-func TransferToBankCard(appid string, params *ParamsTransferBankCard) wx.Action {
+func TransferToBankCard(appid string, params *ParamsTransferBankCard, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchTransferToBankCard,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -104,6 +112,10 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard) wx.Action 
 				"enc_true_name":    params.EncTrueName,
 				"bank_code":        params.BankCode,
 				"amount":           strconv.Itoa(params.Amount),
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if params.Desc != "" {
@@ -119,7 +131,7 @@ func TransferToBankCard(appid string, params *ParamsTransferBankCard) wx.Action 
 }
 
 // QueryTransferBankCard 查询付款到银行卡结果（需要证书）
-func QueryTransferBankCard(appid, partnerTradeNO string) wx.Action {
+func QueryTransferBankCard(appid, partnerTradeNO string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchTransferBankCardOrderQuery,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -127,6 +139,10 @@ func QueryTransferBankCard(appid, partnerTradeNO string) wx.Action {
 				"mch_id":           mchid,
 				"partner_trade_no": partnerTradeNO,
 				"nonce_str":        nonce,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名

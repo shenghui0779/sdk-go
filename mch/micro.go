@@ -31,7 +31,7 @@ type ParamsMicroPay struct {
 // MicroPay 扫码支付
 // 【提醒1】提交支付请求后微信会同步返回支付结果。当返回结果为“系统错误”时，商户系统等待5秒后调用「查询订单API」，查询支付实际交易结果；当返回结果为“USERPAYING”时，商户系统可设置间隔时间(建议10秒)重新查询支付结果，直到支付成功或超时(建议45秒)；
 // 【提醒2】在调用查询接口返回后，如果交易状况不明晰，请调用「撤销订单API」，此时如果交易失败则关闭订单，该单不能再支付成功；如果交易成功，则将扣款退回到用户账户。当撤销无返回或错误时，请再次调用。注意：请勿扣款后立即调用「撤销订单API」，建议至少15秒后再调用。
-func MicroPay(appid string, params *ParamsMicroPay) wx.Action {
+func MicroPay(appid string, params *ParamsMicroPay, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchMicroPay,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -44,6 +44,10 @@ func MicroPay(appid string, params *ParamsMicroPay) wx.Action {
 				"out_trade_no":     params.OutTradeNO,
 				"total_fee":        strconv.Itoa(params.TotalFee),
 				"spbill_create_ip": params.SpbillCreateIP,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if len(params.DeviceInfo) != 0 {
@@ -100,7 +104,7 @@ func MicroPay(appid string, params *ParamsMicroPay) wx.Action {
 // ReverseByTransactionID 撤销订单
 // 支付交易返回失败或支付系统超时，调用该接口撤销交易。如果此订单用户支付失败，微信支付系统会将此订单关闭；如果用户支付成功，微信支付系统会将此订单资金退还给用户。
 // 【注意】7天以内的交易单可调用撤销，其他正常支付的单如需实现相同功能请调用申请退款API。提交支付交易后调用「查询订单API」，没有明确的支付结果再调用「撤销订单API」。
-func ReverseByTransactionID(appid, transactionID string) wx.Action {
+func ReverseByTransactionID(appid, transactionID string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchOrderReverse,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -109,6 +113,10 @@ func ReverseByTransactionID(appid, transactionID string) wx.Action {
 				"mch_id":         mchid,
 				"transaction_id": transactionID,
 				"nonce_str":      nonce,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名
@@ -122,7 +130,7 @@ func ReverseByTransactionID(appid, transactionID string) wx.Action {
 // ReverseByOutTradeNO 撤销订单
 // 支付交易返回失败或支付系统超时，调用该接口撤销交易。如果此订单用户支付失败，微信支付系统会将此订单关闭；如果用户支付成功，微信支付系统会将此订单资金退还给用户。
 // 【注意】7天以内的交易单可调用撤销，其他正常支付的单如需实现相同功能请调用申请退款API。提交支付交易后调用「查询订单API」，没有明确的支付结果再调用「撤销订单API」。
-func ReverseByOutTradeNO(appid, outTradeNO string) wx.Action {
+func ReverseByOutTradeNO(appid, outTradeNO string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchOrderReverse,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -131,6 +139,10 @@ func ReverseByOutTradeNO(appid, outTradeNO string) wx.Action {
 				"mch_id":       mchid,
 				"out_trade_no": outTradeNO,
 				"nonce_str":    nonce,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名

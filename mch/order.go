@@ -32,7 +32,7 @@ type ParamsUnifyOrder struct {
 }
 
 // UnifyOrder 统一下单
-func UnifyOrder(appid string, params *ParamsUnifyOrder) wx.Action {
+func UnifyOrder(appid string, params *ParamsUnifyOrder, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchOrderUnify,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -46,6 +46,10 @@ func UnifyOrder(appid string, params *ParamsUnifyOrder) wx.Action {
 				"total_fee":        strconv.Itoa(params.TotalFee),
 				"spbill_create_ip": params.SpbillCreateIP,
 				"notify_url":       params.NotifyURL,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if len(params.DeviceInfo) != 0 {
@@ -104,7 +108,7 @@ func UnifyOrder(appid string, params *ParamsUnifyOrder) wx.Action {
 }
 
 // QueryOrderByTransactionID 根据微信订单号查询
-func QueryOrderByTransactionID(appid, transactionID string) wx.Action {
+func QueryOrderByTransactionID(appid, transactionID string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchOrderQuery,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -112,6 +116,10 @@ func QueryOrderByTransactionID(appid, transactionID string) wx.Action {
 				"mch_id":         mchid,
 				"transaction_id": transactionID,
 				"nonce_str":      nonce,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名
@@ -123,7 +131,7 @@ func QueryOrderByTransactionID(appid, transactionID string) wx.Action {
 }
 
 // QueryOrderByOutTradeNO 根据商户订单号查询
-func QueryOrderByOutTradeNO(appid, outTradeNO string) wx.Action {
+func QueryOrderByOutTradeNO(appid, outTradeNO string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchOrderQuery,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -131,6 +139,10 @@ func QueryOrderByOutTradeNO(appid, outTradeNO string) wx.Action {
 				"mch_id":       mchid,
 				"out_trade_no": outTradeNO,
 				"nonce_str":    nonce,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名
@@ -142,7 +154,7 @@ func QueryOrderByOutTradeNO(appid, outTradeNO string) wx.Action {
 }
 
 // CloseOrder 关闭订单【注意：订单生成后不能马上调用关单接口，最短调用时间间隔为5分钟。】
-func CloseOrder(appid, outTradeNO string) wx.Action {
+func CloseOrder(appid, outTradeNO string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchOrderClose,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -150,6 +162,10 @@ func CloseOrder(appid, outTradeNO string) wx.Action {
 				"mch_id":       mchid,
 				"out_trade_no": outTradeNO,
 				"nonce_str":    nonce,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名

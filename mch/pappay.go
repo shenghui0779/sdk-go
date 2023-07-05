@@ -69,7 +69,7 @@ type ParamsPappay struct {
 }
 
 // APPEntrust APP纯签约
-func APPEntrust(appid string, params *ParamsContract) wx.Action {
+func APPEntrust(appid string, params *ParamsContract, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchPappayAPPEntrust,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -82,6 +82,10 @@ func APPEntrust(appid string, params *ParamsContract) wx.Action {
 				"version":                  "1.0",
 				"timestamp":                strconv.FormatInt(params.Timestamp, 10),
 				"notify_url":               params.NotifyURL,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if params.ReturnAPP {
@@ -97,7 +101,7 @@ func APPEntrust(appid string, params *ParamsContract) wx.Action {
 }
 
 // OAEntrust 公众号纯签约
-func OAEntrust(appid string, params *ParamsContract) wx.Action {
+func OAEntrust(appid string, params *ParamsContract, options ...SLOption) wx.Action {
 	return wx.NewAction("", urls.MchPappayOAEntrust,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -110,6 +114,10 @@ func OAEntrust(appid string, params *ParamsContract) wx.Action {
 				"version":                  "1.0",
 				"timestamp":                strconv.FormatInt(params.Timestamp, 10),
 				"notify_url":               params.NotifyURL,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if params.ReturnWeb {
@@ -125,7 +133,7 @@ func OAEntrust(appid string, params *ParamsContract) wx.Action {
 }
 
 // MinipEntrust 小程序纯签约，返回小程序所需的 extraData 数据
-func MinipEntrust(appid string, params *ParamsContract) wx.Action {
+func MinipEntrust(appid string, params *ParamsContract, options ...SLOption) wx.Action {
 	return wx.NewAction("", "",
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -137,6 +145,10 @@ func MinipEntrust(appid string, params *ParamsContract) wx.Action {
 				"contract_display_account": params.ContractDisplayAccount,
 				"timestamp":                strconv.FormatInt(params.Timestamp, 10),
 				"notify_url":               params.NotifyURL,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if params.OuterID != 0 {
@@ -152,7 +164,7 @@ func MinipEntrust(appid string, params *ParamsContract) wx.Action {
 }
 
 // H5Entrust H5纯签约
-func H5Entrust(appid string, params *ParamsContract) wx.Action {
+func H5Entrust(appid string, params *ParamsContract, options ...SLOption) wx.Action {
 	return wx.NewAction("", urls.MchPappayH5Entrust,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -168,6 +180,10 @@ func H5Entrust(appid string, params *ParamsContract) wx.Action {
 				"notify_url":               params.NotifyURL,
 			}
 
+			for _, f := range options {
+				f(m)
+			}
+
 			if params.ReturnAPPID != "" {
 				m["return_appid"] = params.ReturnAPPID
 			}
@@ -181,7 +197,7 @@ func H5Entrust(appid string, params *ParamsContract) wx.Action {
 }
 
 // EntrustInPay 支付中签约
-func EntrustInPay(appid string, params *ParamsContractInPay) wx.Action {
+func EntrustInPay(appid string, params *ParamsContractInPay, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchPappayContractOrder,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -202,6 +218,10 @@ func EntrustInPay(appid string, params *ParamsContractInPay) wx.Action {
 				"contract_display_account": params.ContractDisplayAccount,
 				"notify_url":               params.PaymentNotifyURL,
 				"contract_notify_url":      params.ContractNotifyURL,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if params.DeviceInfo != "" {
@@ -253,7 +273,7 @@ func EntrustInPay(appid string, params *ParamsContractInPay) wx.Action {
 }
 
 // QueryContractByID 根据微信返回的委托代扣协议id查询签约关系
-func QueryContractByID(appid string, contractID string) wx.Action {
+func QueryContractByID(appid string, contractID string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchPappayContractQuery,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -261,6 +281,10 @@ func QueryContractByID(appid string, contractID string) wx.Action {
 				"mch_id":      mchid,
 				"contract_id": contractID,
 				"version":     "1.0",
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名
@@ -272,7 +296,7 @@ func QueryContractByID(appid string, contractID string) wx.Action {
 }
 
 // QueryContractByCode 根据签约协议号查询签约关系，需要商户平台配置的代扣模版id
-func QueryContractByCode(appid, planID, contractCode string) wx.Action {
+func QueryContractByCode(appid, planID, contractCode string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchPappayContractQuery,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -281,6 +305,10 @@ func QueryContractByCode(appid, planID, contractCode string) wx.Action {
 				"plan_id":       planID,
 				"contract_code": contractCode,
 				"version":       "1.0",
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名
@@ -292,7 +320,7 @@ func QueryContractByCode(appid, planID, contractCode string) wx.Action {
 }
 
 // PappayApply 申请扣款
-func PappayApply(appid string, params *ParamsPappay) wx.Action {
+func PappayApply(appid string, params *ParamsPappay, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchPappayApply,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -307,6 +335,10 @@ func PappayApply(appid string, params *ParamsPappay) wx.Action {
 				"total_fee":        strconv.Itoa(params.TotalFee),
 				"contract_id":      params.ContractID,
 				"spbill_create_ip": params.SpbillCreateIP,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if len(params.Detail) != 0 {
@@ -338,7 +370,7 @@ func PappayApply(appid string, params *ParamsPappay) wx.Action {
 }
 
 // DeleteContractByID 根据微信返回的委托代扣协议id解约
-func DeleteContractByID(appid, contractID, remark string) wx.Action {
+func DeleteContractByID(appid, contractID, remark string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchPappayContractDelete,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -347,6 +379,10 @@ func DeleteContractByID(appid, contractID, remark string) wx.Action {
 				"contract_id":                 contractID,
 				"version":                     "1.0",
 				"contract_termination_remark": remark,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名
@@ -358,7 +394,7 @@ func DeleteContractByID(appid, contractID, remark string) wx.Action {
 }
 
 // DeleteContractByCode 根据签约协议号解约，需要商户平台配置的代扣模版id
-func DeleteContractByCode(appid, planID, contractCode, remark string) wx.Action {
+func DeleteContractByCode(appid, planID, contractCode, remark string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchPappayContractDelete,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -370,6 +406,10 @@ func DeleteContractByCode(appid, planID, contractCode, remark string) wx.Action 
 				"contract_termination_remark": remark,
 			}
 
+			for _, f := range options {
+				f(m)
+			}
+
 			// 签名
 			m["sign"] = wx.SignMD5.Do(apikey, m, true)
 
@@ -379,7 +419,7 @@ func DeleteContractByCode(appid, planID, contractCode, remark string) wx.Action 
 }
 
 // QueryPappayByTransactionID 根据微信订单号查询扣款信息
-func QueryPappayByTransactionID(appid, transactionID string) wx.Action {
+func QueryPappayByTransactionID(appid, transactionID string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchPappayOrderQuery,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -387,6 +427,10 @@ func QueryPappayByTransactionID(appid, transactionID string) wx.Action {
 				"mch_id":         mchid,
 				"transaction_id": transactionID,
 				"nonce_str":      nonce,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名
@@ -398,7 +442,7 @@ func QueryPappayByTransactionID(appid, transactionID string) wx.Action {
 }
 
 // QueryPappayByOutTradeNO 根据商户订单号查询扣款信息
-func QueryPappayByOutTradeNO(appid, outTradeNO string) wx.Action {
+func QueryPappayByOutTradeNO(appid, outTradeNO string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchPappayOrderQuery,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -406,6 +450,10 @@ func QueryPappayByOutTradeNO(appid, outTradeNO string) wx.Action {
 				"mch_id":       mchid,
 				"out_trade_no": outTradeNO,
 				"nonce_str":    nonce,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名

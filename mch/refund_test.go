@@ -177,7 +177,7 @@ func TestQueryRefundByRefundID(t *testing.T) {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}), WithMockClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryRefundByRefundID("wx2421b1c4370ec43b", "2008450740201411110000174436"))
+	r, err := mch.Do(context.TODO(), QueryRefundByRefundID("wx2421b1c4370ec43b", "2008450740201411110000174436", 0))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
@@ -237,7 +237,7 @@ func TestQueryRefundByOutRefundNO(t *testing.T) {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}), WithMockClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryRefundByOutRefundNO("wx2421b1c4370ec43b", "1415701182"))
+	r, err := mch.Do(context.TODO(), QueryRefundByOutRefundNO("wx2421b1c4370ec43b", "1415701182", 0))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
@@ -297,7 +297,7 @@ func TestQueryRefundByTransactionID(t *testing.T) {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}), WithMockClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryRefundByTransactionID("wx2421b1c4370ec43b", "1008450740201411110005820873"))
+	r, err := mch.Do(context.TODO(), QueryRefundByTransactionID("wx2421b1c4370ec43b", "1008450740201411110005820873", 0))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{
@@ -357,7 +357,7 @@ func TestQueryRefundByOutTradeNO(t *testing.T) {
 		return "0b9f35f484df17a732e537c37708d1d0"
 	}), WithMockClient(client))
 
-	r, err := mch.Do(context.TODO(), QueryRefundByOutTradeNO("wx2421b1c4370ec43b", "1415757673"))
+	r, err := mch.Do(context.TODO(), QueryRefundByOutTradeNO("wx2421b1c4370ec43b", "1415757673", 0))
 
 	assert.Nil(t, err)
 	assert.Equal(t, wx.WXML{

@@ -22,7 +22,7 @@ type ParamsRefund struct {
 
 // RefundByTransactionID 根据微信订单号退款（需要证书）
 // 注意：一笔退款失败后重新提交，请不要更换退款单号，请使用原商户退款单号。
-func RefundByTransactionID(appid, transactionID string, params *ParamsRefund) wx.Action {
+func RefundByTransactionID(appid, transactionID string, params *ParamsRefund, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchRefundApply,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -34,6 +34,10 @@ func RefundByTransactionID(appid, transactionID string, params *ParamsRefund) wx
 				"out_refund_no":  params.OutRefundNO,
 				"total_fee":      strconv.Itoa(params.TotalFee),
 				"refund_fee":     strconv.Itoa(params.RefundFee),
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if params.RefundFeeType != "" {
@@ -62,7 +66,7 @@ func RefundByTransactionID(appid, transactionID string, params *ParamsRefund) wx
 
 // RefundByOutTradeNO 根据商户订单号退款（需要证书）
 // 注意：一笔退款失败后重新提交，请不要更换退款单号，请使用原商户退款单号。
-func RefundByOutTradeNO(appid, outTradeNO string, params *ParamsRefund) wx.Action {
+func RefundByOutTradeNO(appid, outTradeNO string, params *ParamsRefund, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchRefundApply,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -74,6 +78,10 @@ func RefundByOutTradeNO(appid, outTradeNO string, params *ParamsRefund) wx.Actio
 				"out_refund_no": params.OutRefundNO,
 				"total_fee":     strconv.Itoa(params.TotalFee),
 				"refund_fee":    strconv.Itoa(params.RefundFee),
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if params.RefundFeeType != "" {
@@ -101,7 +109,7 @@ func RefundByOutTradeNO(appid, outTradeNO string, params *ParamsRefund) wx.Actio
 }
 
 // QueryRefundByRefundID 根据微信退款单号查询退款信息
-func QueryRefundByRefundID(appid, refundID string, offset ...int) wx.Action {
+func QueryRefundByRefundID(appid, refundID string, offset int, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchRefundQuery,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -111,8 +119,12 @@ func QueryRefundByRefundID(appid, refundID string, offset ...int) wx.Action {
 				"nonce_str": nonce,
 			}
 
-			if len(offset) != 0 {
-				m["offset"] = strconv.Itoa(offset[0])
+			for _, f := range options {
+				f(m)
+			}
+
+			if offset > 0 {
+				m["offset"] = strconv.Itoa(offset)
 			}
 
 			// 签名
@@ -124,7 +136,7 @@ func QueryRefundByRefundID(appid, refundID string, offset ...int) wx.Action {
 }
 
 // QueryRefundByOutRefundNO 根据商户退款单号查询退款信息
-func QueryRefundByOutRefundNO(appid, outRefundNO string, offset ...int) wx.Action {
+func QueryRefundByOutRefundNO(appid, outRefundNO string, offset int, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchRefundQuery,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -134,8 +146,12 @@ func QueryRefundByOutRefundNO(appid, outRefundNO string, offset ...int) wx.Actio
 				"nonce_str":     nonce,
 			}
 
-			if len(offset) != 0 {
-				m["offset"] = strconv.Itoa(offset[0])
+			for _, f := range options {
+				f(m)
+			}
+
+			if offset > 0 {
+				m["offset"] = strconv.Itoa(offset)
 			}
 
 			// 签名
@@ -147,7 +163,7 @@ func QueryRefundByOutRefundNO(appid, outRefundNO string, offset ...int) wx.Actio
 }
 
 // QueryRefundByTransactionID 根据微信订单号查询退款信息
-func QueryRefundByTransactionID(appid, transactionID string, offset ...int) wx.Action {
+func QueryRefundByTransactionID(appid, transactionID string, offset int, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchRefundQuery,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -157,8 +173,12 @@ func QueryRefundByTransactionID(appid, transactionID string, offset ...int) wx.A
 				"nonce_str":      nonce,
 			}
 
-			if len(offset) != 0 {
-				m["offset"] = strconv.Itoa(offset[0])
+			for _, f := range options {
+				f(m)
+			}
+
+			if offset > 0 {
+				m["offset"] = strconv.Itoa(offset)
 			}
 
 			// 签名
@@ -170,7 +190,7 @@ func QueryRefundByTransactionID(appid, transactionID string, offset ...int) wx.A
 }
 
 // QueryRefundByOutTradeNO 根据商户订单号查询退款信息
-func QueryRefundByOutTradeNO(appid, outTradeNO string, offset ...int) wx.Action {
+func QueryRefundByOutTradeNO(appid, outTradeNO string, offset int, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchRefundQuery,
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
 			m := wx.WXML{
@@ -180,8 +200,12 @@ func QueryRefundByOutTradeNO(appid, outTradeNO string, offset ...int) wx.Action 
 				"nonce_str":    nonce,
 			}
 
-			if len(offset) != 0 {
-				m["offset"] = strconv.Itoa(offset[0])
+			for _, f := range options {
+				f(m)
+			}
+
+			if offset > 0 {
+				m["offset"] = strconv.Itoa(offset)
 			}
 
 			// 签名

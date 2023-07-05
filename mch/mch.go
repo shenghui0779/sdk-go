@@ -147,13 +147,17 @@ func (mch *Mch) MinipRedpackJSAPI(appid, pkg string) wx.WXML {
 
 // DownloadBill 下载交易账单
 // 账单日期格式：20140603
-func (mch *Mch) DownloadBill(ctx context.Context, appid, billDate, billType string) ([]byte, error) {
+func (mch *Mch) DownloadBill(ctx context.Context, appid, billDate, billType string, options ...SLOption) ([]byte, error) {
 	m := wx.WXML{
 		"appid":     appid,
 		"mch_id":    mch.mchid,
 		"bill_date": billDate,
 		"bill_type": billType,
 		"nonce_str": mch.nonce(),
+	}
+
+	for _, f := range options {
+		f(m)
 	}
 
 	m["sign"] = wx.SignMD5.Do(mch.apikey, m, true)
@@ -187,13 +191,17 @@ func (mch *Mch) DownloadBill(ctx context.Context, appid, billDate, billType stri
 
 // DownloadFundFlow 下载资金账单
 // 账单日期格式：20140603
-func (mch *Mch) DownloadFundFlow(ctx context.Context, appid string, billDate, accountType string) ([]byte, error) {
+func (mch *Mch) DownloadFundFlow(ctx context.Context, appid string, billDate, accountType string, options ...SLOption) ([]byte, error) {
 	m := wx.WXML{
 		"appid":        appid,
 		"mch_id":       mch.mchid,
 		"bill_date":    billDate,
 		"account_type": accountType,
 		"nonce_str":    mch.nonce(),
+	}
+
+	for _, f := range options {
+		f(m)
 	}
 
 	m["sign"] = wx.SignHMacSHA256.Do(mch.apikey, m, true)
@@ -228,7 +236,7 @@ func (mch *Mch) DownloadFundFlow(ctx context.Context, appid string, billDate, ac
 // BatchQueryComment 拉取订单评价数据
 // 时间格式：yyyyMMddHHmmss
 // 默认一次且最多拉取200条
-func (mch *Mch) BatchQueryComment(ctx context.Context, appid, beginTime, endTime string, offset int, limit ...int) ([]byte, error) {
+func (mch *Mch) BatchQueryComment(ctx context.Context, appid, beginTime, endTime string, offset, limit int, options ...SLOption) ([]byte, error) {
 	m := wx.WXML{
 		"appid":      appid,
 		"mch_id":     mch.mchid,
@@ -238,8 +246,12 @@ func (mch *Mch) BatchQueryComment(ctx context.Context, appid, beginTime, endTime
 		"nonce_str":  mch.nonce(),
 	}
 
-	if len(limit) != 0 {
-		m["limit"] = strconv.Itoa(limit[0])
+	for _, f := range options {
+		f(m)
+	}
+
+	if limit > 0 {
+		m["limit"] = strconv.Itoa(limit)
 	}
 
 	m["sign"] = wx.SignHMacSHA256.Do(mch.apikey, m, true)
@@ -316,7 +328,7 @@ func (mch *Mch) DecryptWithAES256ECB(encrypt string) (wx.WXML, error) {
 	return wx.ParseXML2Map(plainText)
 }
 
-// Option 支付商户配置项
+// Option 支付配置项
 type Option func(mch *Mch)
 
 // WithTLSCert 设置TLS证书
@@ -352,6 +364,32 @@ func WithMockClient(c wx.HTTPClient) Option {
 	return func(mch *Mch) {
 		mch.client = c
 		mch.tlscli = c
+	}
+}
+
+// SLOption 服务商模式配置项
+type SLOption func(m wx.WXML)
+
+// WithSubMchID 「服务商模式下」设置子商户(特约商户)号
+func WithSubMchID(mchid string) SLOption {
+	return func(m wx.WXML) {
+		m["sub_mch_id"] = mchid
+	}
+}
+
+// WithSubAppID 「服务商模式下」设置子商户(特约商户)公众账号ID
+func WithSubAppID(appid string) SLOption {
+	return func(m wx.WXML) {
+		m["sub_appid"] = appid
+	}
+}
+
+// WithMsgAppID 「服务商模式下」设置红包触达用户时的appid
+// 可填服务商自己的appid或子商户的appid；
+// 子商户appid必须在微信支付商户平台中先录入，否则会校验不过
+func WithMsgAppID(appid string) SLOption {
+	return func(m wx.WXML) {
+		m["msgappid"] = appid
 	}
 }
 

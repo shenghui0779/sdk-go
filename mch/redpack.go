@@ -26,7 +26,7 @@ type ParamsRedpack struct {
 
 // SendNormalRedpack 发放普通红包（需要证书）
 // 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
-func SendNormalRedpack(appid string, params *ParamsRedpack) wx.Action {
+func SendNormalRedpack(appid string, params *ParamsRedpack, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackNormal,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -43,6 +43,10 @@ func SendNormalRedpack(appid string, params *ParamsRedpack) wx.Action {
 				"client_ip":    params.ClientIP,
 				"act_name":     params.ActName,
 				"remark":       params.Remark,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if params.SceneID != "" {
@@ -63,7 +67,7 @@ func SendNormalRedpack(appid string, params *ParamsRedpack) wx.Action {
 
 // SendGroupRedpack 发放裂变红包（需要证书）
 // 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
-func SendGroupRedpack(appid string, params *ParamsRedpack) wx.Action {
+func SendGroupRedpack(appid string, params *ParamsRedpack, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackGroup,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -80,6 +84,10 @@ func SendGroupRedpack(appid string, params *ParamsRedpack) wx.Action {
 				"wishing":      params.Wishing,
 				"act_name":     params.ActName,
 				"remark":       params.Remark,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			if params.SceneID != "" {
@@ -100,7 +108,7 @@ func SendGroupRedpack(appid string, params *ParamsRedpack) wx.Action {
 
 // SendMinipRedpack 发放小程序红包（需要证书）
 // 注意：当返回错误码为“SYSTEMERROR”时，请务必使用原商户订单号重试，否则可能造成重复支付等资金风险。
-func SendMinipRedpack(appid string, params *ParamsRedpack) wx.Action {
+func SendMinipRedpack(appid string, params *ParamsRedpack, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackMinip,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -119,6 +127,10 @@ func SendMinipRedpack(appid string, params *ParamsRedpack) wx.Action {
 				"notify_way":   "MINI_PROGRAM_JSAPI",
 			}
 
+			for _, f := range options {
+				f(m)
+			}
+
 			if params.SceneID != "" {
 				m["scene_id"] = params.SceneID
 			}
@@ -132,7 +144,7 @@ func SendMinipRedpack(appid string, params *ParamsRedpack) wx.Action {
 }
 
 // QueryRedpack 查询红包记录（需要证书）
-func QueryRedpack(appid, billNO string) wx.Action {
+func QueryRedpack(appid, billNO string, options ...SLOption) wx.Action {
 	return wx.NewPostAction(urls.MchRedpackQuery,
 		wx.WithTLS(),
 		wx.WithWXML(func(mchid, apikey, nonce string) (wx.WXML, error) {
@@ -142,6 +154,10 @@ func QueryRedpack(appid, billNO string) wx.Action {
 				"mch_billno": billNO,
 				"bill_type":  "MCHT",
 				"nonce_str":  nonce,
+			}
+
+			for _, f := range options {
+				f(m)
 			}
 
 			// 签名
