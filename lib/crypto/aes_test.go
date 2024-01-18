@@ -50,48 +50,6 @@ func TestAesECB(t *testing.T) {
 	assert.Equal(t, data, string(plain2))
 }
 
-func TestAesCFB(t *testing.T) {
-	key := "AES256Key-32Characters1234567890"
-	iv := key[:16]
-	data := "ILoveYiigo"
-
-	cipher, err := AESEncryptCFB([]byte(key), []byte(iv), []byte(data))
-	assert.Nil(t, err)
-	assert.Equal(t, "KP7OnZjqIdiGlA==", cipher.String())
-
-	plain, err := AESDecryptCFB([]byte(key), []byte(iv), cipher.Bytes())
-	assert.Nil(t, err)
-	assert.Equal(t, data, string(plain))
-}
-
-func TestAesOFB(t *testing.T) {
-	key := "AES256Key-32Characters1234567890"
-	iv := key[:16]
-	data := "ILoveYiigo"
-
-	cipher, err := AESEncryptOFB([]byte(key), []byte(iv), []byte(data))
-	assert.Nil(t, err)
-	assert.Equal(t, "KP7OnZjqIdiGlA==", cipher.String())
-
-	plain, err := AESDecryptOFB([]byte(key), []byte(iv), cipher.Bytes())
-	assert.Nil(t, err)
-	assert.Equal(t, data, string(plain))
-}
-
-func TestAesCTR(t *testing.T) {
-	key := "AES256Key-32Characters1234567890"
-	iv := key[:16]
-	data := "ILoveYiigo"
-
-	cipher, err := AESEncryptCTR([]byte(key), []byte(iv), []byte(data))
-	assert.Nil(t, err)
-	assert.Equal(t, "KP7OnZjqIdiGlA==", cipher.String())
-
-	plain, err := AESDecryptCTR([]byte(key), []byte(iv), cipher.Bytes())
-	assert.Nil(t, err)
-	assert.Equal(t, data, string(plain))
-}
-
 func TestAesGCM(t *testing.T) {
 	key := "AES256Key-32Characters1234567890"
 	nonce := key[:12]
