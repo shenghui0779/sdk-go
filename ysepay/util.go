@@ -7,11 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/tidwall/gjson"
 	"golang.org/x/crypto/pkcs12"
 )
-
-var fail = func(err error) (gjson.Result, error) { return gjson.Result{}, err }
 
 // ErrSysAccepting 网关受理中
 var ErrSysAccepting = errors.New("SYS001 | 网关受理中")

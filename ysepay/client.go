@@ -91,14 +91,14 @@ func (c *Client) PostForm(ctx context.Context, api, serviceNO string, bizData va
 
 	form, err := c.reqForm(uuid.NewString(), serviceNO, bizData)
 	if err != nil {
-		return fail(err)
+		return lib.Fail(err)
 	}
 
 	log.SetReqBody(form)
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(form), libHttp.WithHeader(libHttp.HeaderContentType, libHttp.ContentForm))
 	if err != nil {
-		return fail(err)
+		return lib.Fail(err)
 	}
 	defer resp.Body.Close()
 
@@ -106,12 +106,12 @@ func (c *Client) PostForm(ctx context.Context, api, serviceNO string, bizData va
 	log.SetStatusCode(resp.StatusCode)
 
 	if resp.StatusCode != http.StatusOK {
-		return fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode))
+		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode))
 	}
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fail(err)
+		return lib.Fail(err)
 	}
 
 	log.SetRespBody(string(b))
@@ -155,14 +155,14 @@ func (c *Client) reqForm(reqID, serviceNO string, bizData value.V) (string, erro
 
 func (c *Client) verifyResp(body []byte) (gjson.Result, error) {
 	if c.pubKey == nil {
-		return fail(errors.New("public key is nil (forgotten configure?)"))
+		return lib.Fail(errors.New("public key is nil (forgotten configure?)"))
 	}
 
 	ret := gjson.ParseBytes(body)
 
 	sign, err := base64.StdEncoding.DecodeString(ret.Get("sign").String())
 	if err != nil {
-		return fail(err)
+		return lib.Fail(err)
 	}
 
 	v := value.V{}
@@ -174,15 +174,15 @@ func (c *Client) verifyResp(body []byte) (gjson.Result, error) {
 
 	err = c.pubKey.Verify(crypto.SHA1, []byte(v.Encode("=", "&", value.WithEmptyMode(value.EmptyIgnore))), sign)
 	if err != nil {
-		return fail(err)
+		return lib.Fail(err)
 	}
 
 	if code := ret.Get("code").String(); code != SysOK {
 		if code == SysAccepting {
-			return fail(ErrSysAccepting)
+			return lib.Fail(ErrSysAccepting)
 		}
 
-		return fail(fmt.Errorf("%s | %s", code, ret.Get("msg").String()))
+		return lib.Fail(fmt.Errorf("%s | %s", code, ret.Get("msg").String()))
 	}
 
 	return ret.Get("bizResponseJson"), nil
@@ -191,12 +191,12 @@ func (c *Client) verifyResp(body []byte) (gjson.Result, error) {
 // VerifyNotify 解析并验证异步回调通知，返回BizJSON数据
 func (c *Client) VerifyNotify(form url.Values) (gjson.Result, error) {
 	if c.pubKey == nil {
-		return fail(errors.New("public key is nil (forgotten configure?)"))
+		return lib.Fail(errors.New("public key is nil (forgotten configure?)"))
 	}
 
 	sign, err := base64.StdEncoding.DecodeString(form.Get("sign"))
 	if err != nil {
-		return fail(err)
+		return lib.Fail(err)
 	}
 
 	v := value.V{}
@@ -210,7 +210,7 @@ func (c *Client) VerifyNotify(form url.Values) (gjson.Result, error) {
 
 	err = c.pubKey.Verify(crypto.SHA1, []byte(v.Encode("=", "&", value.WithEmptyMode(value.EmptyIgnore))), sign)
 	if err != nil {
-		return fail(err)
+		return lib.Fail(err)
 	}
 
 	return gjson.Parse(form.Get("bizResponseJson")), nil

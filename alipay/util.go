@@ -51,7 +51,6 @@ func FormatPKCS1PrivateKey(pemStr string) (crypto.RSAPadding, []byte) {
 	var builder strings.Builder
 
 	builder.WriteString("-----BEGIN RSA PRIVATE KEY-----\n")
-
 	for i := 0; i < raws; i++ {
 		if i == raws-1 {
 			builder.WriteString(pemStr[start:])
@@ -64,7 +63,6 @@ func FormatPKCS1PrivateKey(pemStr string) (crypto.RSAPadding, []byte) {
 		start += rawLen
 		end = start + rawLen
 	}
-
 	builder.WriteString("-----END RSA PRIVATE KEY-----\n")
 
 	return crypto.RSA_PKCS1, []byte(builder.String())
@@ -87,7 +85,6 @@ func FormatPKCS8PrivateKey(pemStr string) (crypto.RSAPadding, []byte) {
 	var builder strings.Builder
 
 	builder.WriteString("-----BEGIN PRIVATE KEY-----\n")
-
 	for i := 0; i < raws; i++ {
 		if i == raws-1 {
 			builder.WriteString(pemStr[start:])
@@ -100,7 +97,6 @@ func FormatPKCS8PrivateKey(pemStr string) (crypto.RSAPadding, []byte) {
 		start += rawLen
 		end = start + rawLen
 	}
-
 	builder.WriteString("-----END PRIVATE KEY-----\n")
 
 	return crypto.RSA_PKCS8, []byte(builder.String())
@@ -123,7 +119,6 @@ func FormatPKCS1PublicKey(pemStr string) (crypto.RSAPadding, []byte) {
 	var builder strings.Builder
 
 	builder.WriteString("-----BEGIN RSA PUBLIC KEY-----\n")
-
 	for i := 0; i < raws; i++ {
 		if i == raws-1 {
 			builder.WriteString(pemStr[start:])
@@ -136,7 +131,6 @@ func FormatPKCS1PublicKey(pemStr string) (crypto.RSAPadding, []byte) {
 		start += rawLen
 		end = start + rawLen
 	}
-
 	builder.WriteString("-----END RSA PUBLIC KEY-----\n")
 
 	return crypto.RSA_PKCS1, []byte(builder.String())
