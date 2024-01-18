@@ -4,6 +4,10 @@
 
 第三方应用 Go SDK
 
+```sh
+go get -u github.com/shenghui0779/sdk-go
+```
+
 #### 👉 目前支持
 
 - 微信
