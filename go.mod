@@ -1,12 +1,13 @@
-module github.com/shenghui0779/gochat
+module github.com/shenghui0779/sdk-go
 
-go 1.17
+go 1.20
 
 require (
-	github.com/golang/mock v1.6.0
+	github.com/google/uuid v1.5.0
 	github.com/stretchr/testify v1.8.4
-	github.com/tidwall/gjson v1.14.4
-	golang.org/x/crypto v0.10.0
+	github.com/tidwall/gjson v1.17.0
+	golang.org/x/crypto v0.18.0
+	golang.org/x/sync v0.6.0
 )
 
 require (
