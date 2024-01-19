@@ -13,16 +13,16 @@ import (
 	"strings"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	libCrypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	libHttp "github.com/shenghui0779/sdk-go/lib/http"
+	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
+	lib_http "github.com/shenghui0779/sdk-go/lib/http"
 )
 
 // Client 杉德支付客户端
 type Client struct {
 	mchID   string
-	prvKey  *libCrypto.PrivateKey
-	pubKey  *libCrypto.PublicKey
-	httpCli libHttp.HTTPClient
+	prvKey  *lib_crypto.PrivateKey
+	pubKey  *lib_crypto.PublicKey
+	httpCli lib_http.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -43,7 +43,7 @@ func (c *Client) Do(ctx context.Context, reqURL string, form *Form) (*Form, erro
 
 	log.SetReqBody(body)
 
-	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body), libHttp.WithHeader(libHttp.HeaderContentType, libHttp.ContentForm))
+	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body), lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentForm))
 	if err != nil {
 		return nil, err
 	}
@@ -105,19 +105,19 @@ type Option func(c *Client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(cli *http.Client) Option {
 	return func(c *Client) {
-		c.httpCli = libHttp.NewHTTPClient(cli)
+		c.httpCli = lib_http.NewHTTPClient(cli)
 	}
 }
 
 // WithPrivateKey 设置商户RSA私钥
-func WithPrivateKey(key *libCrypto.PrivateKey) Option {
+func WithPrivateKey(key *lib_crypto.PrivateKey) Option {
 	return func(c *Client) {
 		c.prvKey = key
 	}
 }
 
 // WithPublicKey 设置平台RSA公钥
-func WithPublicKey(key *libCrypto.PublicKey) Option {
+func WithPublicKey(key *lib_crypto.PublicKey) Option {
 	return func(c *Client) {
 		c.pubKey = key
 	}
@@ -134,7 +134,7 @@ func WithLogger(f func(ctx context.Context, data map[string]string)) Option {
 func NewClient(mchID string, options ...Option) *Client {
 	c := &Client{
 		mchID:   mchID,
-		httpCli: libHttp.NewDefaultClient(),
+		httpCli: lib_http.NewDefaultClient(),
 	}
 
 	for _, f := range options {

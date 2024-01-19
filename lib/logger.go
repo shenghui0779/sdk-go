@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	libHttp "github.com/shenghui0779/sdk-go/lib/http"
+	lib_http "github.com/shenghui0779/sdk-go/lib/http"
 )
 
 // ReqLog 请求日志
@@ -81,11 +81,11 @@ func HeaderEncode(h http.Header) string {
 	return buf.String()
 }
 
-func HeaderToHttpOption(h http.Header) []libHttp.Option {
-	options := make([]libHttp.Option, 0, len(h))
+func HeaderToHttpOption(h http.Header) []lib_http.Option {
+	options := make([]lib_http.Option, 0, len(h))
 
 	for k, vals := range h {
-		options = append(options, libHttp.WithHeader(k, vals...))
+		options = append(options, lib_http.WithHeader(k, vals...))
 	}
 
 	return options

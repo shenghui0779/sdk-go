@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	libCrypto "github.com/shenghui0779/sdk-go/lib/crypto"
+	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
@@ -31,7 +31,7 @@ func SignWithSHA1(token string, items ...string) string {
 
 // EventEncrypt 时间消息加密
 // [参考](https://developer.work.weixin.qq.com/document/path/90968)
-func EventEncrypt(receiveID, encodingAESKey, nonce string, plainText []byte) (*libCrypto.CipherText, error) {
+func EventEncrypt(receiveID, encodingAESKey, nonce string, plainText []byte) (*lib_crypto.CipherText, error) {
 	key, err := base64.StdEncoding.DecodeString(encodingAESKey + "=")
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func EventEncrypt(receiveID, encodingAESKey, nonce string, plainText []byte) (*l
 	copy(encryptData[20:], plainText)
 	copy(encryptData[appidOffset:], receiveID)
 
-	return libCrypto.AESEncryptCBC(key, key[:aes.BlockSize], encryptData)
+	return lib_crypto.AESEncryptCBC(key, key[:aes.BlockSize], encryptData)
 }
 
 // EventDecrypt 事件消息解密
@@ -63,7 +63,7 @@ func EventDecrypt(receiveID, encodingAESKey, cipherText string) ([]byte, error) 
 		return nil, err
 	}
 
-	plainText, err := libCrypto.AESDecryptCBC(key, key[:aes.BlockSize], decryptData)
+	plainText, err := lib_crypto.AESDecryptCBC(key, key[:aes.BlockSize], decryptData)
 	if err != nil {
 		return nil, err
 	}

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	libCrypto "github.com/shenghui0779/sdk-go/lib/crypto"
+	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
@@ -21,7 +21,7 @@ type Form struct {
 }
 
 // URLEncode 数据表单格式化为POST表单
-func (f *Form) URLEncode(mid string, key *libCrypto.PrivateKey) (string, error) {
+func (f *Form) URLEncode(mid string, key *lib_crypto.PrivateKey) (string, error) {
 	if key == nil {
 		return "", errors.New("private key is nil (forgotten configure?)")
 	}

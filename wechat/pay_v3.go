@@ -18,8 +18,8 @@ import (
 	"golang.org/x/sync/singleflight"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	libCrypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	libHttp "github.com/shenghui0779/sdk-go/lib/http"
+	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
+	lib_http "github.com/shenghui0779/sdk-go/lib/http"
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
@@ -29,10 +29,10 @@ type PayV3 struct {
 	mchid   string
 	apikey  string
 	prvSN   string
-	prvKey  *libCrypto.PrivateKey
-	pubKeyM map[string]*libCrypto.PublicKey
+	prvKey  *lib_crypto.PrivateKey
+	pubKeyM map[string]*lib_crypto.PublicKey
 	mutex   singleflight.Group
-	httpCli libHttp.HTTPClient
+	httpCli lib_http.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -63,7 +63,7 @@ func (p *PayV3) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (p *PayV3) publicKey(ctx context.Context, serialNO string) (*libCrypto.PublicKey, error) {
+func (p *PayV3) publicKey(ctx context.Context, serialNO string) (*lib_crypto.PublicKey, error) {
 	pubKey, ok := p.pubKeyM[serialNO]
 	if ok {
 		return pubKey, nil
@@ -86,12 +86,12 @@ func (p *PayV3) publicKey(ctx context.Context, serialNO string) (*libCrypto.Publ
 			data := cert.Get("ciphertext").String()
 			aad := cert.Get("associated_data").String()
 
-			block, err := libCrypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
+			block, err := lib_crypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
 			if err != nil {
 				return nil, err
 			}
 
-			key, err := libCrypto.NewPublicKeyFromDerBlock(block)
+			key, err := lib_crypto.NewPublicKeyFromDerBlock(block)
 			if err != nil {
 				return nil, err
 			}
@@ -123,7 +123,7 @@ func (p *PayV3) publicKey(ctx context.Context, serialNO string) (*libCrypto.Publ
 			return nil, v.Err
 		}
 
-		return v.Val.(*libCrypto.PublicKey), nil
+		return v.Val.(*lib_crypto.PublicKey), nil
 	}
 }
 
@@ -138,9 +138,9 @@ func (p *PayV3) httpCerts(ctx context.Context) (gjson.Result, error) {
 		return lib.Fail(err)
 	}
 
-	log.Set(libHttp.HeaderAuthorization, authStr)
+	log.Set(lib_http.HeaderAuthorization, authStr)
 
-	resp, err := p.httpCli.Do(ctx, http.MethodGet, reqURL, nil, libHttp.WithHeader(libHttp.HeaderAccept, "application/json"), libHttp.WithHeader(libHttp.HeaderAuthorization, authStr))
+	resp, err := p.httpCli.Do(ctx, http.MethodGet, reqURL, nil, lib_http.WithHeader(lib_http.HeaderAccept, "application/json"), lib_http.WithHeader(lib_http.HeaderAuthorization, authStr))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -173,12 +173,12 @@ func (p *PayV3) httpCerts(ctx context.Context) (gjson.Result, error) {
 			data := cert.Get("ciphertext").String()
 			aad := cert.Get("associated_data").String()
 
-			block, err := libCrypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
+			block, err := lib_crypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
 			if err != nil {
 				return lib.Fail(err)
 			}
 
-			key, err := libCrypto.NewPublicKeyFromDerBlock(block)
+			key, err := lib_crypto.NewPublicKeyFromDerBlock(block)
 			if err != nil {
 				return lib.Fail(err)
 			}
@@ -233,12 +233,12 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 		return nil, err
 	}
 
-	log.Set(libHttp.HeaderAuthorization, authStr)
+	log.Set(lib_http.HeaderAuthorization, authStr)
 
 	resp, err := p.httpCli.Do(ctx, method, reqURL, body,
-		libHttp.WithHeader(libHttp.HeaderAccept, "application/json"),
-		libHttp.WithHeader(libHttp.HeaderAuthorization, authStr),
-		libHttp.WithHeader(libHttp.HeaderContentType, libHttp.ContentJSON),
+		lib_http.WithHeader(lib_http.HeaderAccept, "application/json"),
+		lib_http.WithHeader(lib_http.HeaderAuthorization, authStr),
+		lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON),
 	)
 	if err != nil {
 		return nil, err
@@ -279,7 +279,7 @@ func (p *PayV3) PostJSON(ctx context.Context, path string, params lib.X) (*APIRe
 }
 
 // Upload 上传资源
-func (p *PayV3) Upload(ctx context.Context, path string, form libHttp.UploadForm) (*APIResult, error) {
+func (p *PayV3) Upload(ctx context.Context, path string, form lib_http.UploadForm) (*APIResult, error) {
 	reqURL := p.url(path, nil)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
@@ -290,9 +290,9 @@ func (p *PayV3) Upload(ctx context.Context, path string, form libHttp.UploadForm
 		return nil, err
 	}
 
-	log.Set(libHttp.HeaderAuthorization, authStr)
+	log.Set(lib_http.HeaderAuthorization, authStr)
 
-	resp, err := p.httpCli.Upload(ctx, reqURL, form, libHttp.WithHeader(libHttp.HeaderAuthorization, authStr))
+	resp, err := p.httpCli.Upload(ctx, reqURL, form, lib_http.WithHeader(lib_http.HeaderAuthorization, authStr))
 	if err != nil {
 		return nil, err
 	}
@@ -332,9 +332,9 @@ func (p *PayV3) Download(ctx context.Context, downloadURL string, w io.Writer) e
 		return err
 	}
 
-	log.Set(libHttp.HeaderAuthorization, authStr)
+	log.Set(lib_http.HeaderAuthorization, authStr)
 
-	resp, err := p.httpCli.Do(ctx, http.MethodGet, downloadURL, nil, libHttp.WithHeader(libHttp.HeaderAuthorization, authStr))
+	resp, err := p.httpCli.Do(ctx, http.MethodGet, downloadURL, nil, lib_http.WithHeader(lib_http.HeaderAuthorization, authStr))
 	if err != nil {
 		return err
 	}
@@ -488,12 +488,12 @@ type PayV3Option func(p *PayV3)
 // WithPayV3HttpCli 设置支付(v3)请求的 HTTP Client
 func WithPayV3HttpCli(c *http.Client) PayV3Option {
 	return func(p *PayV3) {
-		p.httpCli = libHttp.NewHTTPClient(c)
+		p.httpCli = lib_http.NewHTTPClient(c)
 	}
 }
 
 // WithPayV3PrivateKey 设置支付(v3)商户RSA私钥
-func WithPayV3PrivateKey(serialNO string, key *libCrypto.PrivateKey) PayV3Option {
+func WithPayV3PrivateKey(serialNO string, key *lib_crypto.PrivateKey) PayV3Option {
 	return func(p *PayV3) {
 		p.prvSN = serialNO
 		p.prvKey = key
@@ -513,7 +513,7 @@ func NewPayV3(mchid, apikey string, options ...PayV3Option) *PayV3 {
 		host:    "https://api.mch.weixin.qq.com",
 		mchid:   mchid,
 		apikey:  apikey,
-		httpCli: libHttp.NewDefaultClient(),
+		httpCli: lib_http.NewDefaultClient(),
 	}
 
 	for _, f := range options {

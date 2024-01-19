@@ -17,8 +17,8 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	libCrypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	libHttp "github.com/shenghui0779/sdk-go/lib/http"
+	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
+	lib_http "github.com/shenghui0779/sdk-go/lib/http"
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
@@ -26,9 +26,9 @@ import (
 type SafeMode struct {
 	aesSN  string
 	aeskey string
-	prvKey *libCrypto.PrivateKey
+	prvKey *lib_crypto.PrivateKey
 	pubSN  string
-	pubKey *libCrypto.PublicKey
+	pubKey *lib_crypto.PublicKey
 }
 
 // MiniProgram 小程序
@@ -38,7 +38,7 @@ type MiniProgram struct {
 	secret  string
 	srvCfg  *ServerConfig
 	sfMode  *SafeMode
-	httpCli libHttp.HTTPClient
+	httpCli lib_http.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -69,7 +69,7 @@ func (mp *MiniProgram) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...libHttp.Option) ([]byte, error) {
+func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...lib_http.Option) ([]byte, error) {
 	reqURL := mp.url(path, query)
 
 	log := lib.NewReqLog(method, reqURL)
@@ -141,7 +141,7 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 
 	reqHeader := http.Header{}
 
-	reqHeader.Set(libHttp.HeaderContentType, libHttp.ContentJSON)
+	reqHeader.Set(lib_http.HeaderContentType, lib_http.ContentJSON)
 	reqHeader.Set(HeaderMPAppID, mp.appid)
 	reqHeader.Set(HeaderMPTimestamp, strconv.FormatInt(now, 10))
 	reqHeader.Set(HeaderMPSignature, sign)
@@ -218,7 +218,7 @@ func (mp *MiniProgram) encrypt(log *lib.ReqLog, path string, query url.Values, p
 	iv := lib.NonceByte(12)
 	aad := fmt.Sprintf("%s|%s|%d|%s", mp.url(path, nil), mp.appid, timestamp, mp.sfMode.aesSN)
 
-	ct, err := libCrypto.AESEncryptGCM(key, iv, data, []byte(aad), nil)
+	ct, err := lib_crypto.AESEncryptGCM(key, iv, data, []byte(aad), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -325,7 +325,7 @@ func (mp *MiniProgram) decrypt(path string, header http.Header, body []byte) ([]
 
 	aad := fmt.Sprintf("%s|%s|%s|%s", mp.url(path, nil), mp.appid, header.Get(HeaderMPTimestamp), mp.sfMode.aesSN)
 
-	return libCrypto.AESDecryptGCM(key, iv, append(data, tag...), []byte(aad), nil)
+	return lib_crypto.AESDecryptGCM(key, iv, append(data, tag...), []byte(aad), nil)
 }
 
 // Code2Session 通过临时登录凭证code完成登录流程
@@ -382,7 +382,7 @@ func (mp *MiniProgram) StableAccessToken(ctx context.Context, forceRefresh bool)
 		"force_refresh": forceRefresh,
 	}
 
-	b, err := mp.do(ctx, http.MethodPost, "/cgi-bin/stable_token", nil, params, libHttp.WithHeader(libHttp.HeaderContentType, libHttp.ContentJSON))
+	b, err := mp.do(ctx, http.MethodPost, "/cgi-bin/stable_token", nil, params, lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -440,7 +440,7 @@ func (mp *MiniProgram) PostJSON(ctx context.Context, accessToken, path string, p
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := mp.do(ctx, http.MethodPost, path, query, params, libHttp.WithHeader(libHttp.HeaderContentType, libHttp.ContentJSON))
+	b, err := mp.do(ctx, http.MethodPost, path, query, params, lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -458,7 +458,7 @@ func (mp *MiniProgram) PostBuffer(ctx context.Context, accessToken, path string,
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := mp.do(ctx, http.MethodPost, path, query, params, libHttp.WithHeader(libHttp.HeaderContentType, libHttp.ContentJSON))
+	b, err := mp.do(ctx, http.MethodPost, path, query, params, lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON))
 	if err != nil {
 		return nil, err
 	}
@@ -512,7 +512,7 @@ func (mp *MiniProgram) SafePostBuffer(ctx context.Context, accessToken, path str
 }
 
 // Upload 上传媒体资源
-func (mp *MiniProgram) Upload(ctx context.Context, accessToken, path string, form libHttp.UploadForm) (gjson.Result, error) {
+func (mp *MiniProgram) Upload(ctx context.Context, accessToken, path string, form lib_http.UploadForm) (gjson.Result, error) {
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
@@ -577,7 +577,7 @@ func (mp *MiniProgram) DecodeEncryptData(sessionKey, iv, encryptData string) ([]
 		return nil, fmt.Errorf("encrypt_data base64.decode error: %w", err)
 	}
 
-	ct, err := libCrypto.AESEncryptCBC(keyBlock, ivBlock, data)
+	ct, err := lib_crypto.AESEncryptCBC(keyBlock, ivBlock, data)
 	if err != nil {
 		return nil, err
 	}
@@ -620,7 +620,7 @@ func WithMPSrvCfg(token, aeskey string) MPOption {
 // WithMPHttpCli 设置小程序请求的 HTTP Client
 func WithMPHttpCli(c *http.Client) MPOption {
 	return func(mp *MiniProgram) {
-		mp.httpCli = libHttp.NewHTTPClient(c)
+		mp.httpCli = lib_http.NewHTTPClient(c)
 	}
 }
 
@@ -640,14 +640,14 @@ func WithMPAesKey(serialNO, key string) MPOption {
 }
 
 // WithMPPrivateKey 设置小程序RSA私钥
-func WithMPPrivateKey(key *libCrypto.PrivateKey) MPOption {
+func WithMPPrivateKey(key *lib_crypto.PrivateKey) MPOption {
 	return func(mp *MiniProgram) {
 		mp.sfMode.prvKey = key
 	}
 }
 
 // WithMPPublicKey 设置小程序平台RSA公钥
-func WithMPPublicKey(serialNO string, key *libCrypto.PublicKey) MPOption {
+func WithMPPublicKey(serialNO string, key *lib_crypto.PublicKey) MPOption {
 	return func(mp *MiniProgram) {
 		mp.sfMode.pubSN = serialNO
 		mp.sfMode.pubKey = key
@@ -661,7 +661,7 @@ func NewMiniProgram(appid, secret string, options ...MPOption) *MiniProgram {
 		appid:   appid,
 		secret:  secret,
 		srvCfg:  new(ServerConfig),
-		httpCli: libHttp.NewDefaultClient(),
+		httpCli: lib_http.NewDefaultClient(),
 	}
 
 	for _, f := range options {

@@ -14,8 +14,8 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	libCrypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	libHttp "github.com/shenghui0779/sdk-go/lib/http"
+	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
+	lib_http "github.com/shenghui0779/sdk-go/lib/http"
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
@@ -24,9 +24,9 @@ type Client struct {
 	gateway string
 	appid   string
 	aesKey  string
-	prvKey  *libCrypto.PrivateKey
-	pubKey  *libCrypto.PublicKey
-	httpCli libHttp.HTTPClient
+	prvKey  *lib_crypto.PrivateKey
+	pubKey  *lib_crypto.PublicKey
+	httpCli lib_http.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -52,8 +52,8 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 	log.SetReqBody(body)
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body),
-		libHttp.WithHeader(libHttp.HeaderAccept, "application/json"),
-		libHttp.WithHeader(libHttp.HeaderContentType, libHttp.ContentForm),
+		lib_http.WithHeader(lib_http.HeaderAccept, "application/json"),
+		lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentForm),
 	)
 	if err != nil {
 		return lib.Fail(err)
@@ -100,7 +100,7 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 }
 
 // Upload 文件上传，参考：https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload
-func (c *Client) Upload(ctx context.Context, method string, form libHttp.UploadForm, options ...ActionOption) (gjson.Result, error) {
+func (c *Client) Upload(ctx context.Context, method string, form lib_http.UploadForm, options ...ActionOption) (gjson.Result, error) {
 	log := lib.NewReqLog(http.MethodPost, c.gateway)
 	defer log.Do(ctx, c.logger)
 
@@ -113,7 +113,7 @@ func (c *Client) Upload(ctx context.Context, method string, form libHttp.UploadF
 
 	log.Set("query", query)
 
-	resp, err := c.httpCli.Upload(ctx, c.gateway+"?"+query, form, libHttp.WithHeader(libHttp.HeaderAccept, "application/json"))
+	resp, err := c.httpCli.Upload(ctx, c.gateway+"?"+query, form, lib_http.WithHeader(lib_http.HeaderAccept, "application/json"))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -215,7 +215,7 @@ func (c *Client) Encrypt(data string) (string, error) {
 		return "", fmt.Errorf("aes_key base64.decode error: %w", err)
 	}
 
-	ct, err := libCrypto.AESEncryptCBC(key, make([]byte, 16), []byte(data))
+	ct, err := lib_crypto.AESEncryptCBC(key, make([]byte, 16), []byte(data))
 	if err != nil {
 		return "", err
 	}
@@ -235,7 +235,7 @@ func (c *Client) Decrypt(encryptData string) ([]byte, error) {
 		return nil, fmt.Errorf("encrypt_data base64.decode error: %w", err)
 	}
 
-	return libCrypto.AESDecryptCBC(key, make([]byte, 16), data)
+	return lib_crypto.AESDecryptCBC(key, make([]byte, 16), data)
 }
 
 // DecodeEncryptData 解析加密数据，如：授权的用户信息和手机号
@@ -297,19 +297,19 @@ type Option func(c *Client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(cli *http.Client) Option {
 	return func(c *Client) {
-		c.httpCli = libHttp.NewHTTPClient(cli)
+		c.httpCli = lib_http.NewHTTPClient(cli)
 	}
 }
 
 // WithPrivateKey 设置商户RSA私钥
-func WithPrivateKey(key *libCrypto.PrivateKey) Option {
+func WithPrivateKey(key *lib_crypto.PrivateKey) Option {
 	return func(c *Client) {
 		c.prvKey = key
 	}
 }
 
 // WithPublicKey 设置平台RSA公钥
-func WithPublicKey(key *libCrypto.PublicKey) Option {
+func WithPublicKey(key *lib_crypto.PublicKey) Option {
 	return func(c *Client) {
 		c.pubKey = key
 	}
@@ -328,7 +328,7 @@ func NewClient(appid, aesKey string, options ...Option) *Client {
 		appid:   appid,
 		aesKey:  aesKey,
 		gateway: "https://openapi.alipay.com/gateway.do",
-		httpCli: libHttp.NewDefaultClient(),
+		httpCli: lib_http.NewDefaultClient(),
 	}
 
 	for _, f := range options {
@@ -344,7 +344,7 @@ func NewSandbox(appid, aesKey string, options ...Option) *Client {
 		appid:   appid,
 		aesKey:  aesKey,
 		gateway: "https://openapi-sandbox.dl.alipaydev.com/gateway.do",
-		httpCli: libHttp.NewDefaultClient(),
+		httpCli: lib_http.NewDefaultClient(),
 	}
 
 	for _, f := range options {

@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	libCrypto "github.com/shenghui0779/sdk-go/lib/crypto"
+	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
 	"github.com/shenghui0779/sdk-go/lib/hash"
-	libHttp "github.com/shenghui0779/sdk-go/lib/http"
+	lib_http "github.com/shenghui0779/sdk-go/lib/http"
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
@@ -24,8 +24,8 @@ type Pay struct {
 	host    string
 	mchid   string
 	apikey  string
-	httpCli libHttp.HTTPClient
-	tlsCli  libHttp.HTTPClient
+	httpCli lib_http.Client
+	tlsCli  lib_http.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -265,7 +265,7 @@ func (p *Pay) DecryptRefund(encrypt string) (value.V, error) {
 		return nil, err
 	}
 
-	plainText, err := libCrypto.AESDecryptECB([]byte(hash.MD5(p.apikey)), cipherText)
+	plainText, err := lib_crypto.AESDecryptECB([]byte(hash.MD5(p.apikey)), cipherText)
 	if err != nil {
 		return nil, err
 	}
@@ -327,21 +327,21 @@ type PayOption func(p *Pay)
 // WithPayTLSCert 设置支付TLS证书
 func WithPayTLSCert(cert tls.Certificate) PayOption {
 	return func(p *Pay) {
-		p.tlsCli = libHttp.NewDefaultClient(cert)
+		p.tlsCli = lib_http.NewDefaultClient(cert)
 	}
 }
 
 // WithPayHttpCli 设置支付无证书 HTTP Client
 func WithPayHttpCli(c *http.Client) PayOption {
 	return func(p *Pay) {
-		p.httpCli = libHttp.NewHTTPClient(c)
+		p.httpCli = lib_http.NewHTTPClient(c)
 	}
 }
 
 // WithPayTLSCli 设置支付带证书 HTTP Client
 func WithPayTLSCli(c *http.Client) PayOption {
 	return func(p *Pay) {
-		p.tlsCli = libHttp.NewHTTPClient(c)
+		p.tlsCli = lib_http.NewHTTPClient(c)
 	}
 }
 
@@ -358,8 +358,8 @@ func NewPay(mchid, apikey string, options ...PayOption) *Pay {
 		host:    "https://api.mch.weixin.qq.com",
 		mchid:   mchid,
 		apikey:  apikey,
-		httpCli: libHttp.NewDefaultClient(),
-		tlsCli:  libHttp.NewDefaultClient(),
+		httpCli: lib_http.NewDefaultClient(),
+		tlsCli:  lib_http.NewDefaultClient(),
 	}
 
 	for _, f := range options {

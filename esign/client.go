@@ -21,7 +21,7 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	libHttp "github.com/shenghui0779/sdk-go/lib/http"
+	lib_http "github.com/shenghui0779/sdk-go/lib/http"
 )
 
 // Client E签宝客户端
@@ -29,7 +29,7 @@ type Client struct {
 	host    string
 	appid   string
 	secret  string
-	httpCli libHttp.HTTPClient
+	httpCli lib_http.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -58,7 +58,7 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 
 	header := http.Header{}
 
-	header.Set(libHttp.HeaderAccept, AcceptAll)
+	header.Set(lib_http.HeaderAccept, AcceptAll)
 	header.Set(HeaderTSignOpenAppID, c.appid)
 	header.Set(HeaderTSignOpenAuthMode, AuthModeSign)
 	header.Set(HeaderTSignOpenCaTimestamp, strconv.FormatInt(time.Now().UnixMilli(), 10))
@@ -83,7 +83,7 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 
 		contentMD5 := ContentMD5(body)
 
-		header.Set(libHttp.HeaderContentType, "application/json; charset=UTF-8")
+		header.Set(lib_http.HeaderContentType, "application/json; charset=UTF-8")
 		header.Set(HeaderContentMD5, contentMD5)
 
 		options = append(options, WithSignContMD5(contentMD5), WithSignContType("application/json; charset=UTF-8"))
@@ -132,7 +132,7 @@ func (c *Client) doStream(ctx context.Context, uploadURL string, reader io.ReadS
 
 	header := http.Header{}
 
-	header.Set(libHttp.HeaderContentType, libHttp.ContentStream)
+	header.Set(lib_http.HeaderContentType, lib_http.ContentStream)
 	header.Set(HeaderContentMD5, base64.StdEncoding.EncodeToString(h.Sum(nil)))
 
 	log.SetReqHeader(header)
@@ -227,7 +227,7 @@ type Option func(c *Client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(cli *http.Client) Option {
 	return func(c *Client) {
-		c.httpCli = libHttp.NewHTTPClient(cli)
+		c.httpCli = lib_http.NewHTTPClient(cli)
 	}
 }
 
@@ -244,7 +244,7 @@ func NewClient(appid, secret string, options ...Option) *Client {
 		host:    "https://openapi.esign.cn",
 		appid:   appid,
 		secret:  secret,
-		httpCli: libHttp.NewDefaultClient(),
+		httpCli: lib_http.NewDefaultClient(),
 	}
 
 	for _, f := range options {
@@ -260,7 +260,7 @@ func NewSandbox(appid, secret string, options ...Option) *Client {
 		host:    "https://smlopenapi.esign.cn",
 		appid:   appid,
 		secret:  secret,
-		httpCli: libHttp.NewDefaultClient(),
+		httpCli: lib_http.NewDefaultClient(),
 	}
 
 	for _, f := range options {
