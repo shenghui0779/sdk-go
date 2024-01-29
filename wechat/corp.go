@@ -70,7 +70,6 @@ func (c *Corp) do(ctx context.Context, method, path string, query url.Values, pa
 		if err != nil {
 			return nil, err
 		}
-
 		log.SetReqBody(string(body))
 	}
 
@@ -91,7 +90,6 @@ func (c *Corp) do(ctx context.Context, method, path string, query url.Values, pa
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetRespBody(string(b))
 
 	return b, nil
@@ -235,7 +233,6 @@ func (c *Corp) Upload(ctx context.Context, accessToken, path string, form lib_ht
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	log.SetRespBody(string(b))
 
 	ret := gjson.ParseBytes(b)

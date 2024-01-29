@@ -104,12 +104,6 @@ func (p *PayV3) publicKey(ctx context.Context, serialNO string) (*lib_crypto.Pub
 			return nil, fmt.Errorf("cert(serial_no=%s) not found", serialNO)
 		}
 
-		// 成功2秒后删除缓存
-		go func() {
-			time.Sleep(2 * time.Second)
-			p.mutex.Forget(serialNO)
-		}()
-
 		return pk, nil
 	})
 
@@ -121,6 +115,14 @@ func (p *PayV3) publicKey(ctx context.Context, serialNO string) (*lib_crypto.Pub
 		if v.Err != nil {
 			p.mutex.Forget(serialNO)
 			return nil, v.Err
+		}
+
+		if !v.Shared {
+			// 成功2秒后删除缓存
+			go func() {
+				time.Sleep(2 * time.Second)
+				p.mutex.Forget(serialNO)
+			}()
 		}
 
 		return v.Val.(*lib_crypto.PublicKey), nil
@@ -153,7 +155,6 @@ func (p *PayV3) httpCerts(ctx context.Context) (gjson.Result, error) {
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	log.SetRespBody(string(b))
 
 	if resp.StatusCode >= 400 {
@@ -224,7 +225,6 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 		if err != nil {
 			return nil, err
 		}
-
 		log.SetReqBody(string(body))
 	}
 
@@ -252,7 +252,6 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetRespBody(string(b))
 
 	// 签名校验
@@ -305,7 +304,6 @@ func (p *PayV3) Upload(ctx context.Context, path string, form lib_http.UploadFor
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetRespBody(string(b))
 
 	// 签名校验

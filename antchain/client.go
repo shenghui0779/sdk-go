@@ -147,7 +147,6 @@ func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, e
 	if err != nil {
 		return "", err
 	}
-
 	log.SetReqBody(string(body))
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, body, lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON))
@@ -167,7 +166,6 @@ func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, e
 	if err != nil {
 		return "", err
 	}
-
 	log.SetRespBody(string(b))
 
 	ret := gjson.ParseBytes(b)

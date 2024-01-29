@@ -78,7 +78,6 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 		if err != nil {
 			return lib.Fail(err)
 		}
-
 		log.SetReqBody(string(body))
 
 		contentMD5 := ContentMD5(body)
@@ -110,7 +109,6 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	log.SetRespBody(string(b))
 
 	ret := gjson.ParseBytes(b)
@@ -163,7 +161,6 @@ func (c *Client) doStream(ctx context.Context, uploadURL string, reader io.ReadS
 	if err != nil {
 		return err
 	}
-
 	log.SetRespBody(string(b))
 
 	ret := gjson.ParseBytes(b)

@@ -40,7 +40,6 @@ func (c *Client) Do(ctx context.Context, reqURL string, form *Form) (*Form, erro
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetReqBody(body)
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body), lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentForm))
@@ -60,7 +59,6 @@ func (c *Client) Do(ctx context.Context, reqURL string, form *Form) (*Form, erro
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetRespBody(string(b))
 
 	query, err := url.QueryUnescape(string(b))

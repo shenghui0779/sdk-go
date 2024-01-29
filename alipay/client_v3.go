@@ -71,7 +71,6 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 		if err != nil {
 			return nil, err
 		}
-
 		log.SetReqBody(string(body))
 
 		if len(header.Get(HeaderEncryptType)) != 0 {
@@ -106,7 +105,6 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetRespBody(string(b))
 
 	// 签名校验
@@ -213,7 +211,6 @@ func (c *ClientV3) Upload(ctx context.Context, path string, form lib_http.Upload
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetRespBody(string(b))
 
 	// 签名校验

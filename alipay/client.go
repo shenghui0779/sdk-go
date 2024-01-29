@@ -48,7 +48,6 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	log.SetReqBody(body)
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body),
@@ -71,7 +70,6 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	log.SetRespBody(string(b))
 
 	ret, err := c.verifyResp(action.RespKey(), b)
@@ -130,7 +128,6 @@ func (c *Client) Upload(ctx context.Context, method string, form lib_http.Upload
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	log.SetRespBody(string(b))
 
 	ret, err := c.verifyResp(action.RespKey(), b)

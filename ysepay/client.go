@@ -93,7 +93,6 @@ func (c *Client) PostForm(ctx context.Context, api, serviceNO string, bizData va
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	log.SetReqBody(form)
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(form), lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentForm))
@@ -113,7 +112,6 @@ func (c *Client) PostForm(ctx context.Context, api, serviceNO string, bizData va
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	log.SetRespBody(string(b))
 
 	return c.verifyResp(b)

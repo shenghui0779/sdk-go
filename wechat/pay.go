@@ -68,7 +68,6 @@ func (p *Pay) do(ctx context.Context, path string, params value.V) ([]byte, erro
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetReqBody(string(body))
 
 	resp, err := p.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body))
@@ -88,7 +87,6 @@ func (p *Pay) do(ctx context.Context, path string, params value.V) ([]byte, erro
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetRespBody(string(b))
 
 	return b, nil
@@ -106,7 +104,6 @@ func (p *Pay) doTLS(ctx context.Context, path string, params value.V) ([]byte, e
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetReqBody(string(body))
 
 	resp, err := p.tlsCli.Do(ctx, http.MethodPost, reqURL, []byte(body))
@@ -126,7 +123,6 @@ func (p *Pay) doTLS(ctx context.Context, path string, params value.V) ([]byte, e
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetRespBody(string(b))
 
 	return b, nil

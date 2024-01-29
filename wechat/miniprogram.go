@@ -85,7 +85,6 @@ func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Va
 		if err != nil {
 			return nil, err
 		}
-
 		log.SetReqBody(string(body))
 	}
 
@@ -106,7 +105,6 @@ func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Va
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetRespBody(string(b))
 
 	return b, nil
@@ -130,7 +128,6 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetReqBody(string(body))
 
 	// 签名
@@ -165,7 +162,6 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetRespBody(string(b))
 
 	// 验签
@@ -538,7 +534,6 @@ func (mp *MiniProgram) Upload(ctx context.Context, accessToken, path string, for
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	log.SetRespBody(string(b))
 
 	ret := gjson.ParseBytes(b)

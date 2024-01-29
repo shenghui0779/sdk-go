@@ -77,7 +77,6 @@ func (oa *OfficialAccount) do(ctx context.Context, method, path string, query ur
 		if err != nil {
 			return nil, err
 		}
-
 		log.SetReqBody(string(body))
 	}
 
@@ -98,7 +97,6 @@ func (oa *OfficialAccount) do(ctx context.Context, method, path string, query ur
 	if err != nil {
 		return nil, err
 	}
-
 	log.SetRespBody(string(b))
 
 	return b, nil
@@ -323,7 +321,6 @@ func (oa *OfficialAccount) Upload(ctx context.Context, accessToken, path string,
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	log.SetRespBody(string(b))
 
 	ret := gjson.ParseBytes(b)
