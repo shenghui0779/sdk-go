@@ -111,13 +111,13 @@ func (p *PayV3) publicKey(ctx context.Context, serialNO string) (*lib_crypto.Pub
 	case <-ctx.Done():
 		p.mutex.Forget(serialNO)
 		return nil, ctx.Err()
-	case v := <-ch:
-		if v.Err != nil {
+	case r := <-ch:
+		if r.Err != nil {
 			p.mutex.Forget(serialNO)
-			return nil, v.Err
+			return nil, r.Err
 		}
 
-		if !v.Shared {
+		if !r.Shared {
 			// 成功2秒后删除缓存
 			go func() {
 				time.Sleep(2 * time.Second)
@@ -125,7 +125,7 @@ func (p *PayV3) publicKey(ctx context.Context, serialNO string) (*lib_crypto.Pub
 			}()
 		}
 
-		return v.Val.(*lib_crypto.PublicKey), nil
+		return r.Val.(*lib_crypto.PublicKey), nil
 	}
 }
 
