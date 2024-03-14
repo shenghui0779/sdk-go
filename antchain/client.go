@@ -103,8 +103,8 @@ func (c *client) chainCall(ctx context.Context, method string, options ...ChainC
 
 	params := lib.X{}
 
-	for _, f := range options {
-		f(params)
+	for _, fn := range options {
+		fn(params)
 	}
 
 	params["bizid"] = c.config.BizID
@@ -123,8 +123,8 @@ func (c *client) chainCallForBiz(ctx context.Context, method string, options ...
 
 	params := lib.X{}
 
-	for _, f := range options {
-		f(params)
+	for _, fn := range options {
+		fn(params)
 	}
 
 	params["orderId"] = uuid.New().String()
@@ -187,9 +187,9 @@ func WithHttpCli(httpCli *http.Client) Option {
 }
 
 // WithLogger 设置日志记录
-func WithLogger(f func(ctx context.Context, data map[string]string)) Option {
+func WithLogger(fn func(ctx context.Context, data map[string]string)) Option {
 	return func(c *client) {
-		c.logger = f
+		c.logger = fn
 	}
 }
 
@@ -201,8 +201,8 @@ func NewClient(cfg *Config, options ...Option) Client {
 		httpCli:  lib_http.NewDefaultClient(),
 	}
 
-	for _, f := range options {
-		f(c)
+	for _, fn := range options {
+		fn(c)
 	}
 
 	return c

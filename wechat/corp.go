@@ -298,9 +298,9 @@ func WithCorpHttpCli(cli *http.Client) CorpOption {
 }
 
 // WithCorpLogger 设置企业微信日志记录
-func WithCorpLogger(f func(ctx context.Context, data map[string]string)) CorpOption {
+func WithCorpLogger(fn func(ctx context.Context, data map[string]string)) CorpOption {
 	return func(c *Corp) {
-		c.logger = f
+		c.logger = fn
 	}
 }
 
@@ -314,8 +314,8 @@ func NewCorp(corpid, secret string, options ...CorpOption) *Corp {
 		httpCli: lib_http.NewDefaultClient(),
 	}
 
-	for _, f := range options {
-		f(c)
+	for _, fn := range options {
+		fn(c)
 	}
 
 	return c

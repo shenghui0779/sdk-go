@@ -381,9 +381,9 @@ func WithOAHttpCli(c *http.Client) OAOption {
 }
 
 // WithOALogger 设置公众号日志记录
-func WithOALogger(f func(ctx context.Context, data map[string]string)) OAOption {
+func WithOALogger(fn func(ctx context.Context, data map[string]string)) OAOption {
 	return func(oa *OfficialAccount) {
-		oa.logger = f
+		oa.logger = fn
 	}
 }
 
@@ -397,8 +397,8 @@ func NewOfficialAccount(appid, secret string, options ...OAOption) *OfficialAcco
 		httpCli: lib_http.NewDefaultClient(),
 	}
 
-	for _, f := range options {
-		f(oa)
+	for _, fn := range options {
+		fn(oa)
 	}
 
 	return oa

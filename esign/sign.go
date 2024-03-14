@@ -103,8 +103,8 @@ func NewSigner(method, path string, options ...SignOption) *Signer {
 		params:  make(value.V),
 	}
 
-	for _, f := range options {
-		f(fields)
+	for _, fn := range options {
+		fn(fields)
 	}
 
 	var buf strings.Builder

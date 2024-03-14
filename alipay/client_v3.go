@@ -138,8 +138,8 @@ func (c *ClientV3) GetJSON(ctx context.Context, path string, query url.Values, o
 	header.Set(lib_http.HeaderAccept, "application/json")
 	header.Set(HeaderRequestID, uuid.NewString())
 
-	for _, f := range options {
-		f(header)
+	for _, fn := range options {
+		fn(header)
 	}
 
 	return c.do(ctx, http.MethodGet, path, query, nil, header)
@@ -153,8 +153,8 @@ func (c *ClientV3) PostJSON(ctx context.Context, path string, params lib.X, opti
 	header.Set(HeaderRequestID, uuid.NewString())
 	header.Set(lib_http.HeaderContentType, lib_http.ContentJSON)
 
-	for _, f := range options {
-		f(header)
+	for _, fn := range options {
+		fn(header)
 	}
 
 	return c.do(ctx, http.MethodPost, path, nil, params, header)
@@ -168,8 +168,8 @@ func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params lib.X, o
 	header.Set(HeaderEncryptType, "AES")
 	header.Set(lib_http.HeaderContentType, lib_http.ContentText)
 
-	for _, f := range options {
-		f(header)
+	for _, fn := range options {
+		fn(header)
 	}
 
 	return c.do(ctx, http.MethodPost, path, nil, params, header)
@@ -186,8 +186,8 @@ func (c *ClientV3) Upload(ctx context.Context, path string, form lib_http.Upload
 	reqHeader := http.Header{}
 
 	reqHeader.Set(HeaderRequestID, reqID)
-	for _, f := range options {
-		f(reqHeader)
+	for _, fn := range options {
+		fn(reqHeader)
 	}
 
 	authStr, err := c.Authorization(http.MethodPost, path, nil, []byte(form.Field("data")), reqHeader)
@@ -352,9 +352,9 @@ func WithV3PublicKey(key *lib_crypto.PublicKey) V3Option {
 }
 
 // WithV3Logger 设置日志记录
-func WithV3Logger(f func(ctx context.Context, data map[string]string)) V3Option {
+func WithV3Logger(fn func(ctx context.Context, data map[string]string)) V3Option {
 	return func(c *ClientV3) {
-		c.logger = f
+		c.logger = fn
 	}
 }
 
@@ -367,8 +367,8 @@ func NewClientV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		httpCli: lib_http.NewDefaultClient(),
 	}
 
-	for _, f := range options {
-		f(c)
+	for _, fn := range options {
+		fn(c)
 	}
 
 	return c
@@ -383,8 +383,8 @@ func NewSandboxV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		httpCli: lib_http.NewDefaultClient(),
 	}
 
-	for _, f := range options {
-		f(c)
+	for _, fn := range options {
+		fn(c)
 	}
 
 	return c

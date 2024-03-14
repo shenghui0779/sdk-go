@@ -229,9 +229,9 @@ func WithHttpCli(cli *http.Client) Option {
 }
 
 // WithLogger 设置日志记录
-func WithLogger(f func(ctx context.Context, data map[string]string)) Option {
+func WithLogger(fn func(ctx context.Context, data map[string]string)) Option {
 	return func(c *Client) {
-		c.logger = f
+		c.logger = fn
 	}
 }
 
@@ -244,8 +244,8 @@ func NewClient(appid, secret string, options ...Option) *Client {
 		httpCli: lib_http.NewDefaultClient(),
 	}
 
-	for _, f := range options {
-		f(c)
+	for _, fn := range options {
+		fn(c)
 	}
 
 	return c
@@ -260,8 +260,8 @@ func NewSandbox(appid, secret string, options ...Option) *Client {
 		httpCli: lib_http.NewDefaultClient(),
 	}
 
-	for _, f := range options {
-		f(c)
+	for _, fn := range options {
+		fn(c)
 	}
 
 	return c

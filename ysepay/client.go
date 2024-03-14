@@ -239,9 +239,9 @@ func WithPublicKey(key *lib_crypto.PublicKey) Option {
 }
 
 // WithLogger 设置日志记录
-func WithLogger(f func(ctx context.Context, data map[string]string)) Option {
+func WithLogger(fn func(ctx context.Context, data map[string]string)) Option {
 	return func(c *Client) {
-		c.logger = f
+		c.logger = fn
 	}
 }
 
@@ -254,8 +254,8 @@ func NewClient(mchNO, desKey string, options ...Option) *Client {
 		httpCli: lib_http.NewDefaultClient(),
 	}
 
-	for _, f := range options {
-		f(c)
+	for _, fn := range options {
+		fn(c)
 	}
 
 	return c

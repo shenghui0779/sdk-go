@@ -342,9 +342,9 @@ func WithPayTLSCli(c *http.Client) PayOption {
 }
 
 // WithPayLogger 设置支付日志记录
-func WithPayLogger(f func(ctx context.Context, data map[string]string)) PayOption {
+func WithPayLogger(fn func(ctx context.Context, data map[string]string)) PayOption {
 	return func(p *Pay) {
-		p.logger = f
+		p.logger = fn
 	}
 }
 
@@ -358,8 +358,8 @@ func NewPay(mchid, apikey string, options ...PayOption) *Pay {
 		tlsCli:  lib_http.NewDefaultClient(),
 	}
 
-	for _, f := range options {
-		f(pay)
+	for _, fn := range options {
+		fn(pay)
 	}
 
 	return pay

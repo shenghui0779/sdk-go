@@ -156,8 +156,8 @@ func NewAction(method string, options ...ActionOption) *Action {
 		params: make(value.V),
 	}
 
-	for _, f := range options {
-		f(action)
+	for _, fn := range options {
+		fn(action)
 	}
 
 	return action

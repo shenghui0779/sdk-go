@@ -620,9 +620,9 @@ func WithMPHttpCli(c *http.Client) MPOption {
 }
 
 // WithMPLogger 设置小程序日志记录
-func WithMPLogger(f func(ctx context.Context, data map[string]string)) MPOption {
+func WithMPLogger(fn func(ctx context.Context, data map[string]string)) MPOption {
 	return func(mp *MiniProgram) {
-		mp.logger = f
+		mp.logger = fn
 	}
 }
 
@@ -659,8 +659,8 @@ func NewMiniProgram(appid, secret string, options ...MPOption) *MiniProgram {
 		httpCli: lib_http.NewDefaultClient(),
 	}
 
-	for _, f := range options {
-		f(mp)
+	for _, fn := range options {
+		fn(mp)
 	}
 
 	return mp

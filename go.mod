@@ -3,10 +3,10 @@ module github.com/shenghui0779/sdk-go
 go 1.20
 
 require (
-	github.com/google/uuid v1.5.0
-	github.com/stretchr/testify v1.8.4
-	github.com/tidwall/gjson v1.17.0
-	golang.org/x/crypto v0.18.0
+	github.com/google/uuid v1.6.0
+	github.com/stretchr/testify v1.9.0
+	github.com/tidwall/gjson v1.17.1
+	golang.org/x/crypto v0.21.0
 	golang.org/x/sync v0.6.0
 )
 

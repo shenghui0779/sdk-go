@@ -499,9 +499,9 @@ func WithPayV3PrivateKey(serialNO string, key *lib_crypto.PrivateKey) PayV3Optio
 }
 
 // WithPayV3Logger 设置支付(v3)日志记录
-func WithPayV3Logger(f func(ctx context.Context, data map[string]string)) PayV3Option {
+func WithPayV3Logger(fn func(ctx context.Context, data map[string]string)) PayV3Option {
 	return func(p *PayV3) {
-		p.logger = f
+		p.logger = fn
 	}
 }
 
@@ -514,8 +514,8 @@ func NewPayV3(mchid, apikey string, options ...PayV3Option) *PayV3 {
 		httpCli: lib_http.NewDefaultClient(),
 	}
 
-	for _, f := range options {
-		f(pay)
+	for _, fn := range options {
+		fn(pay)
 	}
 
 	return pay
