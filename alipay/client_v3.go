@@ -19,7 +19,7 @@ import (
 
 	"github.com/shenghui0779/sdk-go/lib"
 	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	lib_http "github.com/shenghui0779/sdk-go/lib/http"
+	"github.com/shenghui0779/sdk-go/lib/curl"
 )
 
 // ClientV3 支付宝V3客户端(仅支持v3版本的接口可用)
@@ -29,7 +29,7 @@ type ClientV3 struct {
 	aesKey  string
 	prvKey  *lib_crypto.PrivateKey
 	pubKey  *lib_crypto.PublicKey
-	httpCli lib_http.Client
+	httpCli curl.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -88,7 +88,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 	if err != nil {
 		return nil, err
 	}
-	header.Set(lib_http.HeaderAuthorization, authStr)
+	header.Set(curl.HeaderAuthorization, authStr)
 
 	log.SetReqHeader(header)
 
@@ -135,7 +135,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 func (c *ClientV3) GetJSON(ctx context.Context, path string, query url.Values, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
 
-	header.Set(lib_http.HeaderAccept, "application/json")
+	header.Set(curl.HeaderAccept, "application/json")
 	header.Set(HeaderRequestID, uuid.NewString())
 
 	for _, fn := range options {
@@ -149,9 +149,9 @@ func (c *ClientV3) GetJSON(ctx context.Context, path string, query url.Values, o
 func (c *ClientV3) PostJSON(ctx context.Context, path string, params lib.X, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
 
-	header.Set(lib_http.HeaderAccept, "application/json")
+	header.Set(curl.HeaderAccept, "application/json")
 	header.Set(HeaderRequestID, uuid.NewString())
-	header.Set(lib_http.HeaderContentType, lib_http.ContentJSON)
+	header.Set(curl.HeaderContentType, curl.ContentJSON)
 
 	for _, fn := range options {
 		fn(header)
@@ -166,7 +166,7 @@ func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params lib.X, o
 
 	header.Set(HeaderRequestID, uuid.NewString())
 	header.Set(HeaderEncryptType, "AES")
-	header.Set(lib_http.HeaderContentType, lib_http.ContentText)
+	header.Set(curl.HeaderContentType, curl.ContentText)
 
 	for _, fn := range options {
 		fn(header)
@@ -176,7 +176,7 @@ func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params lib.X, o
 }
 
 // Upload 文件上传，参考：https://opendocs.alipay.com/open-v3/054oog?pathHash=7834d743
-func (c *ClientV3) Upload(ctx context.Context, path string, form lib_http.UploadForm, options ...V3HeaderOption) (*APIResult, error) {
+func (c *ClientV3) Upload(ctx context.Context, path string, form curl.UploadForm, options ...V3HeaderOption) (*APIResult, error) {
 	reqID := uuid.NewString()
 	reqURL := c.url(path, nil)
 
@@ -194,7 +194,7 @@ func (c *ClientV3) Upload(ctx context.Context, path string, form lib_http.Upload
 	if err != nil {
 		return nil, err
 	}
-	reqHeader.Set(lib_http.HeaderAuthorization, authStr)
+	reqHeader.Set(curl.HeaderAuthorization, authStr)
 
 	log.SetReqHeader(reqHeader)
 
@@ -333,7 +333,7 @@ type V3Option func(c *ClientV3)
 // WithV3Client 设置自定义 HTTP Client
 func WithV3Client(cli *http.Client) V3Option {
 	return func(c *ClientV3) {
-		c.httpCli = lib_http.NewHTTPClient(cli)
+		c.httpCli = curl.NewHTTPClient(cli)
 	}
 }
 
@@ -364,7 +364,7 @@ func NewClientV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		host:    "https://openapi.alipay.com",
 		appid:   appid,
 		aesKey:  aesKey,
-		httpCli: lib_http.NewDefaultClient(),
+		httpCli: curl.NewDefaultClient(),
 	}
 
 	for _, fn := range options {
@@ -380,7 +380,7 @@ func NewSandboxV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		host:    "http://openapi.sandbox.dl.alipaydev.com",
 		appid:   appid,
 		aesKey:  aesKey,
-		httpCli: lib_http.NewDefaultClient(),
+		httpCli: curl.NewDefaultClient(),
 	}
 
 	for _, fn := range options {

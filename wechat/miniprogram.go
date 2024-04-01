@@ -18,7 +18,7 @@ import (
 
 	"github.com/shenghui0779/sdk-go/lib"
 	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	lib_http "github.com/shenghui0779/sdk-go/lib/http"
+	"github.com/shenghui0779/sdk-go/lib/curl"
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
@@ -38,7 +38,7 @@ type MiniProgram struct {
 	secret  string
 	srvCfg  *ServerConfig
 	sfMode  *SafeMode
-	httpCli lib_http.Client
+	httpCli curl.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -69,7 +69,7 @@ func (mp *MiniProgram) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...lib_http.Option) ([]byte, error) {
+func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...curl.Option) ([]byte, error) {
 	reqURL := mp.url(path, query)
 
 	log := lib.NewReqLog(method, reqURL)
@@ -138,7 +138,7 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 
 	reqHeader := http.Header{}
 
-	reqHeader.Set(lib_http.HeaderContentType, lib_http.ContentJSON)
+	reqHeader.Set(curl.HeaderContentType, curl.ContentJSON)
 	reqHeader.Set(HeaderMPAppID, mp.appid)
 	reqHeader.Set(HeaderMPTimestamp, strconv.FormatInt(now, 10))
 	reqHeader.Set(HeaderMPSignature, sign)
@@ -378,7 +378,7 @@ func (mp *MiniProgram) StableAccessToken(ctx context.Context, forceRefresh bool)
 		"force_refresh": forceRefresh,
 	}
 
-	b, err := mp.do(ctx, http.MethodPost, "/cgi-bin/stable_token", nil, params, lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON))
+	b, err := mp.do(ctx, http.MethodPost, "/cgi-bin/stable_token", nil, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -436,7 +436,7 @@ func (mp *MiniProgram) PostJSON(ctx context.Context, accessToken, path string, p
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := mp.do(ctx, http.MethodPost, path, query, params, lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON))
+	b, err := mp.do(ctx, http.MethodPost, path, query, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -454,7 +454,7 @@ func (mp *MiniProgram) PostBuffer(ctx context.Context, accessToken, path string,
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := mp.do(ctx, http.MethodPost, path, query, params, lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON))
+	b, err := mp.do(ctx, http.MethodPost, path, query, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
 	if err != nil {
 		return nil, err
 	}
@@ -508,7 +508,7 @@ func (mp *MiniProgram) SafePostBuffer(ctx context.Context, accessToken, path str
 }
 
 // Upload 上传媒体资源
-func (mp *MiniProgram) Upload(ctx context.Context, accessToken, path string, form lib_http.UploadForm) (gjson.Result, error) {
+func (mp *MiniProgram) Upload(ctx context.Context, accessToken, path string, form curl.UploadForm) (gjson.Result, error) {
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
@@ -615,7 +615,7 @@ func WithMPSrvCfg(token, aeskey string) MPOption {
 // WithMPHttpCli 设置小程序请求的 HTTP Client
 func WithMPHttpCli(c *http.Client) MPOption {
 	return func(mp *MiniProgram) {
-		mp.httpCli = lib_http.NewHTTPClient(c)
+		mp.httpCli = curl.NewHTTPClient(c)
 	}
 }
 
@@ -656,7 +656,7 @@ func NewMiniProgram(appid, secret string, options ...MPOption) *MiniProgram {
 		appid:   appid,
 		secret:  secret,
 		srvCfg:  new(ServerConfig),
-		httpCli: lib_http.NewDefaultClient(),
+		httpCli: curl.NewDefaultClient(),
 	}
 
 	for _, fn := range options {

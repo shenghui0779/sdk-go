@@ -19,7 +19,7 @@ import (
 
 	"github.com/shenghui0779/sdk-go/lib"
 	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	lib_http "github.com/shenghui0779/sdk-go/lib/http"
+	"github.com/shenghui0779/sdk-go/lib/curl"
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
@@ -32,7 +32,7 @@ type PayV3 struct {
 	prvKey  *lib_crypto.PrivateKey
 	pubKeyM map[string]*lib_crypto.PublicKey
 	mutex   singleflight.Group
-	httpCli lib_http.Client
+	httpCli curl.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -140,9 +140,9 @@ func (p *PayV3) httpCerts(ctx context.Context) (gjson.Result, error) {
 		return lib.Fail(err)
 	}
 
-	log.Set(lib_http.HeaderAuthorization, authStr)
+	log.Set(curl.HeaderAuthorization, authStr)
 
-	resp, err := p.httpCli.Do(ctx, http.MethodGet, reqURL, nil, lib_http.WithHeader(lib_http.HeaderAccept, "application/json"), lib_http.WithHeader(lib_http.HeaderAuthorization, authStr))
+	resp, err := p.httpCli.Do(ctx, http.MethodGet, reqURL, nil, curl.WithHeader(curl.HeaderAccept, "application/json"), curl.WithHeader(curl.HeaderAuthorization, authStr))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -233,12 +233,12 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 		return nil, err
 	}
 
-	log.Set(lib_http.HeaderAuthorization, authStr)
+	log.Set(curl.HeaderAuthorization, authStr)
 
 	resp, err := p.httpCli.Do(ctx, method, reqURL, body,
-		lib_http.WithHeader(lib_http.HeaderAccept, "application/json"),
-		lib_http.WithHeader(lib_http.HeaderAuthorization, authStr),
-		lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON),
+		curl.WithHeader(curl.HeaderAccept, "application/json"),
+		curl.WithHeader(curl.HeaderAuthorization, authStr),
+		curl.WithHeader(curl.HeaderContentType, curl.ContentJSON),
 	)
 	if err != nil {
 		return nil, err
@@ -278,7 +278,7 @@ func (p *PayV3) PostJSON(ctx context.Context, path string, params lib.X) (*APIRe
 }
 
 // Upload 上传资源
-func (p *PayV3) Upload(ctx context.Context, path string, form lib_http.UploadForm) (*APIResult, error) {
+func (p *PayV3) Upload(ctx context.Context, path string, form curl.UploadForm) (*APIResult, error) {
 	reqURL := p.url(path, nil)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
@@ -289,9 +289,9 @@ func (p *PayV3) Upload(ctx context.Context, path string, form lib_http.UploadFor
 		return nil, err
 	}
 
-	log.Set(lib_http.HeaderAuthorization, authStr)
+	log.Set(curl.HeaderAuthorization, authStr)
 
-	resp, err := p.httpCli.Upload(ctx, reqURL, form, lib_http.WithHeader(lib_http.HeaderAuthorization, authStr))
+	resp, err := p.httpCli.Upload(ctx, reqURL, form, curl.WithHeader(curl.HeaderAuthorization, authStr))
 	if err != nil {
 		return nil, err
 	}
@@ -330,9 +330,9 @@ func (p *PayV3) Download(ctx context.Context, downloadURL string, w io.Writer) e
 		return err
 	}
 
-	log.Set(lib_http.HeaderAuthorization, authStr)
+	log.Set(curl.HeaderAuthorization, authStr)
 
-	resp, err := p.httpCli.Do(ctx, http.MethodGet, downloadURL, nil, lib_http.WithHeader(lib_http.HeaderAuthorization, authStr))
+	resp, err := p.httpCli.Do(ctx, http.MethodGet, downloadURL, nil, curl.WithHeader(curl.HeaderAuthorization, authStr))
 	if err != nil {
 		return err
 	}
@@ -486,7 +486,7 @@ type PayV3Option func(p *PayV3)
 // WithPayV3HttpCli 设置支付(v3)请求的 HTTP Client
 func WithPayV3HttpCli(c *http.Client) PayV3Option {
 	return func(p *PayV3) {
-		p.httpCli = lib_http.NewHTTPClient(c)
+		p.httpCli = curl.NewHTTPClient(c)
 	}
 }
 
@@ -511,7 +511,7 @@ func NewPayV3(mchid, apikey string, options ...PayV3Option) *PayV3 {
 		host:    "https://api.mch.weixin.qq.com",
 		mchid:   mchid,
 		apikey:  apikey,
-		httpCli: lib_http.NewDefaultClient(),
+		httpCli: curl.NewDefaultClient(),
 	}
 
 	for _, fn := range options {

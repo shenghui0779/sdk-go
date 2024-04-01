@@ -16,7 +16,7 @@ import (
 
 	"github.com/shenghui0779/sdk-go/lib"
 	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	lib_http "github.com/shenghui0779/sdk-go/lib/http"
+	"github.com/shenghui0779/sdk-go/lib/curl"
 )
 
 // Config 客户端配置
@@ -74,7 +74,7 @@ func WithParam(key string, value any) ChainCallOption {
 type client struct {
 	endpoint string
 	config   *Config
-	httpCli  lib_http.Client
+	httpCli  curl.Client
 	logger   func(ctx context.Context, data map[string]string)
 }
 
@@ -149,7 +149,7 @@ func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, e
 	}
 	log.SetReqBody(string(body))
 
-	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, body, lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON))
+	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, body, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
 	if err != nil {
 		return "", err
 	}
@@ -182,7 +182,7 @@ type Option func(c *client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(httpCli *http.Client) Option {
 	return func(c *client) {
-		c.httpCli = lib_http.NewHTTPClient(httpCli)
+		c.httpCli = curl.NewHTTPClient(httpCli)
 	}
 }
 
@@ -198,7 +198,7 @@ func NewClient(cfg *Config, options ...Option) Client {
 	c := &client{
 		endpoint: "https://rest.baas.alipay.com",
 		config:   cfg,
-		httpCli:  lib_http.NewDefaultClient(),
+		httpCli:  curl.NewDefaultClient(),
 	}
 
 	for _, fn := range options {

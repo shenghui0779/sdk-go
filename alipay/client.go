@@ -15,7 +15,7 @@ import (
 
 	"github.com/shenghui0779/sdk-go/lib"
 	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	lib_http "github.com/shenghui0779/sdk-go/lib/http"
+	"github.com/shenghui0779/sdk-go/lib/curl"
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
@@ -26,7 +26,7 @@ type Client struct {
 	aesKey  string
 	prvKey  *lib_crypto.PrivateKey
 	pubKey  *lib_crypto.PublicKey
-	httpCli lib_http.Client
+	httpCli curl.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -51,8 +51,8 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 	log.SetReqBody(body)
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body),
-		lib_http.WithHeader(lib_http.HeaderAccept, "application/json"),
-		lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentForm),
+		curl.WithHeader(curl.HeaderAccept, "application/json"),
+		curl.WithHeader(curl.HeaderContentType, curl.ContentForm),
 	)
 	if err != nil {
 		return lib.Fail(err)
@@ -98,7 +98,7 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 }
 
 // Upload 文件上传，参考：https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload
-func (c *Client) Upload(ctx context.Context, method string, form lib_http.UploadForm, options ...ActionOption) (gjson.Result, error) {
+func (c *Client) Upload(ctx context.Context, method string, form curl.UploadForm, options ...ActionOption) (gjson.Result, error) {
 	log := lib.NewReqLog(http.MethodPost, c.gateway)
 	defer log.Do(ctx, c.logger)
 
@@ -111,7 +111,7 @@ func (c *Client) Upload(ctx context.Context, method string, form lib_http.Upload
 
 	log.Set("query", query)
 
-	resp, err := c.httpCli.Upload(ctx, c.gateway+"?"+query, form, lib_http.WithHeader(lib_http.HeaderAccept, "application/json"))
+	resp, err := c.httpCli.Upload(ctx, c.gateway+"?"+query, form, curl.WithHeader(curl.HeaderAccept, "application/json"))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -294,7 +294,7 @@ type Option func(c *Client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(cli *http.Client) Option {
 	return func(c *Client) {
-		c.httpCli = lib_http.NewHTTPClient(cli)
+		c.httpCli = curl.NewHTTPClient(cli)
 	}
 }
 
@@ -325,7 +325,7 @@ func NewClient(appid, aesKey string, options ...Option) *Client {
 		appid:   appid,
 		aesKey:  aesKey,
 		gateway: "https://openapi.alipay.com/gateway.do",
-		httpCli: lib_http.NewDefaultClient(),
+		httpCli: curl.NewDefaultClient(),
 	}
 
 	for _, fn := range options {
@@ -341,7 +341,7 @@ func NewSandbox(appid, aesKey string, options ...Option) *Client {
 		appid:   appid,
 		aesKey:  aesKey,
 		gateway: "https://openapi-sandbox.dl.alipaydev.com/gateway.do",
-		httpCli: lib_http.NewDefaultClient(),
+		httpCli: curl.NewDefaultClient(),
 	}
 
 	for _, fn := range options {

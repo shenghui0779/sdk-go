@@ -13,7 +13,7 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	lib_http "github.com/shenghui0779/sdk-go/lib/http"
+	"github.com/shenghui0779/sdk-go/lib/curl"
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
@@ -23,7 +23,7 @@ type Corp struct {
 	corpid  string
 	secret  string
 	srvCfg  *ServerConfig
-	httpCli lib_http.Client
+	httpCli curl.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -54,7 +54,7 @@ func (c *Corp) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (c *Corp) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...lib_http.Option) ([]byte, error) {
+func (c *Corp) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...curl.Option) ([]byte, error) {
 	reqURL := c.url(path, query)
 
 	log := lib.NewReqLog(method, reqURL)
@@ -155,7 +155,7 @@ func (c *Corp) PostJSON(ctx context.Context, accessToken, path string, params li
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := c.do(ctx, http.MethodPost, path, query, params, lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON))
+	b, err := c.do(ctx, http.MethodPost, path, query, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -193,7 +193,7 @@ func (c *Corp) PostBuffer(ctx context.Context, accessToken, path string, params 
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := c.do(ctx, http.MethodPost, path, query, params, lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentJSON))
+	b, err := c.do(ctx, http.MethodPost, path, query, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
 	if err != nil {
 		return nil, err
 	}
@@ -207,7 +207,7 @@ func (c *Corp) PostBuffer(ctx context.Context, accessToken, path string, params 
 }
 
 // Upload 上传媒体资源
-func (c *Corp) Upload(ctx context.Context, accessToken, path string, form lib_http.UploadForm) (gjson.Result, error) {
+func (c *Corp) Upload(ctx context.Context, accessToken, path string, form curl.UploadForm) (gjson.Result, error) {
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
@@ -293,7 +293,7 @@ func WithCorpSrvCfg(token, aeskey string) CorpOption {
 // WithCorpHttpCli 设置企业微信请求的 HTTP Client
 func WithCorpHttpCli(cli *http.Client) CorpOption {
 	return func(c *Corp) {
-		c.httpCli = lib_http.NewHTTPClient(cli)
+		c.httpCli = curl.NewHTTPClient(cli)
 	}
 }
 
@@ -311,7 +311,7 @@ func NewCorp(corpid, secret string, options ...CorpOption) *Corp {
 		corpid:  corpid,
 		secret:  secret,
 		srvCfg:  new(ServerConfig),
-		httpCli: lib_http.NewDefaultClient(),
+		httpCli: curl.NewDefaultClient(),
 	}
 
 	for _, fn := range options {

@@ -17,7 +17,7 @@ import (
 
 	"github.com/shenghui0779/sdk-go/lib"
 	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	lib_http "github.com/shenghui0779/sdk-go/lib/http"
+	"github.com/shenghui0779/sdk-go/lib/curl"
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
@@ -28,7 +28,7 @@ type Client struct {
 	desKey  string
 	prvKey  *lib_crypto.PrivateKey
 	pubKey  *lib_crypto.PublicKey
-	httpCli lib_http.Client
+	httpCli curl.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -95,7 +95,7 @@ func (c *Client) PostForm(ctx context.Context, api, serviceNO string, bizData va
 	}
 	log.SetReqBody(form)
 
-	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(form), lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentForm))
+	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(form), curl.WithHeader(curl.HeaderContentType, curl.ContentForm))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -220,7 +220,7 @@ type Option func(c *Client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(cli *http.Client) Option {
 	return func(c *Client) {
-		c.httpCli = lib_http.NewHTTPClient(cli)
+		c.httpCli = curl.NewHTTPClient(cli)
 	}
 }
 
@@ -251,7 +251,7 @@ func NewClient(mchNO, desKey string, options ...Option) *Client {
 		host:    "https://eqt.ysepay.com",
 		mchNO:   mchNO,
 		desKey:  desKey,
-		httpCli: lib_http.NewDefaultClient(),
+		httpCli: curl.NewDefaultClient(),
 	}
 
 	for _, fn := range options {

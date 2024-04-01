@@ -14,7 +14,7 @@ import (
 
 	"github.com/shenghui0779/sdk-go/lib"
 	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	lib_http "github.com/shenghui0779/sdk-go/lib/http"
+	"github.com/shenghui0779/sdk-go/lib/curl"
 )
 
 // Client 杉德支付客户端
@@ -22,7 +22,7 @@ type Client struct {
 	mchID   string
 	prvKey  *lib_crypto.PrivateKey
 	pubKey  *lib_crypto.PublicKey
-	httpCli lib_http.Client
+	httpCli curl.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -42,7 +42,7 @@ func (c *Client) Do(ctx context.Context, reqURL string, form *Form) (*Form, erro
 	}
 	log.SetReqBody(body)
 
-	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body), lib_http.WithHeader(lib_http.HeaderContentType, lib_http.ContentForm))
+	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body), curl.WithHeader(curl.HeaderContentType, curl.ContentForm))
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ type Option func(c *Client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(cli *http.Client) Option {
 	return func(c *Client) {
-		c.httpCli = lib_http.NewHTTPClient(cli)
+		c.httpCli = curl.NewHTTPClient(cli)
 	}
 }
 
@@ -132,7 +132,7 @@ func WithLogger(fn func(ctx context.Context, data map[string]string)) Option {
 func NewClient(mchID string, options ...Option) *Client {
 	c := &Client{
 		mchID:   mchID,
-		httpCli: lib_http.NewDefaultClient(),
+		httpCli: curl.NewDefaultClient(),
 	}
 
 	for _, fn := range options {
