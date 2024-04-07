@@ -27,9 +27,9 @@ func Nonce(size uint) string {
 	return hex.EncodeToString(nonce)
 }
 
-// NonceByte 生成指定长度的随机字节 (最好是偶数)
+// NonceByte 生成指定长度的随机字节
 func NonceByte(size uint) []byte {
-	nonce := make([]byte, size/2)
+	nonce := make([]byte, size)
 	io.ReadFull(rand.Reader, nonce)
 
 	return nonce
