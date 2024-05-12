@@ -45,7 +45,6 @@ func (c *Corp) url(path string, query url.Values) string {
 		builder.WriteString("/")
 	}
 	builder.WriteString(path)
-
 	if len(query) != 0 {
 		builder.WriteString("?")
 		builder.WriteString(query.Encode())
@@ -68,6 +67,7 @@ func (c *Corp) do(ctx context.Context, method, path string, query url.Values, pa
 	if params != nil {
 		body, err = json.Marshal(params)
 		if err != nil {
+			log.Set("error", err.Error())
 			return nil, err
 		}
 		log.SetReqBody(string(body))
@@ -75,6 +75,7 @@ func (c *Corp) do(ctx context.Context, method, path string, query url.Values, pa
 
 	resp, err := c.httpCli.Do(ctx, method, reqURL, body, options...)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -88,6 +89,7 @@ func (c *Corp) do(ctx context.Context, method, path string, query url.Values, pa
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	log.SetRespBody(string(b))
@@ -126,7 +128,6 @@ func (c *Corp) AccessToken(ctx context.Context) (gjson.Result, error) {
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -146,7 +147,6 @@ func (c *Corp) GetJSON(ctx context.Context, accessToken, path string, query url.
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -164,7 +164,6 @@ func (c *Corp) PostJSON(ctx context.Context, accessToken, path string, params li
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -184,7 +183,6 @@ func (c *Corp) GetBuffer(ctx context.Context, accessToken, path string, query ur
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return nil, fmt.Errorf("%d | %s", code, ret.Get("errmsg").String())
 	}
-
 	return b, nil
 }
 
@@ -202,7 +200,6 @@ func (c *Corp) PostBuffer(ctx context.Context, accessToken, path string, params 
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return nil, fmt.Errorf("%d | %s", code, ret.Get("errmsg").String())
 	}
-
 	return b, nil
 }
 
@@ -218,6 +215,7 @@ func (c *Corp) Upload(ctx context.Context, accessToken, path string, form curl.U
 
 	resp, err := c.httpCli.Upload(ctx, reqURL, form)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	defer resp.Body.Close()
@@ -231,6 +229,7 @@ func (c *Corp) Upload(ctx context.Context, accessToken, path string, form curl.U
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	log.SetRespBody(string(b))
@@ -239,7 +238,6 @@ func (c *Corp) Upload(ctx context.Context, accessToken, path string, form curl.U
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -249,12 +247,10 @@ func (c *Corp) VerifyURL(signature, timestamp, nonce, echoStr string) (string, e
 	if SignWithSHA1(c.srvCfg.token, timestamp, nonce, echoStr) != signature {
 		return "", errors.New("signature verified fail")
 	}
-
 	b, err := EventDecrypt(c.corpid, c.srvCfg.aeskey, echoStr)
 	if err != nil {
 		return "", err
 	}
-
 	return string(b), nil
 }
 
@@ -264,12 +260,10 @@ func (c *Corp) DecodeEventMsg(signature, timestamp, nonce, encryptMsg string) (v
 	if SignWithSHA1(c.srvCfg.token, timestamp, nonce, encryptMsg) != signature {
 		return nil, errors.New("signature verified fail")
 	}
-
 	b, err := EventDecrypt(c.corpid, c.srvCfg.aeskey, encryptMsg)
 	if err != nil {
 		return nil, err
 	}
-
 	return ParseXMLToV(b)
 }
 
@@ -313,10 +307,8 @@ func NewCorp(corpid, secret string, options ...CorpOption) *Corp {
 		srvCfg:  new(ServerConfig),
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(c)
 	}
-
 	return c
 }

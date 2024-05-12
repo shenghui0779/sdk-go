@@ -68,6 +68,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 	if params != nil {
 		body, err = json.Marshal(params)
 		if err != nil {
+			log.Set("error", err.Error())
 			return nil, err
 		}
 		log.SetReqBody(string(body))
@@ -75,6 +76,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 		if len(header.Get(HeaderEncryptType)) != 0 {
 			encryptData, err := c.Encrypt(string(body))
 			if err != nil {
+				log.Set("error", err.Error())
 				return nil, err
 			}
 
@@ -85,6 +87,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 
 	authStr, err := c.Authorization(method, path, query, body, header)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	header.Set(curl.HeaderAuthorization, authStr)
@@ -93,6 +96,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 
 	resp, err := c.httpCli.Do(ctx, method, reqURL, body, lib.HeaderToHttpOption(header)...)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -102,12 +106,14 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	log.SetRespBody(string(b))
 
 	// 签名校验
 	if err = c.Verify(resp.Header, b); err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
@@ -120,6 +126,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 	if resp.StatusCode < 400 && len(b) != 0 && !bytes.HasPrefix(b, []byte("{")) {
 		data, err := c.Decrypt(string(b))
 		if err != nil {
+			log.Set("error", err.Error())
 			return nil, err
 		}
 
@@ -188,6 +195,7 @@ func (c *ClientV3) Upload(ctx context.Context, path string, form curl.UploadForm
 
 	authStr, err := c.Authorization(http.MethodPost, path, nil, []byte(form.Field("data")), reqHeader)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	reqHeader.Set(curl.HeaderAuthorization, authStr)
@@ -196,6 +204,7 @@ func (c *ClientV3) Upload(ctx context.Context, path string, form curl.UploadForm
 
 	resp, err := c.httpCli.Upload(ctx, reqURL, form, lib.HeaderToHttpOption(reqHeader)...)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -205,12 +214,14 @@ func (c *ClientV3) Upload(ctx context.Context, path string, form curl.UploadForm
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	log.SetRespBody(string(b))
 
 	// 签名校验
 	if err = c.Verify(resp.Header, b); err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 

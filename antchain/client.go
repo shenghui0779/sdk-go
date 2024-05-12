@@ -145,12 +145,14 @@ func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, e
 
 	body, err := json.Marshal(params)
 	if err != nil {
+		log.Set("error", err.Error())
 		return "", err
 	}
 	log.SetReqBody(string(body))
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, body, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
 	if err != nil {
+		log.Set("error", err.Error())
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -164,6 +166,7 @@ func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, e
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return "", err
 	}
 	log.SetRespBody(string(b))

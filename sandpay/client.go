@@ -38,12 +38,14 @@ func (c *Client) Do(ctx context.Context, reqURL string, form *Form) (*Form, erro
 
 	body, err := form.URLEncode(c.mchID, c.prvKey)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	log.SetReqBody(body)
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body), curl.WithHeader(curl.HeaderContentType, curl.ContentForm))
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -57,16 +59,19 @@ func (c *Client) Do(ctx context.Context, reqURL string, form *Form) (*Form, erro
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	log.SetRespBody(string(b))
 
 	query, err := url.QueryUnescape(string(b))
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	v, err := url.ParseQuery(query)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	return c.Verify(v)

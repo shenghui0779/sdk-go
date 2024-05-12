@@ -12,9 +12,10 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"sync"
+	"sync/atomic"
 	"time"
 
+	"github.com/robfig/cron/v3"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
@@ -30,9 +31,9 @@ type PayV3 struct {
 	apikey  string
 	prvSN   string
 	prvKey  *lib_crypto.PrivateKey
-	pubKey  map[string]*lib_crypto.PublicKey
-	mutex   sync.Mutex
+	pubKey  atomic.Value // map[string]*lib_crypto.PublicKey
 	httpCli curl.Client
+	crontab *cron.Cron
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -62,33 +63,22 @@ func (p *PayV3) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (p *PayV3) publicKey(ctx context.Context, serialNO string) (*lib_crypto.PublicKey, error) {
-	key, ok := p.pubKey[serialNO]
-	if ok {
-		return key, nil
+func (p *PayV3) publicKey(serialNO string) (*lib_crypto.PublicKey, error) {
+	keyMap, ok := p.pubKey.Load().(map[string]*lib_crypto.PublicKey)
+	if !ok {
+		return nil, errors.New("public key load failed")
 	}
 
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
-
-	// 二次确认
-	key, ok = p.pubKey[serialNO]
-	if ok {
-		return key, nil
-	}
-
-	if err := p.httpCerts(ctx); err != nil {
-		return nil, err
-	}
-
-	pk, ok := p.pubKey[serialNO]
+	pk, ok := keyMap[serialNO]
 	if !ok {
 		return nil, fmt.Errorf("cert(serial_no=%s) not found", serialNO)
 	}
 	return pk, nil
 }
 
-func (p *PayV3) httpCerts(ctx context.Context) error {
+func (p *PayV3) refreshCerts() {
+	ctx := context.Background()
+
 	reqURL := p.url("/v3/certificates", nil)
 
 	log := lib.NewReqLog(http.MethodGet, reqURL)
@@ -96,14 +86,16 @@ func (p *PayV3) httpCerts(ctx context.Context) error {
 
 	authStr, err := p.Authorization(http.MethodGet, "/v3/certificates", nil, "")
 	if err != nil {
-		return err
+		log.Set("error", err.Error())
+		return
 	}
 
 	log.Set(curl.HeaderAuthorization, authStr)
 
 	resp, err := p.httpCli.Do(ctx, http.MethodGet, reqURL, nil, curl.WithHeader(curl.HeaderAccept, "application/json"), curl.WithHeader(curl.HeaderAuthorization, authStr))
 	if err != nil {
-		return err
+		log.Set("error", err.Error())
+		return
 	}
 	defer resp.Body.Close()
 
@@ -112,18 +104,22 @@ func (p *PayV3) httpCerts(ctx context.Context) error {
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		log.Set("error", err.Error())
+		return
 	}
 	log.SetRespBody(string(b))
 
 	if resp.StatusCode >= 400 {
-		return errors.New(string(b))
+		log.Set("error", string(b))
+		return
 	}
 
-	serial := resp.Header.Get(HeaderPaySerial)
+	keyMap := make(map[string]*lib_crypto.PublicKey)
+	headSerial := resp.Header.Get(HeaderPaySerial)
 
 	ret := gjson.GetBytes(b, "data")
 	for _, v := range ret.Array() {
+		serialNO := v.Get("serial_no").String()
 		cert := v.Get("encrypt_certificate")
 
 		nonce := cert.Get("nonce").String()
@@ -132,16 +128,18 @@ func (p *PayV3) httpCerts(ctx context.Context) error {
 
 		block, err := lib_crypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
 		if err != nil {
-			return err
+			log.Set("error", err.Error())
+			return
 		}
 		key, err := lib_crypto.NewPublicKeyFromDerBlock(block)
 		if err != nil {
-			return err
+			log.Set("error", err.Error())
+			return
 		}
-		p.pubKey[cert.Get("serial_no").String()] = key
+		keyMap[serialNO] = key
 
 		// 签名验证
-		if v.Get("serial_no").String() == serial {
+		if serialNO == headSerial {
 			// 签名验证
 			var builder strings.Builder
 
@@ -153,12 +151,13 @@ func (p *PayV3) httpCerts(ctx context.Context) error {
 			builder.WriteString("\n")
 
 			if err = key.Verify(crypto.SHA256, []byte(builder.String()), []byte(resp.Header.Get(HeaderPaySignature))); err != nil {
-				return err
+				log.Set("error", err.Error())
+				return
 			}
 		}
 	}
 
-	return nil
+	p.pubKey.Store(keyMap)
 }
 
 func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, params lib.X) (*APIResult, error) {
@@ -175,6 +174,7 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 	if params != nil {
 		body, err = json.Marshal(params)
 		if err != nil {
+			log.Set("error", err.Error())
 			return nil, err
 		}
 		log.SetReqBody(string(body))
@@ -182,6 +182,7 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 
 	authStr, err := p.Authorization(method, path, query, string(body))
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
@@ -193,6 +194,7 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 		curl.WithHeader(curl.HeaderContentType, curl.ContentJSON),
 	)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -202,12 +204,14 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	log.SetRespBody(string(b))
 
 	// 签名校验
 	if err = p.Verify(ctx, resp.Header, b); err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
@@ -216,6 +220,21 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 		Body: gjson.ParseBytes(b),
 	}
 	return ret, nil
+}
+
+// LoadCerts 加载平台证书(默认: 定时每12h刷新一次);
+// intervals 可以参考[crontab](https://pkg.go.dev/github.com/robfig/cron)
+func (p *PayV3) LoadCerts(intervals ...string) error {
+	spec := "@every 12h"
+	if len(intervals) != 0 {
+		spec = intervals[0]
+	}
+	p.refreshCerts()
+	if _, err := p.crontab.AddFunc(spec, p.refreshCerts); err != nil {
+		return err
+	}
+	p.crontab.Start()
+	return nil
 }
 
 // GetJSON GET请求JSON数据
@@ -237,6 +256,7 @@ func (p *PayV3) Upload(ctx context.Context, path string, form curl.UploadForm) (
 
 	authStr, err := p.Authorization(http.MethodPost, path, nil, form.Field("meta"))
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
@@ -244,6 +264,7 @@ func (p *PayV3) Upload(ctx context.Context, path string, form curl.UploadForm) (
 
 	resp, err := p.httpCli.Upload(ctx, reqURL, form, curl.WithHeader(curl.HeaderAuthorization, authStr))
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -253,12 +274,14 @@ func (p *PayV3) Upload(ctx context.Context, path string, form curl.UploadForm) (
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	log.SetRespBody(string(b))
 
 	// 签名校验
 	if err = p.Verify(ctx, resp.Header, b); err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
@@ -277,6 +300,7 @@ func (p *PayV3) Download(ctx context.Context, downloadURL string, w io.Writer) e
 	// 获取 download_url
 	authStr, err := p.Authorization(http.MethodGet, downloadURL, nil, "")
 	if err != nil {
+		log.Set("error", err.Error())
 		return err
 	}
 
@@ -284,6 +308,7 @@ func (p *PayV3) Download(ctx context.Context, downloadURL string, w io.Writer) e
 
 	resp, err := p.httpCli.Do(ctx, http.MethodGet, downloadURL, nil, curl.WithHeader(curl.HeaderAuthorization, authStr))
 	if err != nil {
+		log.Set("error", err.Error())
 		return err
 	}
 
@@ -339,7 +364,7 @@ func (p *PayV3) Verify(ctx context.Context, header http.Header, body []byte) err
 	serial := header.Get(HeaderPaySerial)
 	sign := header.Get(HeaderPaySignature)
 
-	key, err := p.publicKey(ctx, serial)
+	key, err := p.publicKey(serial)
 	if err != nil {
 		return err
 	}
@@ -459,6 +484,7 @@ func NewPayV3(mchid, apikey string, options ...PayV3Option) *PayV3 {
 		mchid:   mchid,
 		apikey:  apikey,
 		httpCli: curl.NewDefaultClient(),
+		crontab: cron.New(cron.WithLocation(lib.GMT8)),
 	}
 	for _, fn := range options {
 		fn(pay)

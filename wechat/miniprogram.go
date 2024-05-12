@@ -83,6 +83,7 @@ func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Va
 	if params != nil {
 		body, err = json.Marshal(params)
 		if err != nil {
+			log.Set("error", err.Error())
 			return nil, err
 		}
 		log.SetReqBody(string(body))
@@ -90,6 +91,7 @@ func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Va
 
 	resp, err := mp.httpCli.Do(ctx, method, reqURL, body, options...)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -103,6 +105,7 @@ func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Va
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	log.SetRespBody(string(b))
@@ -121,11 +124,13 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 	// 加密
 	params, err := mp.encrypt(log, path, query, params, now)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
 	body, err := json.Marshal(params)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	log.SetReqBody(string(body))
@@ -133,6 +138,7 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 	// 签名
 	sign, err := mp.sign(path, now, body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
@@ -147,6 +153,7 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 
 	resp, err := mp.httpCli.Do(ctx, method, reqURL, body, lib.HeaderToHttpOption(reqHeader)...)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -160,18 +167,21 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	log.SetRespBody(string(b))
 
 	// 验签
 	if err = mp.verify(path, resp.Header, b); err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
 	// 解密
 	data, err := mp.decrypt(path, resp.Header, b)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
@@ -201,6 +211,7 @@ func (mp *MiniProgram) encrypt(log *lib.ReqLog, path string, query url.Values, p
 
 	data, err := json.Marshal(params)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
@@ -208,6 +219,7 @@ func (mp *MiniProgram) encrypt(log *lib.ReqLog, path string, query url.Values, p
 
 	key, err := base64.StdEncoding.DecodeString(mp.sfMode.aeskey)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
@@ -216,6 +228,7 @@ func (mp *MiniProgram) encrypt(log *lib.ReqLog, path string, query url.Values, p
 
 	ct, err := lib_crypto.AESEncryptGCM(key, iv, data, []byte(aad), nil)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 
@@ -504,6 +517,7 @@ func (mp *MiniProgram) Upload(ctx context.Context, accessToken, path string, for
 
 	resp, err := mp.httpCli.Upload(ctx, reqURL, form)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	defer resp.Body.Close()
@@ -517,6 +531,7 @@ func (mp *MiniProgram) Upload(ctx context.Context, accessToken, path string, for
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	log.SetRespBody(string(b))

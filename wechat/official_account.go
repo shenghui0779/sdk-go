@@ -74,6 +74,7 @@ func (oa *OfficialAccount) do(ctx context.Context, method, path string, query ur
 	if params != nil {
 		body, err = json.Marshal(params)
 		if err != nil {
+			log.Set("error", err.Error())
 			return nil, err
 		}
 		log.SetReqBody(string(body))
@@ -81,6 +82,7 @@ func (oa *OfficialAccount) do(ctx context.Context, method, path string, query ur
 
 	resp, err := oa.httpCli.Do(ctx, method, reqURL, body, options...)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -94,6 +96,7 @@ func (oa *OfficialAccount) do(ctx context.Context, method, path string, query ur
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return nil, err
 	}
 	log.SetRespBody(string(b))
@@ -297,6 +300,7 @@ func (oa *OfficialAccount) Upload(ctx context.Context, accessToken, path string,
 
 	resp, err := oa.httpCli.Upload(ctx, reqURL, form)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	defer resp.Body.Close()
@@ -310,6 +314,7 @@ func (oa *OfficialAccount) Upload(ctx context.Context, accessToken, path string,
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	log.SetRespBody(string(b))

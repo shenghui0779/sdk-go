@@ -46,6 +46,7 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 
 	body, err := action.Encode(c)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	log.SetReqBody(body)
@@ -55,6 +56,7 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 		curl.WithHeader(curl.HeaderContentType, curl.ContentForm),
 	)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	defer resp.Body.Close()
@@ -68,12 +70,14 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	log.SetRespBody(string(b))
 
 	ret, err := c.verifyResp(action.RespKey(), b)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 
@@ -82,13 +86,13 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 		if code := ret.Get("code").String(); code != CodeOK {
 			return lib.Fail(fmt.Errorf("%s | %s (sub_code = %s, sub_msg = %s)", code, ret.Get("msg").String(), ret.Get("sub_code").String(), ret.Get("sub_msg").String()))
 		}
-
 		return ret, nil
 	}
 
 	// 非JSON串，需解密
 	data, err := c.Decrypt(ret.String())
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 
@@ -106,6 +110,7 @@ func (c *Client) Upload(ctx context.Context, method string, form curl.UploadForm
 
 	query, err := action.Encode(c)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 
@@ -113,6 +118,7 @@ func (c *Client) Upload(ctx context.Context, method string, form curl.UploadForm
 
 	resp, err := c.httpCli.Upload(ctx, c.gateway+"?"+query, form, curl.WithHeader(curl.HeaderAccept, "application/json"))
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	defer resp.Body.Close()
@@ -126,12 +132,14 @@ func (c *Client) Upload(ctx context.Context, method string, form curl.UploadForm
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	log.SetRespBody(string(b))
 
 	ret, err := c.verifyResp(action.RespKey(), b)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 
@@ -147,6 +155,7 @@ func (c *Client) Upload(ctx context.Context, method string, form curl.UploadForm
 	// 非JSON串，需解密
 	data, err := c.Decrypt(ret.String())
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 

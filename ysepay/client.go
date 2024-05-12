@@ -87,12 +87,14 @@ func (c *Client) PostForm(ctx context.Context, api, serviceNO string, bizData va
 
 	form, err := c.reqForm(uuid.NewString(), serviceNO, bizData)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	log.SetReqBody(form)
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(form), curl.WithHeader(curl.HeaderContentType, curl.ContentForm))
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	defer resp.Body.Close()
@@ -106,6 +108,7 @@ func (c *Client) PostForm(ctx context.Context, api, serviceNO string, bizData va
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	log.SetRespBody(string(b))

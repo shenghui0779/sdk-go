@@ -75,6 +75,7 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 	if params != nil {
 		body, err = json.Marshal(params)
 		if err != nil {
+			log.Set("error", err.Error())
 			return lib.Fail(err)
 		}
 		log.SetReqBody(string(body))
@@ -93,6 +94,7 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 
 	resp, err := c.httpCli.Do(ctx, method, reqURL, body, lib.HeaderToHttpOption(header)...)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	defer resp.Body.Close()
@@ -106,6 +108,7 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return lib.Fail(err)
 	}
 	log.SetRespBody(string(b))
@@ -123,6 +126,7 @@ func (c *Client) doStream(ctx context.Context, uploadURL string, reader io.ReadS
 
 	h := md5.New()
 	if _, err := io.Copy(h, reader); err != nil {
+		log.Set("error", err.Error())
 		return err
 	}
 
@@ -135,16 +139,19 @@ func (c *Client) doStream(ctx context.Context, uploadURL string, reader io.ReadS
 
 	// 文件指针移动到头部
 	if _, err := reader.Seek(0, 0); err != nil {
+		log.Set("error", err.Error())
 		return err
 	}
 
 	buf := bytes.NewBuffer(make([]byte, 0, 20<<10)) // 20kb
 	if _, err := io.Copy(buf, reader); err != nil {
+		log.Set("error", err.Error())
 		return err
 	}
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPut, uploadURL, buf.Bytes(), lib.HeaderToHttpOption(header)...)
 	if err != nil {
+		log.Set("error", err.Error())
 		return err
 	}
 	defer resp.Body.Close()
@@ -157,6 +164,7 @@ func (c *Client) doStream(ctx context.Context, uploadURL string, reader io.ReadS
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Set("error", err.Error())
 		return err
 	}
 	log.SetRespBody(string(b))
