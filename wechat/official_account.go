@@ -52,7 +52,6 @@ func (oa *OfficialAccount) url(path string, query url.Values) string {
 		builder.WriteString("/")
 	}
 	builder.WriteString(path)
-
 	if len(query) != 0 {
 		builder.WriteString("?")
 		builder.WriteString(query.Encode())
@@ -148,7 +147,6 @@ func (oa *OfficialAccount) Code2OAuthToken(ctx context.Context, code string) (gj
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -169,7 +167,6 @@ func (oa *OfficialAccount) RefreshOAuthToken(ctx context.Context, refreshToken s
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -190,7 +187,6 @@ func (oa *OfficialAccount) AccessToken(ctx context.Context) (gjson.Result, error
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -214,7 +210,6 @@ func (oa *OfficialAccount) StableAccessToken(ctx context.Context, forceRefresh b
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -234,7 +229,6 @@ func (oa *OfficialAccount) GetJSON(ctx context.Context, accessToken, path string
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -252,7 +246,6 @@ func (oa *OfficialAccount) PostJSON(ctx context.Context, accessToken, path strin
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -272,7 +265,6 @@ func (oa *OfficialAccount) GetBuffer(ctx context.Context, accessToken, path stri
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return nil, fmt.Errorf("%d | %s", code, ret.Get("errmsg").String())
 	}
-
 	return b, nil
 }
 
@@ -290,7 +282,6 @@ func (oa *OfficialAccount) PostBuffer(ctx context.Context, accessToken, path str
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return nil, fmt.Errorf("%d | %s", code, ret.Get("errmsg").String())
 	}
-
 	return b, nil
 }
 
@@ -327,7 +318,6 @@ func (oa *OfficialAccount) Upload(ctx context.Context, accessToken, path string,
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -337,7 +327,6 @@ func (oa *OfficialAccount) VerifyURL(signature, timestamp, nonce string) error {
 	if SignWithSHA1(oa.srvCfg.token, timestamp, nonce) != signature {
 		return errors.New("signature verified fail")
 	}
-
 	return nil
 }
 
@@ -352,7 +341,6 @@ func (oa *OfficialAccount) DecodeEventMsg(signature, timestamp, nonce, encryptMs
 	if err != nil {
 		return nil, err
 	}
-
 	return ParseXMLToV(b)
 }
 
@@ -396,10 +384,8 @@ func NewOfficialAccount(appid, secret string, options ...OAOption) *OfficialAcco
 		srvCfg:  new(ServerConfig),
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(oa)
 	}
-
 	return oa
 }

@@ -54,7 +54,6 @@ func (p *PayV3) url(path string, query url.Values) string {
 		builder.WriteString("/")
 	}
 	builder.WriteString(path)
-
 	if len(query) != 0 {
 		builder.WriteString("?")
 		builder.WriteString(query.Encode())
@@ -216,7 +215,6 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 		Code: resp.StatusCode,
 		Body: gjson.ParseBytes(b),
 	}
-
 	return ret, nil
 }
 
@@ -268,7 +266,6 @@ func (p *PayV3) Upload(ctx context.Context, path string, form curl.UploadForm) (
 		Code: resp.StatusCode,
 		Body: gjson.ParseBytes(b),
 	}
-
 	return ret, nil
 }
 
@@ -296,7 +293,6 @@ func (p *PayV3) Download(ctx context.Context, downloadURL string, w io.Writer) e
 	log.SetStatusCode(resp.StatusCode)
 
 	_, err = io.Copy(w, resp.Body)
-
 	return err
 }
 
@@ -306,10 +302,10 @@ func (p *PayV3) Authorization(method, path string, query url.Values, body string
 		return "", errors.New("private key not found (forgotten configure?)")
 	}
 
-	var builder strings.Builder
-
 	nonce := lib.Nonce(32)
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
+
+	var builder strings.Builder
 
 	builder.WriteString(method)
 	builder.WriteString("\n")
@@ -332,9 +328,7 @@ func (p *PayV3) Authorization(method, path string, query url.Values, body string
 	if err != nil {
 		return "", err
 	}
-
 	auth := fmt.Sprintf(`WECHATPAY2-SHA256-RSA2048 mchid="%s",nonce_str="%s",signature="%s",timestamp="%s",serial_no="%s"`, p.mchid, nonce, base64.StdEncoding.EncodeToString(sign), timestamp, p.prvSN)
-
 	return auth, nil
 }
 
@@ -466,10 +460,8 @@ func NewPayV3(mchid, apikey string, options ...PayV3Option) *PayV3 {
 		apikey:  apikey,
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(pay)
 	}
-
 	return pay
 }

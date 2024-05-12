@@ -65,12 +65,10 @@ func (c *Client) Do(ctx context.Context, reqURL string, form *Form) (*Form, erro
 	if err != nil {
 		return nil, err
 	}
-
 	v, err := url.ParseQuery(query)
 	if err != nil {
 		return nil, err
 	}
-
 	return c.Verify(v)
 }
 
@@ -84,7 +82,6 @@ func (c *Client) Verify(form url.Values) (*Form, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	if err = c.pubKey.Verify(crypto.SHA1, []byte(form.Get("data")), sign); err != nil {
 		return nil, err
 	}
@@ -93,7 +90,6 @@ func (c *Client) Verify(form url.Values) (*Form, error) {
 	if err := json.Unmarshal([]byte(form.Get("data")), ret); err != nil {
 		return nil, err
 	}
-
 	return ret, nil
 }
 
@@ -134,10 +130,8 @@ func NewClient(mchID string, options ...Option) *Client {
 		mchID:   mchID,
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(c)
 	}
-
 	return c
 }

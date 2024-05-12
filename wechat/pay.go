@@ -47,7 +47,6 @@ func (p *Pay) url(path string, query url.Values) string {
 		builder.WriteString("/")
 	}
 	builder.WriteString(path)
-
 	if len(query) != 0 {
 		builder.WriteString("?")
 		builder.WriteString(query.Encode())
@@ -139,15 +138,12 @@ func (p *Pay) PostXML(ctx context.Context, path string, params value.V) (value.V
 	if err != nil {
 		return nil, err
 	}
-
 	if code := ret.Get("return_code"); code != ResultSuccess {
 		return nil, fmt.Errorf("%s | %s", code, ret.Get("return_msg"))
 	}
-
 	if err = p.Verify(ret); err != nil {
 		return nil, err
 	}
-
 	return ret, nil
 }
 
@@ -162,15 +158,12 @@ func (p *Pay) PostTLSXML(ctx context.Context, path string, params value.V) (valu
 	if err != nil {
 		return nil, err
 	}
-
 	if code := ret.Get("return_code"); code != ResultSuccess {
 		return nil, fmt.Errorf("%s | %s", code, ret.Get("return_msg"))
 	}
-
 	if err = p.Verify(ret); err != nil {
 		return nil, err
 	}
-
 	return ret, nil
 }
 
@@ -185,7 +178,6 @@ func (p *Pay) PostBuffer(ctx context.Context, path string, params value.V) ([]by
 	if err != nil {
 		return nil, err
 	}
-
 	// 能解析出XML，说明发生错误
 	if len(ret) != 0 {
 		return nil, fmt.Errorf("%s | %s (error_code = %s, err_code_des = %s)", ret.Get("return_code"), ret.Get("return_msg"), ret.Get("error_code"), ret.Get("err_code_des"))
@@ -205,7 +197,6 @@ func (p *Pay) PostTLSBuffer(ctx context.Context, path string, params value.V) ([
 	if err != nil {
 		return nil, err
 	}
-
 	// 能解析出XML，说明发生错误
 	if len(ret) != 0 {
 		return nil, fmt.Errorf("%s | %s | %s", ret.Get("return_code"), ret.Get("return_msg"), ret.Get("error_code"))
@@ -216,16 +207,13 @@ func (p *Pay) PostTLSBuffer(ctx context.Context, path string, params value.V) ([
 
 func (p *Pay) Sign(v value.V) string {
 	signStr := v.Encode("=", "&", value.WithIgnoreKeys("sign"), value.WithEmptyMode(value.EmptyIgnore)) + "&key=" + p.apikey
-
 	signType := v.Get("sign_type")
 	if len(signType) == 0 {
 		signType = v.Get("signType")
 	}
-
 	if len(signType) != 0 && SignAlgo(strings.ToUpper(signType)) == SignHMacSHA256 {
 		return strings.ToUpper(hash.HMacSHA256(p.apikey, signStr))
 	}
-
 	return strings.ToUpper(hash.MD5(signStr))
 }
 
@@ -260,12 +248,10 @@ func (p *Pay) DecryptRefund(encrypt string) (value.V, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	plainText, err := lib_crypto.AESDecryptECB([]byte(hash.MD5(p.apikey)), cipherText)
 	if err != nil {
 		return nil, err
 	}
-
 	return ParseXMLToV(plainText)
 }
 
@@ -357,10 +343,8 @@ func NewPay(mchid, apikey string, options ...PayOption) *Pay {
 		httpCli: curl.NewDefaultClient(),
 		tlsCli:  curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(pay)
 	}
-
 	return pay
 }

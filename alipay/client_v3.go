@@ -46,7 +46,6 @@ func (c *ClientV3) url(path string, query url.Values) string {
 		builder.WriteString("/")
 	}
 	builder.WriteString(path)
-
 	if len(query) != 0 {
 		builder.WriteString("?")
 		builder.WriteString(query.Encode())
@@ -137,7 +136,6 @@ func (c *ClientV3) GetJSON(ctx context.Context, path string, query url.Values, o
 
 	header.Set(curl.HeaderAccept, "application/json")
 	header.Set(HeaderRequestID, uuid.NewString())
-
 	for _, fn := range options {
 		fn(header)
 	}
@@ -152,7 +150,6 @@ func (c *ClientV3) PostJSON(ctx context.Context, path string, params lib.X, opti
 	header.Set(curl.HeaderAccept, "application/json")
 	header.Set(HeaderRequestID, uuid.NewString())
 	header.Set(curl.HeaderContentType, curl.ContentJSON)
-
 	for _, fn := range options {
 		fn(header)
 	}
@@ -167,7 +164,6 @@ func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params lib.X, o
 	header.Set(HeaderRequestID, uuid.NewString())
 	header.Set(HeaderEncryptType, "AES")
 	header.Set(curl.HeaderContentType, curl.ContentText)
-
 	for _, fn := range options {
 		fn(header)
 	}
@@ -222,7 +218,6 @@ func (c *ClientV3) Upload(ctx context.Context, path string, form curl.UploadForm
 		Code: resp.StatusCode,
 		Body: gjson.ParseBytes(b),
 	}
-
 	return ret, nil
 }
 
@@ -241,18 +236,15 @@ func (c *ClientV3) Authorization(method, path string, query url.Values, body []b
 	builder.WriteString(method)
 	builder.WriteString("\n")
 	builder.WriteString(path)
-
 	if len(query) != 0 {
 		builder.WriteString("?")
 		builder.WriteString(query.Encode())
 	}
 	builder.WriteString("\n")
-
 	if len(body) != 0 {
 		builder.Write(body)
 		builder.WriteString("\n")
 	}
-
 	if token := header.Get(HeaderAppAuthToken); len(token) != 0 {
 		builder.WriteString(token)
 		builder.WriteString("\n")
@@ -262,9 +254,7 @@ func (c *ClientV3) Authorization(method, path string, query url.Values, body []b
 	if err != nil {
 		return "", err
 	}
-
 	auth := fmt.Sprintf("ALIPAY-SHA256withRSA %s,sign=%s", authStr, base64.StdEncoding.EncodeToString(sign))
-
 	return auth, nil
 }
 
@@ -288,7 +278,6 @@ func (c *ClientV3) Verify(header http.Header, body []byte) error {
 	builder.WriteString("\n")
 	builder.WriteString(nonce)
 	builder.WriteString("\n")
-
 	if len(body) != 0 {
 		builder.Write(body)
 		builder.WriteString("\n")
@@ -303,12 +292,10 @@ func (c *ClientV3) Encrypt(data string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	ct, err := lib_crypto.AESEncryptCBC(key, make([]byte, 16), []byte(data))
 	if err != nil {
 		return "", err
 	}
-
 	return base64.StdEncoding.EncodeToString(ct.Bytes()), nil
 }
 
@@ -318,12 +305,10 @@ func (c *ClientV3) Decrypt(encryptData string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	data, err := base64.StdEncoding.DecodeString(encryptData)
 	if err != nil {
 		return nil, err
 	}
-
 	return lib_crypto.AESDecryptCBC(key, make([]byte, 16), data)
 }
 
@@ -366,11 +351,9 @@ func NewClientV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		aesKey:  aesKey,
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(c)
 	}
-
 	return c
 }
 
@@ -382,10 +365,8 @@ func NewSandboxV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		aesKey:  aesKey,
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(c)
 	}
-
 	return c
 }

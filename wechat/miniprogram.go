@@ -3,6 +3,7 @@ package wechat
 import (
 	"context"
 	"crypto"
+	"crypto/rsa"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -60,7 +61,6 @@ func (mp *MiniProgram) url(path string, query url.Values) string {
 		builder.WriteString("/")
 	}
 	builder.WriteString(path)
-
 	if len(query) != 0 {
 		builder.WriteString("?")
 		builder.WriteString(query.Encode())
@@ -224,7 +224,6 @@ func (mp *MiniProgram) encrypt(log *lib.ReqLog, path string, query url.Values, p
 		"data":    base64.StdEncoding.EncodeToString(ct.Data()),
 		"authtag": base64.StdEncoding.EncodeToString(ct.Tag()),
 	}
-
 	return body, nil
 }
 
@@ -243,12 +242,11 @@ func (mp *MiniProgram) sign(path string, timestamp int64, body []byte) (string, 
 	builder.WriteString("\n")
 	builder.Write(body)
 
-	sign, err := mp.sfMode.prvKey.Sign(crypto.SHA256, []byte(builder.String()))
+	b, err := mp.sfMode.prvKey.SignPSS(crypto.SHA256, []byte(builder.String()), &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash})
 	if err != nil {
 		return "", err
 	}
-
-	return base64.StdEncoding.EncodeToString(sign), nil
+	return base64.StdEncoding.EncodeToString(b), nil
 }
 
 func (mp *MiniProgram) verify(path string, header http.Header, body []byte) error {
@@ -261,19 +259,15 @@ func (mp *MiniProgram) verify(path string, header http.Header, body []byte) erro
 	}
 
 	sign := ""
-
 	if serial := header.Get(HeaderMPSerial); serial == mp.sfMode.pubSN {
 		sign = header.Get(HeaderMPSignature)
 	} else {
 		serialDeprecated := header.Get(HeaderMPSerialDeprecated)
-
 		if serialDeprecated != mp.sfMode.pubSN {
 			return fmt.Errorf("header serial mismatch, expect = %s", mp.sfMode.pubSN)
 		}
-
 		sign = header.Get(HeaderMPSignatureDeprecated)
 	}
-
 	b, err := base64.StdEncoding.DecodeString(sign)
 	if err != nil {
 		return err
@@ -289,7 +283,7 @@ func (mp *MiniProgram) verify(path string, header http.Header, body []byte) erro
 	builder.WriteString("\n")
 	builder.Write(body)
 
-	return mp.sfMode.pubKey.Verify(crypto.SHA256, []byte(builder.String()), b)
+	return mp.sfMode.pubKey.VerifyPSS(crypto.SHA256, []byte(builder.String()), b, &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash})
 }
 
 func (mp *MiniProgram) decrypt(path string, header http.Header, body []byte) ([]byte, error) {
@@ -342,7 +336,6 @@ func (mp *MiniProgram) Code2Session(ctx context.Context, code string) (gjson.Res
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -363,7 +356,6 @@ func (mp *MiniProgram) AccessToken(ctx context.Context) (gjson.Result, error) {
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -387,7 +379,6 @@ func (mp *MiniProgram) StableAccessToken(ctx context.Context, forceRefresh bool)
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -407,7 +398,6 @@ func (mp *MiniProgram) GetJSON(ctx context.Context, accessToken, path string, qu
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -427,7 +417,6 @@ func (mp *MiniProgram) GetBuffer(ctx context.Context, accessToken, path string, 
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return nil, fmt.Errorf("%d | %s", code, ret.Get("errmsg").String())
 	}
-
 	return b, nil
 }
 
@@ -445,7 +434,6 @@ func (mp *MiniProgram) PostJSON(ctx context.Context, accessToken, path string, p
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -463,7 +451,6 @@ func (mp *MiniProgram) PostBuffer(ctx context.Context, accessToken, path string,
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return nil, fmt.Errorf("%d | %s", code, ret.Get("errmsg").String())
 	}
-
 	return b, nil
 }
 
@@ -483,7 +470,6 @@ func (mp *MiniProgram) SafePostJSON(ctx context.Context, accessToken, path strin
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -503,7 +489,6 @@ func (mp *MiniProgram) SafePostBuffer(ctx context.Context, accessToken, path str
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return nil, fmt.Errorf("%d | %s", code, ret.Get("errmsg").String())
 	}
-
 	return b, nil
 }
 
@@ -540,7 +525,6 @@ func (mp *MiniProgram) Upload(ctx context.Context, accessToken, path string, for
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
-
 	return ret, nil
 }
 
@@ -550,7 +534,6 @@ func (mp *MiniProgram) VerifyURL(signature, timestamp, nonce string) error {
 	if SignWithSHA1(mp.srvCfg.token, timestamp, nonce) != signature {
 		return errors.New("signature verified fail")
 	}
-
 	return nil
 }
 
@@ -591,7 +574,6 @@ func (mp *MiniProgram) DecodeEventMsg(signature, timestamp, nonce, encryptMsg st
 	if err != nil {
 		return nil, err
 	}
-
 	return ParseXMLToV(b)
 }
 
@@ -658,10 +640,8 @@ func NewMiniProgram(appid, secret string, options ...MPOption) *MiniProgram {
 		srvCfg:  new(ServerConfig),
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(mp)
 	}
-
 	return mp
 }

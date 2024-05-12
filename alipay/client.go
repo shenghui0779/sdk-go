@@ -189,19 +189,16 @@ func (c *Client) verifyResp(key string, body []byte) (gjson.Result, error) {
 	if err = c.pubKey.Verify(hash, []byte(resp.Raw), signByte); err != nil {
 		return lib.Fail(err)
 	}
-
 	return resp, nil
 }
 
 // PageExecute 致敬官方SDK
 func (c *Client) PageExecute(method string, options ...ActionOption) (string, error) {
 	action := NewAction(method, options...)
-
 	query, err := action.Encode(c)
 	if err != nil {
 		return "", err
 	}
-
 	return c.gateway + "?" + query, nil
 }
 
@@ -211,12 +208,10 @@ func (c *Client) Encrypt(data string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("aes_key base64.decode error: %w", err)
 	}
-
 	ct, err := lib_crypto.AESEncryptCBC(key, make([]byte, 16), []byte(data))
 	if err != nil {
 		return "", err
 	}
-
 	return base64.StdEncoding.EncodeToString(ct.Bytes()), nil
 }
 
@@ -226,12 +221,10 @@ func (c *Client) Decrypt(encryptData string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("aes_key base64.decode error: %w", err)
 	}
-
 	data, err := base64.StdEncoding.DecodeString(encryptData)
 	if err != nil {
 		return nil, fmt.Errorf("encrypt_data base64.decode error: %w", err)
 	}
-
 	return lib_crypto.AESDecryptCBC(key, make([]byte, 16), data)
 }
 
@@ -245,11 +238,9 @@ func (c *Client) DecodeEncryptData(hash crypto.Hash, data, sign string) ([]byte,
 	if err != nil {
 		return nil, fmt.Errorf("sign base64.decode error: %w", err)
 	}
-
 	if err = c.pubKey.Verify(hash, []byte(`"`+data+`"`), signByte); err != nil {
 		return nil, fmt.Errorf("sign verified error: %w", err)
 	}
-
 	return c.Decrypt(data)
 }
 
@@ -265,26 +256,21 @@ func (c *Client) VerifyNotify(form url.Values) (value.V, error) {
 	}
 
 	v := value.V{}
-
 	for key, vals := range form {
 		if key == "sign_type" || key == "sign" || len(vals) == 0 {
 			continue
 		}
-
 		v.Set(key, vals[0])
 	}
-
 	str := v.Encode("=", "&", value.WithEmptyMode(value.EmptyIgnore))
 
 	hash := crypto.SHA256
 	if form.Get("sign_type") == "RSA" {
 		hash = crypto.SHA1
 	}
-
 	if err = c.pubKey.Verify(hash, []byte(str), sign); err != nil {
 		return nil, err
 	}
-
 	return v, nil
 }
 
@@ -327,11 +313,9 @@ func NewClient(appid, aesKey string, options ...Option) *Client {
 		gateway: "https://openapi.alipay.com/gateway.do",
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(c)
 	}
-
 	return c
 }
 
@@ -343,10 +327,8 @@ func NewSandbox(appid, aesKey string, options ...Option) *Client {
 		gateway: "https://openapi-sandbox.dl.alipaydev.com/gateway.do",
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(c)
 	}
-
 	return c
 }

@@ -172,7 +172,6 @@ func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, e
 	if !ret.Get("success").Bool() {
 		return "", fmt.Errorf("%s | %s", ret.Get("code").String(), ret.Get("data").String())
 	}
-
 	return ret.Get("data").String(), nil
 }
 
@@ -200,10 +199,8 @@ func NewClient(cfg *Config, options ...Option) Client {
 		config:   cfg,
 		httpCli:  curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(c)
 	}
-
 	return c
 }

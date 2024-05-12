@@ -53,7 +53,6 @@ func (c *Client) Encrypt(plain string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return base64.StdEncoding.EncodeToString(b), nil
 }
 
@@ -63,7 +62,6 @@ func (c *Client) MustEncrypt(plain string) string {
 	if err != nil {
 		panic(err)
 	}
-
 	return base64.StdEncoding.EncodeToString(b)
 }
 
@@ -73,12 +71,10 @@ func (c *Client) Decrypt(cipher string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	plain, err := lib_crypto.DESEncryptECB([]byte(c.desKey), b)
 	if err != nil {
 		return "", err
 	}
-
 	return string(plain), nil
 }
 
@@ -174,15 +170,12 @@ func (c *Client) verifyResp(body []byte) (gjson.Result, error) {
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	if code := ret.Get("code").String(); code != SysOK {
 		if code == SysAccepting {
 			return lib.Fail(ErrSysAccepting)
 		}
-
 		return lib.Fail(fmt.Errorf("%s | %s", code, ret.Get("msg").String()))
 	}
-
 	return ret.Get("bizResponseJson"), nil
 }
 
@@ -210,7 +203,6 @@ func (c *Client) VerifyNotify(form url.Values) (gjson.Result, error) {
 	if err != nil {
 		return lib.Fail(err)
 	}
-
 	return gjson.Parse(form.Get("bizResponseJson")), nil
 }
 
@@ -253,10 +245,8 @@ func NewClient(mchNO, desKey string, options ...Option) *Client {
 		desKey:  desKey,
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(c)
 	}
-
 	return c
 }

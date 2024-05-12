@@ -41,7 +41,6 @@ func (c *Client) url(path string, query url.Values) string {
 		builder.WriteString("/")
 	}
 	builder.WriteString(path)
-
 	if len(query) != 0 {
 		builder.WriteString("?")
 		builder.WriteString(query.Encode())
@@ -115,7 +114,6 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 	if code := ret.Get("code").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("message")))
 	}
-
 	return ret.Get("data"), nil
 }
 
@@ -167,7 +165,6 @@ func (c *Client) doStream(ctx context.Context, uploadURL string, reader io.ReadS
 	if code := ret.Get("errCode").Int(); code != 0 {
 		return fmt.Errorf("%d | %s", code, ret.Get("msg"))
 	}
-
 	return nil
 }
 
@@ -210,11 +207,9 @@ func (c *Client) Verify(header http.Header, body []byte) error {
 	h := hmac.New(sha256.New, []byte(c.secret))
 	h.Write([]byte(timestamp))
 	h.Write(body)
-
 	if v := hex.EncodeToString(h.Sum(nil)); v != sign {
 		return fmt.Errorf("signature mismatch, expect = %s, actual = %s", v, sign)
 	}
-
 	return nil
 }
 
@@ -243,11 +238,9 @@ func NewClient(appid, secret string, options ...Option) *Client {
 		secret:  secret,
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(c)
 	}
-
 	return c
 }
 
@@ -259,10 +252,8 @@ func NewSandbox(appid, secret string, options ...Option) *Client {
 		secret:  secret,
 		httpCli: curl.NewDefaultClient(),
 	}
-
 	for _, fn := range options {
 		fn(c)
 	}
-
 	return c
 }
