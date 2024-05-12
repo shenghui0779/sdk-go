@@ -12,10 +12,10 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/tidwall/gjson"
-	"golang.org/x/sync/singleflight"
 
 	"github.com/shenghui0779/sdk-go/lib"
 	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
@@ -30,8 +30,8 @@ type PayV3 struct {
 	apikey  string
 	prvSN   string
 	prvKey  *lib_crypto.PrivateKey
-	pubKeyM map[string]*lib_crypto.PublicKey
-	mutex   singleflight.Group
+	pubKey  map[string]*lib_crypto.PublicKey
+	mutex   sync.Mutex
 	httpCli curl.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
@@ -64,72 +64,32 @@ func (p *PayV3) url(path string, query url.Values) string {
 }
 
 func (p *PayV3) publicKey(ctx context.Context, serialNO string) (*lib_crypto.PublicKey, error) {
-	pubKey, ok := p.pubKeyM[serialNO]
+	key, ok := p.pubKey[serialNO]
 	if ok {
-		return pubKey, nil
+		return key, nil
 	}
 
-	// 加个超时，以防阻塞
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
 
-	ch := p.mutex.DoChan(serialNO, func() (interface{}, error) {
-		ret, err := p.httpCerts(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, v := range ret.Array() {
-			cert := v.Get("encrypt_certificate")
-
-			nonce := cert.Get("nonce").String()
-			data := cert.Get("ciphertext").String()
-			aad := cert.Get("associated_data").String()
-
-			block, err := lib_crypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
-			if err != nil {
-				return nil, err
-			}
-
-			key, err := lib_crypto.NewPublicKeyFromDerBlock(block)
-			if err != nil {
-				return nil, err
-			}
-
-			p.pubKeyM[cert.Get("serial_no").String()] = key
-		}
-
-		pk, ok := p.pubKeyM[serialNO]
-		if !ok {
-			return nil, fmt.Errorf("cert(serial_no=%s) not found", serialNO)
-		}
-
-		return pk, nil
-	})
-
-	select {
-	case <-ctx.Done():
-		p.mutex.Forget(serialNO)
-		return nil, ctx.Err()
-	case r := <-ch:
-		if r.Err != nil {
-			p.mutex.Forget(serialNO)
-			return nil, r.Err
-		}
-
-		if !r.Shared {
-			// 成功2秒后删除缓存
-			go func() {
-				time.Sleep(2 * time.Second)
-				p.mutex.Forget(serialNO)
-			}()
-		}
-
-		return r.Val.(*lib_crypto.PublicKey), nil
+	// 二次确认
+	key, ok = p.pubKey[serialNO]
+	if ok {
+		return key, nil
 	}
+
+	if err := p.httpCerts(ctx); err != nil {
+		return nil, err
+	}
+
+	pk, ok := p.pubKey[serialNO]
+	if !ok {
+		return nil, fmt.Errorf("cert(serial_no=%s) not found", serialNO)
+	}
+	return pk, nil
 }
 
-func (p *PayV3) httpCerts(ctx context.Context) (gjson.Result, error) {
+func (p *PayV3) httpCerts(ctx context.Context) error {
 	reqURL := p.url("/v3/certificates", nil)
 
 	log := lib.NewReqLog(http.MethodGet, reqURL)
@@ -137,14 +97,14 @@ func (p *PayV3) httpCerts(ctx context.Context) (gjson.Result, error) {
 
 	authStr, err := p.Authorization(http.MethodGet, "/v3/certificates", nil, "")
 	if err != nil {
-		return lib.Fail(err)
+		return err
 	}
 
 	log.Set(curl.HeaderAuthorization, authStr)
 
 	resp, err := p.httpCli.Do(ctx, http.MethodGet, reqURL, nil, curl.WithHeader(curl.HeaderAccept, "application/json"), curl.WithHeader(curl.HeaderAuthorization, authStr))
 	if err != nil {
-		return lib.Fail(err)
+		return err
 	}
 	defer resp.Body.Close()
 
@@ -153,37 +113,36 @@ func (p *PayV3) httpCerts(ctx context.Context) (gjson.Result, error) {
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return lib.Fail(err)
+		return err
 	}
 	log.SetRespBody(string(b))
 
 	if resp.StatusCode >= 400 {
-		return lib.Fail(errors.New(string(b)))
+		return errors.New(string(b))
 	}
 
-	ret := gjson.GetBytes(b, "data")
-
-	valid := false
 	serial := resp.Header.Get(HeaderPaySerial)
 
+	ret := gjson.GetBytes(b, "data")
 	for _, v := range ret.Array() {
+		cert := v.Get("encrypt_certificate")
+
+		nonce := cert.Get("nonce").String()
+		data := cert.Get("ciphertext").String()
+		aad := cert.Get("associated_data").String()
+
+		block, err := lib_crypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
+		if err != nil {
+			return err
+		}
+		key, err := lib_crypto.NewPublicKeyFromDerBlock(block)
+		if err != nil {
+			return err
+		}
+		p.pubKey[cert.Get("serial_no").String()] = key
+
+		// 签名验证
 		if v.Get("serial_no").String() == serial {
-			cert := v.Get("encrypt_certificate")
-
-			nonce := cert.Get("nonce").String()
-			data := cert.Get("ciphertext").String()
-			aad := cert.Get("associated_data").String()
-
-			block, err := lib_crypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
-			if err != nil {
-				return lib.Fail(err)
-			}
-
-			key, err := lib_crypto.NewPublicKeyFromDerBlock(block)
-			if err != nil {
-				return lib.Fail(err)
-			}
-
 			// 签名验证
 			var builder strings.Builder
 
@@ -195,18 +154,12 @@ func (p *PayV3) httpCerts(ctx context.Context) (gjson.Result, error) {
 			builder.WriteString("\n")
 
 			if err = key.Verify(crypto.SHA256, []byte(builder.String()), []byte(resp.Header.Get(HeaderPaySignature))); err != nil {
-				return lib.Fail(err)
+				return err
 			}
-
-			valid = true
 		}
 	}
 
-	if !valid {
-		return lib.Fail(fmt.Errorf("sign header cert(serial_no=%s) not found", serial))
-	}
-
-	return ret, nil
+	return nil
 }
 
 func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, params lib.X) (*APIResult, error) {
