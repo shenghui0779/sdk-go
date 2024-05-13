@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/tidwall/gjson"
@@ -39,6 +40,7 @@ type MiniProgram struct {
 	secret  string
 	srvCfg  *ServerConfig
 	sfMode  *SafeMode
+	token   atomic.Value
 	httpCli curl.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
@@ -352,51 +354,63 @@ func (mp *MiniProgram) Code2Session(ctx context.Context, code string) (gjson.Res
 	return ret, nil
 }
 
-// AccessToken 获取接口调用凭据
-func (mp *MiniProgram) AccessToken(ctx context.Context) (gjson.Result, error) {
-	query := url.Values{}
-
-	query.Set("appid", mp.appid)
-	query.Set("secret", mp.secret)
-	query.Set("grant_type", "client_credential")
-
-	b, err := mp.do(ctx, http.MethodGet, "/cgi-bin/token", query, nil)
-	if err != nil {
-		return lib.Fail(err)
-	}
-
-	ret := gjson.ParseBytes(b)
-	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
-	}
-	return ret, nil
-}
-
-// StableAccessToken 获取稳定版接口调用凭据，有两种调用模式:
+// loadAccessToken 获取稳定版接口调用凭据，有两种调用模式:
 // 1. 普通模式，access_token有效期内重复调用该接口不会更新access_token，绝大部分场景下使用该模式；
 // 2. 强制刷新模式，会导致上次获取的access_token失效，并返回新的access_token
-func (mp *MiniProgram) StableAccessToken(ctx context.Context, forceRefresh bool) (gjson.Result, error) {
+func (mp *MiniProgram) reloadAccessToken() error {
 	params := lib.X{
 		"grant_type":    "client_credential",
 		"appid":         mp.appid,
 		"secret":        mp.secret,
-		"force_refresh": forceRefresh,
+		"force_refresh": false,
 	}
 
-	b, err := mp.do(ctx, http.MethodPost, "/cgi-bin/stable_token", nil, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
+	b, err := mp.do(context.Background(), http.MethodPost, "/cgi-bin/stable_token", nil, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
 	if err != nil {
-		return lib.Fail(err)
+		return err
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return fmt.Errorf("%d | %s", code, ret.Get("errmsg").String())
 	}
-	return ret, nil
+	mp.token.Store(ret.Get("access_token").String())
+	return nil
+}
+
+func (mp *MiniProgram) getAccessToken() (string, error) {
+	v := mp.token.Load()
+	if v == nil {
+		return "", errors.New("access_token is empty (forgotten auto load?)")
+	}
+	token, ok := v.(string)
+	if !ok {
+		return "", errors.New("access_token is not a string")
+	}
+	return token, nil
+}
+
+// AutoLoadAccessToken 自动加载AccessToken
+func (mp *MiniProgram) AutoLoadAccessToken() error {
+	if err := mp.reloadAccessToken(); err != nil {
+		return err
+	}
+	go func() {
+		ticker := time.NewTicker(time.Minute * 5)
+		defer ticker.Stop()
+		for range ticker.C {
+			mp.reloadAccessToken()
+		}
+	}()
+	return nil
 }
 
 // GetJSON GET请求JSON数据
-func (mp *MiniProgram) GetJSON(ctx context.Context, accessToken, path string, query url.Values) (gjson.Result, error) {
+func (mp *MiniProgram) GetJSON(ctx context.Context, path string, query url.Values) (gjson.Result, error) {
+	accessToken, err := mp.getAccessToken()
+	if err != nil {
+		return lib.Fail(err)
+	}
 	if query == nil {
 		query = url.Values{}
 	}
@@ -415,7 +429,11 @@ func (mp *MiniProgram) GetJSON(ctx context.Context, accessToken, path string, qu
 }
 
 // GetBuffer GET请求获取buffer (如：获取媒体资源)
-func (mp *MiniProgram) GetBuffer(ctx context.Context, accessToken, path string, query url.Values) ([]byte, error) {
+func (mp *MiniProgram) GetBuffer(ctx context.Context, path string, query url.Values) ([]byte, error) {
+	accessToken, err := mp.getAccessToken()
+	if err != nil {
+		return nil, err
+	}
 	if query == nil {
 		query = url.Values{}
 	}
@@ -434,7 +452,11 @@ func (mp *MiniProgram) GetBuffer(ctx context.Context, accessToken, path string, 
 }
 
 // PostJSON POST请求JSON数据
-func (mp *MiniProgram) PostJSON(ctx context.Context, accessToken, path string, params lib.X) (gjson.Result, error) {
+func (mp *MiniProgram) PostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
+	accessToken, err := mp.getAccessToken()
+	if err != nil {
+		return lib.Fail(err)
+	}
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
@@ -451,7 +473,11 @@ func (mp *MiniProgram) PostJSON(ctx context.Context, accessToken, path string, p
 }
 
 // PostBuffer POST请求获取buffer (如：获取二维码)
-func (mp *MiniProgram) PostBuffer(ctx context.Context, accessToken, path string, params lib.X) ([]byte, error) {
+func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params lib.X) ([]byte, error) {
+	accessToken, err := mp.getAccessToken()
+	if err != nil {
+		return nil, err
+	}
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
@@ -470,7 +496,11 @@ func (mp *MiniProgram) PostBuffer(ctx context.Context, accessToken, path string,
 // SafePostJSON POST请求JSON数据
 // 安全鉴权模式 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html
 // 支持的api可参考 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc
-func (mp *MiniProgram) SafePostJSON(ctx context.Context, accessToken, path string, params lib.X) (gjson.Result, error) {
+func (mp *MiniProgram) SafePostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
+	accessToken, err := mp.getAccessToken()
+	if err != nil {
+		return lib.Fail(err)
+	}
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
@@ -489,7 +519,11 @@ func (mp *MiniProgram) SafePostJSON(ctx context.Context, accessToken, path strin
 // SafePostBuffer POST请求获取buffer (如：获取二维码)
 // 安全鉴权模式 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html
 // 支持的api可参考 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc
-func (mp *MiniProgram) SafePostBuffer(ctx context.Context, accessToken, path string, params lib.X) ([]byte, error) {
+func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params lib.X) ([]byte, error) {
+	accessToken, err := mp.getAccessToken()
+	if err != nil {
+		return nil, err
+	}
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
@@ -506,7 +540,11 @@ func (mp *MiniProgram) SafePostBuffer(ctx context.Context, accessToken, path str
 }
 
 // Upload 上传媒体资源
-func (mp *MiniProgram) Upload(ctx context.Context, accessToken, path string, form curl.UploadForm) (gjson.Result, error) {
+func (mp *MiniProgram) Upload(ctx context.Context, path string, form curl.UploadForm) (gjson.Result, error) {
+	accessToken, err := mp.getAccessToken()
+	if err != nil {
+		return lib.Fail(err)
+	}
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 

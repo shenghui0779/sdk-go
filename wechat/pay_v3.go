@@ -15,7 +15,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/robfig/cron/v3"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
@@ -33,7 +32,6 @@ type PayV3 struct {
 	prvKey  *lib_crypto.PrivateKey
 	pubKey  atomic.Value // map[string]*lib_crypto.PublicKey
 	httpCli curl.Client
-	crontab *cron.Cron
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -64,11 +62,14 @@ func (p *PayV3) url(path string, query url.Values) string {
 }
 
 func (p *PayV3) publicKey(serialNO string) (*lib_crypto.PublicKey, error) {
-	keyMap, ok := p.pubKey.Load().(map[string]*lib_crypto.PublicKey)
-	if !ok {
-		return nil, errors.New("public key load failed")
+	v := p.pubKey.Load()
+	if v == nil {
+		return nil, errors.New("public key is empty (forgotten auto load?)")
 	}
-
+	keyMap, ok := v.(map[string]*lib_crypto.PublicKey)
+	if !ok {
+		return nil, errors.New("public key is not map[string]*PublicKey")
+	}
 	pk, ok := keyMap[serialNO]
 	if !ok {
 		return nil, fmt.Errorf("cert(serial_no=%s) not found", serialNO)
@@ -76,7 +77,7 @@ func (p *PayV3) publicKey(serialNO string) (*lib_crypto.PublicKey, error) {
 	return pk, nil
 }
 
-func (p *PayV3) refreshCerts() {
+func (p *PayV3) reloadCerts() error {
 	ctx := context.Background()
 
 	reqURL := p.url("/v3/certificates", nil)
@@ -87,7 +88,7 @@ func (p *PayV3) refreshCerts() {
 	authStr, err := p.Authorization(http.MethodGet, "/v3/certificates", nil, "")
 	if err != nil {
 		log.Set("error", err.Error())
-		return
+		return err
 	}
 
 	log.Set(curl.HeaderAuthorization, authStr)
@@ -95,7 +96,7 @@ func (p *PayV3) refreshCerts() {
 	resp, err := p.httpCli.Do(ctx, http.MethodGet, reqURL, nil, curl.WithHeader(curl.HeaderAccept, "application/json"), curl.WithHeader(curl.HeaderAuthorization, authStr))
 	if err != nil {
 		log.Set("error", err.Error())
-		return
+		return err
 	}
 	defer resp.Body.Close()
 
@@ -105,13 +106,14 @@ func (p *PayV3) refreshCerts() {
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Set("error", err.Error())
-		return
+		return err
 	}
 	log.SetRespBody(string(b))
 
 	if resp.StatusCode >= 400 {
-		log.Set("error", string(b))
-		return
+		text := string(b)
+		log.Set("error", text)
+		return errors.New(text)
 	}
 
 	keyMap := make(map[string]*lib_crypto.PublicKey)
@@ -129,12 +131,12 @@ func (p *PayV3) refreshCerts() {
 		block, err := lib_crypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
 		if err != nil {
 			log.Set("error", err.Error())
-			return
+			return err
 		}
 		key, err := lib_crypto.NewPublicKeyFromDerBlock(block)
 		if err != nil {
 			log.Set("error", err.Error())
-			return
+			return err
 		}
 		keyMap[serialNO] = key
 
@@ -152,12 +154,13 @@ func (p *PayV3) refreshCerts() {
 
 			if err = key.Verify(crypto.SHA256, []byte(builder.String()), []byte(resp.Header.Get(HeaderPaySignature))); err != nil {
 				log.Set("error", err.Error())
-				return
+				return err
 			}
 		}
 	}
 
 	p.pubKey.Store(keyMap)
+	return nil
 }
 
 func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, params lib.X) (*APIResult, error) {
@@ -222,18 +225,18 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 	return ret, nil
 }
 
-// LoadCerts 加载平台证书(默认: 定时每12h刷新一次);
-// intervals 可以参考[crontab](https://pkg.go.dev/github.com/robfig/cron)
-func (p *PayV3) LoadCerts(intervals ...string) error {
-	spec := "@every 12h"
-	if len(intervals) != 0 {
-		spec = intervals[0]
-	}
-	p.refreshCerts()
-	if _, err := p.crontab.AddFunc(spec, p.refreshCerts); err != nil {
+// AutoLoadCerts 自动加载平台证书
+func (p *PayV3) AutoLoadCerts() error {
+	if err := p.reloadCerts(); err != nil {
 		return err
 	}
-	p.crontab.Start()
+	go func() {
+		ticker := time.NewTicker(time.Hour * 24)
+		defer ticker.Stop()
+		for range ticker.C {
+			p.reloadCerts()
+		}
+	}()
 	return nil
 }
 
@@ -484,7 +487,6 @@ func NewPayV3(mchid, apikey string, options ...PayV3Option) *PayV3 {
 		mchid:   mchid,
 		apikey:  apikey,
 		httpCli: curl.NewDefaultClient(),
-		crontab: cron.New(cron.WithLocation(lib.GMT8)),
 	}
 	for _, fn := range options {
 		fn(pay)
