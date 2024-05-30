@@ -16,13 +16,10 @@ func TestXML(t *testing.T) {
 		"noncestr":  "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
 		"timestamp": "1514363815",
 	}
-
 	x, err := FormatVToXML(m)
-
 	assert.Nil(t, err)
 
 	r, err := ParseXMLToV([]byte(x))
-
 	assert.Nil(t, err)
 	assert.Equal(t, m, r)
 }
