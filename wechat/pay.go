@@ -90,7 +90,6 @@ func (p *Pay) do(ctx context.Context, path string, params value.V) ([]byte, erro
 		return nil, err
 	}
 	log.SetRespBody(string(b))
-
 	return b, nil
 }
 
@@ -129,7 +128,6 @@ func (p *Pay) doTLS(ctx context.Context, path string, params value.V) ([]byte, e
 		return nil, err
 	}
 	log.SetRespBody(string(b))
-
 	return b, nil
 }
 
@@ -188,7 +186,6 @@ func (p *Pay) PostBuffer(ctx context.Context, path string, params value.V) ([]by
 	if len(ret) != 0 {
 		return nil, fmt.Errorf("%s | %s (error_code = %s, err_code_des = %s)", ret.Get("return_code"), ret.Get("return_msg"), ret.Get("error_code"), ret.Get("err_code_des"))
 	}
-
 	return b, nil
 }
 
@@ -207,7 +204,6 @@ func (p *Pay) PostTLSBuffer(ctx context.Context, path string, params value.V) ([
 	if len(ret) != 0 {
 		return nil, fmt.Errorf("%s | %s | %s", ret.Get("return_code"), ret.Get("return_msg"), ret.Get("error_code"))
 	}
-
 	return b, nil
 }
 
@@ -224,27 +220,23 @@ func (p *Pay) Sign(v value.V) string {
 }
 
 func (p *Pay) Verify(v value.V) error {
-	signStr := v.Encode("=", "&", value.WithIgnoreKeys("sign"), value.WithEmptyMode(value.EmptyIgnore)) + "&key=" + p.apikey
-
+	wxsign := v.Get("sign")
 	signType := v.Get("sign_type")
 	if len(signType) == 0 {
 		signType = v.Get("signType")
 	}
-
-	wxsign := v.Get("sign")
-
+	signStr := v.Encode("=", "&", value.WithIgnoreKeys("sign"), value.WithEmptyMode(value.EmptyIgnore)) + "&key=" + p.apikey
+	// hmac-sha256
 	if len(signType) != 0 && SignAlgo(strings.ToUpper(signType)) == SignHMacSHA256 {
 		if sign := strings.ToUpper(hash.HMacSHA256(p.apikey, signStr)); sign != wxsign {
 			return fmt.Errorf("sign verify failed, expect = %s, actual = %s", sign, wxsign)
 		}
-
 		return nil
 	}
-
+	// md5
 	if sign := strings.ToUpper(hash.MD5(signStr)); sign != wxsign {
 		return fmt.Errorf("sign verify failed, expect = %s, actual = %s", sign, wxsign)
 	}
-
 	return nil
 }
 
