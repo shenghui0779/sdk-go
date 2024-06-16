@@ -18,8 +18,8 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	"github.com/shenghui0779/sdk-go/lib/curl"
+	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // ClientV3 支付宝V3客户端(仅支持v3版本的接口可用)
@@ -27,9 +27,9 @@ type ClientV3 struct {
 	host    string
 	appid   string
 	aesKey  string
-	prvKey  *lib_crypto.PrivateKey
-	pubKey  *lib_crypto.PublicKey
-	httpCli curl.Client
+	prvKey  *xcrypto.PrivateKey
+	pubKey  *xcrypto.PublicKey
+	httpCli xhttp.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -90,7 +90,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 		log.Set("error", err.Error())
 		return nil, err
 	}
-	header.Set(curl.HeaderAuthorization, authStr)
+	header.Set(xhttp.HeaderAuthorization, authStr)
 
 	log.SetReqHeader(header)
 
@@ -141,7 +141,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 func (c *ClientV3) GetJSON(ctx context.Context, path string, query url.Values, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
 
-	header.Set(curl.HeaderAccept, "application/json")
+	header.Set(xhttp.HeaderAccept, "application/json")
 	header.Set(HeaderRequestID, uuid.NewString())
 	for _, fn := range options {
 		fn(header)
@@ -154,9 +154,9 @@ func (c *ClientV3) GetJSON(ctx context.Context, path string, query url.Values, o
 func (c *ClientV3) PostJSON(ctx context.Context, path string, params lib.X, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
 
-	header.Set(curl.HeaderAccept, "application/json")
+	header.Set(xhttp.HeaderAccept, "application/json")
 	header.Set(HeaderRequestID, uuid.NewString())
-	header.Set(curl.HeaderContentType, curl.ContentJSON)
+	header.Set(xhttp.HeaderContentType, xhttp.ContentJSON)
 	for _, fn := range options {
 		fn(header)
 	}
@@ -170,7 +170,7 @@ func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params lib.X, o
 
 	header.Set(HeaderRequestID, uuid.NewString())
 	header.Set(HeaderEncryptType, "AES")
-	header.Set(curl.HeaderContentType, curl.ContentText)
+	header.Set(xhttp.HeaderContentType, xhttp.ContentText)
 	for _, fn := range options {
 		fn(header)
 	}
@@ -179,7 +179,7 @@ func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params lib.X, o
 }
 
 // Upload 文件上传，参考：https://opendocs.alipay.com/open-v3/054oog?pathHash=7834d743
-func (c *ClientV3) Upload(ctx context.Context, path string, form curl.UploadForm, options ...V3HeaderOption) (*APIResult, error) {
+func (c *ClientV3) Upload(ctx context.Context, path string, form xhttp.UploadForm, options ...V3HeaderOption) (*APIResult, error) {
 	reqID := uuid.NewString()
 	reqURL := c.url(path, nil)
 
@@ -198,7 +198,7 @@ func (c *ClientV3) Upload(ctx context.Context, path string, form curl.UploadForm
 		log.Set("error", err.Error())
 		return nil, err
 	}
-	reqHeader.Set(curl.HeaderAuthorization, authStr)
+	reqHeader.Set(xhttp.HeaderAuthorization, authStr)
 
 	log.SetReqHeader(reqHeader)
 
@@ -303,7 +303,7 @@ func (c *ClientV3) Encrypt(data string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	ct, err := lib_crypto.AESEncryptCBC(key, make([]byte, 16), []byte(data))
+	ct, err := xcrypto.AESEncryptCBC(key, make([]byte, 16), []byte(data))
 	if err != nil {
 		return "", err
 	}
@@ -320,7 +320,7 @@ func (c *ClientV3) Decrypt(encryptData string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return lib_crypto.AESDecryptCBC(key, make([]byte, 16), data)
+	return xcrypto.AESDecryptCBC(key, make([]byte, 16), data)
 }
 
 // V3Option 自定义设置项
@@ -329,19 +329,19 @@ type V3Option func(c *ClientV3)
 // WithV3Client 设置自定义 HTTP Client
 func WithV3Client(cli *http.Client) V3Option {
 	return func(c *ClientV3) {
-		c.httpCli = curl.NewHTTPClient(cli)
+		c.httpCli = xhttp.NewHTTPClient(cli)
 	}
 }
 
 // WithV3PrivateKey 设置商户RSA私钥
-func WithV3PrivateKey(key *lib_crypto.PrivateKey) V3Option {
+func WithV3PrivateKey(key *xcrypto.PrivateKey) V3Option {
 	return func(c *ClientV3) {
 		c.prvKey = key
 	}
 }
 
 // WithV3PublicKey 设置平台RSA公钥
-func WithV3PublicKey(key *lib_crypto.PublicKey) V3Option {
+func WithV3PublicKey(key *xcrypto.PublicKey) V3Option {
 	return func(c *ClientV3) {
 		c.pubKey = key
 	}
@@ -360,7 +360,7 @@ func NewClientV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		host:    "https://openapi.alipay.com",
 		appid:   appid,
 		aesKey:  aesKey,
-		httpCli: curl.NewDefaultClient(),
+		httpCli: xhttp.NewDefaultClient(),
 	}
 	for _, fn := range options {
 		fn(c)
@@ -374,7 +374,7 @@ func NewSandboxV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		host:    "http://openapi.sandbox.dl.alipaydev.com",
 		appid:   appid,
 		aesKey:  aesKey,
-		httpCli: curl.NewDefaultClient(),
+		httpCli: xhttp.NewDefaultClient(),
 	}
 	for _, fn := range options {
 		fn(c)

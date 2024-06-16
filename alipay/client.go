@@ -14,9 +14,9 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	"github.com/shenghui0779/sdk-go/lib/curl"
 	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // Client 支付宝客户端
@@ -24,9 +24,9 @@ type Client struct {
 	gateway string
 	appid   string
 	aesKey  string
-	prvKey  *lib_crypto.PrivateKey
-	pubKey  *lib_crypto.PublicKey
-	httpCli curl.Client
+	prvKey  *xcrypto.PrivateKey
+	pubKey  *xcrypto.PublicKey
+	httpCli xhttp.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -52,8 +52,8 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 	log.SetReqBody(body)
 
 	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body),
-		curl.WithHeader(curl.HeaderAccept, "application/json"),
-		curl.WithHeader(curl.HeaderContentType, curl.ContentForm),
+		xhttp.WithHeader(xhttp.HeaderAccept, "application/json"),
+		xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentForm),
 	)
 	if err != nil {
 		log.Set("error", err.Error())
@@ -102,7 +102,7 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 }
 
 // Upload 文件上传，参考：https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload
-func (c *Client) Upload(ctx context.Context, method string, form curl.UploadForm, options ...ActionOption) (gjson.Result, error) {
+func (c *Client) Upload(ctx context.Context, method string, form xhttp.UploadForm, options ...ActionOption) (gjson.Result, error) {
 	log := lib.NewReqLog(http.MethodPost, c.gateway)
 	defer log.Do(ctx, c.logger)
 
@@ -116,7 +116,7 @@ func (c *Client) Upload(ctx context.Context, method string, form curl.UploadForm
 
 	log.Set("query", query)
 
-	resp, err := c.httpCli.Upload(ctx, c.gateway+"?"+query, form, curl.WithHeader(curl.HeaderAccept, "application/json"))
+	resp, err := c.httpCli.Upload(ctx, c.gateway+"?"+query, form, xhttp.WithHeader(xhttp.HeaderAccept, "application/json"))
 	if err != nil {
 		log.Set("error", err.Error())
 		return lib.Fail(err)
@@ -217,7 +217,7 @@ func (c *Client) Encrypt(data string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("aes_key base64.decode error: %w", err)
 	}
-	ct, err := lib_crypto.AESEncryptCBC(key, make([]byte, 16), []byte(data))
+	ct, err := xcrypto.AESEncryptCBC(key, make([]byte, 16), []byte(data))
 	if err != nil {
 		return "", err
 	}
@@ -234,7 +234,7 @@ func (c *Client) Decrypt(encryptData string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("encrypt_data base64.decode error: %w", err)
 	}
-	return lib_crypto.AESDecryptCBC(key, make([]byte, 16), data)
+	return xcrypto.AESDecryptCBC(key, make([]byte, 16), data)
 }
 
 // DecodeEncryptData 解析加密数据，如：授权的用户信息和手机号
@@ -289,19 +289,19 @@ type Option func(c *Client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(cli *http.Client) Option {
 	return func(c *Client) {
-		c.httpCli = curl.NewHTTPClient(cli)
+		c.httpCli = xhttp.NewHTTPClient(cli)
 	}
 }
 
 // WithPrivateKey 设置商户RSA私钥
-func WithPrivateKey(key *lib_crypto.PrivateKey) Option {
+func WithPrivateKey(key *xcrypto.PrivateKey) Option {
 	return func(c *Client) {
 		c.prvKey = key
 	}
 }
 
 // WithPublicKey 设置平台RSA公钥
-func WithPublicKey(key *lib_crypto.PublicKey) Option {
+func WithPublicKey(key *xcrypto.PublicKey) Option {
 	return func(c *Client) {
 		c.pubKey = key
 	}
@@ -320,7 +320,7 @@ func NewClient(appid, aesKey string, options ...Option) *Client {
 		appid:   appid,
 		aesKey:  aesKey,
 		gateway: "https://openapi.alipay.com/gateway.do",
-		httpCli: curl.NewDefaultClient(),
+		httpCli: xhttp.NewDefaultClient(),
 	}
 	for _, fn := range options {
 		fn(c)
@@ -334,7 +334,7 @@ func NewSandbox(appid, aesKey string, options ...Option) *Client {
 		appid:   appid,
 		aesKey:  aesKey,
 		gateway: "https://openapi-sandbox.dl.alipaydev.com/gateway.do",
-		httpCli: curl.NewDefaultClient(),
+		httpCli: xhttp.NewDefaultClient(),
 	}
 	for _, fn := range options {
 		fn(c)

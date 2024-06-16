@@ -18,9 +18,9 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	"github.com/shenghui0779/sdk-go/lib/curl"
 	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // PayV3 微信支付V3
@@ -29,9 +29,9 @@ type PayV3 struct {
 	mchid   string
 	apikey  string
 	prvSN   string
-	prvKey  *lib_crypto.PrivateKey
-	pubKey  atomic.Value // map[string]*lib_crypto.PublicKey
-	httpCli curl.Client
+	prvKey  *xcrypto.PrivateKey
+	pubKey  atomic.Value // map[string]*xcrypto.PublicKey
+	httpCli xhttp.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -61,12 +61,12 @@ func (p *PayV3) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (p *PayV3) publicKey(serialNO string) (*lib_crypto.PublicKey, error) {
+func (p *PayV3) publicKey(serialNO string) (*xcrypto.PublicKey, error) {
 	v := p.pubKey.Load()
 	if v == nil {
 		return nil, errors.New("public key is empty (forgotten auto load?)")
 	}
-	keyMap, ok := v.(map[string]*lib_crypto.PublicKey)
+	keyMap, ok := v.(map[string]*xcrypto.PublicKey)
 	if !ok {
 		return nil, errors.New("public key is not map[string]*PublicKey")
 	}
@@ -91,9 +91,9 @@ func (p *PayV3) reloadCerts() error {
 		return err
 	}
 
-	log.Set(curl.HeaderAuthorization, authStr)
+	log.Set(xhttp.HeaderAuthorization, authStr)
 
-	resp, err := p.httpCli.Do(ctx, http.MethodGet, reqURL, nil, curl.WithHeader(curl.HeaderAccept, "application/json"), curl.WithHeader(curl.HeaderAuthorization, authStr))
+	resp, err := p.httpCli.Do(ctx, http.MethodGet, reqURL, nil, xhttp.WithHeader(xhttp.HeaderAccept, "application/json"), xhttp.WithHeader(xhttp.HeaderAuthorization, authStr))
 	if err != nil {
 		log.Set("error", err.Error())
 		return err
@@ -116,7 +116,7 @@ func (p *PayV3) reloadCerts() error {
 		return errors.New(text)
 	}
 
-	keyMap := make(map[string]*lib_crypto.PublicKey)
+	keyMap := make(map[string]*xcrypto.PublicKey)
 	headSerial := resp.Header.Get(HeaderPaySerial)
 
 	ret := gjson.GetBytes(b, "data")
@@ -128,12 +128,12 @@ func (p *PayV3) reloadCerts() error {
 		data := cert.Get("ciphertext").String()
 		aad := cert.Get("associated_data").String()
 
-		block, err := lib_crypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
+		block, err := xcrypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
 		if err != nil {
 			log.Set("error", err.Error())
 			return err
 		}
-		key, err := lib_crypto.NewPublicKeyFromDerBlock(block)
+		key, err := xcrypto.NewPublicKeyFromDerBlock(block)
 		if err != nil {
 			log.Set("error", err.Error())
 			return err
@@ -189,12 +189,12 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 		return nil, err
 	}
 
-	log.Set(curl.HeaderAuthorization, authStr)
+	log.Set(xhttp.HeaderAuthorization, authStr)
 
 	resp, err := p.httpCli.Do(ctx, method, reqURL, body,
-		curl.WithHeader(curl.HeaderAccept, "application/json"),
-		curl.WithHeader(curl.HeaderAuthorization, authStr),
-		curl.WithHeader(curl.HeaderContentType, curl.ContentJSON),
+		xhttp.WithHeader(xhttp.HeaderAccept, "application/json"),
+		xhttp.WithHeader(xhttp.HeaderAuthorization, authStr),
+		xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON),
 	)
 	if err != nil {
 		log.Set("error", err.Error())
@@ -251,7 +251,7 @@ func (p *PayV3) PostJSON(ctx context.Context, path string, params lib.X) (*APIRe
 }
 
 // Upload 上传资源
-func (p *PayV3) Upload(ctx context.Context, path string, form curl.UploadForm) (*APIResult, error) {
+func (p *PayV3) Upload(ctx context.Context, path string, form xhttp.UploadForm) (*APIResult, error) {
 	reqURL := p.url(path, nil)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
@@ -263,9 +263,9 @@ func (p *PayV3) Upload(ctx context.Context, path string, form curl.UploadForm) (
 		return nil, err
 	}
 
-	log.Set(curl.HeaderAuthorization, authStr)
+	log.Set(xhttp.HeaderAuthorization, authStr)
 
-	resp, err := p.httpCli.Upload(ctx, reqURL, form, curl.WithHeader(curl.HeaderAuthorization, authStr))
+	resp, err := p.httpCli.Upload(ctx, reqURL, form, xhttp.WithHeader(xhttp.HeaderAuthorization, authStr))
 	if err != nil {
 		log.Set("error", err.Error())
 		return nil, err
@@ -307,9 +307,9 @@ func (p *PayV3) Download(ctx context.Context, downloadURL string, w io.Writer) e
 		return err
 	}
 
-	log.Set(curl.HeaderAuthorization, authStr)
+	log.Set(xhttp.HeaderAuthorization, authStr)
 
-	resp, err := p.httpCli.Do(ctx, http.MethodGet, downloadURL, nil, curl.WithHeader(curl.HeaderAuthorization, authStr))
+	resp, err := p.httpCli.Do(ctx, http.MethodGet, downloadURL, nil, xhttp.WithHeader(xhttp.HeaderAuthorization, authStr))
 	if err != nil {
 		log.Set("error", err.Error())
 		return err
@@ -461,12 +461,12 @@ type PayV3Option func(p *PayV3)
 // WithPayV3HttpCli 设置支付(v3)请求的 HTTP Client
 func WithPayV3HttpCli(c *http.Client) PayV3Option {
 	return func(p *PayV3) {
-		p.httpCli = curl.NewHTTPClient(c)
+		p.httpCli = xhttp.NewHTTPClient(c)
 	}
 }
 
 // WithPayV3PrivateKey 设置支付(v3)商户RSA私钥
-func WithPayV3PrivateKey(serialNO string, key *lib_crypto.PrivateKey) PayV3Option {
+func WithPayV3PrivateKey(serialNO string, key *xcrypto.PrivateKey) PayV3Option {
 	return func(p *PayV3) {
 		p.prvSN = serialNO
 		p.prvKey = key
@@ -486,7 +486,7 @@ func NewPayV3(mchid, apikey string, options ...PayV3Option) *PayV3 {
 		host:    "https://api.mch.weixin.qq.com",
 		mchid:   mchid,
 		apikey:  apikey,
-		httpCli: curl.NewDefaultClient(),
+		httpCli: xhttp.NewDefaultClient(),
 	}
 	for _, fn := range options {
 		fn(pay)

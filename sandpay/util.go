@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
 	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/shenghui0779/sdk-go/lib/xcrypto"
 )
 
 const OK = "000000"
@@ -21,7 +21,7 @@ type Form struct {
 }
 
 // URLEncode 数据表单格式化为POST表单
-func (f *Form) URLEncode(mid string, key *lib_crypto.PrivateKey) (string, error) {
+func (f *Form) URLEncode(mid string, key *xcrypto.PrivateKey) (string, error) {
 	if key == nil {
 		return "", errors.New("private key is nil (forgotten configure?)")
 	}
@@ -88,7 +88,7 @@ func NewReqForm(method, productID string, body value.V, options ...HeadOption) *
 			"productId":   productID,
 			"accessType":  "1",
 			"channelType": "07",
-			"reqTime":     time.Now().In(lib.GMT8).Format("20060102150405"),
+			"reqTime":     time.Now().In(time.Local).Format("20060102150405"),
 		},
 		Body: body,
 	}

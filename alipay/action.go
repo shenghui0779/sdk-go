@@ -38,7 +38,7 @@ func (a *Action) Encode(c *Client) (string, error) {
 	v.Set("format", "JSON")
 	v.Set("charset", "utf-8")
 	v.Set("sign_type", "RSA2")
-	v.Set("timestamp", time.Now().In(lib.GMT8).Format("2006-01-02 15:04:05"))
+	v.Set("timestamp", time.Now().In(time.Local).Format("2006-01-02 15:04:05"))
 	v.Set("version", "1.0")
 
 	for key, val := range a.params {

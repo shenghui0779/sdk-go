@@ -16,9 +16,9 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	"github.com/shenghui0779/sdk-go/lib/curl"
 	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // Client 银盛支付客户端
@@ -26,9 +26,9 @@ type Client struct {
 	host    string
 	mchNO   string
 	desKey  string
-	prvKey  *lib_crypto.PrivateKey
-	pubKey  *lib_crypto.PublicKey
-	httpCli curl.Client
+	prvKey  *xcrypto.PrivateKey
+	pubKey  *xcrypto.PublicKey
+	httpCli xhttp.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -49,7 +49,7 @@ func (c *Client) url(api string) string {
 
 // Encrypt 敏感数据DES加密
 func (c *Client) Encrypt(plain string) (string, error) {
-	b, err := lib_crypto.DESEncryptECB([]byte(c.desKey), []byte(plain))
+	b, err := xcrypto.DESEncryptECB([]byte(c.desKey), []byte(plain))
 	if err != nil {
 		return "", err
 	}
@@ -58,7 +58,7 @@ func (c *Client) Encrypt(plain string) (string, error) {
 
 // MustEncrypt 敏感数据DES加密；若发生错误，则Panic
 func (c *Client) MustEncrypt(plain string) string {
-	b, err := lib_crypto.DESEncryptECB([]byte(c.desKey), []byte(plain))
+	b, err := xcrypto.DESEncryptECB([]byte(c.desKey), []byte(plain))
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +71,7 @@ func (c *Client) Decrypt(cipher string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	plain, err := lib_crypto.DESEncryptECB([]byte(c.desKey), b)
+	plain, err := xcrypto.DESEncryptECB([]byte(c.desKey), b)
 	if err != nil {
 		return "", err
 	}
@@ -92,7 +92,7 @@ func (c *Client) PostForm(ctx context.Context, api, serviceNO string, bizData va
 	}
 	log.SetReqBody(form)
 
-	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(form), curl.WithHeader(curl.HeaderContentType, curl.ContentForm))
+	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(form), xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentForm))
 	if err != nil {
 		log.Set("error", err.Error())
 		return lib.Fail(err)
@@ -215,19 +215,19 @@ type Option func(c *Client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(cli *http.Client) Option {
 	return func(c *Client) {
-		c.httpCli = curl.NewHTTPClient(cli)
+		c.httpCli = xhttp.NewHTTPClient(cli)
 	}
 }
 
 // WithPrivateKey 设置商户RSA私钥
-func WithPrivateKey(key *lib_crypto.PrivateKey) Option {
+func WithPrivateKey(key *xcrypto.PrivateKey) Option {
 	return func(c *Client) {
 		c.prvKey = key
 	}
 }
 
 // WithPublicKey 设置平台RSA公钥
-func WithPublicKey(key *lib_crypto.PublicKey) Option {
+func WithPublicKey(key *xcrypto.PublicKey) Option {
 	return func(c *Client) {
 		c.pubKey = key
 	}
@@ -246,7 +246,7 @@ func NewClient(mchNO, desKey string, options ...Option) *Client {
 		host:    "https://eqt.ysepay.com",
 		mchNO:   mchNO,
 		desKey:  desKey,
-		httpCli: curl.NewDefaultClient(),
+		httpCli: xhttp.NewDefaultClient(),
 	}
 	for _, fn := range options {
 		fn(c)

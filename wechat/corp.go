@@ -13,8 +13,8 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/curl"
 	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // Corp 企业微信(企业内部开发)
@@ -23,7 +23,7 @@ type Corp struct {
 	corpid  string
 	secret  string
 	srvCfg  *ServerConfig
-	httpCli curl.Client
+	httpCli xhttp.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -53,7 +53,7 @@ func (c *Corp) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (c *Corp) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...curl.Option) ([]byte, error) {
+func (c *Corp) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...xhttp.Option) ([]byte, error) {
 	reqURL := c.url(path, query)
 
 	log := lib.NewReqLog(method, reqURL)
@@ -155,7 +155,7 @@ func (c *Corp) PostJSON(ctx context.Context, accessToken, path string, params li
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := c.do(ctx, http.MethodPost, path, query, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
+	b, err := c.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -191,7 +191,7 @@ func (c *Corp) PostBuffer(ctx context.Context, accessToken, path string, params 
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := c.do(ctx, http.MethodPost, path, query, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
+	b, err := c.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
 		return nil, err
 	}
@@ -204,7 +204,7 @@ func (c *Corp) PostBuffer(ctx context.Context, accessToken, path string, params 
 }
 
 // Upload 上传媒体资源
-func (c *Corp) Upload(ctx context.Context, accessToken, path string, form curl.UploadForm) (gjson.Result, error) {
+func (c *Corp) Upload(ctx context.Context, accessToken, path string, form xhttp.UploadForm) (gjson.Result, error) {
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
@@ -264,7 +264,7 @@ func (c *Corp) DecodeEventMsg(signature, timestamp, nonce, encryptMsg string) (v
 	if err != nil {
 		return nil, err
 	}
-	return ParseXMLToV(b)
+	return XMLToValue(b)
 }
 
 // ReplyEventMsg 事件消息回复
@@ -287,7 +287,7 @@ func WithCorpSrvCfg(token, aeskey string) CorpOption {
 // WithCorpHttpCli 设置企业微信请求的 HTTP Client
 func WithCorpHttpCli(cli *http.Client) CorpOption {
 	return func(c *Corp) {
-		c.httpCli = curl.NewHTTPClient(cli)
+		c.httpCli = xhttp.NewHTTPClient(cli)
 	}
 }
 
@@ -305,7 +305,7 @@ func NewCorp(corpid, secret string, options ...CorpOption) *Corp {
 		corpid:  corpid,
 		secret:  secret,
 		srvCfg:  new(ServerConfig),
-		httpCli: curl.NewDefaultClient(),
+		httpCli: xhttp.NewDefaultClient(),
 	}
 	for _, fn := range options {
 		fn(c)

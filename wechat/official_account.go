@@ -15,8 +15,8 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/curl"
 	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // ServerConfig 服务器配置
@@ -32,7 +32,7 @@ type OfficialAccount struct {
 	secret  string
 	srvCfg  *ServerConfig
 	token   atomic.Value
-	httpCli curl.Client
+	httpCli xhttp.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -63,7 +63,7 @@ func (oa *OfficialAccount) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (oa *OfficialAccount) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...curl.Option) ([]byte, error) {
+func (oa *OfficialAccount) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...xhttp.Option) ([]byte, error) {
 	reqURL := oa.url(path, query)
 
 	log := lib.NewReqLog(method, reqURL)
@@ -187,7 +187,7 @@ func (oa *OfficialAccount) reloadAccessToken() error {
 		"force_refresh": false,
 	}
 
-	b, err := oa.do(context.Background(), http.MethodPost, "/cgi-bin/stable_token", nil, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
+	b, err := oa.do(context.Background(), http.MethodPost, "/cgi-bin/stable_token", nil, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
 		return err
 	}
@@ -259,7 +259,7 @@ func (oa *OfficialAccount) PostJSON(ctx context.Context, path string, params lib
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := oa.do(ctx, http.MethodPost, path, query, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
+	b, err := oa.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -303,7 +303,7 @@ func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params l
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := oa.do(ctx, http.MethodPost, path, query, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
+	b, err := oa.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
 		return nil, err
 	}
@@ -316,7 +316,7 @@ func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params l
 }
 
 // Upload 上传媒体资源
-func (oa *OfficialAccount) Upload(ctx context.Context, path string, form curl.UploadForm) (gjson.Result, error) {
+func (oa *OfficialAccount) Upload(ctx context.Context, path string, form xhttp.UploadForm) (gjson.Result, error) {
 	accessToken, err := oa.getAccessToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -377,7 +377,7 @@ func (oa *OfficialAccount) DecodeEventMsg(signature, timestamp, nonce, encryptMs
 	if err != nil {
 		return nil, err
 	}
-	return ParseXMLToV(b)
+	return XMLToValue(b)
 }
 
 // ReplyEventMsg 事件消息回复
@@ -400,7 +400,7 @@ func WithOASrvCfg(token, aeskey string) OAOption {
 // WithOAHttpCli 设置公众号请求的 HTTP Client
 func WithOAHttpCli(c *http.Client) OAOption {
 	return func(oa *OfficialAccount) {
-		oa.httpCli = curl.NewHTTPClient(c)
+		oa.httpCli = xhttp.NewHTTPClient(c)
 	}
 }
 
@@ -418,7 +418,7 @@ func NewOfficialAccount(appid, secret string, options ...OAOption) *OfficialAcco
 		appid:   appid,
 		secret:  secret,
 		srvCfg:  new(ServerConfig),
-		httpCli: curl.NewDefaultClient(),
+		httpCli: xhttp.NewDefaultClient(),
 	}
 	for _, fn := range options {
 		fn(oa)

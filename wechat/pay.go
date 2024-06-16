@@ -13,10 +13,10 @@ import (
 	"time"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	"github.com/shenghui0779/sdk-go/lib/curl"
-	"github.com/shenghui0779/sdk-go/lib/hash"
 	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/shenghui0779/sdk-go/lib/xhash"
+	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // Pay 微信支付
@@ -24,8 +24,8 @@ type Pay struct {
 	host    string
 	mchid   string
 	apikey  string
-	httpCli curl.Client
-	tlsCli  curl.Client
+	httpCli xhttp.Client
+	tlsCli  xhttp.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -63,7 +63,7 @@ func (p *Pay) do(ctx context.Context, path string, params value.V) ([]byte, erro
 
 	params.Set("sign", p.Sign(params))
 
-	body, err := FormatVToXML(params)
+	body, err := ValueToXML(params)
 	if err != nil {
 		log.Set("error", err.Error())
 		return nil, err
@@ -101,7 +101,7 @@ func (p *Pay) doTLS(ctx context.Context, path string, params value.V) ([]byte, e
 
 	params.Set("sign", p.Sign(params))
 
-	body, err := FormatVToXML(params)
+	body, err := ValueToXML(params)
 	if err != nil {
 		log.Set("error", err.Error())
 		return nil, err
@@ -138,7 +138,7 @@ func (p *Pay) PostXML(ctx context.Context, path string, params value.V) (value.V
 		return nil, err
 	}
 
-	ret, err := ParseXMLToV(b)
+	ret, err := XMLToValue(b)
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +158,7 @@ func (p *Pay) PostTLSXML(ctx context.Context, path string, params value.V) (valu
 		return nil, err
 	}
 
-	ret, err := ParseXMLToV(b)
+	ret, err := XMLToValue(b)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +178,7 @@ func (p *Pay) PostBuffer(ctx context.Context, path string, params value.V) ([]by
 		return nil, err
 	}
 
-	ret, err := ParseXMLToV(b)
+	ret, err := XMLToValue(b)
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +196,7 @@ func (p *Pay) PostTLSBuffer(ctx context.Context, path string, params value.V) ([
 		return nil, err
 	}
 
-	ret, err := ParseXMLToV(b)
+	ret, err := XMLToValue(b)
 	if err != nil {
 		return nil, err
 	}
@@ -214,9 +214,9 @@ func (p *Pay) Sign(v value.V) string {
 		signType = v.Get("signType")
 	}
 	if len(signType) != 0 && SignAlgo(strings.ToUpper(signType)) == SignHMacSHA256 {
-		return strings.ToUpper(hash.HMacSHA256(p.apikey, signStr))
+		return strings.ToUpper(xhash.HMacSHA256(p.apikey, signStr))
 	}
-	return strings.ToUpper(hash.MD5(signStr))
+	return strings.ToUpper(xhash.MD5(signStr))
 }
 
 func (p *Pay) Verify(v value.V) error {
@@ -228,13 +228,13 @@ func (p *Pay) Verify(v value.V) error {
 	signStr := v.Encode("=", "&", value.WithIgnoreKeys("sign"), value.WithEmptyMode(value.EmptyIgnore)) + "&key=" + p.apikey
 	// hmac-sha256
 	if len(signType) != 0 && SignAlgo(strings.ToUpper(signType)) == SignHMacSHA256 {
-		if sign := strings.ToUpper(hash.HMacSHA256(p.apikey, signStr)); sign != wxsign {
+		if sign := strings.ToUpper(xhash.HMacSHA256(p.apikey, signStr)); sign != wxsign {
 			return fmt.Errorf("sign verify failed, expect = %s, actual = %s", sign, wxsign)
 		}
 		return nil
 	}
 	// md5
-	if sign := strings.ToUpper(hash.MD5(signStr)); sign != wxsign {
+	if sign := strings.ToUpper(xhash.MD5(signStr)); sign != wxsign {
 		return fmt.Errorf("sign verify failed, expect = %s, actual = %s", sign, wxsign)
 	}
 	return nil
@@ -246,11 +246,11 @@ func (p *Pay) DecryptRefund(encrypt string) (value.V, error) {
 	if err != nil {
 		return nil, err
 	}
-	plainText, err := lib_crypto.AESDecryptECB([]byte(hash.MD5(p.apikey)), cipherText)
+	plainText, err := xcrypto.AESDecryptECB([]byte(xhash.MD5(p.apikey)), cipherText)
 	if err != nil {
 		return nil, err
 	}
-	return ParseXMLToV(plainText)
+	return XMLToValue(plainText)
 }
 
 // APPAPI 用于APP拉起支付
@@ -296,7 +296,7 @@ func (p *Pay) MinipRedpackJSAPI(appid, pkg string) value.V {
 
 	signStr := fmt.Sprintf("appId=%s&nonceStr=%s&package=%s&timeStamp=%s&key=%s", appid, v.Get("nonceStr"), v.Get("package"), v.Get("timeStamp"), p.apikey)
 
-	v.Set("paySign", hash.MD5(signStr))
+	v.Set("paySign", xhash.MD5(signStr))
 
 	return v
 }
@@ -307,21 +307,21 @@ type PayOption func(p *Pay)
 // WithPayTLSCert 设置支付TLS证书
 func WithPayTLSCert(cert tls.Certificate) PayOption {
 	return func(p *Pay) {
-		p.tlsCli = curl.NewDefaultClient(cert)
+		p.tlsCli = xhttp.NewDefaultClient(cert)
 	}
 }
 
 // WithPayHttpCli 设置支付无证书 HTTP Client
 func WithPayHttpCli(c *http.Client) PayOption {
 	return func(p *Pay) {
-		p.httpCli = curl.NewHTTPClient(c)
+		p.httpCli = xhttp.NewHTTPClient(c)
 	}
 }
 
 // WithPayTLSCli 设置支付带证书 HTTP Client
 func WithPayTLSCli(c *http.Client) PayOption {
 	return func(p *Pay) {
-		p.tlsCli = curl.NewHTTPClient(c)
+		p.tlsCli = xhttp.NewHTTPClient(c)
 	}
 }
 
@@ -338,8 +338,8 @@ func NewPay(mchid, apikey string, options ...PayOption) *Pay {
 		host:    "https://api.mch.weixin.qq.com",
 		mchid:   mchid,
 		apikey:  apikey,
-		httpCli: curl.NewDefaultClient(),
-		tlsCli:  curl.NewDefaultClient(),
+		httpCli: xhttp.NewDefaultClient(),
+		tlsCli:  xhttp.NewDefaultClient(),
 	}
 	for _, fn := range options {
 		fn(pay)

@@ -3,7 +3,7 @@ package alipay
 import (
 	"strings"
 
-	"github.com/shenghui0779/sdk-go/lib/crypto"
+	"github.com/shenghui0779/sdk-go/lib/xcrypto"
 	"github.com/tidwall/gjson"
 )
 
@@ -35,7 +35,7 @@ type APIResult struct {
 }
 
 // FormatPKCS1PrivateKey 格式化支付宝应用私钥(PKCS#1)
-func FormatPKCS1PrivateKey(pemStr string) (crypto.RSAPadding, []byte) {
+func FormatPKCS1PrivateKey(pemStr string) (xcrypto.RSAPadding, []byte) {
 	rawLen := 64
 	keyLen := len(pemStr)
 
@@ -65,11 +65,11 @@ func FormatPKCS1PrivateKey(pemStr string) (crypto.RSAPadding, []byte) {
 	}
 	builder.WriteString("-----END RSA PRIVATE KEY-----\n")
 
-	return crypto.RSA_PKCS1, []byte(builder.String())
+	return xcrypto.RSA_PKCS1, []byte(builder.String())
 }
 
 // FormatPKCS8PrivateKey 格式化支付宝应用私钥(PKCS#8)
-func FormatPKCS8PrivateKey(pemStr string) (crypto.RSAPadding, []byte) {
+func FormatPKCS8PrivateKey(pemStr string) (xcrypto.RSAPadding, []byte) {
 	rawLen := 64
 	keyLen := len(pemStr)
 
@@ -99,11 +99,11 @@ func FormatPKCS8PrivateKey(pemStr string) (crypto.RSAPadding, []byte) {
 	}
 	builder.WriteString("-----END PRIVATE KEY-----\n")
 
-	return crypto.RSA_PKCS8, []byte(builder.String())
+	return xcrypto.RSA_PKCS8, []byte(builder.String())
 }
 
 // FormatPKCS1PublicKey 格式化支付宝应用公钥(PKCS#1)
-func FormatPKCS1PublicKey(pemStr string) (crypto.RSAPadding, []byte) {
+func FormatPKCS1PublicKey(pemStr string) (xcrypto.RSAPadding, []byte) {
 	rawLen := 64
 	keyLen := len(pemStr)
 
@@ -133,11 +133,11 @@ func FormatPKCS1PublicKey(pemStr string) (crypto.RSAPadding, []byte) {
 	}
 	builder.WriteString("-----END RSA PUBLIC KEY-----\n")
 
-	return crypto.RSA_PKCS1, []byte(builder.String())
+	return xcrypto.RSA_PKCS1, []byte(builder.String())
 }
 
 // FormatPKCS8PublicKey 格式化支付宝应用公钥(PKCS#8)
-func FormatPKCS8PublicKey(pemStr string) (crypto.RSAPadding, []byte) {
+func FormatPKCS8PublicKey(pemStr string) (xcrypto.RSAPadding, []byte) {
 	rawLen := 64
 	keyLen := len(pemStr)
 
@@ -166,5 +166,5 @@ func FormatPKCS8PublicKey(pemStr string) (crypto.RSAPadding, []byte) {
 	}
 	builder.WriteString("-----END PUBLIC KEY-----\n")
 
-	return crypto.RSA_PKCS8, []byte(builder.String())
+	return xcrypto.RSA_PKCS8, []byte(builder.String())
 }

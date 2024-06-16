@@ -9,8 +9,8 @@ import (
 	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
-// FormatVToXML format map to xml
-func FormatVToXML(vals value.V) ([]byte, error) {
+// ValueToXML value to xml
+func ValueToXML(vals value.V) ([]byte, error) {
 	var builder strings.Builder
 
 	builder.WriteString("<xml>")
@@ -26,8 +26,8 @@ func FormatVToXML(vals value.V) ([]byte, error) {
 	return []byte(builder.String()), nil
 }
 
-// ParseXMLToV parse xml to map
-func ParseXMLToV(b []byte) (value.V, error) {
+// XMLToValue xml to value
+func XMLToValue(b []byte) (value.V, error) {
 	m := make(value.V)
 
 	xmlReader := bytes.NewReader(b)

@@ -19,18 +19,18 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	"github.com/shenghui0779/sdk-go/lib/curl"
 	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // SafeMode 安全鉴权模式配置
 type SafeMode struct {
 	aesSN  string
 	aeskey string
-	prvKey *lib_crypto.PrivateKey
+	prvKey *xcrypto.PrivateKey
 	pubSN  string
-	pubKey *lib_crypto.PublicKey
+	pubKey *xcrypto.PublicKey
 }
 
 // MiniProgram 小程序
@@ -41,7 +41,7 @@ type MiniProgram struct {
 	srvCfg  *ServerConfig
 	sfMode  *SafeMode
 	token   atomic.Value
-	httpCli curl.Client
+	httpCli xhttp.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
 
@@ -71,7 +71,7 @@ func (mp *MiniProgram) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...curl.Option) ([]byte, error) {
+func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...xhttp.Option) ([]byte, error) {
 	reqURL := mp.url(path, query)
 
 	log := lib.NewReqLog(method, reqURL)
@@ -146,7 +146,7 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 
 	reqHeader := http.Header{}
 
-	reqHeader.Set(curl.HeaderContentType, curl.ContentJSON)
+	reqHeader.Set(xhttp.HeaderContentType, xhttp.ContentJSON)
 	reqHeader.Set(HeaderMPAppID, mp.appid)
 	reqHeader.Set(HeaderMPTimestamp, strconv.FormatInt(now, 10))
 	reqHeader.Set(HeaderMPSignature, sign)
@@ -228,7 +228,7 @@ func (mp *MiniProgram) encrypt(log *lib.ReqLog, path string, query url.Values, p
 	iv := lib.NonceByte(12)
 	aad := fmt.Sprintf("%s|%s|%d|%s", mp.url(path, nil), mp.appid, timestamp, mp.sfMode.aesSN)
 
-	ct, err := lib_crypto.AESEncryptGCM(key, iv, data, []byte(aad), nil)
+	ct, err := xcrypto.AESEncryptGCM(key, iv, data, []byte(aad), nil)
 	if err != nil {
 		log.Set("error", err.Error())
 		return nil, err
@@ -330,7 +330,7 @@ func (mp *MiniProgram) decrypt(path string, header http.Header, body []byte) ([]
 
 	aad := fmt.Sprintf("%s|%s|%s|%s", mp.url(path, nil), mp.appid, header.Get(HeaderMPTimestamp), mp.sfMode.aesSN)
 
-	return lib_crypto.AESDecryptGCM(key, iv, append(data, tag...), []byte(aad), nil)
+	return xcrypto.AESDecryptGCM(key, iv, append(data, tag...), []byte(aad), nil)
 }
 
 // Code2Session 通过临时登录凭证code完成登录流程
@@ -365,7 +365,7 @@ func (mp *MiniProgram) reloadAccessToken() error {
 		"force_refresh": false,
 	}
 
-	b, err := mp.do(context.Background(), http.MethodPost, "/cgi-bin/stable_token", nil, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
+	b, err := mp.do(context.Background(), http.MethodPost, "/cgi-bin/stable_token", nil, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
 		return err
 	}
@@ -460,7 +460,7 @@ func (mp *MiniProgram) PostJSON(ctx context.Context, path string, params lib.X) 
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := mp.do(ctx, http.MethodPost, path, query, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
+	b, err := mp.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -481,7 +481,7 @@ func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params lib.X
 	query := url.Values{}
 	query.Set(AccessToken, accessToken)
 
-	b, err := mp.do(ctx, http.MethodPost, path, query, params, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
+	b, err := mp.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
 		return nil, err
 	}
@@ -540,7 +540,7 @@ func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params l
 }
 
 // Upload 上传媒体资源
-func (mp *MiniProgram) Upload(ctx context.Context, path string, form curl.UploadForm) (gjson.Result, error) {
+func (mp *MiniProgram) Upload(ctx context.Context, path string, form xhttp.UploadForm) (gjson.Result, error) {
 	accessToken, err := mp.getAccessToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -608,7 +608,7 @@ func (mp *MiniProgram) DecodeEncryptData(sessionKey, iv, encryptData string) ([]
 		return nil, fmt.Errorf("encrypt_data base64.decode error: %w", err)
 	}
 
-	ct, err := lib_crypto.AESEncryptCBC(keyBlock, ivBlock, data)
+	ct, err := xcrypto.AESEncryptCBC(keyBlock, ivBlock, data)
 	if err != nil {
 		return nil, err
 	}
@@ -627,7 +627,7 @@ func (mp *MiniProgram) DecodeEventMsg(signature, timestamp, nonce, encryptMsg st
 	if err != nil {
 		return nil, err
 	}
-	return ParseXMLToV(b)
+	return XMLToValue(b)
 }
 
 // ReplyEventMsg 事件消息回复
@@ -650,7 +650,7 @@ func WithMPSrvCfg(token, aeskey string) MPOption {
 // WithMPHttpCli 设置小程序请求的 HTTP Client
 func WithMPHttpCli(c *http.Client) MPOption {
 	return func(mp *MiniProgram) {
-		mp.httpCli = curl.NewHTTPClient(c)
+		mp.httpCli = xhttp.NewHTTPClient(c)
 	}
 }
 
@@ -670,14 +670,14 @@ func WithMPAesKey(serialNO, key string) MPOption {
 }
 
 // WithMPPrivateKey 设置小程序RSA私钥
-func WithMPPrivateKey(key *lib_crypto.PrivateKey) MPOption {
+func WithMPPrivateKey(key *xcrypto.PrivateKey) MPOption {
 	return func(mp *MiniProgram) {
 		mp.sfMode.prvKey = key
 	}
 }
 
 // WithMPPublicKey 设置小程序平台RSA公钥
-func WithMPPublicKey(serialNO string, key *lib_crypto.PublicKey) MPOption {
+func WithMPPublicKey(serialNO string, key *xcrypto.PublicKey) MPOption {
 	return func(mp *MiniProgram) {
 		mp.sfMode.pubSN = serialNO
 		mp.sfMode.pubKey = key
@@ -691,7 +691,7 @@ func NewMiniProgram(appid, secret string, options ...MPOption) *MiniProgram {
 		appid:   appid,
 		secret:  secret,
 		srvCfg:  new(ServerConfig),
-		httpCli: curl.NewDefaultClient(),
+		httpCli: xhttp.NewDefaultClient(),
 	}
 	for _, fn := range options {
 		fn(mp)

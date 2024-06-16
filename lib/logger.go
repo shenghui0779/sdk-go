@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/shenghui0779/sdk-go/lib/curl"
+	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // ReqLog 请求日志
@@ -81,10 +81,10 @@ func HeaderEncode(h http.Header) string {
 	return buf.String()
 }
 
-func HeaderToHttpOption(h http.Header) []curl.Option {
-	options := make([]curl.Option, 0, len(h))
+func HeaderToHttpOption(h http.Header) []xhttp.Option {
+	options := make([]xhttp.Option, 0, len(h))
 	for k, vals := range h {
-		options = append(options, curl.WithHeader(k, vals...))
+		options = append(options, xhttp.WithHeader(k, vals...))
 	}
 
 	return options

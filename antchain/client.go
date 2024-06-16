@@ -15,18 +15,18 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	lib_crypto "github.com/shenghui0779/sdk-go/lib/crypto"
-	"github.com/shenghui0779/sdk-go/lib/curl"
+	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // Config 客户端配置
 type Config struct {
-	BizID      string                 `json:"biz_id"`      // 链ID (a00e36c5)
-	TenantID   string                 `json:"tenant_id"`   // 租户ID
-	AccessID   string                 `json:"access_id"`   // AccessID
-	AccessKey  *lib_crypto.PrivateKey `json:"access_key"`  // AccessKey
-	Account    string                 `json:"account"`     // 链账户
-	MyKmsKeyID string                 `json:"mykmskey_id"` // 托管标识
+	BizID      string              `json:"biz_id"`      // 链ID (a00e36c5)
+	TenantID   string              `json:"tenant_id"`   // 租户ID
+	AccessID   string              `json:"access_id"`   // AccessID
+	AccessKey  *xcrypto.PrivateKey `json:"access_key"`  // AccessKey
+	Account    string              `json:"account"`     // 链账户
+	MyKmsKeyID string              `json:"mykmskey_id"` // 托管标识
 }
 
 // Client 发送请求使用的客户端
@@ -74,7 +74,7 @@ func WithParam(key string, value any) ChainCallOption {
 type client struct {
 	endpoint string
 	config   *Config
-	httpCli  curl.Client
+	httpCli  xhttp.Client
 	logger   func(ctx context.Context, data map[string]string)
 }
 
@@ -150,7 +150,7 @@ func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, e
 	}
 	log.SetReqBody(string(body))
 
-	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, body, curl.WithHeader(curl.HeaderContentType, curl.ContentJSON))
+	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, body, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
 		log.Set("error", err.Error())
 		return "", err
@@ -184,7 +184,7 @@ type Option func(c *client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(httpCli *http.Client) Option {
 	return func(c *client) {
-		c.httpCli = curl.NewHTTPClient(httpCli)
+		c.httpCli = xhttp.NewHTTPClient(httpCli)
 	}
 }
 
@@ -200,7 +200,7 @@ func NewClient(cfg *Config, options ...Option) Client {
 	c := &client{
 		endpoint: "https://rest.baas.alipay.com",
 		config:   cfg,
-		httpCli:  curl.NewDefaultClient(),
+		httpCli:  xhttp.NewDefaultClient(),
 	}
 	for _, fn := range options {
 		fn(c)
