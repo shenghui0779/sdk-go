@@ -176,31 +176,94 @@ func (oa *OfficialAccount) RefreshOAuthToken(ctx context.Context, refreshToken s
 	return ret, nil
 }
 
-// reloadAccessToken 获取稳定版接口调用凭据，有两种调用模式:
-// 1. 普通模式，access_token 有效期内重复调用该接口不会更新 access_token，绝大部分场景下使用该模式；
-// 2. 强制刷新模式，会导致上次获取的 access_token 失效，并返回新的 access_token
-func (oa *OfficialAccount) reloadAccessToken() error {
-	params := lib.X{
-		"grant_type":    "client_credential",
-		"appid":         oa.appid,
-		"secret":        oa.secret,
-		"force_refresh": false,
-	}
+// AccessToken 获取接口调用凭据
+func (oa *OfficialAccount) AccessToken(ctx context.Context) (gjson.Result, error) {
+	query := url.Values{}
 
-	b, err := oa.do(context.Background(), http.MethodPost, "/cgi-bin/stable_token", nil, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	query.Set("appid", oa.appid)
+	query.Set("secret", oa.secret)
+	query.Set("grant_type", "client_credential")
+
+	b, err := oa.do(ctx, http.MethodGet, "/cgi-bin/token", query, nil)
 	if err != nil {
-		return err
+		return lib.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return fmt.Errorf("%d | %s", code, ret.Get("errmsg").String())
+		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+	}
+	return ret, nil
+}
+
+// StableAccessToken 获取稳定版接口调用凭据，有两种调用模式:
+// 1. 普通模式，access_token 有效期内重复调用该接口不会更新 access_token，绝大部分场景下使用该模式；
+// 2. 强制刷新模式，会导致上次获取的 access_token 失效，并返回新的 access_token
+func (oa *OfficialAccount) StableAccessToken(ctx context.Context, forceRefresh bool) (gjson.Result, error) {
+	params := lib.X{
+		"grant_type":    "client_credential",
+		"appid":         oa.appid,
+		"secret":        oa.secret,
+		"force_refresh": forceRefresh,
+	}
+
+	b, err := oa.do(ctx, http.MethodPost, "/cgi-bin/stable_token", nil, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	if err != nil {
+		return lib.Fail(err)
+	}
+
+	ret := gjson.ParseBytes(b)
+	if code := ret.Get("errcode").Int(); code != 0 {
+		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+	}
+	return ret, nil
+}
+
+// AutoLoadAccessToken 自动加载AccessToken(使用StableAccessToken接口)
+func (oa *OfficialAccount) AutoLoadAccessToken(interval time.Duration) error {
+	// 初始化AccessToken
+	ret, err := oa.StableAccessToken(context.Background(), false)
+	if err != nil {
+		return err
 	}
 	oa.token.Store(ret.Get("access_token").String())
+	// 异步定时加载
+	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+		for range ticker.C {
+			_ret, _ := oa.StableAccessToken(context.Background(), false)
+			if token := _ret.Get("access_token").String(); len(token) != 0 {
+				oa.token.Store(token)
+			}
+		}
+	}()
 	return nil
 }
 
-func (oa *OfficialAccount) getAccessToken() (string, error) {
+// LoadAccessTokenFunc 自定义加载AccessToken
+func (oa *OfficialAccount) LoadAccessTokenFunc(fn func(ctx context.Context) (string, error), interval time.Duration) error {
+	// 初始化AccessToken
+	token, err := fn(context.Background())
+	if err != nil {
+		return err
+	}
+	oa.token.Store(token)
+	// 异步定时加载
+	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+		for range ticker.C {
+			_token, _ := fn(context.Background())
+			if len(token) != 0 {
+				oa.token.Store(_token)
+			}
+		}
+	}()
+	return nil
+}
+
+func (oa *OfficialAccount) getToken() (string, error) {
 	v := oa.token.Load()
 	if v == nil {
 		return "", errors.New("access_token is empty (forgotten auto load?)")
@@ -212,31 +275,16 @@ func (oa *OfficialAccount) getAccessToken() (string, error) {
 	return token, nil
 }
 
-// AutoLoadAccessToken 自动加载AccessToken
-func (oa *OfficialAccount) AutoLoadAccessToken() error {
-	if err := oa.reloadAccessToken(); err != nil {
-		return err
-	}
-	go func() {
-		ticker := time.NewTicker(time.Minute * 5)
-		defer ticker.Stop()
-		for range ticker.C {
-			oa.reloadAccessToken()
-		}
-	}()
-	return nil
-}
-
 // GetJSON GET请求JSON数据
 func (oa *OfficialAccount) GetJSON(ctx context.Context, path string, query url.Values) (gjson.Result, error) {
-	accessToken, err := oa.getAccessToken()
+	token, err := oa.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
 	if query == nil {
 		query = url.Values{}
 	}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := oa.do(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
@@ -252,12 +300,12 @@ func (oa *OfficialAccount) GetJSON(ctx context.Context, path string, query url.V
 
 // PostJSON POST请求JSON数据
 func (oa *OfficialAccount) PostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
-	accessToken, err := oa.getAccessToken()
+	token, err := oa.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
 	query := url.Values{}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := oa.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
@@ -273,14 +321,14 @@ func (oa *OfficialAccount) PostJSON(ctx context.Context, path string, params lib
 
 // GetBuffer GET请求获取buffer (如：获取媒体资源)
 func (oa *OfficialAccount) GetBuffer(ctx context.Context, path string, query url.Values) ([]byte, error) {
-	accessToken, err := oa.getAccessToken()
+	token, err := oa.getToken()
 	if err != nil {
 		return nil, err
 	}
 	if query == nil {
 		query = url.Values{}
 	}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := oa.do(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
@@ -296,12 +344,12 @@ func (oa *OfficialAccount) GetBuffer(ctx context.Context, path string, query url
 
 // PostBuffer POST请求获取buffer (如：获取二维码)
 func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params lib.X) ([]byte, error) {
-	accessToken, err := oa.getAccessToken()
+	token, err := oa.getToken()
 	if err != nil {
 		return nil, err
 	}
 	query := url.Values{}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := oa.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
@@ -317,12 +365,12 @@ func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params l
 
 // Upload 上传媒体资源
 func (oa *OfficialAccount) Upload(ctx context.Context, path string, form xhttp.UploadForm) (gjson.Result, error) {
-	accessToken, err := oa.getAccessToken()
+	token, err := oa.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
 	query := url.Values{}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	reqURL := oa.url(path, query)
 

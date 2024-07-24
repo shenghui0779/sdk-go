@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync/atomic"
+	"time"
 
 	"github.com/tidwall/gjson"
 
@@ -23,6 +25,7 @@ type Corp struct {
 	corpid  string
 	secret  string
 	srvCfg  *ServerConfig
+	token   atomic.Value
 	httpCli xhttp.Client
 	logger  func(ctx context.Context, data map[string]string)
 }
@@ -112,7 +115,7 @@ func (c *Corp) OAuthURL(scope AuthScope, redirectURI, state, agentID string) str
 	return fmt.Sprintf("https://open.weixin.qq.com/connect/cuth2/authorize?%s#wechat_redirect", query.Encode())
 }
 
-// AccessToken 获取接口调用凭据 (开发者应在 WithAccessToken 回调函数中使用该方法，并自行实现存/取)
+// AccessToken 获取接口调用凭据
 func (c *Corp) AccessToken(ctx context.Context) (gjson.Result, error) {
 	query := url.Values{}
 
@@ -131,12 +134,50 @@ func (c *Corp) AccessToken(ctx context.Context) (gjson.Result, error) {
 	return ret, nil
 }
 
+// LoadAccessTokenFunc 自定义加载AccessToken
+func (c *Corp) LoadAccessTokenFunc(fn func(ctx context.Context) (string, error), interval time.Duration) error {
+	// 初始化AccessToken
+	token, err := fn(context.Background())
+	if err != nil {
+		return err
+	}
+	c.token.Store(token)
+	// 异步定时加载
+	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+		for range ticker.C {
+			_token, _ := fn(context.Background())
+			if len(token) != 0 {
+				c.token.Store(_token)
+			}
+		}
+	}()
+	return nil
+}
+
+func (c *Corp) getToken() (string, error) {
+	v := c.token.Load()
+	if v == nil {
+		return "", errors.New("access_token is empty (forgotten auto load?)")
+	}
+	token, ok := v.(string)
+	if !ok {
+		return "", errors.New("access_token is not a string")
+	}
+	return token, nil
+}
+
 // GetJSON GET请求JSON数据
-func (c *Corp) GetJSON(ctx context.Context, accessToken, path string, query url.Values) (gjson.Result, error) {
+func (c *Corp) GetJSON(ctx context.Context, path string, query url.Values) (gjson.Result, error) {
+	token, err := c.getToken()
+	if err != nil {
+		return lib.Fail(err)
+	}
 	if query == nil {
 		query = url.Values{}
 	}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := c.do(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
@@ -151,9 +192,13 @@ func (c *Corp) GetJSON(ctx context.Context, accessToken, path string, query url.
 }
 
 // PostJSON POST请求JSON数据
-func (c *Corp) PostJSON(ctx context.Context, accessToken, path string, params lib.X) (gjson.Result, error) {
+func (c *Corp) PostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
+	token, err := c.getToken()
+	if err != nil {
+		return lib.Fail(err)
+	}
 	query := url.Values{}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := c.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
@@ -168,11 +213,15 @@ func (c *Corp) PostJSON(ctx context.Context, accessToken, path string, params li
 }
 
 // GetBuffer GET请求获取buffer (如：获取媒体资源)
-func (c *Corp) GetBuffer(ctx context.Context, accessToken, path string, query url.Values) ([]byte, error) {
+func (c *Corp) GetBuffer(ctx context.Context, path string, query url.Values) ([]byte, error) {
+	token, err := c.getToken()
+	if err != nil {
+		return nil, err
+	}
 	if query == nil {
 		query = url.Values{}
 	}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := c.do(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
@@ -187,9 +236,13 @@ func (c *Corp) GetBuffer(ctx context.Context, accessToken, path string, query ur
 }
 
 // PostBuffer POST请求获取buffer (如：获取二维码)
-func (c *Corp) PostBuffer(ctx context.Context, accessToken, path string, params lib.X) ([]byte, error) {
+func (c *Corp) PostBuffer(ctx context.Context, path string, params lib.X) ([]byte, error) {
+	token, err := c.getToken()
+	if err != nil {
+		return nil, err
+	}
 	query := url.Values{}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := c.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
@@ -204,9 +257,13 @@ func (c *Corp) PostBuffer(ctx context.Context, accessToken, path string, params 
 }
 
 // Upload 上传媒体资源
-func (c *Corp) Upload(ctx context.Context, accessToken, path string, form xhttp.UploadForm) (gjson.Result, error) {
+func (c *Corp) Upload(ctx context.Context, path string, form xhttp.UploadForm) (gjson.Result, error) {
+	token, err := c.getToken()
+	if err != nil {
+		return lib.Fail(err)
+	}
 	query := url.Values{}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	reqURL := c.url(path, query)
 

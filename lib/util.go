@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"io"
-	"time"
 
 	"github.com/tidwall/gjson"
 )
@@ -14,10 +13,7 @@ import (
 // X 类型别名
 type X map[string]any
 
-var (
-	Fail = func(err error) (gjson.Result, error) { return gjson.Result{}, err }
-	GMT8 = time.FixedZone("CST", 8*3600)
-)
+var Fail = func(err error) (gjson.Result, error) { return gjson.Result{}, err }
 
 // Nonce 生成指定长度的随机串 (最好是偶数)
 func Nonce(size uint) string {

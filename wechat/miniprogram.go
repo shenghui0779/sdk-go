@@ -354,31 +354,94 @@ func (mp *MiniProgram) Code2Session(ctx context.Context, code string) (gjson.Res
 	return ret, nil
 }
 
-// loadAccessToken 获取稳定版接口调用凭据，有两种调用模式:
-// 1. 普通模式，access_token有效期内重复调用该接口不会更新access_token，绝大部分场景下使用该模式；
-// 2. 强制刷新模式，会导致上次获取的access_token失效，并返回新的access_token
-func (mp *MiniProgram) reloadAccessToken() error {
-	params := lib.X{
-		"grant_type":    "client_credential",
-		"appid":         mp.appid,
-		"secret":        mp.secret,
-		"force_refresh": false,
-	}
+// AccessToken 获取接口调用凭据
+func (mp *MiniProgram) AccessToken(ctx context.Context) (gjson.Result, error) {
+	query := url.Values{}
 
-	b, err := mp.do(context.Background(), http.MethodPost, "/cgi-bin/stable_token", nil, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	query.Set("appid", mp.appid)
+	query.Set("secret", mp.secret)
+	query.Set("grant_type", "client_credential")
+
+	b, err := mp.do(ctx, http.MethodGet, "/cgi-bin/token", query, nil)
 	if err != nil {
-		return err
+		return lib.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return fmt.Errorf("%d | %s", code, ret.Get("errmsg").String())
+		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+	}
+	return ret, nil
+}
+
+// StableAccessToken 获取稳定版接口调用凭据，有两种调用模式:
+// 1. 普通模式，access_token有效期内重复调用该接口不会更新access_token，绝大部分场景下使用该模式；
+// 2. 强制刷新模式，会导致上次获取的access_token失效，并返回新的access_token
+func (mp *MiniProgram) StableAccessToken(ctx context.Context, forceRefresh bool) (gjson.Result, error) {
+	params := lib.X{
+		"grant_type":    "client_credential",
+		"appid":         mp.appid,
+		"secret":        mp.secret,
+		"force_refresh": forceRefresh,
+	}
+
+	b, err := mp.do(ctx, http.MethodPost, "/cgi-bin/stable_token", nil, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	if err != nil {
+		return lib.Fail(err)
+	}
+
+	ret := gjson.ParseBytes(b)
+	if code := ret.Get("errcode").Int(); code != 0 {
+		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+	}
+	return ret, nil
+}
+
+// AutoLoadAccessToken 自动加载AccessToken(使用StableAccessToken接口)
+func (mp *MiniProgram) AutoLoadAccessToken(interval time.Duration) error {
+	// 初始化AccessToken
+	ret, err := mp.StableAccessToken(context.Background(), false)
+	if err != nil {
+		return err
 	}
 	mp.token.Store(ret.Get("access_token").String())
+	// 异步定时加载
+	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+		for range ticker.C {
+			_ret, _ := mp.StableAccessToken(context.Background(), false)
+			if token := _ret.Get("access_token").String(); len(token) != 0 {
+				mp.token.Store(token)
+			}
+		}
+	}()
 	return nil
 }
 
-func (mp *MiniProgram) getAccessToken() (string, error) {
+// LoadAccessTokenFunc 自定义加载AccessToken
+func (mp *MiniProgram) LoadAccessTokenFunc(fn func(ctx context.Context) (string, error), interval time.Duration) error {
+	// 初始化AccessToken
+	token, err := fn(context.Background())
+	if err != nil {
+		return err
+	}
+	mp.token.Store(token)
+	// 异步定时加载
+	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+		for range ticker.C {
+			_token, _ := fn(context.Background())
+			if len(token) != 0 {
+				mp.token.Store(_token)
+			}
+		}
+	}()
+	return nil
+}
+
+func (mp *MiniProgram) getToken() (string, error) {
 	v := mp.token.Load()
 	if v == nil {
 		return "", errors.New("access_token is empty (forgotten auto load?)")
@@ -390,31 +453,16 @@ func (mp *MiniProgram) getAccessToken() (string, error) {
 	return token, nil
 }
 
-// AutoLoadAccessToken 自动加载AccessToken
-func (mp *MiniProgram) AutoLoadAccessToken() error {
-	if err := mp.reloadAccessToken(); err != nil {
-		return err
-	}
-	go func() {
-		ticker := time.NewTicker(time.Minute * 5)
-		defer ticker.Stop()
-		for range ticker.C {
-			mp.reloadAccessToken()
-		}
-	}()
-	return nil
-}
-
 // GetJSON GET请求JSON数据
 func (mp *MiniProgram) GetJSON(ctx context.Context, path string, query url.Values) (gjson.Result, error) {
-	accessToken, err := mp.getAccessToken()
+	token, err := mp.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
 	if query == nil {
 		query = url.Values{}
 	}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := mp.do(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
@@ -430,14 +478,14 @@ func (mp *MiniProgram) GetJSON(ctx context.Context, path string, query url.Value
 
 // GetBuffer GET请求获取buffer (如：获取媒体资源)
 func (mp *MiniProgram) GetBuffer(ctx context.Context, path string, query url.Values) ([]byte, error) {
-	accessToken, err := mp.getAccessToken()
+	token, err := mp.getToken()
 	if err != nil {
 		return nil, err
 	}
 	if query == nil {
 		query = url.Values{}
 	}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := mp.do(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
@@ -453,12 +501,12 @@ func (mp *MiniProgram) GetBuffer(ctx context.Context, path string, query url.Val
 
 // PostJSON POST请求JSON数据
 func (mp *MiniProgram) PostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
-	accessToken, err := mp.getAccessToken()
+	token, err := mp.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
 	query := url.Values{}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := mp.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
@@ -474,12 +522,12 @@ func (mp *MiniProgram) PostJSON(ctx context.Context, path string, params lib.X) 
 
 // PostBuffer POST请求获取buffer (如：获取二维码)
 func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params lib.X) ([]byte, error) {
-	accessToken, err := mp.getAccessToken()
+	token, err := mp.getToken()
 	if err != nil {
 		return nil, err
 	}
 	query := url.Values{}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := mp.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
 	if err != nil {
@@ -497,12 +545,12 @@ func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params lib.X
 // 安全鉴权模式 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html
 // 支持的api可参考 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc
 func (mp *MiniProgram) SafePostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
-	accessToken, err := mp.getAccessToken()
+	token, err := mp.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
 	query := url.Values{}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := mp.doSafe(ctx, http.MethodPost, path, query, params)
 	if err != nil {
@@ -520,12 +568,12 @@ func (mp *MiniProgram) SafePostJSON(ctx context.Context, path string, params lib
 // 安全鉴权模式 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html
 // 支持的api可参考 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc
 func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params lib.X) ([]byte, error) {
-	accessToken, err := mp.getAccessToken()
+	token, err := mp.getToken()
 	if err != nil {
 		return nil, err
 	}
 	query := url.Values{}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	b, err := mp.doSafe(ctx, http.MethodPost, path, query, params)
 	if err != nil {
@@ -541,12 +589,12 @@ func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params l
 
 // Upload 上传媒体资源
 func (mp *MiniProgram) Upload(ctx context.Context, path string, form xhttp.UploadForm) (gjson.Result, error) {
-	accessToken, err := mp.getAccessToken()
+	token, err := mp.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
 	query := url.Values{}
-	query.Set(AccessToken, accessToken)
+	query.Set(AccessToken, token)
 
 	reqURL := mp.url(path, query)
 
@@ -612,7 +660,6 @@ func (mp *MiniProgram) DecodeEncryptData(sessionKey, iv, encryptData string) ([]
 	if err != nil {
 		return nil, err
 	}
-
 	return ct.Bytes(), nil
 }
 
