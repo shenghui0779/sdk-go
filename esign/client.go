@@ -246,8 +246,8 @@ func NewClient(appid, secret string, options ...Option) *Client {
 		secret:  secret,
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(c)
+	for _, f := range options {
+		f(c)
 	}
 	return c
 }
@@ -260,8 +260,8 @@ func NewSandbox(appid, secret string, options ...Option) *Client {
 		secret:  secret,
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(c)
+	for _, f := range options {
+		f(c)
 	}
 	return c
 }

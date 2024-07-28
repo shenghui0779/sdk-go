@@ -740,8 +740,8 @@ func NewMiniProgram(appid, secret string, options ...MPOption) *MiniProgram {
 		srvCfg:  new(ServerConfig),
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(mp)
+	for _, f := range options {
+		f(mp)
 	}
 	return mp
 }

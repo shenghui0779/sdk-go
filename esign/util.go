@@ -39,11 +39,9 @@ func FileMD5(filename string) (string, int64) {
 	defer f.Close()
 
 	h := md5.New()
-
 	n, err := io.Copy(h, f)
 	if err != nil {
 		return err.Error(), -1
 	}
-
 	return base64.StdEncoding.EncodeToString(h.Sum(nil)), n
 }

@@ -18,7 +18,7 @@ var Fail = func(err error) (gjson.Result, error) { return gjson.Result{}, err }
 // Nonce 生成指定长度的随机串 (最好是偶数)
 func Nonce(size uint) string {
 	nonce := make([]byte, size/2)
-	io.ReadFull(rand.Reader, nonce)
+	_, _ = io.ReadFull(rand.Reader, nonce)
 
 	return hex.EncodeToString(nonce)
 }
@@ -26,7 +26,7 @@ func Nonce(size uint) string {
 // NonceByte 生成指定长度的随机字节
 func NonceByte(size uint) []byte {
 	nonce := make([]byte, size)
-	io.ReadFull(rand.Reader, nonce)
+	_, _ = io.ReadFull(rand.Reader, nonce)
 
 	return nonce
 }

@@ -103,8 +103,8 @@ func (c *client) chainCall(ctx context.Context, method string, options ...ChainC
 
 	params := lib.X{}
 
-	for _, fn := range options {
-		fn(params)
+	for _, f := range options {
+		f(params)
 	}
 
 	params["bizid"] = c.config.BizID
@@ -123,8 +123,8 @@ func (c *client) chainCallForBiz(ctx context.Context, method string, options ...
 
 	params := lib.X{}
 
-	for _, fn := range options {
-		fn(params)
+	for _, f := range options {
+		f(params)
 	}
 
 	params["orderId"] = uuid.New().String()
@@ -202,8 +202,8 @@ func NewClient(cfg *Config, options ...Option) Client {
 		config:   cfg,
 		httpCli:  xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(c)
+	for _, f := range options {
+		f(c)
 	}
 	return c
 }

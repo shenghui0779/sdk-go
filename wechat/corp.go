@@ -364,8 +364,8 @@ func NewCorp(corpid, secret string, options ...CorpOption) *Corp {
 		srvCfg:  new(ServerConfig),
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(c)
+	for _, f := range options {
+		f(c)
 	}
 	return c
 }

@@ -143,8 +143,8 @@ func (c *ClientV3) GetJSON(ctx context.Context, path string, query url.Values, o
 
 	header.Set(xhttp.HeaderAccept, "application/json")
 	header.Set(HeaderRequestID, uuid.NewString())
-	for _, fn := range options {
-		fn(header)
+	for _, f := range options {
+		f(header)
 	}
 
 	return c.do(ctx, http.MethodGet, path, query, nil, header)
@@ -157,8 +157,8 @@ func (c *ClientV3) PostJSON(ctx context.Context, path string, params lib.X, opti
 	header.Set(xhttp.HeaderAccept, "application/json")
 	header.Set(HeaderRequestID, uuid.NewString())
 	header.Set(xhttp.HeaderContentType, xhttp.ContentJSON)
-	for _, fn := range options {
-		fn(header)
+	for _, f := range options {
+		f(header)
 	}
 
 	return c.do(ctx, http.MethodPost, path, nil, params, header)
@@ -171,8 +171,8 @@ func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params lib.X, o
 	header.Set(HeaderRequestID, uuid.NewString())
 	header.Set(HeaderEncryptType, "AES")
 	header.Set(xhttp.HeaderContentType, xhttp.ContentText)
-	for _, fn := range options {
-		fn(header)
+	for _, f := range options {
+		f(header)
 	}
 
 	return c.do(ctx, http.MethodPost, path, nil, params, header)
@@ -189,8 +189,8 @@ func (c *ClientV3) Upload(ctx context.Context, path string, form xhttp.UploadFor
 	reqHeader := http.Header{}
 
 	reqHeader.Set(HeaderRequestID, reqID)
-	for _, fn := range options {
-		fn(reqHeader)
+	for _, f := range options {
+		f(reqHeader)
 	}
 
 	authStr, err := c.Authorization(http.MethodPost, path, nil, []byte(form.Field("data")), reqHeader)
@@ -362,8 +362,8 @@ func NewClientV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		aesKey:  aesKey,
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(c)
+	for _, f := range options {
+		f(c)
 	}
 	return c
 }
@@ -376,8 +376,8 @@ func NewSandboxV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		aesKey:  aesKey,
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(c)
+	for _, f := range options {
+		f(c)
 	}
 	return c
 }

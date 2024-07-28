@@ -322,8 +322,8 @@ func NewClient(appid, aesKey string, options ...Option) *Client {
 		gateway: "https://openapi.alipay.com/gateway.do",
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(c)
+	for _, f := range options {
+		f(c)
 	}
 	return c
 }
@@ -336,8 +336,8 @@ func NewSandbox(appid, aesKey string, options ...Option) *Client {
 		gateway: "https://openapi-sandbox.dl.alipaydev.com/gateway.do",
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(c)
+	for _, f := range options {
+		f(c)
 	}
 	return c
 }

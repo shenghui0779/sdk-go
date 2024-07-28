@@ -488,8 +488,8 @@ func NewPayV3(mchid, apikey string, options ...PayV3Option) *PayV3 {
 		apikey:  apikey,
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(pay)
+	for _, f := range options {
+		f(pay)
 	}
 	return pay
 }

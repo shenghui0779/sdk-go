@@ -3,8 +3,9 @@ package wechat
 import (
 	"testing"
 
-	"github.com/shenghui0779/sdk-go/lib/value"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
 func TestXML(t *testing.T) {
@@ -19,7 +20,7 @@ func TestXML(t *testing.T) {
 	x, err := ValueToXML(m)
 	assert.Nil(t, err)
 
-	r, err := XMLToValue([]byte(x))
+	r, err := XMLToValue(x)
 	assert.Nil(t, err)
 	assert.Equal(t, m, r)
 }

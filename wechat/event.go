@@ -21,11 +21,9 @@ func SignWithSHA1(token string, items ...string) string {
 	sort.Strings(items)
 
 	h := sha1.New()
-
 	for _, v := range items {
 		h.Write([]byte(v))
 	}
-
 	return hex.EncodeToString(h.Sum(nil))
 }
 
@@ -73,7 +71,6 @@ func EventDecrypt(receiveID, encodingAESKey, cipherText string) ([]byte, error) 
 	if v := string(plainText[appidOffset:]); v != receiveID {
 		return nil, fmt.Errorf("receive_id mismatch, want: %s, got: %s", receiveID, v)
 	}
-
 	return plainText[20:appidOffset], nil
 }
 

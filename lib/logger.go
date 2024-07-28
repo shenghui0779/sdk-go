@@ -49,7 +49,6 @@ func (l *ReqLog) Do(ctx context.Context, log func(ctx context.Context, data map[
 	if log == nil {
 		return
 	}
-
 	log(ctx, l.data)
 }
 
@@ -86,6 +85,5 @@ func HeaderToHttpOption(h http.Header) []xhttp.Option {
 	for k, vals := range h {
 		options = append(options, xhttp.WithHeader(k, vals...))
 	}
-
 	return options
 }

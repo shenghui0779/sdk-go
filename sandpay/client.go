@@ -135,8 +135,8 @@ func NewClient(mchID string, options ...Option) *Client {
 		mchID:   mchID,
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(c)
+	for _, f := range options {
+		f(c)
 	}
 	return c
 }

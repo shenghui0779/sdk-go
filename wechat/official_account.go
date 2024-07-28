@@ -468,8 +468,8 @@ func NewOfficialAccount(appid, secret string, options ...OAOption) *OfficialAcco
 		srvCfg:  new(ServerConfig),
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(oa)
+	for _, f := range options {
+		f(oa)
 	}
 	return oa
 }

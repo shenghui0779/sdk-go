@@ -22,7 +22,6 @@ type Identity struct {
 func GetIdentityByName(name string) *Identity {
 	h := sha256.New()
 	h.Write([]byte(name))
-
 	return &Identity{
 		Data: base64.StdEncoding.EncodeToString(h.Sum(nil)),
 	}
@@ -34,7 +33,6 @@ type TokenID *big.Int
 // GetTokenID 获取token(如：md5值)对应的tokenID(uint256)
 func GetTokenID(token string) TokenID {
 	v, _ := big.NewInt(0).SetString(token, 16)
-
 	return TokenID(v)
 }
 
@@ -44,6 +42,5 @@ func ParseOutput(data string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return hex.EncodeToString(b), nil
 }

@@ -92,10 +92,8 @@ func NewReqForm(method, productID string, body value.V, options ...HeadOption) *
 		},
 		Body: body,
 	}
-
-	for _, fn := range options {
-		fn(form)
+	for _, f := range options {
+		f(form)
 	}
-
 	return form
 }

@@ -136,7 +136,6 @@ func (c *Client) reqForm(reqID, serviceNO string, bizData value.V) (string, erro
 		if err != nil {
 			return "", err
 		}
-
 		v.Set("bizReqJson", string(bizByte))
 	}
 
@@ -248,8 +247,8 @@ func NewClient(mchNO, desKey string, options ...Option) *Client {
 		desKey:  desKey,
 		httpCli: xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(c)
+	for _, f := range options {
+		f(c)
 	}
 	return c
 }

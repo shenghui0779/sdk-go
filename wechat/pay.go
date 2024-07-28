@@ -341,8 +341,8 @@ func NewPay(mchid, apikey string, options ...PayOption) *Pay {
 		httpCli: xhttp.NewDefaultClient(),
 		tlsCli:  xhttp.NewDefaultClient(),
 	}
-	for _, fn := range options {
-		fn(pay)
+	for _, f := range options {
+		f(pay)
 	}
 	return pay
 }
