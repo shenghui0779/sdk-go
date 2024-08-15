@@ -645,22 +645,15 @@ func (mp *MiniProgram) DecodeEncryptData(sessionKey, iv, encryptData string) ([]
 	if err != nil {
 		return nil, fmt.Errorf("session_key base64.decode error: %w", err)
 	}
-
 	ivBlock, err := base64.StdEncoding.DecodeString(iv)
 	if err != nil {
 		return nil, fmt.Errorf("iv base64.decode error: %w", err)
 	}
-
 	data, err := base64.StdEncoding.DecodeString(encryptData)
 	if err != nil {
 		return nil, fmt.Errorf("encrypt_data base64.decode error: %w", err)
 	}
-
-	ct, err := xcrypto.AESEncryptCBC(keyBlock, ivBlock, data)
-	if err != nil {
-		return nil, err
-	}
-	return ct.Bytes(), nil
+	return xcrypto.AESDecryptCBC(keyBlock, ivBlock, data)
 }
 
 // DecodeEventMsg 解析事件消息，使用：msg_signature、timestamp、nonce、msg_encrypt
