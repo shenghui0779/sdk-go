@@ -11,12 +11,17 @@ import (
 
 // ReqLog 请求日志
 type ReqLog struct {
+	err  error
 	data map[string]string
 }
 
 // Set 设置日志K-V
 func (l *ReqLog) Set(k, v string) {
 	l.data[k] = v
+}
+
+func (l *ReqLog) SetError(err error) {
+	l.err = err
 }
 
 // SetReqHeader 设置请求头
@@ -45,11 +50,11 @@ func (l *ReqLog) SetStatusCode(code int) {
 }
 
 // Do 日志记录
-func (l *ReqLog) Do(ctx context.Context, log func(ctx context.Context, data map[string]string)) {
+func (l *ReqLog) Do(ctx context.Context, log func(ctx context.Context, err error, data map[string]string)) {
 	if log == nil {
 		return
 	}
-	log(ctx, l.data)
+	log(ctx, l.err, l.data)
 }
 
 // NewReqLog 生成请求日志

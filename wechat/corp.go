@@ -12,6 +12,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
@@ -21,13 +22,13 @@ import (
 
 // Corp 企业微信(企业内部开发)
 type Corp struct {
-	host    string
-	corpid  string
-	secret  string
-	srvCfg  *ServerConfig
-	token   atomic.Value
-	httpCli xhttp.Client
-	logger  func(ctx context.Context, data map[string]string)
+	host   string
+	corpid string
+	secret string
+	srvCfg *ServerConfig
+	token  atomic.Value
+	client *resty.Client
+	logger func(ctx context.Context, err error, data map[string]string)
 }
 
 // AppID 返回AppID
@@ -70,13 +71,14 @@ func (c *Corp) do(ctx context.Context, method, path string, query url.Values, pa
 	if params != nil {
 		body, err = json.Marshal(params)
 		if err != nil {
-			log.Set("error", err.Error())
+			log.SetError(err)
 			return nil, err
 		}
 		log.SetReqBody(string(body))
 	}
 
-	resp, err := c.httpCli.Do(ctx, method, reqURL, body, options...)
+	// resp, err := c.httpCli.Do(ctx, method, reqURL, body, options...)
+	resp, err := c.client.R().SetContext(ctx).SetBody(body)
 	if err != nil {
 		log.Set("error", err.Error())
 		return nil, err
