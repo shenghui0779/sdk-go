@@ -15,24 +15,24 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
 	"github.com/shenghui0779/sdk-go/lib/value"
 	"github.com/shenghui0779/sdk-go/lib/xcrypto"
-	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // PayV3 微信支付V3
 type PayV3 struct {
-	host    string
-	mchid   string
-	apikey  string
-	prvSN   string
-	prvKey  *xcrypto.PrivateKey
-	pubKey  atomic.Value // map[string]*xcrypto.PublicKey
-	httpCli xhttp.Client
-	logger  func(ctx context.Context, data map[string]string)
+	host   string
+	mchid  string
+	apikey string
+	prvSN  string
+	prvKey *xcrypto.PrivateKey
+	pubKey atomic.Value // map[string]*xcrypto.PublicKey
+	client *resty.Client
+	logger func(ctx context.Context, err error, data map[string]string)
 }
 
 // MchID 返回mchid
@@ -90,36 +90,31 @@ func (p *PayV3) reloadCerts() error {
 		log.SetError(err)
 		return err
 	}
+	log.Set(lib.HeaderAuthorization, authStr)
 
-	log.Set(xhttp.HeaderAuthorization, authStr)
-
-	resp, err := p.httpCli.Do(ctx, http.MethodGet, reqURL, nil, xhttp.WithHeader(xhttp.HeaderAccept, "application/json"), xhttp.WithHeader(xhttp.HeaderAuthorization, authStr))
+	resp, err := p.client.R().
+		SetContext(ctx).
+		SetHeader(lib.HeaderAccept, lib.ContentJSON).
+		SetHeader(lib.HeaderAuthorization, authStr).
+		Get(reqURL)
 	if err != nil {
 		log.SetError(err)
 		return err
 	}
-	defer resp.Body.Close()
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
 
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.SetError(err)
-		return err
-	}
-	log.SetRespBody(string(b))
-
-	if resp.StatusCode >= 400 {
-		text := string(b)
-		log.Set("error", text)
+	if resp.StatusCode() >= 400 {
+		text := string(resp.Body())
+		log.SetError(errors.New(text))
 		return errors.New(text)
 	}
 
 	keyMap := make(map[string]*xcrypto.PublicKey)
-	headSerial := resp.Header.Get(HeaderPaySerial)
+	headSerial := resp.Header().Get(HeaderPaySerial)
 
-	ret := gjson.GetBytes(b, "data")
+	ret := gjson.GetBytes(resp.Body(), "data")
 	for _, v := range ret.Array() {
 		serialNO := v.Get("serial_no").String()
 		cert := v.Get("encrypt_certificate")
@@ -145,14 +140,14 @@ func (p *PayV3) reloadCerts() error {
 			// 签名验证
 			var builder strings.Builder
 
-			builder.WriteString(resp.Header.Get(HeaderPayTimestamp))
+			builder.WriteString(resp.Header().Get(HeaderPayTimestamp))
 			builder.WriteString("\n")
-			builder.WriteString(resp.Header.Get(HeaderPayNonce))
+			builder.WriteString(resp.Header().Get(HeaderPayNonce))
 			builder.WriteString("\n")
-			builder.Write(b)
+			builder.Write(resp.Body())
 			builder.WriteString("\n")
 
-			if err = key.Verify(crypto.SHA256, []byte(builder.String()), []byte(resp.Header.Get(HeaderPaySignature))); err != nil {
+			if err = key.Verify(crypto.SHA256, []byte(builder.String()), []byte(resp.Header().Get(HeaderPaySignature))); err != nil {
 				log.SetError(err)
 				return err
 			}
@@ -188,39 +183,35 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 		log.SetError(err)
 		return nil, err
 	}
+	log.Set(lib.HeaderAuthorization, authStr)
 
-	log.Set(xhttp.HeaderAuthorization, authStr)
-
-	resp, err := p.httpCli.Do(ctx, method, reqURL, body,
-		xhttp.WithHeader(xhttp.HeaderAccept, "application/json"),
-		xhttp.WithHeader(xhttp.HeaderAuthorization, authStr),
-		xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON),
-	)
+	resp, err := p.client.R().
+		SetContext(ctx).
+		SetHeader(lib.HeaderAccept, lib.ContentJSON).
+		SetHeader(lib.HeaderAuthorization, authStr).
+		SetHeader(lib.HeaderContentType, lib.ContentJSON).
+		SetBody(body).
+		Execute(method, reqURL)
 	if err != nil {
 		log.SetError(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.SetError(err)
-		return nil, err
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode())
 	}
-	log.SetRespBody(string(b))
 
 	// 签名校验
-	if err = p.Verify(ctx, resp.Header, b); err != nil {
+	if err = p.Verify(ctx, resp.Header(), resp.Body()); err != nil {
 		log.SetError(err)
 		return nil, err
 	}
 
 	ret := &APIResult{
-		Code: resp.StatusCode,
-		Body: gjson.ParseBytes(b),
+		Code: resp.StatusCode(),
+		Body: gjson.ParseBytes(resp.Body()),
 	}
 	return ret, nil
 }
@@ -251,46 +242,83 @@ func (p *PayV3) PostJSON(ctx context.Context, path string, params lib.X) (*APIRe
 }
 
 // Upload 上传资源
-func (p *PayV3) Upload(ctx context.Context, path string, form xhttp.UploadForm) (*APIResult, error) {
-	reqURL := p.url(path, nil)
+func (p *PayV3) Upload(ctx context.Context, reqPath, fieldName, filePath, metaData string) (*APIResult, error) {
+	reqURL := p.url(reqPath, nil)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, p.logger)
 
-	authStr, err := p.Authorization(http.MethodPost, path, nil, form.Field("meta"))
+	authStr, err := p.Authorization(http.MethodPost, reqPath, nil, metaData)
 	if err != nil {
 		log.SetError(err)
 		return nil, err
 	}
+	log.Set(lib.HeaderAuthorization, authStr)
 
-	log.Set(xhttp.HeaderAuthorization, authStr)
-
-	resp, err := p.httpCli.Upload(ctx, reqURL, form, xhttp.WithHeader(xhttp.HeaderAuthorization, authStr))
+	resp, err := p.client.R().
+		SetContext(ctx).
+		SetHeader(lib.HeaderAuthorization, authStr).
+		SetFile(fieldName, filePath).
+		SetMultipartField("meta", "", lib.ContentJSON, strings.NewReader(metaData)).
+		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.SetError(err)
-		return nil, err
-	}
-	log.SetRespBody(string(b))
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
 
 	// 签名校验
-	if err = p.Verify(ctx, resp.Header, b); err != nil {
+	if err = p.Verify(ctx, resp.Header(), resp.Body()); err != nil {
 		log.SetError(err)
 		return nil, err
 	}
 
 	ret := &APIResult{
-		Code: resp.StatusCode,
-		Body: gjson.ParseBytes(b),
+		Code: resp.StatusCode(),
+		Body: gjson.ParseBytes(resp.Body()),
+	}
+	return ret, nil
+}
+
+// UploadWithReader 上传资源
+func (p *PayV3) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, metaData string) (*APIResult, error) {
+	reqURL := p.url(reqPath, nil)
+
+	log := lib.NewReqLog(http.MethodPost, reqURL)
+	defer log.Do(ctx, p.logger)
+
+	authStr, err := p.Authorization(http.MethodPost, reqPath, nil, metaData)
+	if err != nil {
+		log.SetError(err)
+		return nil, err
+	}
+	log.Set(lib.HeaderAuthorization, authStr)
+
+	resp, err := p.client.R().
+		SetContext(ctx).
+		SetHeader(lib.HeaderAuthorization, authStr).
+		SetMultipartField(fieldName, fileName, "", reader).
+		SetMultipartField("meta", "", lib.ContentJSON, strings.NewReader(metaData)).
+		Post(reqURL)
+	if err != nil {
+		log.SetError(err)
+		return nil, err
+	}
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+
+	// 签名校验
+	if err = p.Verify(ctx, resp.Header(), resp.Body()); err != nil {
+		log.SetError(err)
+		return nil, err
+	}
+
+	ret := &APIResult{
+		Code: resp.StatusCode(),
+		Body: gjson.ParseBytes(resp.Body()),
 	}
 	return ret, nil
 }
@@ -306,21 +334,21 @@ func (p *PayV3) Download(ctx context.Context, downloadURL string, w io.Writer) e
 		log.SetError(err)
 		return err
 	}
+	log.Set(lib.HeaderAuthorization, authStr)
 
-	log.Set(xhttp.HeaderAuthorization, authStr)
-
-	resp, err := p.httpCli.Do(ctx, http.MethodGet, downloadURL, nil, xhttp.WithHeader(xhttp.HeaderAuthorization, authStr))
+	resp, err := p.client.R().
+		SetContext(ctx).
+		SetHeader(lib.HeaderAuthorization, authStr).
+		SetDoNotParseResponse(true).
+		Get(downloadURL)
 	if err != nil {
 		log.SetError(err)
 		return err
 	}
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
 
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	_, err = io.Copy(w, resp.Body)
+	_, err = io.Copy(w, resp.RawResponse.Body)
 	return err
 }
 
@@ -458,10 +486,10 @@ func (p *PayV3) JSAPI(appid, prepayID string) (value.V, error) {
 // PayV3Option 微信支付(v3)设置项
 type PayV3Option func(p *PayV3)
 
-// WithPayV3HttpCli 设置支付(v3)请求的 HTTP Client
-func WithPayV3HttpCli(c *http.Client) PayV3Option {
+// WithPayV3Client 设置支付(v3)请求的 HTTP Client
+func WithPayV3Client(cli *http.Client) PayV3Option {
 	return func(p *PayV3) {
-		p.httpCli = xhttp.NewHTTPClient(c)
+		p.client = resty.NewWithClient(cli)
 	}
 }
 
@@ -474,7 +502,7 @@ func WithPayV3PrivateKey(serialNO string, key *xcrypto.PrivateKey) PayV3Option {
 }
 
 // WithPayV3Logger 设置支付(v3)日志记录
-func WithPayV3Logger(fn func(ctx context.Context, data map[string]string)) PayV3Option {
+func WithPayV3Logger(fn func(ctx context.Context, err error, data map[string]string)) PayV3Option {
 	return func(p *PayV3) {
 		p.logger = fn
 	}
@@ -483,10 +511,10 @@ func WithPayV3Logger(fn func(ctx context.Context, data map[string]string)) PayV3
 // NewPayV3 生成一个微信支付(v3)实例
 func NewPayV3(mchid, apikey string, options ...PayV3Option) *PayV3 {
 	pay := &PayV3{
-		host:    "https://api.mch.weixin.qq.com",
-		mchid:   mchid,
-		apikey:  apikey,
-		httpCli: xhttp.NewDefaultClient(),
+		host:   "https://api.mch.weixin.qq.com",
+		mchid:  mchid,
+		apikey: apikey,
+		client: lib.NewClient(),
 	}
 	for _, f := range options {
 		f(pay)

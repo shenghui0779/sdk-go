@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -52,10 +53,8 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 
 	resp, err := c.client.R().
 		SetContext(ctx).
-		SetHeaders(map[string]string{
-			lib.HeaderAccept:      lib.ContentJSON,
-			lib.HeaderContentType: lib.ContentForm,
-		}).
+		SetHeader(lib.HeaderAccept, lib.ContentJSON).
+		SetHeader(lib.HeaderContentType, lib.ContentForm).
 		SetBody(body).
 		Post(reqURL)
 	if err != nil {
@@ -68,6 +67,7 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 	if !resp.IsSuccess() {
 		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
+
 	// 签名校验
 	ret, err := c.verifyResp(action.RespKey(), resp.Body())
 	if err != nil {
@@ -95,7 +95,7 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 }
 
 // Upload 文件上传，参考：https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload
-func (c *Client) Upload(ctx context.Context, method string, fileField *resty.MultipartField, formData map[string]string, options ...ActionOption) (gjson.Result, error) {
+func (c *Client) Upload(ctx context.Context, method string, fieldName, filePath string, formData map[string]string, options ...ActionOption) (gjson.Result, error) {
 	log := lib.NewReqLog(http.MethodPost, c.gateway)
 	defer log.Do(ctx, c.logger)
 
@@ -111,7 +111,7 @@ func (c *Client) Upload(ctx context.Context, method string, fileField *resty.Mul
 	resp, err := c.client.R().
 		SetContext(ctx).
 		SetHeader(lib.HeaderAccept, lib.ContentJSON).
-		SetMultipartFields(fileField).
+		SetFile(fieldName, filePath).
 		SetMultipartFormData(formData).
 		Post(c.gateway + "?" + query)
 	if err != nil {
@@ -124,6 +124,64 @@ func (c *Client) Upload(ctx context.Context, method string, fileField *resty.Mul
 	if !resp.IsSuccess() {
 		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
+
+	// 签名校验
+	ret, err := c.verifyResp(action.RespKey(), resp.Body())
+	if err != nil {
+		log.SetError(err)
+		return lib.Fail(err)
+	}
+
+	// JSON串，无需解密
+	if strings.HasPrefix(ret.String(), "{") {
+		if code := ret.Get("code").String(); code != CodeOK {
+			return lib.Fail(fmt.Errorf("%s | %s (sub_code = %s, sub_msg = %s)", code, ret.Get("msg").String(), ret.Get("sub_code").String(), ret.Get("sub_msg").String()))
+		}
+		return ret, nil
+	}
+
+	// 非JSON串，需解密
+	data, err := c.Decrypt(ret.String())
+	if err != nil {
+		log.SetError(err)
+		return lib.Fail(err)
+	}
+	log.Set("decrypt", string(data))
+
+	return gjson.ParseBytes(data), nil
+}
+
+// UploadWithReader 文件上传，参考：https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload
+func (c *Client) UploadWithReader(ctx context.Context, method string, fieldName, fileName string, reader io.Reader, formData map[string]string, options ...ActionOption) (gjson.Result, error) {
+	log := lib.NewReqLog(http.MethodPost, c.gateway)
+	defer log.Do(ctx, c.logger)
+
+	action := NewAction(method, options...)
+
+	query, err := action.Encode(c)
+	if err != nil {
+		log.SetError(err)
+		return lib.Fail(err)
+	}
+	log.Set("query", query)
+
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetHeader(lib.HeaderAccept, lib.ContentJSON).
+		SetMultipartField(fieldName, fileName, "", reader).
+		SetMultipartFormData(formData).
+		Post(c.gateway + "?" + query)
+	if err != nil {
+		log.SetError(err)
+		return lib.Fail(err)
+	}
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+	}
+
 	// 签名校验
 	ret, err := c.verifyResp(action.RespKey(), resp.Body())
 	if err != nil {
@@ -272,8 +330,8 @@ func (c *Client) VerifyNotify(form url.Values) (value.V, error) {
 // Option 自定义设置项
 type Option func(c *Client)
 
-// WithHttpCli 设置自定义 HTTP Client
-func WithHttpCli(cli *http.Client) Option {
+// WithHttpClient 设置自定义 HTTP Client
+func WithHttpClient(cli *http.Client) Option {
 	return func(c *Client) {
 		c.client = resty.NewWithClient(cli)
 	}

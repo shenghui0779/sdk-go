@@ -5,28 +5,28 @@ import (
 	"crypto/tls"
 	"encoding/base64"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/go-resty/resty/v2"
+
 	"github.com/shenghui0779/sdk-go/lib"
 	"github.com/shenghui0779/sdk-go/lib/value"
 	"github.com/shenghui0779/sdk-go/lib/xcrypto"
 	"github.com/shenghui0779/sdk-go/lib/xhash"
-	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // Pay 微信支付
 type Pay struct {
-	host    string
-	mchid   string
-	apikey  string
-	httpCli xhttp.Client
-	tlsCli  xhttp.Client
-	logger  func(ctx context.Context, data map[string]string)
+	host      string
+	mchid     string
+	apikey    string
+	client    *resty.Client
+	clientTls *resty.Client
+	logger    func(ctx context.Context, err error, data map[string]string)
 }
 
 // MchID 返回mchid
@@ -68,32 +68,26 @@ func (p *Pay) do(ctx context.Context, path string, params value.V) ([]byte, erro
 		log.SetError(err)
 		return nil, err
 	}
-	log.SetReqBody(string(body))
+	log.SetReqBody(body)
 
-	resp, err := p.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body))
+	resp, err := p.client.R().
+		SetContext(ctx).
+		SetBody(body).
+		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode)
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode())
 	}
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.SetError(err)
-		return nil, err
-	}
-	log.SetRespBody(string(b))
-	return b, nil
+	return resp.Body(), nil
 }
 
-func (p *Pay) doTLS(ctx context.Context, path string, params value.V) ([]byte, error) {
+func (p *Pay) doTls(ctx context.Context, path string, params value.V) ([]byte, error) {
 	reqURL := p.url(path, nil)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
@@ -106,29 +100,23 @@ func (p *Pay) doTLS(ctx context.Context, path string, params value.V) ([]byte, e
 		log.SetError(err)
 		return nil, err
 	}
-	log.SetReqBody(string(body))
+	log.SetReqBody(body)
 
-	resp, err := p.tlsCli.Do(ctx, http.MethodPost, reqURL, []byte(body))
+	resp, err := p.clientTls.R().
+		SetContext(ctx).
+		SetBody(body).
+		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode)
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode())
 	}
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.SetError(err)
-		return nil, err
-	}
-	log.SetRespBody(string(b))
-	return b, nil
+	return resp.Body(), nil
 }
 
 // PostXML POST请求XML数据 (无证书请求)
@@ -153,7 +141,7 @@ func (p *Pay) PostXML(ctx context.Context, path string, params value.V) (value.V
 
 // PostTLSXML POST请求XML数据 (带证书请求)
 func (p *Pay) PostTLSXML(ctx context.Context, path string, params value.V) (value.V, error) {
-	b, err := p.doTLS(ctx, path, params)
+	b, err := p.doTls(ctx, path, params)
 	if err != nil {
 		return nil, err
 	}
@@ -190,8 +178,8 @@ func (p *Pay) PostBuffer(ctx context.Context, path string, params value.V) ([]by
 }
 
 // PostBuffer POST请求获取buffer (带证书请求，如：下载资金账单)
-func (p *Pay) PostTLSBuffer(ctx context.Context, path string, params value.V) ([]byte, error) {
-	b, err := p.doTLS(ctx, path, params)
+func (p *Pay) PostTlsBuffer(ctx context.Context, path string, params value.V) ([]byte, error) {
+	b, err := p.doTls(ctx, path, params)
 	if err != nil {
 		return nil, err
 	}
@@ -305,28 +293,28 @@ func (p *Pay) MinipRedpackJSAPI(appid, pkg string) value.V {
 type PayOption func(p *Pay)
 
 // WithPayTLSCert 设置支付TLS证书
-func WithPayTLSCert(cert tls.Certificate) PayOption {
+func WithPayCert(cert tls.Certificate) PayOption {
 	return func(p *Pay) {
-		p.tlsCli = xhttp.NewDefaultClient(cert)
+		p.clientTls.SetCertificates(cert)
 	}
 }
 
-// WithPayHttpCli 设置支付无证书 HTTP Client
-func WithPayHttpCli(c *http.Client) PayOption {
+// WithPayClient 设置支付无证书 HTTP Client
+func WithPayClient(cli *http.Client) PayOption {
 	return func(p *Pay) {
-		p.httpCli = xhttp.NewHTTPClient(c)
+		p.client = resty.NewWithClient(cli)
 	}
 }
 
-// WithPayTLSCli 设置支付带证书 HTTP Client
-func WithPayTLSCli(c *http.Client) PayOption {
+// WithPayTlsClient 设置支付带证书 HTTP Client
+func WithPayTlsClient(cli *http.Client) PayOption {
 	return func(p *Pay) {
-		p.tlsCli = xhttp.NewHTTPClient(c)
+		p.clientTls = resty.NewWithClient(cli)
 	}
 }
 
 // WithPayLogger 设置支付日志记录
-func WithPayLogger(fn func(ctx context.Context, data map[string]string)) PayOption {
+func WithPayLogger(fn func(ctx context.Context, err error, data map[string]string)) PayOption {
 	return func(p *Pay) {
 		p.logger = fn
 	}
@@ -335,11 +323,11 @@ func WithPayLogger(fn func(ctx context.Context, data map[string]string)) PayOpti
 // NewPay 生成一个微信支付实例
 func NewPay(mchid, apikey string, options ...PayOption) *Pay {
 	pay := &Pay{
-		host:    "https://api.mch.weixin.qq.com",
-		mchid:   mchid,
-		apikey:  apikey,
-		httpCli: xhttp.NewDefaultClient(),
-		tlsCli:  xhttp.NewDefaultClient(),
+		host:      "https://api.mch.weixin.qq.com",
+		mchid:     mchid,
+		apikey:    apikey,
+		client:    lib.NewClient(),
+		clientTls: lib.NewClient(),
 	}
 	for _, f := range options {
 		f(pay)

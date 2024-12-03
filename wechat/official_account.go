@@ -12,11 +12,11 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
 	"github.com/shenghui0779/sdk-go/lib/value"
-	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // ServerConfig 服务器配置
@@ -27,13 +27,13 @@ type ServerConfig struct {
 
 // OfficialAccount 微信公众号
 type OfficialAccount struct {
-	host    string
-	appid   string
-	secret  string
-	srvCfg  *ServerConfig
-	token   atomic.Value
-	httpCli xhttp.Client
-	logger  func(ctx context.Context, data map[string]string)
+	host   string
+	appid  string
+	secret string
+	srvCfg *ServerConfig
+	token  atomic.Value
+	client *resty.Client
+	logger func(ctx context.Context, err error, data map[string]string)
 }
 
 // AppID returns appid
@@ -63,7 +63,7 @@ func (oa *OfficialAccount) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (oa *OfficialAccount) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...xhttp.Option) ([]byte, error) {
+func (oa *OfficialAccount) do(ctx context.Context, method, path string, header http.Header, query url.Values, params lib.X) ([]byte, error) {
 	reqURL := oa.url(path, query)
 
 	log := lib.NewReqLog(method, reqURL)
@@ -83,28 +83,22 @@ func (oa *OfficialAccount) do(ctx context.Context, method, path string, query ur
 		log.SetReqBody(string(body))
 	}
 
-	resp, err := oa.httpCli.Do(ctx, method, reqURL, body, options...)
+	resp, err := oa.client.R().
+		SetContext(ctx).
+		SetHeaderMultiValues(header).
+		SetBody(body).
+		Execute(method, reqURL)
 	if err != nil {
 		log.SetError(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode)
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode())
 	}
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.SetError(err)
-		return nil, err
-	}
-	log.SetRespBody(string(b))
-
-	return b, nil
+	return resp.Body(), nil
 }
 
 // OAuth2URL 生成网页授权URL
@@ -144,7 +138,7 @@ func (oa *OfficialAccount) Code2OAuthToken(ctx context.Context, code string) (gj
 	query.Set("code", code)
 	query.Set("grant_type", "authorization_code")
 
-	b, err := oa.do(ctx, http.MethodGet, "/sns/oauth2/access_token", query, nil)
+	b, err := oa.do(ctx, http.MethodGet, "/sns/oauth2/access_token", nil, query, nil)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -164,7 +158,7 @@ func (oa *OfficialAccount) RefreshOAuthToken(ctx context.Context, refreshToken s
 	query.Set("grant_type", "refresh_token")
 	query.Set("refresh_token", refreshToken)
 
-	b, err := oa.do(ctx, http.MethodGet, "/sns/oauth2/refresh_token", query, nil)
+	b, err := oa.do(ctx, http.MethodGet, "/sns/oauth2/refresh_token", nil, query, nil)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -184,7 +178,7 @@ func (oa *OfficialAccount) AccessToken(ctx context.Context) (gjson.Result, error
 	query.Set("secret", oa.secret)
 	query.Set("grant_type", "client_credential")
 
-	b, err := oa.do(ctx, http.MethodGet, "/cgi-bin/token", query, nil)
+	b, err := oa.do(ctx, http.MethodGet, "/cgi-bin/token", nil, query, nil)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -207,7 +201,10 @@ func (oa *OfficialAccount) StableAccessToken(ctx context.Context, forceRefresh b
 		"force_refresh": forceRefresh,
 	}
 
-	b, err := oa.do(ctx, http.MethodPost, "/cgi-bin/stable_token", nil, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	header := http.Header{}
+	header.Set(lib.HeaderContentType, lib.ContentJSON)
+
+	b, err := oa.do(ctx, http.MethodPost, "/cgi-bin/stable_token", header, nil, params)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -286,7 +283,7 @@ func (oa *OfficialAccount) GetJSON(ctx context.Context, path string, query url.V
 	}
 	query.Set(AccessToken, token)
 
-	b, err := oa.do(ctx, http.MethodGet, path, query, nil)
+	b, err := oa.do(ctx, http.MethodGet, path, nil, query, nil)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -307,7 +304,10 @@ func (oa *OfficialAccount) PostJSON(ctx context.Context, path string, params lib
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
-	b, err := oa.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	header := http.Header{}
+	header.Set(lib.HeaderContentType, lib.ContentJSON)
+
+	b, err := oa.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -330,7 +330,7 @@ func (oa *OfficialAccount) GetBuffer(ctx context.Context, path string, query url
 	}
 	query.Set(AccessToken, token)
 
-	b, err := oa.do(ctx, http.MethodGet, path, query, nil)
+	b, err := oa.do(ctx, http.MethodGet, path, nil, query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -351,7 +351,10 @@ func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params l
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
-	b, err := oa.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	header := http.Header{}
+	header.Set(lib.HeaderContentType, lib.ContentJSON)
+
+	b, err := oa.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
 		return nil, err
 	}
@@ -364,7 +367,7 @@ func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params l
 }
 
 // Upload 上传媒体资源
-func (oa *OfficialAccount) Upload(ctx context.Context, path string, form xhttp.UploadForm) (gjson.Result, error) {
+func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, filePath string) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -372,33 +375,63 @@ func (oa *OfficialAccount) Upload(ctx context.Context, path string, form xhttp.U
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
-	reqURL := oa.url(path, query)
+	reqURL := oa.url(reqPath, query)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, oa.logger)
 
-	resp, err := oa.httpCli.Upload(ctx, reqURL, form)
+	resp, err := oa.client.R().
+		SetContext(ctx).
+		SetFile(fieldName, filePath).
+		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
 		return lib.Fail(err)
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode))
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
-	b, err := io.ReadAll(resp.Body)
+	ret := gjson.ParseBytes(resp.Body())
+	if code := ret.Get("errcode").Int(); code != 0 {
+		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+	}
+	return ret, nil
+}
+
+// UploadWithReader 上传媒体资源
+func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader) (gjson.Result, error) {
+	token, err := oa.getToken()
+	if err != nil {
+		return lib.Fail(err)
+	}
+	query := url.Values{}
+	query.Set(AccessToken, token)
+
+	reqURL := oa.url(reqPath, query)
+
+	log := lib.NewReqLog(http.MethodPost, reqURL)
+	defer log.Do(ctx, oa.logger)
+
+	resp, err := oa.client.R().
+		SetContext(ctx).
+		SetMultipartField(fieldName, fileName, "", reader).
+		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
 		return lib.Fail(err)
 	}
-	log.SetRespBody(string(b))
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+	}
 
-	ret := gjson.ParseBytes(b)
+	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
@@ -445,15 +478,15 @@ func WithOASrvCfg(token, aeskey string) OAOption {
 	}
 }
 
-// WithOAHttpCli 设置公众号请求的 HTTP Client
-func WithOAHttpCli(c *http.Client) OAOption {
+// WithOAClient 设置公众号请求的 HTTP Client
+func WithOAClient(cli *http.Client) OAOption {
 	return func(oa *OfficialAccount) {
-		oa.httpCli = xhttp.NewHTTPClient(c)
+		oa.client = resty.NewWithClient(cli)
 	}
 }
 
 // WithOALogger 设置公众号日志记录
-func WithOALogger(fn func(ctx context.Context, data map[string]string)) OAOption {
+func WithOALogger(fn func(ctx context.Context, err error, data map[string]string)) OAOption {
 	return func(oa *OfficialAccount) {
 		oa.logger = fn
 	}
@@ -462,11 +495,11 @@ func WithOALogger(fn func(ctx context.Context, data map[string]string)) OAOption
 // NewOfficialAccount 生成一个公众号实例
 func NewOfficialAccount(appid, secret string, options ...OAOption) *OfficialAccount {
 	oa := &OfficialAccount{
-		host:    "https://api.weixin.qq.com",
-		appid:   appid,
-		secret:  secret,
-		srvCfg:  new(ServerConfig),
-		httpCli: xhttp.NewDefaultClient(),
+		host:   "https://api.weixin.qq.com",
+		appid:  appid,
+		secret: secret,
+		srvCfg: new(ServerConfig),
+		client: lib.NewClient(),
 	}
 	for _, f := range options {
 		f(oa)

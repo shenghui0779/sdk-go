@@ -20,7 +20,7 @@ func TestXML(t *testing.T) {
 	x, err := ValueToXML(m)
 	assert.Nil(t, err)
 
-	r, err := XMLToValue(x)
+	r, err := XMLToValue([]byte(x))
 	assert.Nil(t, err)
 	assert.Equal(t, m, r)
 }

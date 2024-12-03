@@ -10,20 +10,20 @@ import (
 )
 
 // ValueToXML value to xml
-func ValueToXML(vals value.V) ([]byte, error) {
+func ValueToXML(vals value.V) (string, error) {
 	var builder strings.Builder
 
 	builder.WriteString("<xml>")
 	for k, v := range vals {
 		builder.WriteString("<" + k + ">")
 		if err := xml.EscapeText(&builder, []byte(v)); err != nil {
-			return nil, err
+			return "", err
 		}
 		builder.WriteString("</" + k + ">")
 	}
 	builder.WriteString("</xml>")
 
-	return []byte(builder.String()), nil
+	return builder.String(), nil
 }
 
 // XMLToValue xml to value

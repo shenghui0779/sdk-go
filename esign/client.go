@@ -213,8 +213,8 @@ func (c *Client) Verify(header http.Header, body []byte) error {
 // Option 自定义设置项
 type Option func(c *Client)
 
-// WithHttpCli 设置自定义 HTTP Client
-func WithHttpCli(cli *http.Client) Option {
+// WithHttpClient 设置自定义 HTTP Client
+func WithHttpClient(cli *http.Client) Option {
 	return func(c *Client) {
 		c.client = resty.NewWithClient(cli)
 	}

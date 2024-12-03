@@ -16,12 +16,12 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
 	"github.com/shenghui0779/sdk-go/lib/value"
 	"github.com/shenghui0779/sdk-go/lib/xcrypto"
-	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // SafeMode 安全鉴权模式配置
@@ -35,14 +35,14 @@ type SafeMode struct {
 
 // MiniProgram 小程序
 type MiniProgram struct {
-	host    string
-	appid   string
-	secret  string
-	srvCfg  *ServerConfig
-	sfMode  *SafeMode
-	token   atomic.Value
-	httpCli xhttp.Client
-	logger  func(ctx context.Context, data map[string]string)
+	host   string
+	appid  string
+	secret string
+	srvCfg *ServerConfig
+	sfMode *SafeMode
+	token  atomic.Value
+	client *resty.Client
+	logger func(ctx context.Context, err error, data map[string]string)
 }
 
 // AppID 返回appid
@@ -71,7 +71,7 @@ func (mp *MiniProgram) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...xhttp.Option) ([]byte, error) {
+func (mp *MiniProgram) do(ctx context.Context, method, path string, header http.Header, query url.Values, params lib.X) ([]byte, error) {
 	reqURL := mp.url(path, query)
 
 	log := lib.NewReqLog(method, reqURL)
@@ -91,28 +91,22 @@ func (mp *MiniProgram) do(ctx context.Context, method, path string, query url.Va
 		log.SetReqBody(string(body))
 	}
 
-	resp, err := mp.httpCli.Do(ctx, method, reqURL, body, options...)
+	resp, err := mp.client.R().
+		SetContext(ctx).
+		SetHeaderMultiValues(header).
+		SetBody(body).
+		Execute(method, reqURL)
 	if err != nil {
 		log.SetError(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode)
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode())
 	}
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.SetError(err)
-		return nil, err
-	}
-	log.SetRespBody(string(b))
-
-	return b, nil
+	return resp.Body(), nil
 }
 
 func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query url.Values, params lib.X) ([]byte, error) {
@@ -145,50 +139,41 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 	}
 
 	reqHeader := http.Header{}
-
-	reqHeader.Set(xhttp.HeaderContentType, xhttp.ContentJSON)
+	reqHeader.Set(lib.HeaderContentType, lib.ContentJSON)
 	reqHeader.Set(HeaderMPAppID, mp.appid)
 	reqHeader.Set(HeaderMPTimestamp, strconv.FormatInt(now, 10))
 	reqHeader.Set(HeaderMPSignature, sign)
-
 	log.SetReqHeader(reqHeader)
 
-	resp, err := mp.httpCli.Do(ctx, method, reqURL, body, lib.HeaderToHttpOption(reqHeader)...)
+	resp, err := mp.client.R().
+		SetContext(ctx).
+		SetHeaderMultiValues(reqHeader).
+		SetBody(body).
+		Execute(method, reqURL)
 	if err != nil {
 		log.SetError(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode)
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode())
 	}
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.SetError(err)
-		return nil, err
-	}
-	log.SetRespBody(string(b))
 
 	// 验签
-	if err = mp.verify(path, resp.Header, b); err != nil {
+	if err = mp.verify(path, resp.Header(), resp.Body()); err != nil {
 		log.SetError(err)
 		return nil, err
 	}
 
 	// 解密
-	data, err := mp.decrypt(path, resp.Header, b)
+	data, err := mp.decrypt(path, resp.Header(), resp.Body())
 	if err != nil {
 		log.SetError(err)
 		return nil, err
 	}
-
 	log.Set("origin_response_body", string(data))
-
 	return data, nil
 }
 
@@ -342,7 +327,7 @@ func (mp *MiniProgram) Code2Session(ctx context.Context, code string) (gjson.Res
 	query.Set("js_code", code)
 	query.Set("grant_type", "authorization_code")
 
-	b, err := mp.do(ctx, http.MethodGet, "/sns/jscode2session", query, nil)
+	b, err := mp.do(ctx, http.MethodGet, "/sns/jscode2session", nil, query, nil)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -362,7 +347,7 @@ func (mp *MiniProgram) AccessToken(ctx context.Context) (gjson.Result, error) {
 	query.Set("secret", mp.secret)
 	query.Set("grant_type", "client_credential")
 
-	b, err := mp.do(ctx, http.MethodGet, "/cgi-bin/token", query, nil)
+	b, err := mp.do(ctx, http.MethodGet, "/cgi-bin/token", nil, query, nil)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -385,7 +370,10 @@ func (mp *MiniProgram) StableAccessToken(ctx context.Context, forceRefresh bool)
 		"force_refresh": forceRefresh,
 	}
 
-	b, err := mp.do(ctx, http.MethodPost, "/cgi-bin/stable_token", nil, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	header := http.Header{}
+	header.Set(lib.HeaderContentType, lib.ContentJSON)
+
+	b, err := mp.do(ctx, http.MethodPost, "/cgi-bin/stable_token", header, nil, params)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -464,7 +452,7 @@ func (mp *MiniProgram) GetJSON(ctx context.Context, path string, query url.Value
 	}
 	query.Set(AccessToken, token)
 
-	b, err := mp.do(ctx, http.MethodGet, path, query, nil)
+	b, err := mp.do(ctx, http.MethodGet, path, nil, query, nil)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -487,7 +475,7 @@ func (mp *MiniProgram) GetBuffer(ctx context.Context, path string, query url.Val
 	}
 	query.Set(AccessToken, token)
 
-	b, err := mp.do(ctx, http.MethodGet, path, query, nil)
+	b, err := mp.do(ctx, http.MethodGet, path, nil, query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -508,7 +496,10 @@ func (mp *MiniProgram) PostJSON(ctx context.Context, path string, params lib.X) 
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
-	b, err := mp.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	header := http.Header{}
+	header.Set(lib.HeaderContentType, lib.ContentJSON)
+
+	b, err := mp.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -529,7 +520,10 @@ func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params lib.X
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
-	b, err := mp.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	header := http.Header{}
+	header.Set(lib.HeaderContentType, lib.ContentJSON)
+
+	b, err := mp.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
 		return nil, err
 	}
@@ -588,7 +582,7 @@ func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params l
 }
 
 // Upload 上传媒体资源
-func (mp *MiniProgram) Upload(ctx context.Context, path string, form xhttp.UploadForm) (gjson.Result, error) {
+func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath string) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -596,33 +590,63 @@ func (mp *MiniProgram) Upload(ctx context.Context, path string, form xhttp.Uploa
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
-	reqURL := mp.url(path, query)
+	reqURL := mp.url(reqPath, query)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, mp.logger)
 
-	resp, err := mp.httpCli.Upload(ctx, reqURL, form)
+	resp, err := mp.client.R().
+		SetContext(ctx).
+		SetFile(fieldName, filePath).
+		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
 		return lib.Fail(err)
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode))
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
-	b, err := io.ReadAll(resp.Body)
+	ret := gjson.ParseBytes(resp.Body())
+	if code := ret.Get("errcode").Int(); code != 0 {
+		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+	}
+	return ret, nil
+}
+
+// UploadWithReader 上传媒体资源
+func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader) (gjson.Result, error) {
+	token, err := mp.getToken()
+	if err != nil {
+		return lib.Fail(err)
+	}
+	query := url.Values{}
+	query.Set(AccessToken, token)
+
+	reqURL := mp.url(reqPath, query)
+
+	log := lib.NewReqLog(http.MethodPost, reqURL)
+	defer log.Do(ctx, mp.logger)
+
+	resp, err := mp.client.R().
+		SetContext(ctx).
+		SetMultipartField(fieldName, fileName, "", reader).
+		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
 		return lib.Fail(err)
 	}
-	log.SetRespBody(string(b))
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+	}
 
-	ret := gjson.ParseBytes(b)
+	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
@@ -687,15 +711,15 @@ func WithMPSrvCfg(token, aeskey string) MPOption {
 	}
 }
 
-// WithMPHttpCli 设置小程序请求的 HTTP Client
-func WithMPHttpCli(c *http.Client) MPOption {
+// WithMPClient 设置小程序请求的 HTTP Client
+func WithMPClient(cli *http.Client) MPOption {
 	return func(mp *MiniProgram) {
-		mp.httpCli = xhttp.NewHTTPClient(c)
+		mp.client = resty.NewWithClient(cli)
 	}
 }
 
 // WithMPLogger 设置小程序日志记录
-func WithMPLogger(fn func(ctx context.Context, data map[string]string)) MPOption {
+func WithMPLogger(fn func(ctx context.Context, err error, data map[string]string)) MPOption {
 	return func(mp *MiniProgram) {
 		mp.logger = fn
 	}
@@ -727,11 +751,11 @@ func WithMPPublicKey(serialNO string, key *xcrypto.PublicKey) MPOption {
 // NewMiniProgram 生成一个小程序实例
 func NewMiniProgram(appid, secret string, options ...MPOption) *MiniProgram {
 	mp := &MiniProgram{
-		host:    "https://api.weixin.qq.com",
-		appid:   appid,
-		secret:  secret,
-		srvCfg:  new(ServerConfig),
-		httpCli: xhttp.NewDefaultClient(),
+		host:   "https://api.weixin.qq.com",
+		appid:  appid,
+		secret: secret,
+		srvCfg: new(ServerConfig),
+		client: lib.NewClient(),
 	}
 	for _, f := range options {
 		f(mp)

@@ -17,7 +17,6 @@ import (
 
 	"github.com/shenghui0779/sdk-go/lib"
 	"github.com/shenghui0779/sdk-go/lib/value"
-	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // Corp 企业微信(企业内部开发)
@@ -92,7 +91,6 @@ func (c *Corp) do(ctx context.Context, method, path string, header http.Header, 
 	if !resp.IsSuccess() {
 		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode())
 	}
-
 	return resp.Body(), nil
 }
 
@@ -259,7 +257,7 @@ func (c *Corp) PostBuffer(ctx context.Context, path string, params lib.X) ([]byt
 }
 
 // Upload 上传媒体资源
-func (c *Corp) Upload(ctx context.Context, path string, fileField *resty.MultipartField, formData map[string]string) (gjson.Result, error) {
+func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -267,33 +265,63 @@ func (c *Corp) Upload(ctx context.Context, path string, fileField *resty.Multipa
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
-	reqURL := c.url(path, query)
+	reqURL := c.url(reqPath, query)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
 
-	resp, err := c.httpCli.Upload(ctx, reqURL, form)
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetFile(fieldName, filePath).
+		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
 		return lib.Fail(err)
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode))
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
-	b, err := io.ReadAll(resp.Body)
+	ret := gjson.ParseBytes(resp.Body())
+	if code := ret.Get("errcode").Int(); code != 0 {
+		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+	}
+	return ret, nil
+}
+
+// UploadWithReader 上传媒体资源
+func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader) (gjson.Result, error) {
+	token, err := c.getToken()
+	if err != nil {
+		return lib.Fail(err)
+	}
+	query := url.Values{}
+	query.Set(AccessToken, token)
+
+	reqURL := c.url(reqPath, query)
+
+	log := lib.NewReqLog(http.MethodPost, reqURL)
+	defer log.Do(ctx, c.logger)
+
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetMultipartField(fieldName, fileName, "", reader).
+		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
 		return lib.Fail(err)
 	}
-	log.SetRespBody(string(b))
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+	}
 
-	ret := gjson.ParseBytes(b)
+	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("errcode").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
@@ -343,15 +371,15 @@ func WithCorpSrvCfg(token, aeskey string) CorpOption {
 	}
 }
 
-// WithCorpHttpCli 设置企业微信请求的 HTTP Client
-func WithCorpHttpCli(cli *http.Client) CorpOption {
+// WithCorpClient 设置企业微信请求的 HTTP Client
+func WithCorpClient(cli *http.Client) CorpOption {
 	return func(c *Corp) {
-		c.httpCli = xhttp.NewHTTPClient(cli)
+		c.client = resty.NewWithClient(cli)
 	}
 }
 
 // WithCorpLogger 设置企业微信日志记录
-func WithCorpLogger(fn func(ctx context.Context, data map[string]string)) CorpOption {
+func WithCorpLogger(fn func(ctx context.Context, err error, data map[string]string)) CorpOption {
 	return func(c *Corp) {
 		c.logger = fn
 	}
@@ -360,11 +388,11 @@ func WithCorpLogger(fn func(ctx context.Context, data map[string]string)) CorpOp
 // NewCorp 生成一个企业微信(企业内部开发)实例
 func NewCorp(corpid, secret string, options ...CorpOption) *Corp {
 	c := &Corp{
-		host:    "https://qyapi.weixin.qq.com",
-		corpid:  corpid,
-		secret:  secret,
-		srvCfg:  new(ServerConfig),
-		httpCli: xhttp.NewDefaultClient(),
+		host:   "https://qyapi.weixin.qq.com",
+		corpid: corpid,
+		secret: secret,
+		srvCfg: new(ServerConfig),
+		client: lib.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

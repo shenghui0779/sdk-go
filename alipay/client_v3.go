@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -39,7 +40,6 @@ func (c *ClientV3) AppID() string {
 
 func (c *ClientV3) url(path string, query url.Values) string {
 	var builder strings.Builder
-
 	builder.WriteString(c.host)
 	if len(path) != 0 && path[0] != '/' {
 		builder.WriteString("/")
@@ -49,7 +49,6 @@ func (c *ClientV3) url(path string, query url.Values) string {
 		builder.WriteString("?")
 		builder.WriteString(query.Encode())
 	}
-
 	return builder.String()
 }
 
@@ -100,6 +99,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
+
 	// 签名校验
 	if err = c.Verify(resp.Header(), resp.Body()); err != nil {
 		log.SetError(err)
@@ -159,9 +159,9 @@ func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params lib.X, o
 }
 
 // Upload 文件上传，参考：https://opendocs.alipay.com/open-v3/054oog?pathHash=7834d743
-func (c *ClientV3) Upload(ctx context.Context, path, bizData string, fileField *resty.MultipartField, options ...V3HeaderOption) (*APIResult, error) {
+func (c *ClientV3) Upload(ctx context.Context, reqPath, fieldName, filePath, bizData string, options ...V3HeaderOption) (*APIResult, error) {
 	reqID := uuid.NewString()
-	reqURL := c.url(path, nil)
+	reqURL := c.url(reqPath, nil)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
@@ -173,7 +173,7 @@ func (c *ClientV3) Upload(ctx context.Context, path, bizData string, fileField *
 	for _, f := range options {
 		f(reqHeader)
 	}
-	authStr, err := c.Authorization(http.MethodPost, path, nil, []byte(bizData), reqHeader)
+	authStr, err := c.Authorization(http.MethodPost, reqPath, nil, []byte(bizData), reqHeader)
 	if err != nil {
 		log.SetError(err)
 		return nil, err
@@ -184,8 +184,8 @@ func (c *ClientV3) Upload(ctx context.Context, path, bizData string, fileField *
 	resp, err := c.client.R().
 		SetContext(ctx).
 		SetHeaderMultiValues(reqHeader).
+		SetFile(fieldName, filePath).
 		SetMultipartField("data", "", lib.ContentJSON, strings.NewReader(bizData)).
-		SetMultipartFields(fileField).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
@@ -194,6 +194,57 @@ func (c *ClientV3) Upload(ctx context.Context, path, bizData string, fileField *
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
+
+	// 签名校验
+	if err = c.Verify(resp.Header(), resp.Body()); err != nil {
+		log.SetError(err)
+		return nil, err
+	}
+
+	ret := &APIResult{
+		Code: resp.StatusCode(),
+		Body: gjson.ParseBytes(resp.Body()),
+	}
+	return ret, nil
+}
+
+// UploadWithReader 文件上传，参考：https://opendocs.alipay.com/open-v3/054oog?pathHash=7834d743
+func (c *ClientV3) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, bizData string, options ...V3HeaderOption) (*APIResult, error) {
+	reqID := uuid.NewString()
+	reqURL := c.url(reqPath, nil)
+
+	log := lib.NewReqLog(http.MethodPost, reqURL)
+	defer log.Do(ctx, c.logger)
+
+	log.Set("biz_data", bizData)
+
+	reqHeader := http.Header{}
+	reqHeader.Set(HeaderRequestID, reqID)
+	for _, f := range options {
+		f(reqHeader)
+	}
+	authStr, err := c.Authorization(http.MethodPost, reqPath, nil, []byte(bizData), reqHeader)
+	if err != nil {
+		log.SetError(err)
+		return nil, err
+	}
+	reqHeader.Set(lib.HeaderAuthorization, authStr)
+	log.SetReqHeader(reqHeader)
+
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetHeaderMultiValues(reqHeader).
+		SetMultipartField(fieldName, fileName, "", reader).
+		SetMultipartField("data", "", lib.ContentJSON, strings.NewReader(bizData)).
+		Post(reqURL)
+	if err != nil {
+		log.SetError(err)
+		return nil, err
+	}
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+
 	// 签名校验
 	if err = c.Verify(resp.Header(), resp.Body()); err != nil {
 		log.SetError(err)
