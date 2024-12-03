@@ -3,13 +3,9 @@ package lib
 import (
 	"bytes"
 	"crypto/rand"
-	"crypto/tls"
 	"encoding/hex"
 	"encoding/json"
 	"io"
-	"net"
-	"net/http"
-	"time"
 
 	"github.com/tidwall/gjson"
 )
@@ -18,25 +14,6 @@ import (
 type X map[string]any
 
 var Fail = func(err error) (gjson.Result, error) { return gjson.Result{}, err }
-
-var DefaultHttpClient = &http.Client{
-	Transport: &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-		DialContext: (&net.Dialer{
-			Timeout:   30 * time.Second,
-			KeepAlive: 60 * time.Second,
-		}).DialContext,
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
-		},
-		MaxIdleConns:          0,
-		MaxIdleConnsPerHost:   1000,
-		MaxConnsPerHost:       1000,
-		IdleConnTimeout:       60 * time.Second,
-		TLSHandshakeTimeout:   10 * time.Second,
-		ExpectContinueTimeout: 1 * time.Second,
-	},
-}
 
 // Nonce 生成指定长度的随机串 (最好是偶数)
 func Nonce(size uint) string {

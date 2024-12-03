@@ -7,23 +7,23 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/go-resty/resty/v2"
+
 	"github.com/shenghui0779/sdk-go/lib"
 	"github.com/shenghui0779/sdk-go/lib/xcrypto"
-	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // Client 杉德支付客户端
 type Client struct {
-	mchID   string
-	prvKey  *xcrypto.PrivateKey
-	pubKey  *xcrypto.PublicKey
-	httpCli xhttp.Client
-	logger  func(ctx context.Context, data map[string]string)
+	mchID  string
+	prvKey *xcrypto.PrivateKey
+	pubKey *xcrypto.PublicKey
+	client *resty.Client
+	logger func(ctx context.Context, err error, data map[string]string)
 }
 
 // MchID 返回商品ID
@@ -38,40 +38,35 @@ func (c *Client) Do(ctx context.Context, reqURL string, form *Form) (*Form, erro
 
 	body, err := form.URLEncode(c.mchID, c.prvKey)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	log.SetReqBody(body)
 
-	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body), xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentForm))
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetHeader(lib.HeaderContentType, lib.ContentForm).
+		SetBody(body).
+		Post(reqURL)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode)
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode())
 	}
 
-	b, err := io.ReadAll(resp.Body)
+	query, err := url.QueryUnescape(string(resp.Body()))
 	if err != nil {
-		log.Set("error", err.Error())
-		return nil, err
-	}
-	log.SetRespBody(string(b))
-
-	query, err := url.QueryUnescape(string(b))
-	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	v, err := url.ParseQuery(query)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	return c.Verify(v)
@@ -104,7 +99,7 @@ type Option func(c *Client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(cli *http.Client) Option {
 	return func(c *Client) {
-		c.httpCli = xhttp.NewHTTPClient(cli)
+		c.client = resty.NewWithClient(cli)
 	}
 }
 
@@ -123,7 +118,7 @@ func WithPublicKey(key *xcrypto.PublicKey) Option {
 }
 
 // WithLogger 设置日志记录
-func WithLogger(fn func(ctx context.Context, data map[string]string)) Option {
+func WithLogger(fn func(ctx context.Context, err error, data map[string]string)) Option {
 	return func(c *Client) {
 		c.logger = fn
 	}
@@ -132,8 +127,8 @@ func WithLogger(fn func(ctx context.Context, data map[string]string)) Option {
 // NewClient 生成杉德支付客户端
 func NewClient(mchID string, options ...Option) *Client {
 	c := &Client{
-		mchID:   mchID,
-		httpCli: xhttp.NewDefaultClient(),
+		mchID:  mchID,
+		client: lib.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

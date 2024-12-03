@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // ReqLog 请求日志
@@ -69,26 +67,15 @@ func NewReqLog(method, reqURL string) *ReqLog {
 
 func HeaderEncode(h http.Header) string {
 	var buf strings.Builder
-
 	for k, vals := range h {
 		for _, v := range vals {
 			if buf.Len() > 0 {
 				buf.WriteString("&")
 			}
-
 			buf.WriteString(k)
 			buf.WriteString("=")
 			buf.WriteString(v)
 		}
 	}
-
 	return buf.String()
-}
-
-func HeaderToHttpOption(h http.Header) []xhttp.Option {
-	options := make([]xhttp.Option, 0, len(h))
-	for k, vals := range h {
-		options = append(options, xhttp.WithHeader(k, vals...))
-	}
-	return options
 }

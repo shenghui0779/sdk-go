@@ -65,14 +65,14 @@ func (p *Pay) do(ctx context.Context, path string, params value.V) ([]byte, erro
 
 	body, err := ValueToXML(params)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	log.SetReqBody(string(body))
 
 	resp, err := p.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body))
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -86,7 +86,7 @@ func (p *Pay) do(ctx context.Context, path string, params value.V) ([]byte, erro
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	log.SetRespBody(string(b))
@@ -103,14 +103,14 @@ func (p *Pay) doTLS(ctx context.Context, path string, params value.V) ([]byte, e
 
 	body, err := ValueToXML(params)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	log.SetReqBody(string(body))
 
 	resp, err := p.tlsCli.Do(ctx, http.MethodPost, reqURL, []byte(body))
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -124,7 +124,7 @@ func (p *Pay) doTLS(ctx context.Context, path string, params value.V) ([]byte, e
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	log.SetRespBody(string(b))

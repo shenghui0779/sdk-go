@@ -6,17 +6,16 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
 	"github.com/shenghui0779/sdk-go/lib/value"
 	"github.com/shenghui0779/sdk-go/lib/xcrypto"
-	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // Client 支付宝客户端
@@ -26,8 +25,8 @@ type Client struct {
 	aesKey  string
 	prvKey  *xcrypto.PrivateKey
 	pubKey  *xcrypto.PublicKey
-	httpCli xhttp.Client
-	logger  func(ctx context.Context, data map[string]string)
+	client  *resty.Client
+	logger  func(ctx context.Context, err error, data map[string]string)
 }
 
 // AppID 返回appid
@@ -46,38 +45,33 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 
 	body, err := action.Encode(c)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return lib.Fail(err)
 	}
 	log.SetReqBody(body)
 
-	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, []byte(body),
-		xhttp.WithHeader(xhttp.HeaderAccept, "application/json"),
-		xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentForm),
-	)
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetHeaders(map[string]string{
+			lib.HeaderAccept:      lib.ContentJSON,
+			lib.HeaderContentType: lib.ContentForm,
+		}).
+		SetBody(body).
+		Post(reqURL)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return lib.Fail(err)
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode))
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
-
-	b, err := io.ReadAll(resp.Body)
+	// 签名校验
+	ret, err := c.verifyResp(action.RespKey(), resp.Body())
 	if err != nil {
-		log.Set("error", err.Error())
-		return lib.Fail(err)
-	}
-	log.SetRespBody(string(b))
-
-	ret, err := c.verifyResp(action.RespKey(), b)
-	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return lib.Fail(err)
 	}
 
@@ -92,17 +86,16 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 	// 非JSON串，需解密
 	data, err := c.Decrypt(ret.String())
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return lib.Fail(err)
 	}
-
 	log.Set("decrypt", string(data))
 
 	return gjson.ParseBytes(data), nil
 }
 
 // Upload 文件上传，参考：https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload
-func (c *Client) Upload(ctx context.Context, method string, form xhttp.UploadForm, options ...ActionOption) (gjson.Result, error) {
+func (c *Client) Upload(ctx context.Context, method string, fileField *resty.MultipartField, formData map[string]string, options ...ActionOption) (gjson.Result, error) {
 	log := lib.NewReqLog(http.MethodPost, c.gateway)
 	defer log.Do(ctx, c.logger)
 
@@ -110,36 +103,31 @@ func (c *Client) Upload(ctx context.Context, method string, form xhttp.UploadFor
 
 	query, err := action.Encode(c)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return lib.Fail(err)
 	}
-
 	log.Set("query", query)
 
-	resp, err := c.httpCli.Upload(ctx, c.gateway+"?"+query, form, xhttp.WithHeader(xhttp.HeaderAccept, "application/json"))
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetHeader(lib.HeaderAccept, lib.ContentJSON).
+		SetMultipartFields(fileField).
+		SetMultipartFormData(formData).
+		Post(c.gateway + "?" + query)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return lib.Fail(err)
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode))
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
-
-	b, err := io.ReadAll(resp.Body)
+	// 签名校验
+	ret, err := c.verifyResp(action.RespKey(), resp.Body())
 	if err != nil {
-		log.Set("error", err.Error())
-		return lib.Fail(err)
-	}
-	log.SetRespBody(string(b))
-
-	ret, err := c.verifyResp(action.RespKey(), b)
-	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return lib.Fail(err)
 	}
 
@@ -148,17 +136,15 @@ func (c *Client) Upload(ctx context.Context, method string, form xhttp.UploadFor
 		if code := ret.Get("code").String(); code != CodeOK {
 			return lib.Fail(fmt.Errorf("%s | %s (sub_code = %s, sub_msg = %s)", code, ret.Get("msg").String(), ret.Get("sub_code").String(), ret.Get("sub_msg").String()))
 		}
-
 		return ret, nil
 	}
 
 	// 非JSON串，需解密
 	data, err := c.Decrypt(ret.String())
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return lib.Fail(err)
 	}
-
 	log.Set("decrypt", string(data))
 
 	return gjson.ParseBytes(data), nil
@@ -289,7 +275,7 @@ type Option func(c *Client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(cli *http.Client) Option {
 	return func(c *Client) {
-		c.httpCli = xhttp.NewHTTPClient(cli)
+		c.client = resty.NewWithClient(cli)
 	}
 }
 
@@ -308,7 +294,7 @@ func WithPublicKey(key *xcrypto.PublicKey) Option {
 }
 
 // WithLogger 设置日志记录
-func WithLogger(fn func(ctx context.Context, data map[string]string)) Option {
+func WithLogger(fn func(ctx context.Context, err error, data map[string]string)) Option {
 	return func(c *Client) {
 		c.logger = fn
 	}
@@ -320,7 +306,7 @@ func NewClient(appid, aesKey string, options ...Option) *Client {
 		appid:   appid,
 		aesKey:  aesKey,
 		gateway: "https://openapi.alipay.com/gateway.do",
-		httpCli: xhttp.NewDefaultClient(),
+		client:  lib.NewClient(),
 	}
 	for _, f := range options {
 		f(c)
@@ -334,7 +320,7 @@ func NewSandbox(appid, aesKey string, options ...Option) *Client {
 		appid:   appid,
 		aesKey:  aesKey,
 		gateway: "https://openapi-sandbox.dl.alipaydev.com/gateway.do",
-		httpCli: xhttp.NewDefaultClient(),
+		client:  lib.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

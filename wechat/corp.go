@@ -57,7 +57,7 @@ func (c *Corp) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (c *Corp) do(ctx context.Context, method, path string, query url.Values, params lib.X, options ...xhttp.Option) ([]byte, error) {
+func (c *Corp) do(ctx context.Context, method, path string, header http.Header, query url.Values, params lib.X) ([]byte, error) {
 	reqURL := c.url(path, query)
 
 	log := lib.NewReqLog(method, reqURL)
@@ -77,29 +77,23 @@ func (c *Corp) do(ctx context.Context, method, path string, query url.Values, pa
 		log.SetReqBody(string(body))
 	}
 
-	// resp, err := c.httpCli.Do(ctx, method, reqURL, body, options...)
-	resp, err := c.client.R().SetContext(ctx).SetBody(body)
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetHeaderMultiValues(header).
+		SetBody(body).
+		Execute(method, reqURL)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode)
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode())
 	}
 
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Set("error", err.Error())
-		return nil, err
-	}
-	log.SetRespBody(string(b))
-
-	return b, nil
+	return resp.Body(), nil
 }
 
 // OAuthURL 生成网页授权URL
@@ -124,7 +118,7 @@ func (c *Corp) AccessToken(ctx context.Context) (gjson.Result, error) {
 	query.Set("corpid", c.corpid)
 	query.Set("corpsecret", c.secret)
 
-	b, err := c.do(ctx, http.MethodGet, "/cgi-bin/gettoken", query, nil)
+	b, err := c.do(ctx, http.MethodGet, "/cgi-bin/gettoken", nil, query, nil)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -181,7 +175,7 @@ func (c *Corp) GetJSON(ctx context.Context, path string, query url.Values) (gjso
 	}
 	query.Set(AccessToken, token)
 
-	b, err := c.do(ctx, http.MethodGet, path, query, nil)
+	b, err := c.do(ctx, http.MethodGet, path, nil, query, nil)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -202,7 +196,10 @@ func (c *Corp) PostJSON(ctx context.Context, path string, params lib.X) (gjson.R
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
-	b, err := c.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	header := http.Header{}
+	header.Set(lib.HeaderContentType, lib.ContentJSON)
+
+	b, err := c.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
 		return lib.Fail(err)
 	}
@@ -225,7 +222,7 @@ func (c *Corp) GetBuffer(ctx context.Context, path string, query url.Values) ([]
 	}
 	query.Set(AccessToken, token)
 
-	b, err := c.do(ctx, http.MethodGet, path, query, nil)
+	b, err := c.do(ctx, http.MethodGet, path, nil, query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +243,10 @@ func (c *Corp) PostBuffer(ctx context.Context, path string, params lib.X) ([]byt
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
-	b, err := c.do(ctx, http.MethodPost, path, query, params, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	header := http.Header{}
+	header.Set(lib.HeaderContentType, lib.ContentJSON)
+
+	b, err := c.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
 		return nil, err
 	}
@@ -259,7 +259,7 @@ func (c *Corp) PostBuffer(ctx context.Context, path string, params lib.X) ([]byt
 }
 
 // Upload 上传媒体资源
-func (c *Corp) Upload(ctx context.Context, path string, form xhttp.UploadForm) (gjson.Result, error) {
+func (c *Corp) Upload(ctx context.Context, path string, fileField *resty.MultipartField, formData map[string]string) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -274,7 +274,7 @@ func (c *Corp) Upload(ctx context.Context, path string, form xhttp.UploadForm) (
 
 	resp, err := c.httpCli.Upload(ctx, reqURL, form)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return lib.Fail(err)
 	}
 	defer resp.Body.Close()
@@ -288,7 +288,7 @@ func (c *Corp) Upload(ctx context.Context, path string, form xhttp.UploadForm) (
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return lib.Fail(err)
 	}
 	log.SetRespBody(string(b))

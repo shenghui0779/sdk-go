@@ -39,12 +39,10 @@ func (f *Form) URLEncode(mid string, key *xcrypto.PrivateKey) (string, error) {
 	}
 
 	v := make(url.Values)
-
 	v.Set("charset", "utf-8")
 	v.Set("data", string(b))
 	v.Set("signType", "01")
 	v.Set("sign", base64.StdEncoding.EncodeToString(sign))
-
 	return v.Encode(), nil
 }
 

@@ -18,19 +18,19 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // Client E签宝客户端
 type Client struct {
-	host    string
-	appid   string
-	secret  string
-	httpCli xhttp.Client
-	logger  func(ctx context.Context, data map[string]string)
+	host   string
+	appid  string
+	secret string
+	client *resty.Client
+	logger func(ctx context.Context, err error, data map[string]string)
 }
 
 func (c *Client) url(path string, query url.Values) string {
@@ -57,7 +57,7 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 
 	header := http.Header{}
 
-	header.Set(xhttp.HeaderAccept, AcceptAll)
+	header.Set(lib.HeaderAccept, AcceptAll)
 	header.Set(HeaderTSignOpenAppID, c.appid)
 	header.Set(HeaderTSignOpenAuthMode, AuthModeSign)
 	header.Set(HeaderTSignOpenCaTimestamp, strconv.FormatInt(time.Now().UnixMilli(), 10))
@@ -75,14 +75,14 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 	if params != nil {
 		body, err = json.Marshal(params)
 		if err != nil {
-			log.Set("error", err.Error())
+			log.SetError(err)
 			return lib.Fail(err)
 		}
 		log.SetReqBody(string(body))
 
 		contentMD5 := ContentMD5(body)
 
-		header.Set(xhttp.HeaderContentType, "application/json; charset=UTF-8")
+		header.Set(lib.HeaderContentType, "application/json; charset=UTF-8")
 		header.Set(HeaderContentMD5, contentMD5)
 
 		options = append(options, WithSignContMD5(contentMD5), WithSignContType("application/json; charset=UTF-8"))
@@ -92,28 +92,23 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 
 	log.SetReqHeader(header)
 
-	resp, err := c.httpCli.Do(ctx, method, reqURL, body, lib.HeaderToHttpOption(header)...)
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetHeaderMultiValues(header).
+		SetBody(body).
+		Execute(method, reqURL)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return lib.Fail(err)
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode))
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Set("error", err.Error())
-		return lib.Fail(err)
-	}
-	log.SetRespBody(string(b))
-
-	ret := gjson.ParseBytes(b)
+	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("code").Int(); code != 0 {
 		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("message")))
 	}
@@ -126,50 +121,44 @@ func (c *Client) doStream(ctx context.Context, uploadURL string, reader io.ReadS
 
 	h := md5.New()
 	if _, err := io.Copy(h, reader); err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return err
 	}
 
 	header := http.Header{}
-
-	header.Set(xhttp.HeaderContentType, xhttp.ContentStream)
+	header.Set(lib.HeaderContentType, lib.ContentStream)
 	header.Set(HeaderContentMD5, base64.StdEncoding.EncodeToString(h.Sum(nil)))
-
 	log.SetReqHeader(header)
 
 	// 文件指针移动到头部
 	if _, err := reader.Seek(0, 0); err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return err
 	}
 
 	buf := bytes.NewBuffer(make([]byte, 0, 20<<10)) // 20kb
 	if _, err := io.Copy(buf, reader); err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return err
 	}
 
-	resp, err := c.httpCli.Do(ctx, http.MethodPut, uploadURL, buf.Bytes(), lib.HeaderToHttpOption(header)...)
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetHeaderMultiValues(header).
+		SetBody(buf.Bytes()).
+		Put(uploadURL)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return err
 	}
-	defer resp.Body.Close()
-
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode)
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
+		return fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode())
 	}
 
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Set("error", err.Error())
-		return err
-	}
-	log.SetRespBody(string(b))
-
-	ret := gjson.ParseBytes(b)
+	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("errCode").Int(); code != 0 {
 		return fmt.Errorf("%d | %s", code, ret.Get("msg"))
 	}
@@ -227,12 +216,12 @@ type Option func(c *Client)
 // WithHttpCli 设置自定义 HTTP Client
 func WithHttpCli(cli *http.Client) Option {
 	return func(c *Client) {
-		c.httpCli = xhttp.NewHTTPClient(cli)
+		c.client = resty.NewWithClient(cli)
 	}
 }
 
 // WithLogger 设置日志记录
-func WithLogger(fn func(ctx context.Context, data map[string]string)) Option {
+func WithLogger(fn func(ctx context.Context, err error, data map[string]string)) Option {
 	return func(c *Client) {
 		c.logger = fn
 	}
@@ -241,10 +230,10 @@ func WithLogger(fn func(ctx context.Context, data map[string]string)) Option {
 // NewClient 返回E签宝客户端
 func NewClient(appid, secret string, options ...Option) *Client {
 	c := &Client{
-		host:    "https://openapi.esign.cn",
-		appid:   appid,
-		secret:  secret,
-		httpCli: xhttp.NewDefaultClient(),
+		host:   "https://openapi.esign.cn",
+		appid:  appid,
+		secret: secret,
+		client: lib.NewClient(),
 	}
 	for _, f := range options {
 		f(c)
@@ -255,10 +244,10 @@ func NewClient(appid, secret string, options ...Option) *Client {
 // NewSandbox 返回E签宝「沙箱环境」客户端
 func NewSandbox(appid, secret string, options ...Option) *Client {
 	c := &Client{
-		host:    "https://smlopenapi.esign.cn",
-		appid:   appid,
-		secret:  secret,
-		httpCli: xhttp.NewDefaultClient(),
+		host:   "https://smlopenapi.esign.cn",
+		appid:  appid,
+		secret: secret,
+		client: lib.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

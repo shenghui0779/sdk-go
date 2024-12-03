@@ -6,17 +6,16 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/google/uuid"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
 	"github.com/shenghui0779/sdk-go/lib/xcrypto"
-	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // Config 客户端配置
@@ -74,8 +73,8 @@ func WithParam(key string, value any) ChainCallOption {
 type client struct {
 	endpoint string
 	config   *Config
-	httpCli  xhttp.Client
-	logger   func(ctx context.Context, data map[string]string)
+	httpCli  *resty.Client
+	logger   func(ctx context.Context, err error, data map[string]string)
 }
 
 func (c *client) shakehand(ctx context.Context) (string, error) {
@@ -91,7 +90,6 @@ func (c *client) shakehand(ctx context.Context) (string, error) {
 		"time":     timeStr,
 		"secret":   hex.EncodeToString(sign),
 	}
-
 	return c.do(ctx, c.endpoint+SHAKE_HAND, params)
 }
 
@@ -102,11 +100,9 @@ func (c *client) chainCall(ctx context.Context, method string, options ...ChainC
 	}
 
 	params := lib.X{}
-
 	for _, f := range options {
 		f(params)
 	}
-
 	params["bizid"] = c.config.BizID
 	params["accessId"] = c.config.AccessID
 	params["method"] = method
@@ -122,11 +118,9 @@ func (c *client) chainCallForBiz(ctx context.Context, method string, options ...
 	}
 
 	params := lib.X{}
-
 	for _, f := range options {
 		f(params)
 	}
-
 	params["orderId"] = uuid.New().String()
 	params["bizid"] = c.config.BizID
 	params["account"] = c.config.Account
@@ -145,33 +139,28 @@ func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, e
 
 	body, err := json.Marshal(params)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return "", err
 	}
 	log.SetReqBody(string(body))
 
-	resp, err := c.httpCli.Do(ctx, http.MethodPost, reqURL, body, xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON))
+	resp, err := c.httpCli.R().
+		SetContext(ctx).
+		SetHeader(lib.HeaderContentType, lib.ContentJSON).
+		SetBody(body).
+		Post(reqURL)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return "", err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	if resp.StatusCode != http.StatusOK {
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
+	if !resp.IsSuccess() {
 		return "", fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode)
 	}
 
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Set("error", err.Error())
-		return "", err
-	}
-	log.SetRespBody(string(b))
-
-	ret := gjson.ParseBytes(b)
+	ret := gjson.ParseBytes(resp.Body())
 	if !ret.Get("success").Bool() {
 		return "", fmt.Errorf("%s | %s", ret.Get("code").String(), ret.Get("data").String())
 	}
@@ -182,14 +171,14 @@ func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, e
 type Option func(c *client)
 
 // WithHttpCli 设置自定义 HTTP Client
-func WithHttpCli(httpCli *http.Client) Option {
+func WithHttpCli(cli *http.Client) Option {
 	return func(c *client) {
-		c.httpCli = xhttp.NewHTTPClient(httpCli)
+		c.httpCli = resty.NewWithClient(cli)
 	}
 }
 
 // WithLogger 设置日志记录
-func WithLogger(fn func(ctx context.Context, data map[string]string)) Option {
+func WithLogger(fn func(ctx context.Context, err error, data map[string]string)) Option {
 	return func(c *client) {
 		c.logger = fn
 	}
@@ -200,7 +189,7 @@ func NewClient(cfg *Config, options ...Option) Client {
 	c := &client{
 		endpoint: "https://rest.baas.alipay.com",
 		config:   cfg,
-		httpCli:  xhttp.NewDefaultClient(),
+		httpCli:  lib.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

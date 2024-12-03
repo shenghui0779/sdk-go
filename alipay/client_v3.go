@@ -8,29 +8,28 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/google/uuid"
 	"github.com/tidwall/gjson"
 
 	"github.com/shenghui0779/sdk-go/lib"
 	"github.com/shenghui0779/sdk-go/lib/xcrypto"
-	"github.com/shenghui0779/sdk-go/lib/xhttp"
 )
 
 // ClientV3 支付宝V3客户端(仅支持v3版本的接口可用)
 type ClientV3 struct {
-	host    string
-	appid   string
-	aesKey  string
-	prvKey  *xcrypto.PrivateKey
-	pubKey  *xcrypto.PublicKey
-	httpCli xhttp.Client
-	logger  func(ctx context.Context, data map[string]string)
+	host   string
+	appid  string
+	aesKey string
+	prvKey *xcrypto.PrivateKey
+	pubKey *xcrypto.PublicKey
+	client *resty.Client
+	logger func(ctx context.Context, err error, data map[string]string)
 }
 
 // AppID 返回appid
@@ -68,18 +67,18 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 	if params != nil {
 		body, err = json.Marshal(params)
 		if err != nil {
-			log.Set("error", err.Error())
+			log.SetError(err)
 			return nil, err
 		}
 		log.SetReqBody(string(body))
 
+		// 是否需要加密
 		if len(header.Get(HeaderEncryptType)) != 0 {
 			encryptData, err := c.Encrypt(string(body))
 			if err != nil {
-				log.Set("error", err.Error())
+				log.SetError(err)
 				return nil, err
 			}
-
 			body = []byte(encryptData)
 			log.Set("encrypt", encryptData)
 		}
@@ -87,147 +86,123 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 
 	authStr, err := c.Authorization(method, path, query, body, header)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
-	header.Set(xhttp.HeaderAuthorization, authStr)
-
+	header.Set(lib.HeaderAuthorization, authStr)
 	log.SetReqHeader(header)
 
-	resp, err := c.httpCli.Do(ctx, method, reqURL, body, lib.HeaderToHttpOption(header)...)
+	resp, err := c.client.R().SetContext(ctx).SetHeaderMultiValues(header).SetBody(body).Execute(method, reqURL)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Set("error", err.Error())
-		return nil, err
-	}
-	log.SetRespBody(string(b))
-
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
 	// 签名校验
-	if err = c.Verify(resp.Header, b); err != nil {
-		log.Set("error", err.Error())
+	if err = c.Verify(resp.Header(), resp.Body()); err != nil {
+		log.SetError(err)
 		return nil, err
 	}
 
 	ret := &APIResult{
-		Code: resp.StatusCode,
-		Body: gjson.ParseBytes(b),
+		Code: resp.StatusCode(),
+		Body: gjson.ParseBytes(resp.Body()),
 	}
-
 	// 如果是加密请求，需要解密
-	if resp.StatusCode < 400 && len(b) != 0 && !bytes.HasPrefix(b, []byte("{")) {
-		data, err := c.Decrypt(string(b))
+	if resp.StatusCode() < 400 && len(resp.Body()) != 0 && !bytes.HasPrefix(resp.Body(), []byte("{")) {
+		data, err := c.Decrypt(string(resp.Body()))
 		if err != nil {
-			log.Set("error", err.Error())
+			log.SetError(err)
 			return nil, err
 		}
-
 		log.Set("decrypt", string(data))
 		ret.Body = gjson.ParseBytes(data)
 	}
-
 	return ret, nil
 }
 
 // GetJSON GET请求JSON数据
 func (c *ClientV3) GetJSON(ctx context.Context, path string, query url.Values, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
-
-	header.Set(xhttp.HeaderAccept, "application/json")
+	header.Set(lib.HeaderAccept, lib.ContentJSON)
 	header.Set(HeaderRequestID, uuid.NewString())
 	for _, f := range options {
 		f(header)
 	}
-
 	return c.do(ctx, http.MethodGet, path, query, nil, header)
 }
 
 // PostJSON POST请求JSON数据
 func (c *ClientV3) PostJSON(ctx context.Context, path string, params lib.X, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
-
-	header.Set(xhttp.HeaderAccept, "application/json")
+	header.Set(lib.HeaderAccept, lib.ContentJSON)
 	header.Set(HeaderRequestID, uuid.NewString())
-	header.Set(xhttp.HeaderContentType, xhttp.ContentJSON)
+	header.Set(lib.HeaderContentType, lib.ContentJSON)
 	for _, f := range options {
 		f(header)
 	}
-
 	return c.do(ctx, http.MethodPost, path, nil, params, header)
 }
 
 // PostJSON POST加密请求
 func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params lib.X, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
-
 	header.Set(HeaderRequestID, uuid.NewString())
 	header.Set(HeaderEncryptType, "AES")
-	header.Set(xhttp.HeaderContentType, xhttp.ContentText)
+	header.Set(lib.HeaderContentType, lib.ContentText)
 	for _, f := range options {
 		f(header)
 	}
-
 	return c.do(ctx, http.MethodPost, path, nil, params, header)
 }
 
 // Upload 文件上传，参考：https://opendocs.alipay.com/open-v3/054oog?pathHash=7834d743
-func (c *ClientV3) Upload(ctx context.Context, path string, form xhttp.UploadForm, options ...V3HeaderOption) (*APIResult, error) {
+func (c *ClientV3) Upload(ctx context.Context, path, bizData string, fileField *resty.MultipartField, options ...V3HeaderOption) (*APIResult, error) {
 	reqID := uuid.NewString()
 	reqURL := c.url(path, nil)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
 
-	reqHeader := http.Header{}
+	log.Set("biz_data", bizData)
 
+	reqHeader := http.Header{}
 	reqHeader.Set(HeaderRequestID, reqID)
 	for _, f := range options {
 		f(reqHeader)
 	}
-
-	authStr, err := c.Authorization(http.MethodPost, path, nil, []byte(form.Field("data")), reqHeader)
+	authStr, err := c.Authorization(http.MethodPost, path, nil, []byte(bizData), reqHeader)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
-	reqHeader.Set(xhttp.HeaderAuthorization, authStr)
-
+	reqHeader.Set(lib.HeaderAuthorization, authStr)
 	log.SetReqHeader(reqHeader)
 
-	resp, err := c.httpCli.Upload(ctx, reqURL, form, lib.HeaderToHttpOption(reqHeader)...)
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetHeaderMultiValues(reqHeader).
+		SetMultipartField("data", "", lib.ContentJSON, strings.NewReader(bizData)).
+		SetMultipartFields(fileField).
+		Post(reqURL)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
-	defer resp.Body.Close()
-
-	log.SetRespHeader(resp.Header)
-	log.SetStatusCode(resp.StatusCode)
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Set("error", err.Error())
-		return nil, err
-	}
-	log.SetRespBody(string(b))
-
+	log.SetRespHeader(resp.Header())
+	log.SetStatusCode(resp.StatusCode())
+	log.SetRespBody(string(resp.Body()))
 	// 签名校验
-	if err = c.Verify(resp.Header, b); err != nil {
-		log.Set("error", err.Error())
+	if err = c.Verify(resp.Header(), resp.Body()); err != nil {
+		log.SetError(err)
 		return nil, err
 	}
 
 	ret := &APIResult{
-		Code: resp.StatusCode,
-		Body: gjson.ParseBytes(b),
+		Code: resp.StatusCode(),
+		Body: gjson.ParseBytes(resp.Body()),
 	}
 	return ret, nil
 }
@@ -329,7 +304,7 @@ type V3Option func(c *ClientV3)
 // WithV3Client 设置自定义 HTTP Client
 func WithV3Client(cli *http.Client) V3Option {
 	return func(c *ClientV3) {
-		c.httpCli = xhttp.NewHTTPClient(cli)
+		c.client = resty.NewWithClient(cli)
 	}
 }
 
@@ -348,7 +323,7 @@ func WithV3PublicKey(key *xcrypto.PublicKey) V3Option {
 }
 
 // WithV3Logger 设置日志记录
-func WithV3Logger(fn func(ctx context.Context, data map[string]string)) V3Option {
+func WithV3Logger(fn func(ctx context.Context, err error, data map[string]string)) V3Option {
 	return func(c *ClientV3) {
 		c.logger = fn
 	}
@@ -357,10 +332,10 @@ func WithV3Logger(fn func(ctx context.Context, data map[string]string)) V3Option
 // NewClientV3 生成支付宝客户端V3
 func NewClientV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 	c := &ClientV3{
-		host:    "https://openapi.alipay.com",
-		appid:   appid,
-		aesKey:  aesKey,
-		httpCli: xhttp.NewDefaultClient(),
+		host:   "https://openapi.alipay.com",
+		appid:  appid,
+		aesKey: aesKey,
+		client: lib.NewClient(),
 	}
 	for _, f := range options {
 		f(c)
@@ -371,10 +346,10 @@ func NewClientV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 // NewSandboxV3 生成支付宝沙箱V3
 func NewSandboxV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 	c := &ClientV3{
-		host:    "http://openapi.sandbox.dl.alipaydev.com",
-		appid:   appid,
-		aesKey:  aesKey,
-		httpCli: xhttp.NewDefaultClient(),
+		host:   "http://openapi.sandbox.dl.alipaydev.com",
+		appid:  appid,
+		aesKey: aesKey,
+		client: lib.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

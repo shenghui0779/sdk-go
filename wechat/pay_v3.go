@@ -87,7 +87,7 @@ func (p *PayV3) reloadCerts() error {
 
 	authStr, err := p.Authorization(http.MethodGet, "/v3/certificates", nil, "")
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return err
 	}
 
@@ -95,7 +95,7 @@ func (p *PayV3) reloadCerts() error {
 
 	resp, err := p.httpCli.Do(ctx, http.MethodGet, reqURL, nil, xhttp.WithHeader(xhttp.HeaderAccept, "application/json"), xhttp.WithHeader(xhttp.HeaderAuthorization, authStr))
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return err
 	}
 	defer resp.Body.Close()
@@ -105,7 +105,7 @@ func (p *PayV3) reloadCerts() error {
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return err
 	}
 	log.SetRespBody(string(b))
@@ -130,12 +130,12 @@ func (p *PayV3) reloadCerts() error {
 
 		block, err := xcrypto.AESDecryptGCM([]byte(p.apikey), []byte(nonce), []byte(data), []byte(aad), nil)
 		if err != nil {
-			log.Set("error", err.Error())
+			log.SetError(err)
 			return err
 		}
 		key, err := xcrypto.NewPublicKeyFromDerBlock(block)
 		if err != nil {
-			log.Set("error", err.Error())
+			log.SetError(err)
 			return err
 		}
 		keyMap[serialNO] = key
@@ -153,7 +153,7 @@ func (p *PayV3) reloadCerts() error {
 			builder.WriteString("\n")
 
 			if err = key.Verify(crypto.SHA256, []byte(builder.String()), []byte(resp.Header.Get(HeaderPaySignature))); err != nil {
-				log.Set("error", err.Error())
+				log.SetError(err)
 				return err
 			}
 		}
@@ -177,7 +177,7 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 	if params != nil {
 		body, err = json.Marshal(params)
 		if err != nil {
-			log.Set("error", err.Error())
+			log.SetError(err)
 			return nil, err
 		}
 		log.SetReqBody(string(body))
@@ -185,7 +185,7 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 
 	authStr, err := p.Authorization(method, path, query, string(body))
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 
@@ -197,7 +197,7 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 		xhttp.WithHeader(xhttp.HeaderContentType, xhttp.ContentJSON),
 	)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -207,14 +207,14 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	log.SetRespBody(string(b))
 
 	// 签名校验
 	if err = p.Verify(ctx, resp.Header, b); err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 
@@ -259,7 +259,7 @@ func (p *PayV3) Upload(ctx context.Context, path string, form xhttp.UploadForm) 
 
 	authStr, err := p.Authorization(http.MethodPost, path, nil, form.Field("meta"))
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 
@@ -267,7 +267,7 @@ func (p *PayV3) Upload(ctx context.Context, path string, form xhttp.UploadForm) 
 
 	resp, err := p.httpCli.Upload(ctx, reqURL, form, xhttp.WithHeader(xhttp.HeaderAuthorization, authStr))
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -277,14 +277,14 @@ func (p *PayV3) Upload(ctx context.Context, path string, form xhttp.UploadForm) 
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 	log.SetRespBody(string(b))
 
 	// 签名校验
 	if err = p.Verify(ctx, resp.Header, b); err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return nil, err
 	}
 
@@ -303,7 +303,7 @@ func (p *PayV3) Download(ctx context.Context, downloadURL string, w io.Writer) e
 	// 获取 download_url
 	authStr, err := p.Authorization(http.MethodGet, downloadURL, nil, "")
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return err
 	}
 
@@ -311,7 +311,7 @@ func (p *PayV3) Download(ctx context.Context, downloadURL string, w io.Writer) e
 
 	resp, err := p.httpCli.Do(ctx, http.MethodGet, downloadURL, nil, xhttp.WithHeader(xhttp.HeaderAuthorization, authStr))
 	if err != nil {
-		log.Set("error", err.Error())
+		log.SetError(err)
 		return err
 	}
 
