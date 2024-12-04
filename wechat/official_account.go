@@ -367,7 +367,7 @@ func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params l
 }
 
 // Upload 上传媒体资源
-func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, filePath string, query url.Values) (gjson.Result, error) {
+func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData lib.Form, query url.Values) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -386,6 +386,7 @@ func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, fileP
 	resp, err := oa.client.R().
 		SetContext(ctx).
 		SetFile(fieldName, filePath).
+		SetFormData(formData).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
@@ -406,7 +407,7 @@ func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, fileP
 }
 
 // UploadWithReader 上传媒体资源
-func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, query url.Values) (gjson.Result, error) {
+func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData lib.Form, query url.Values) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -425,6 +426,7 @@ func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldN
 	resp, err := oa.client.R().
 		SetContext(ctx).
 		SetMultipartField(fieldName, fileName, "", reader).
+		SetFormData(formData).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)

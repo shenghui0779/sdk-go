@@ -582,7 +582,7 @@ func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params l
 }
 
 // Upload 上传媒体资源
-func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath string, query url.Values) (gjson.Result, error) {
+func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData lib.Form, query url.Values) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -601,6 +601,7 @@ func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath 
 	resp, err := mp.client.R().
 		SetContext(ctx).
 		SetFile(fieldName, filePath).
+		SetFormData(formData).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
@@ -621,7 +622,7 @@ func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath 
 }
 
 // UploadWithReader 上传媒体资源
-func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, query url.Values) (gjson.Result, error) {
+func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData lib.Form, query url.Values) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -640,6 +641,7 @@ func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName,
 	resp, err := mp.client.R().
 		SetContext(ctx).
 		SetMultipartField(fieldName, fileName, "", reader).
+		SetFormData(formData).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)

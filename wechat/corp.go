@@ -257,7 +257,7 @@ func (c *Corp) PostBuffer(ctx context.Context, path string, params lib.X) ([]byt
 }
 
 // Upload 上传媒体资源
-func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, query url.Values) (gjson.Result, error) {
+func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData lib.Form, query url.Values) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -276,6 +276,7 @@ func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, 
 	resp, err := c.client.R().
 		SetContext(ctx).
 		SetFile(fieldName, filePath).
+		SetFormData(formData).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
@@ -296,7 +297,7 @@ func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, 
 }
 
 // UploadWithReader 上传媒体资源
-func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, query url.Values) (gjson.Result, error) {
+func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData lib.Form, query url.Values) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
 		return lib.Fail(err)
@@ -315,6 +316,7 @@ func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileNam
 	resp, err := c.client.R().
 		SetContext(ctx).
 		SetMultipartField(fieldName, fileName, "", reader).
+		SetFormData(formData).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
