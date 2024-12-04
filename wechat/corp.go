@@ -128,25 +128,30 @@ func (c *Corp) AccessToken(ctx context.Context) (gjson.Result, error) {
 	return ret, nil
 }
 
-// LoadAccessTokenFunc 自定义加载AccessToken
-func (c *Corp) LoadAccessTokenFunc(fn func(ctx context.Context) (string, error), interval time.Duration) error {
+// AutoLoadAccessToken 自动加载AccessToken
+func (c *Corp) AutoLoadAccessToken(fn func(ctx context.Context, c *Corp) (string, error), interval time.Duration) error {
+	ctx := context.Background()
+
 	// 初始化AccessToken
-	token, err := fn(context.Background())
+	token, err := fn(ctx, c)
 	if err != nil {
 		return err
 	}
 	c.token.Store(token)
+
 	// 异步定时加载
-	go func() {
+	go func(ctx context.Context) {
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
+
 		for range ticker.C {
-			_token, _ := fn(context.Background())
+			_token, _ := fn(ctx, c)
 			if len(token) != 0 {
 				c.token.Store(_token)
 			}
 		}
-	}()
+	}(ctx)
+
 	return nil
 }
 

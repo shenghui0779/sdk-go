@@ -42,6 +42,7 @@ type MiniProgram struct {
 	sfMode *SafeMode
 	token  atomic.Value
 	client *resty.Client
+
 	logger func(ctx context.Context, err error, data map[string]string)
 }
 
@@ -387,45 +388,54 @@ func (mp *MiniProgram) StableAccessToken(ctx context.Context, forceRefresh bool)
 
 // AutoLoadAccessToken 自动加载AccessToken(使用StableAccessToken接口)
 func (mp *MiniProgram) AutoLoadAccessToken(interval time.Duration) error {
+	ctx := context.Background()
+
 	// 初始化AccessToken
 	ret, err := mp.StableAccessToken(context.Background(), false)
 	if err != nil {
 		return err
 	}
 	mp.token.Store(ret.Get("access_token").String())
+
 	// 异步定时加载
-	go func() {
+	go func(ctx context.Context) {
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
+
 		for range ticker.C {
-			_ret, _ := mp.StableAccessToken(context.Background(), false)
+			_ret, _ := mp.StableAccessToken(ctx, false)
 			if token := _ret.Get("access_token").String(); len(token) != 0 {
 				mp.token.Store(token)
 			}
 		}
-	}()
+	}(ctx)
 	return nil
 }
 
-// LoadAccessTokenFunc 自定义加载AccessToken
-func (mp *MiniProgram) LoadAccessTokenFunc(fn func(ctx context.Context) (string, error), interval time.Duration) error {
+// CustomAccessTokenLoad 自定义加载AccessToken
+func (mp *MiniProgram) CustomAccessTokenLoad(fn func(ctx context.Context, mp *MiniProgram) (string, error), interval time.Duration) error {
+	ctx := context.Background()
+
 	// 初始化AccessToken
-	token, err := fn(context.Background())
+	token, err := fn(ctx, mp)
 	if err != nil {
 		return err
 	}
 	mp.token.Store(token)
+
 	// 异步定时加载
-	go func() {
+	go func(ctx context.Context) {
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
+
 		for range ticker.C {
-			_token, _ := fn(context.Background())
+			_token, _ := fn(ctx, mp)
 			if len(token) != 0 {
 				mp.token.Store(_token)
 			}
 		}
-	}()
+	}(ctx)
+
 	return nil
 }
 

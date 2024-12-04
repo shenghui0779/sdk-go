@@ -218,45 +218,53 @@ func (oa *OfficialAccount) StableAccessToken(ctx context.Context, forceRefresh b
 
 // AutoLoadAccessToken 自动加载AccessToken(使用StableAccessToken接口)
 func (oa *OfficialAccount) AutoLoadAccessToken(interval time.Duration) error {
+	ctx := context.Background()
+
 	// 初始化AccessToken
-	ret, err := oa.StableAccessToken(context.Background(), false)
+	ret, err := oa.StableAccessToken(ctx, false)
 	if err != nil {
 		return err
 	}
 	oa.token.Store(ret.Get("access_token").String())
+
 	// 异步定时加载
-	go func() {
+	go func(ctx context.Context) {
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 		for range ticker.C {
-			_ret, _ := oa.StableAccessToken(context.Background(), false)
+			_ret, _ := oa.StableAccessToken(ctx, false)
 			if token := _ret.Get("access_token").String(); len(token) != 0 {
 				oa.token.Store(token)
 			}
 		}
-	}()
+	}(ctx)
+
 	return nil
 }
 
-// LoadAccessTokenFunc 自定义加载AccessToken
-func (oa *OfficialAccount) LoadAccessTokenFunc(fn func(ctx context.Context) (string, error), interval time.Duration) error {
+// CustomAccessTokenLoad 自定义加载AccessToken
+func (oa *OfficialAccount) CustomAccessTokenLoad(fn func(ctx context.Context, oa *OfficialAccount) (string, error), interval time.Duration) error {
+	ctx := context.Background()
+
 	// 初始化AccessToken
-	token, err := fn(context.Background())
+	token, err := fn(ctx, oa)
 	if err != nil {
 		return err
 	}
 	oa.token.Store(token)
+
 	// 异步定时加载
-	go func() {
+	go func(ctx context.Context) {
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 		for range ticker.C {
-			_token, _ := fn(context.Background())
+			_token, _ := fn(ctx, oa)
 			if len(token) != 0 {
 				oa.token.Store(_token)
 			}
 		}
-	}()
+	}(ctx)
+
 	return nil
 }
 
