@@ -49,14 +49,11 @@ func XMLToValue(b []byte) (value.V, error) {
 			if err == io.EOF {
 				return m, nil
 			}
-
 			return nil, err
 		}
-
 		switch v := tk.(type) {
 		case xml.StartElement:
 			depth++
-
 			switch depth {
 			case 2:
 				key = v.Name.Local
@@ -65,7 +62,6 @@ func XMLToValue(b []byte) (value.V, error) {
 				if err = d.Skip(); err != nil {
 					return nil, err
 				}
-
 				depth--
 				key = "" // key == "" indicates that the node with depth==2 has children
 			}
@@ -77,7 +73,6 @@ func XMLToValue(b []byte) (value.V, error) {
 			if depth == 2 && key != "" {
 				m[key] = buf.String()
 			}
-
 			depth--
 		}
 	}
