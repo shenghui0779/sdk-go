@@ -367,12 +367,15 @@ func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params l
 }
 
 // Upload 上传媒体资源
-func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, filePath string) (gjson.Result, error) {
+func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, filePath string, query url.Values) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
-	query := url.Values{}
+
+	if query == nil {
+		query = url.Values{}
+	}
 	query.Set(AccessToken, token)
 
 	reqURL := oa.url(reqPath, query)
@@ -403,12 +406,15 @@ func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, fileP
 }
 
 // UploadWithReader 上传媒体资源
-func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader) (gjson.Result, error) {
+func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, query url.Values) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
-	query := url.Values{}
+
+	if query == nil {
+		query = url.Values{}
+	}
 	query.Set(AccessToken, token)
 
 	reqURL := oa.url(reqPath, query)

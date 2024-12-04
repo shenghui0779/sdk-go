@@ -582,12 +582,15 @@ func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params l
 }
 
 // Upload 上传媒体资源
-func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath string) (gjson.Result, error) {
+func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath string, query url.Values) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
-	query := url.Values{}
+
+	if query == nil {
+		query = url.Values{}
+	}
 	query.Set(AccessToken, token)
 
 	reqURL := mp.url(reqPath, query)
@@ -618,12 +621,15 @@ func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath 
 }
 
 // UploadWithReader 上传媒体资源
-func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader) (gjson.Result, error) {
+func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, query url.Values) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
-	query := url.Values{}
+
+	if query == nil {
+		query = url.Values{}
+	}
 	query.Set(AccessToken, token)
 
 	reqURL := mp.url(reqPath, query)

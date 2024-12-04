@@ -242,13 +242,13 @@ func (p *PayV3) PostJSON(ctx context.Context, path string, params lib.X) (*APIRe
 }
 
 // Upload 上传资源
-func (p *PayV3) Upload(ctx context.Context, reqPath, fieldName, filePath, metaData string) (*APIResult, error) {
+func (p *PayV3) Upload(ctx context.Context, reqPath, fieldName, filePath, metadata string, query url.Values) (*APIResult, error) {
 	reqURL := p.url(reqPath, nil)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, p.logger)
 
-	authStr, err := p.Authorization(http.MethodPost, reqPath, nil, metaData)
+	authStr, err := p.Authorization(http.MethodPost, reqPath, query, metadata)
 	if err != nil {
 		log.SetError(err)
 		return nil, err
@@ -259,7 +259,7 @@ func (p *PayV3) Upload(ctx context.Context, reqPath, fieldName, filePath, metaDa
 		SetContext(ctx).
 		SetHeader(lib.HeaderAuthorization, authStr).
 		SetFile(fieldName, filePath).
-		SetMultipartField("meta", "", lib.ContentJSON, strings.NewReader(metaData)).
+		SetMultipartField("meta", "", lib.ContentJSON, strings.NewReader(metadata)).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
@@ -283,13 +283,13 @@ func (p *PayV3) Upload(ctx context.Context, reqPath, fieldName, filePath, metaDa
 }
 
 // UploadWithReader 上传资源
-func (p *PayV3) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, metaData string) (*APIResult, error) {
+func (p *PayV3) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, metadata string, query url.Values) (*APIResult, error) {
 	reqURL := p.url(reqPath, nil)
 
 	log := lib.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, p.logger)
 
-	authStr, err := p.Authorization(http.MethodPost, reqPath, nil, metaData)
+	authStr, err := p.Authorization(http.MethodPost, reqPath, query, metadata)
 	if err != nil {
 		log.SetError(err)
 		return nil, err
@@ -300,7 +300,7 @@ func (p *PayV3) UploadWithReader(ctx context.Context, reqPath, fieldName, fileNa
 		SetContext(ctx).
 		SetHeader(lib.HeaderAuthorization, authStr).
 		SetMultipartField(fieldName, fileName, "", reader).
-		SetMultipartField("meta", "", lib.ContentJSON, strings.NewReader(metaData)).
+		SetMultipartField("meta", "", lib.ContentJSON, strings.NewReader(metadata)).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)

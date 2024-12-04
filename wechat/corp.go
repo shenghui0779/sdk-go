@@ -257,12 +257,15 @@ func (c *Corp) PostBuffer(ctx context.Context, path string, params lib.X) ([]byt
 }
 
 // Upload 上传媒体资源
-func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string) (gjson.Result, error) {
+func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, query url.Values) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
-	query := url.Values{}
+
+	if query == nil {
+		query = url.Values{}
+	}
 	query.Set(AccessToken, token)
 
 	reqURL := c.url(reqPath, query)
@@ -293,12 +296,15 @@ func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string) 
 }
 
 // UploadWithReader 上传媒体资源
-func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader) (gjson.Result, error) {
+func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, query url.Values) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
 		return lib.Fail(err)
 	}
-	query := url.Values{}
+
+	if query == nil {
+		query = url.Values{}
+	}
 	query.Set(AccessToken, token)
 
 	reqURL := c.url(reqPath, query)
