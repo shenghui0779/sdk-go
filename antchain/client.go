@@ -157,7 +157,7 @@ func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, e
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return "", fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode)
+		return "", fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode())
 	}
 
 	ret := gjson.ParseBytes(resp.Body())

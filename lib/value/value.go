@@ -54,7 +54,6 @@ func (v V) Encode(sym, sep string, opts ...Option) string {
 	sort.Strings(keys)
 
 	var buf strings.Builder
-
 	for _, k := range keys {
 		val := v[k]
 		if len(val) == 0 && o.emptyMode == EmptyIgnore {
@@ -83,6 +82,5 @@ func (v V) Encode(sym, sep string, opts ...Option) string {
 			buf.WriteString(sym)
 		}
 	}
-
 	return buf.String()
 }

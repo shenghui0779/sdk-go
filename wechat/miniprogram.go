@@ -258,7 +258,7 @@ func (mp *MiniProgram) verify(path string, header http.Header, body []byte) erro
 		return fmt.Errorf("header appid mismatch, expect = %s", mp.appid)
 	}
 
-	sign := ""
+	var sign string
 	if serial := header.Get(HeaderMPSerial); serial == mp.sfMode.pubSN {
 		sign = header.Get(HeaderMPSignature)
 	} else {

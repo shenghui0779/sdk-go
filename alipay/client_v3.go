@@ -73,10 +73,10 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 
 		// 是否需要加密
 		if len(header.Get(HeaderEncryptType)) != 0 {
-			encryptData, err := c.Encrypt(string(body))
-			if err != nil {
-				log.SetError(err)
-				return nil, err
+			encryptData, _err := c.Encrypt(string(body))
+			if _err != nil {
+				log.SetError(_err)
+				return nil, _err
 			}
 			body = []byte(encryptData)
 			log.Set("encrypt", encryptData)
