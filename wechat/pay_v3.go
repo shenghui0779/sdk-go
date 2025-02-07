@@ -217,15 +217,17 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 }
 
 // AutoLoadCerts 自动加载平台证书
-func (p *PayV3) AutoLoadCerts() error {
+func (p *PayV3) AutoLoadCerts(interval time.Duration) error {
 	if err := p.reloadCerts(); err != nil {
 		return err
 	}
+	// 异步定时加载
 	go func() {
-		ticker := time.NewTicker(time.Hour * 24)
+		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
+
 		for range ticker.C {
-			p.reloadCerts()
+			_ = p.reloadCerts()
 		}
 	}()
 	return nil
