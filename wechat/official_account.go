@@ -455,7 +455,7 @@ func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldN
 }
 
 // VerifyURL 服务器URL验证，使用：signature、timestamp、nonce（若验证成功，请原样返回echostr参数内容）
-// [参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
+// [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
 func (oa *OfficialAccount) VerifyURL(signature, timestamp, nonce string) error {
 	if SignWithSHA1(oa.srvCfg.token, timestamp, nonce) != signature {
 		return errors.New("signature verified fail")
@@ -464,7 +464,7 @@ func (oa *OfficialAccount) VerifyURL(signature, timestamp, nonce string) error {
 }
 
 // DecodeEventMsg 解析事件消息，使用：msg_signature、timestamp、nonce、msg_encrypt
-// [参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
+// [参考](https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Message_encryption_and_decryption_instructions.html)
 func (oa *OfficialAccount) DecodeEventMsg(signature, timestamp, nonce, encryptMsg string) (value.V, error) {
 	if SignWithSHA1(oa.srvCfg.token, timestamp, nonce, encryptMsg) != signature {
 		return nil, errors.New("signature verified fail")
