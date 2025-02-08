@@ -360,9 +360,11 @@ func (mp *MiniProgram) AccessToken(ctx context.Context) (gjson.Result, error) {
 	return ret, nil
 }
 
-// StableAccessToken 获取稳定版接口调用凭据，有两种调用模式:
-// 1. 普通模式，access_token有效期内重复调用该接口不会更新access_token，绝大部分场景下使用该模式；
-// 2. 强制刷新模式，会导致上次获取的access_token失效，并返回新的access_token
+// StableAccessToken 获取稳定版接口调用凭据
+//
+//	有两种调用模式:
+//	[普通模式] access_token有效期内重复调用该接口不会更新access_token，绝大部分场景下使用该模式；
+//	[强制刷新模式] 会导致上次获取的access_token失效，并返回新的access_token
 func (mp *MiniProgram) StableAccessToken(ctx context.Context, forceRefresh bool) (gjson.Result, error) {
 	params := lib.X{
 		"grant_type":    "client_credential",
@@ -546,8 +548,9 @@ func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params lib.X
 }
 
 // SafePostJSON POST请求JSON数据
-// 安全鉴权模式 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html
-// 支持的api可参考 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc
+//
+//	[安全鉴权模式](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html)
+//	[支持的API](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc)
 func (mp *MiniProgram) SafePostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
@@ -569,8 +572,9 @@ func (mp *MiniProgram) SafePostJSON(ctx context.Context, path string, params lib
 }
 
 // SafePostBuffer POST请求获取buffer (如：获取二维码)
-// 安全鉴权模式 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html
-// 支持的api可参考 https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc
+//
+//	[安全鉴权模式](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html)
+//	[支持的API](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc)
 func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params lib.X) ([]byte, error) {
 	token, err := mp.getToken()
 	if err != nil {
@@ -671,17 +675,9 @@ func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName,
 	return ret, nil
 }
 
-// VerifyURL 服务器URL验证，使用：signature、timestamp、nonce（若验证成功，请原样返回echostr参数内容）
-// [参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
-func (mp *MiniProgram) VerifyURL(signature, timestamp, nonce string) error {
-	if SignWithSHA1(mp.srvCfg.token, timestamp, nonce) != signature {
-		return errors.New("signature verified fail")
-	}
-	return nil
-}
-
 // DecodeEncryptData 解析加密数据，如：授权的用户信息和手机号
-// [参考](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/signature.html)
+//
+//	[参考](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/signature.html)
 func (mp *MiniProgram) DecodeEncryptData(sessionKey, iv, encryptData string) ([]byte, error) {
 	keyBlock, err := base64.StdEncoding.DecodeString(sessionKey)
 	if err != nil {
@@ -698,22 +694,35 @@ func (mp *MiniProgram) DecodeEncryptData(sessionKey, iv, encryptData string) ([]
 	return xcrypto.AESDecryptCBC(keyBlock, ivBlock, data)
 }
 
-// DecodeEventMsg 解析事件消息，使用：msg_signature、timestamp、nonce、msg_encrypt
-// [参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
-func (mp *MiniProgram) DecodeEventMsg(signature, timestamp, nonce, encryptMsg string) (value.V, error) {
-	if SignWithSHA1(mp.srvCfg.token, timestamp, nonce, encryptMsg) != signature {
-		return nil, errors.New("signature verified fail")
+// VerifyEventMsg 验证事件消息
+//
+//	[服务器URL验证]
+//	URL参数中的 signature、timestamp、nonce
+//	注意：验证成功后，原样返回 echostr 字段值
+//
+//	[事件消息验证]
+//	[明文模式] URL参数中的 signature、timestamp、nonce
+//	[安全模式] URL参数中的 msg_signature、timestamp、nonce 和包体内的 Encrypt 字段
+//
+//	[参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
+func (mp *MiniProgram) VerifyEventMsg(signature string, items ...string) error {
+	if v := SignWithSHA1(mp.srvCfg.token, items...); v != signature {
+		return fmt.Errorf("signature verified fail, expect=%s, actual=%s", signature, v)
 	}
-
-	b, err := EventDecrypt(mp.appid, mp.srvCfg.aeskey, encryptMsg)
-	if err != nil {
-		return nil, err
-	}
-	return XMLToValue(b)
+	return nil
 }
 
-// ReplyEventMsg 事件消息回复
-func (mp *MiniProgram) ReplyEventMsg(msg value.V) (value.V, error) {
+// DecodeEventMsg 事件消息解密，使用包体内的 Encrypt 字段
+//
+//	[参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
+func (mp *MiniProgram) DecodeEventMsg(encrypt string) ([]byte, error) {
+	return EventDecrypt(mp.appid, mp.srvCfg.aeskey, encrypt)
+}
+
+// EncodeEventReply 事件回复加密
+//
+//	[参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
+func (mp *MiniProgram) EncodeEventReply(msg value.V) (value.V, error) {
 	return EventReply(mp.appid, mp.srvCfg.token, mp.srvCfg.aeskey, msg)
 }
 
@@ -721,7 +730,8 @@ func (mp *MiniProgram) ReplyEventMsg(msg value.V) (value.V, error) {
 type MPOption func(mp *MiniProgram)
 
 // WithMPSrvCfg 设置小程序服务器配置
-// [参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
+//
+//	[参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
 func WithMPSrvCfg(token, aeskey string) MPOption {
 	return func(mp *MiniProgram) {
 		mp.srvCfg.token = token

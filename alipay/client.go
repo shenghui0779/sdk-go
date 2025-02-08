@@ -94,7 +94,9 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 	return gjson.ParseBytes(data), nil
 }
 
-// Upload 文件上传，参考：https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload
+// Upload 文件上传
+//
+//	[参考](https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload)
 func (c *Client) Upload(ctx context.Context, method string, fieldName, filePath string, formData map[string]string, options ...ActionOption) (gjson.Result, error) {
 	log := lib.NewReqLog(http.MethodPost, c.gateway)
 	defer log.Do(ctx, c.logger)
@@ -151,7 +153,9 @@ func (c *Client) Upload(ctx context.Context, method string, fieldName, filePath 
 	return gjson.ParseBytes(data), nil
 }
 
-// UploadWithReader 文件上传，参考：https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload
+// UploadWithReader 文件上传
+//
+//	[参考](https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload)
 func (c *Client) UploadWithReader(ctx context.Context, method string, fieldName, fileName string, reader io.Reader, formData map[string]string, options ...ActionOption) (gjson.Result, error) {
 	log := lib.NewReqLog(http.MethodPost, c.gateway)
 	defer log.Do(ctx, c.logger)

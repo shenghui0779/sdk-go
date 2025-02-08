@@ -28,7 +28,8 @@ func SignWithSHA1(token string, items ...string) string {
 }
 
 // EventEncrypt 时间消息加密
-// [参考](https://developer.work.weixin.qq.com/document/path/90968)
+//
+//	[参考](https://developer.work.weixin.qq.com/document/path/90968)
 func EventEncrypt(receiveID, encodingAESKey, nonce string, plainText []byte) (*xcrypto.CipherText, error) {
 	key, err := base64.StdEncoding.DecodeString(encodingAESKey + "=")
 	if err != nil {
@@ -49,7 +50,8 @@ func EventEncrypt(receiveID, encodingAESKey, nonce string, plainText []byte) (*x
 }
 
 // EventDecrypt 事件消息解密
-// [参考](https://developer.work.weixin.qq.com/document/path/90968)
+//
+//	[参考](https://developer.work.weixin.qq.com/document/path/90968)
 func EventDecrypt(receiveID, encodingAESKey, cipherText string) ([]byte, error) {
 	key, err := base64.StdEncoding.DecodeString(encodingAESKey + "=")
 	if err != nil {

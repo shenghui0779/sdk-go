@@ -102,7 +102,8 @@ func (oa *OfficialAccount) do(ctx context.Context, method, path string, header h
 }
 
 // OAuth2URL 生成网页授权URL
-// [参考](https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html)
+//
+//	[参考](https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html)
 func (oa *OfficialAccount) OAuth2URL(scope AuthScope, redirectURI, state string) string {
 	query := url.Values{}
 
@@ -116,7 +117,8 @@ func (oa *OfficialAccount) OAuth2URL(scope AuthScope, redirectURI, state string)
 }
 
 // SubscribeMsgAuthURL 公众号一次性订阅消息授权URL
-// [参考](https://developers.weixin.qq.com/doc/offiaccount/Message_Management/One-time_subscription_info.html)
+//
+//	[参考](https://developers.weixin.qq.com/doc/offiaccount/Message_Management/One-time_subscription_info.html)
 func (oa *OfficialAccount) SubscribeMsgAuthURL(scene, templateID, redirectURL, reserved string) string {
 	query := url.Values{}
 
@@ -190,9 +192,11 @@ func (oa *OfficialAccount) AccessToken(ctx context.Context) (gjson.Result, error
 	return ret, nil
 }
 
-// StableAccessToken 获取稳定版接口调用凭据，有两种调用模式:
-// 1. 普通模式，access_token 有效期内重复调用该接口不会更新 access_token，绝大部分场景下使用该模式；
-// 2. 强制刷新模式，会导致上次获取的 access_token 失效，并返回新的 access_token
+// StableAccessToken 获取稳定版接口调用凭据
+//
+//	有两种调用模式:
+//	[普通模式] access_token 有效期内重复调用该接口不会更新 access_token，绝大部分场景下使用该模式；
+//	[强制刷新模式] 会导致上次获取的 access_token 失效，并返回新的 access_token
 func (oa *OfficialAccount) StableAccessToken(ctx context.Context, forceRefresh bool) (gjson.Result, error) {
 	params := lib.X{
 		"grant_type":    "client_credential",
@@ -454,31 +458,38 @@ func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldN
 	return ret, nil
 }
 
-// VerifyURL 服务器URL验证，使用：signature、timestamp、nonce（若验证成功，请原样返回echostr参数内容）
-// [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
-func (oa *OfficialAccount) VerifyURL(signature, timestamp, nonce string) error {
-	if SignWithSHA1(oa.srvCfg.token, timestamp, nonce) != signature {
-		return errors.New("signature verified fail")
+// VerifyEventMsg 验证事件消息
+//
+//	[服务器URL验证]
+//	   URL参数中的 signature、timestamp、nonce
+//	   注意：验证成功后，原样返回 echostr 字段值
+//	[参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
+//
+//	[事件消息验证]
+//	[明文模式] URL参数中的 signature、timestamp、nonce
+//	[安全模式] URL参数中的 msg_signature、timestamp、nonce 和 包体内的 Encrypt 字段
+//	[参考](https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Message_encryption_and_decryption_instructions.html)
+func (oa *OfficialAccount) VerifyEventMsg(signature string, items ...string) error {
+	if v := SignWithSHA1(oa.srvCfg.token, items...); v != signature {
+		return fmt.Errorf("signature verified fail, expect=%s, actual=%s", signature, v)
 	}
 	return nil
 }
 
-// DecodeEventMsg 解析事件消息，使用：msg_signature、timestamp、nonce、msg_encrypt
-// [参考](https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Message_encryption_and_decryption_instructions.html)
-func (oa *OfficialAccount) DecodeEventMsg(signature, timestamp, nonce, encryptMsg string) (value.V, error) {
-	if SignWithSHA1(oa.srvCfg.token, timestamp, nonce, encryptMsg) != signature {
-		return nil, errors.New("signature verified fail")
-	}
-
-	b, err := EventDecrypt(oa.appid, oa.srvCfg.aeskey, encryptMsg)
-	if err != nil {
-		return nil, err
-	}
-	return XMLToValue(b)
+// DecodeEventMsg 事件消息解密
+//
+//	使用包体内的 Encrypt 字段
+//	根据配置的数据格式，解析 XML/JSON
+//	[参考](https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Message_encryption_and_decryption_instructions.html)
+func (oa *OfficialAccount) DecodeEventMsg(encrypt string) ([]byte, error) {
+	return EventDecrypt(oa.appid, oa.srvCfg.aeskey, encrypt)
 }
 
-// ReplyEventMsg 事件消息回复
-func (oa *OfficialAccount) ReplyEventMsg(msg value.V) (value.V, error) {
+// EncodeEventReply 事件回复加密
+//
+//	根据配置的数据格式，输出 XML/JSON
+//	[参考](https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Message_encryption_and_decryption_instructions.html)
+func (oa *OfficialAccount) EncodeEventReply(msg value.V) (value.V, error) {
 	return EventReply(oa.appid, oa.srvCfg.token, oa.srvCfg.aeskey, msg)
 }
 
@@ -486,7 +497,8 @@ func (oa *OfficialAccount) ReplyEventMsg(msg value.V) (value.V, error) {
 type OAOption func(oa *OfficialAccount)
 
 // WithOASrvCfg 设置公众号服务器配置
-// [参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
+//
+//	[参考](https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html)
 func WithOASrvCfg(token, aeskey string) OAOption {
 	return func(oa *OfficialAccount) {
 		oa.srvCfg.token = token

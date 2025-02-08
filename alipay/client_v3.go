@@ -158,7 +158,9 @@ func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params lib.X, o
 	return c.do(ctx, http.MethodPost, path, nil, params, header)
 }
 
-// Upload 文件上传，参考：https://opendocs.alipay.com/open-v3/054oog?pathHash=7834d743
+// Upload 文件上传
+//
+//	[参考](https://opendocs.alipay.com/open-v3/054oog?pathHash=7834d743)
 func (c *ClientV3) Upload(ctx context.Context, reqPath, fieldName, filePath, bizData string, options ...V3HeaderOption) (*APIResult, error) {
 	reqID := uuid.NewString()
 	reqURL := c.url(reqPath, nil)
@@ -208,7 +210,9 @@ func (c *ClientV3) Upload(ctx context.Context, reqPath, fieldName, filePath, biz
 	return ret, nil
 }
 
-// UploadWithReader 文件上传，参考：https://opendocs.alipay.com/open-v3/054oog?pathHash=7834d743
+// UploadWithReader 文件上传
+//
+//	[参考](https://opendocs.alipay.com/open-v3/054oog?pathHash=7834d743)
 func (c *ClientV3) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, bizData string, options ...V3HeaderOption) (*APIResult, error) {
 	reqID := uuid.NewString()
 	reqURL := c.url(reqPath, nil)
