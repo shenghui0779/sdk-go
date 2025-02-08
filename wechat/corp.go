@@ -359,8 +359,9 @@ func (c *Corp) VerifyEventMsg(signature string, items ...string) error {
 	return nil
 }
 
-// DecodeEventMsg 事件消息解密，使用包体内的 Encrypt 字段
+// DecodeEventMsg 事件消息解密
 //
+//	使用包体内的 Encrypt 字段
 //	[参考](https://developer.work.weixin.qq.com/document/path/96211)
 func (c *Corp) DecodeEventMsg(encrypt string) ([]byte, error) {
 	return EventDecrypt(c.corpid, c.srvCfg.aeskey, encrypt)

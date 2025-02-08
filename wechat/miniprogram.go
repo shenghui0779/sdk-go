@@ -712,8 +712,10 @@ func (mp *MiniProgram) VerifyEventMsg(signature string, items ...string) error {
 	return nil
 }
 
-// DecodeEventMsg 事件消息解密，使用包体内的 Encrypt 字段
+// DecodeEventMsg 事件消息解密
 //
+//	使用包体内的 Encrypt 字段
+//	根据配置的数据格式，解析 XML/JSON
 //	[参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
 func (mp *MiniProgram) DecodeEventMsg(encrypt string) ([]byte, error) {
 	return EventDecrypt(mp.appid, mp.srvCfg.aeskey, encrypt)
@@ -721,6 +723,7 @@ func (mp *MiniProgram) DecodeEventMsg(encrypt string) ([]byte, error) {
 
 // EncodeEventReply 事件回复加密
 //
+//	根据配置的数据格式，输出 XML/JSON
 //	[参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
 func (mp *MiniProgram) EncodeEventReply(msg value.V) (value.V, error) {
 	return EventReply(mp.appid, mp.srvCfg.token, mp.srvCfg.aeskey, msg)
