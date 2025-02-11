@@ -5,7 +5,11 @@ import (
 	"encoding/base64"
 	"io"
 	"os"
+
+	"github.com/yiigo/sdk-go/internal/value"
 )
+
+type V = value.V
 
 const (
 	HeaderContentMD5           = "Content-MD5"

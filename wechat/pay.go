@@ -13,10 +13,10 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/value"
-	"github.com/shenghui0779/sdk-go/lib/xcrypto"
-	"github.com/shenghui0779/sdk-go/lib/xhash"
+	"github.com/yiigo/sdk-go/internal"
+	"github.com/yiigo/sdk-go/internal/value"
+	"github.com/yiigo/sdk-go/internal/xcrypto"
+	"github.com/yiigo/sdk-go/internal/xhash"
 )
 
 // Pay 微信支付
@@ -55,10 +55,10 @@ func (p *Pay) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (p *Pay) do(ctx context.Context, path string, params value.V) ([]byte, error) {
+func (p *Pay) do(ctx context.Context, path string, params V) ([]byte, error) {
 	reqURL := p.url(path, nil)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, p.logger)
 
 	params.Set("sign", p.Sign(params))
@@ -87,10 +87,10 @@ func (p *Pay) do(ctx context.Context, path string, params value.V) ([]byte, erro
 	return resp.Body(), nil
 }
 
-func (p *Pay) doTls(ctx context.Context, path string, params value.V) ([]byte, error) {
+func (p *Pay) doTls(ctx context.Context, path string, params V) ([]byte, error) {
 	reqURL := p.url(path, nil)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, p.logger)
 
 	params.Set("sign", p.Sign(params))
@@ -120,7 +120,7 @@ func (p *Pay) doTls(ctx context.Context, path string, params value.V) ([]byte, e
 }
 
 // PostXML POST请求XML数据 (无证书请求)
-func (p *Pay) PostXML(ctx context.Context, path string, params value.V) (value.V, error) {
+func (p *Pay) PostXML(ctx context.Context, path string, params V) (V, error) {
 	b, err := p.do(ctx, path, params)
 	if err != nil {
 		return nil, err
@@ -140,7 +140,7 @@ func (p *Pay) PostXML(ctx context.Context, path string, params value.V) (value.V
 }
 
 // PostTLSXML POST请求XML数据 (带证书请求)
-func (p *Pay) PostTLSXML(ctx context.Context, path string, params value.V) (value.V, error) {
+func (p *Pay) PostTLSXML(ctx context.Context, path string, params V) (V, error) {
 	b, err := p.doTls(ctx, path, params)
 	if err != nil {
 		return nil, err
@@ -160,7 +160,7 @@ func (p *Pay) PostTLSXML(ctx context.Context, path string, params value.V) (valu
 }
 
 // PostBuffer POST请求获取buffer (无证书请求，如：下载交易订单)
-func (p *Pay) PostBuffer(ctx context.Context, path string, params value.V) ([]byte, error) {
+func (p *Pay) PostBuffer(ctx context.Context, path string, params V) ([]byte, error) {
 	b, err := p.do(ctx, path, params)
 	if err != nil {
 		return nil, err
@@ -178,7 +178,7 @@ func (p *Pay) PostBuffer(ctx context.Context, path string, params value.V) ([]by
 }
 
 // PostBuffer POST请求获取buffer (带证书请求，如：下载资金账单)
-func (p *Pay) PostTlsBuffer(ctx context.Context, path string, params value.V) ([]byte, error) {
+func (p *Pay) PostTlsBuffer(ctx context.Context, path string, params V) ([]byte, error) {
 	b, err := p.doTls(ctx, path, params)
 	if err != nil {
 		return nil, err
@@ -195,7 +195,7 @@ func (p *Pay) PostTlsBuffer(ctx context.Context, path string, params value.V) ([
 	return b, nil
 }
 
-func (p *Pay) Sign(v value.V) string {
+func (p *Pay) Sign(v V) string {
 	signStr := v.Encode("=", "&", value.WithIgnoreKeys("sign"), value.WithEmptyMode(value.EmptyIgnore)) + "&key=" + p.apikey
 	signType := v.Get("sign_type")
 	if len(signType) == 0 {
@@ -207,7 +207,7 @@ func (p *Pay) Sign(v value.V) string {
 	return strings.ToUpper(xhash.MD5(signStr))
 }
 
-func (p *Pay) Verify(v value.V) error {
+func (p *Pay) Verify(v V) error {
 	wxsign := v.Get("sign")
 	signType := v.Get("sign_type")
 	if len(signType) == 0 {
@@ -229,7 +229,7 @@ func (p *Pay) Verify(v value.V) error {
 }
 
 // DecryptRefund 退款结果通知解密
-func (p *Pay) DecryptRefund(encrypt string) (value.V, error) {
+func (p *Pay) DecryptRefund(encrypt string) (V, error) {
 	cipherText, err := base64.StdEncoding.DecodeString(encrypt)
 	if err != nil {
 		return nil, err
@@ -242,14 +242,14 @@ func (p *Pay) DecryptRefund(encrypt string) (value.V, error) {
 }
 
 // APPAPI 用于APP拉起支付
-func (p *Pay) APPAPI(appid, prepayID string) value.V {
-	v := value.V{}
+func (p *Pay) APPAPI(appid, prepayID string) V {
+	v := V{}
 
 	v.Set("appid", appid)
 	v.Set("partnerid", p.mchid)
 	v.Set("prepayid", prepayID)
 	v.Set("package", "Sign=WXPay")
-	v.Set("noncestr", lib.Nonce(16))
+	v.Set("noncestr", internal.Nonce(16))
 	v.Set("timestamp", strconv.FormatInt(time.Now().Unix(), 10))
 
 	v.Set("sign", p.Sign(v))
@@ -258,11 +258,11 @@ func (p *Pay) APPAPI(appid, prepayID string) value.V {
 }
 
 // JSAPI 用于JS拉起支付
-func (p *Pay) JSAPI(appid, prepayID string) value.V {
-	v := value.V{}
+func (p *Pay) JSAPI(appid, prepayID string) V {
+	v := V{}
 
 	v.Set("appId", appid)
-	v.Set("nonceStr", lib.Nonce(16))
+	v.Set("nonceStr", internal.Nonce(16))
 	v.Set("package", "prepay_id="+prepayID)
 	v.Set("signType", "MD5")
 	v.Set("timeStamp", strconv.FormatInt(time.Now().Unix(), 10))
@@ -273,11 +273,11 @@ func (p *Pay) JSAPI(appid, prepayID string) value.V {
 }
 
 // MinipRedpackJSAPI 小程序领取红包
-func (p *Pay) MinipRedpackJSAPI(appid, pkg string) value.V {
-	v := value.V{}
+func (p *Pay) MinipRedpackJSAPI(appid, pkg string) V {
+	v := V{}
 
 	v.Set("appId", appid)
-	v.Set("nonceStr", lib.Nonce(16))
+	v.Set("nonceStr", internal.Nonce(16))
 	v.Set("package", url.QueryEscape(pkg))
 	v.Set("timeStamp", strconv.FormatInt(time.Now().Unix(), 10))
 	v.Set("signType", "MD5")
@@ -326,8 +326,8 @@ func NewPay(mchid, apikey string, options ...PayOption) *Pay {
 		host:      "https://api.mch.weixin.qq.com",
 		mchid:     mchid,
 		apikey:    apikey,
-		client:    lib.NewClient(),
-		clientTls: lib.NewClient(),
+		client:    internal.NewClient(),
+		clientTls: internal.NewClient(),
 	}
 	for _, f := range options {
 		f(pay)

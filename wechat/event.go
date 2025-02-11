@@ -10,9 +10,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/value"
-	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/yiigo/sdk-go/internal"
+	"github.com/yiigo/sdk-go/internal/xcrypto"
 )
 
 // SignWithSHA1 事件消息sha1签名
@@ -76,13 +75,13 @@ func EventDecrypt(receiveID, encodingAESKey, cipherText string) ([]byte, error) 
 	return plainText[20:appidOffset], nil
 }
 
-func EventReply(receiveID, token, encodingAESKey string, msg value.V) (value.V, error) {
+func EventReply(receiveID, token, encodingAESKey string, msg V) (V, error) {
 	str, err := ValueToXML(msg)
 	if err != nil {
 		return nil, err
 	}
 
-	nonce := lib.Nonce(16)
+	nonce := internal.Nonce(16)
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
 	ct, err := EventEncrypt(receiveID, encodingAESKey, nonce, []byte(str))
@@ -92,7 +91,7 @@ func EventReply(receiveID, token, encodingAESKey string, msg value.V) (value.V, 
 
 	encryptMsg := ct.String()
 
-	return value.V{
+	return V{
 		"Encrypt":      encryptMsg,
 		"MsgSignature": SignWithSHA1(token, timestamp, nonce, encryptMsg),
 		"TimeStamp":    timestamp,

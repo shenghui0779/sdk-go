@@ -14,9 +14,9 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/value"
-	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/yiigo/sdk-go/internal"
+	"github.com/yiigo/sdk-go/internal/value"
+	"github.com/yiigo/sdk-go/internal/xcrypto"
 )
 
 // Client 支付宝客户端
@@ -39,7 +39,7 @@ func (c *Client) AppID() string {
 func (c *Client) Do(ctx context.Context, method string, options ...ActionOption) (gjson.Result, error) {
 	reqURL := c.gateway + "?charset=utf-8"
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
 
 	action := NewAction(method, options...)
@@ -47,38 +47,38 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 	body, err := action.Encode(c)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetReqBody(body)
 
 	resp, err := c.client.R().
 		SetContext(ctx).
-		SetHeader(lib.HeaderAccept, lib.ContentJSON).
-		SetHeader(lib.HeaderContentType, lib.ContentForm).
+		SetHeader(internal.HeaderAccept, internal.ContentJSON).
+		SetHeader(internal.HeaderContentType, internal.ContentForm).
 		SetBody(body).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+		return internal.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
 	// 签名校验
 	ret, err := c.verifyResp(action.RespKey(), resp.Body())
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	// JSON串，无需解密
 	if strings.HasPrefix(ret.String(), "{") {
 		if code := ret.Get("code").String(); code != CodeOK {
-			return lib.Fail(fmt.Errorf("%s | %s (sub_code = %s, sub_msg = %s)", code, ret.Get("msg").String(), ret.Get("sub_code").String(), ret.Get("sub_msg").String()))
+			return internal.Fail(fmt.Errorf("%s | %s (sub_code = %s, sub_msg = %s)", code, ret.Get("msg").String(), ret.Get("sub_code").String(), ret.Get("sub_msg").String()))
 		}
 		return ret, nil
 	}
@@ -87,7 +87,7 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 	data, err := c.Decrypt(ret.String())
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.Set("decrypt", string(data))
 
@@ -98,7 +98,7 @@ func (c *Client) Do(ctx context.Context, method string, options ...ActionOption)
 //
 //	[参考](https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload)
 func (c *Client) Upload(ctx context.Context, method string, fieldName, filePath string, formData map[string]string, options ...ActionOption) (gjson.Result, error) {
-	log := lib.NewReqLog(http.MethodPost, c.gateway)
+	log := internal.NewReqLog(http.MethodPost, c.gateway)
 	defer log.Do(ctx, c.logger)
 
 	action := NewAction(method, options...)
@@ -106,38 +106,38 @@ func (c *Client) Upload(ctx context.Context, method string, fieldName, filePath 
 	query, err := action.Encode(c)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.Set("query", query)
 
 	resp, err := c.client.R().
 		SetContext(ctx).
-		SetHeader(lib.HeaderAccept, lib.ContentJSON).
+		SetHeader(internal.HeaderAccept, internal.ContentJSON).
 		SetFile(fieldName, filePath).
 		SetMultipartFormData(formData).
 		Post(c.gateway + "?" + query)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+		return internal.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
 	// 签名校验
 	ret, err := c.verifyResp(action.RespKey(), resp.Body())
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	// JSON串，无需解密
 	if strings.HasPrefix(ret.String(), "{") {
 		if code := ret.Get("code").String(); code != CodeOK {
-			return lib.Fail(fmt.Errorf("%s | %s (sub_code = %s, sub_msg = %s)", code, ret.Get("msg").String(), ret.Get("sub_code").String(), ret.Get("sub_msg").String()))
+			return internal.Fail(fmt.Errorf("%s | %s (sub_code = %s, sub_msg = %s)", code, ret.Get("msg").String(), ret.Get("sub_code").String(), ret.Get("sub_msg").String()))
 		}
 		return ret, nil
 	}
@@ -146,7 +146,7 @@ func (c *Client) Upload(ctx context.Context, method string, fieldName, filePath 
 	data, err := c.Decrypt(ret.String())
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.Set("decrypt", string(data))
 
@@ -157,7 +157,7 @@ func (c *Client) Upload(ctx context.Context, method string, fieldName, filePath 
 //
 //	[参考](https://opendocs.alipay.com/apis/api_4/alipay.merchant.item.file.upload)
 func (c *Client) UploadWithReader(ctx context.Context, method string, fieldName, fileName string, reader io.Reader, formData map[string]string, options ...ActionOption) (gjson.Result, error) {
-	log := lib.NewReqLog(http.MethodPost, c.gateway)
+	log := internal.NewReqLog(http.MethodPost, c.gateway)
 	defer log.Do(ctx, c.logger)
 
 	action := NewAction(method, options...)
@@ -165,38 +165,38 @@ func (c *Client) UploadWithReader(ctx context.Context, method string, fieldName,
 	query, err := action.Encode(c)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.Set("query", query)
 
 	resp, err := c.client.R().
 		SetContext(ctx).
-		SetHeader(lib.HeaderAccept, lib.ContentJSON).
+		SetHeader(internal.HeaderAccept, internal.ContentJSON).
 		SetMultipartField(fieldName, fileName, "", reader).
 		SetMultipartFormData(formData).
 		Post(c.gateway + "?" + query)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+		return internal.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
 	// 签名校验
 	ret, err := c.verifyResp(action.RespKey(), resp.Body())
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	// JSON串，无需解密
 	if strings.HasPrefix(ret.String(), "{") {
 		if code := ret.Get("code").String(); code != CodeOK {
-			return lib.Fail(fmt.Errorf("%s | %s (sub_code = %s, sub_msg = %s)", code, ret.Get("msg").String(), ret.Get("sub_code").String(), ret.Get("sub_msg").String()))
+			return internal.Fail(fmt.Errorf("%s | %s (sub_code = %s, sub_msg = %s)", code, ret.Get("msg").String(), ret.Get("sub_code").String(), ret.Get("sub_msg").String()))
 		}
 		return ret, nil
 	}
@@ -205,7 +205,7 @@ func (c *Client) UploadWithReader(ctx context.Context, method string, fieldName,
 	data, err := c.Decrypt(ret.String())
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.Set("decrypt", string(data))
 
@@ -214,27 +214,27 @@ func (c *Client) UploadWithReader(ctx context.Context, method string, fieldName,
 
 func (c *Client) verifyResp(key string, body []byte) (gjson.Result, error) {
 	if c.pubKey == nil {
-		return lib.Fail(errors.New("public key is nil (forgotten configure?)"))
+		return internal.Fail(errors.New("public key is nil (forgotten configure?)"))
 	}
 
 	ret := gjson.ParseBytes(body)
 
 	signByte, err := base64.StdEncoding.DecodeString(ret.Get("sign").String())
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
-	hash := crypto.SHA256
+	xhash := crypto.SHA256
 	if ret.Get("sign_type").String() == "RSA" {
-		hash = crypto.SHA1
+		xhash = crypto.SHA1
 	}
 
 	if errResp := ret.Get("error_response"); errResp.Exists() {
-		if err = c.pubKey.Verify(hash, []byte(errResp.Raw), signByte); err != nil {
-			return lib.Fail(err)
+		if err = c.pubKey.Verify(xhash, []byte(errResp.Raw), signByte); err != nil {
+			return internal.Fail(err)
 		}
 
-		return lib.Fail(fmt.Errorf("%s | %s (sub_code = %s, sub_msg = %s)",
+		return internal.Fail(fmt.Errorf("%s | %s (sub_code = %s, sub_msg = %s)",
 			errResp.Get("code").String(),
 			errResp.Get("msg").String(),
 			errResp.Get("sub_code").String(),
@@ -243,8 +243,8 @@ func (c *Client) verifyResp(key string, body []byte) (gjson.Result, error) {
 	}
 
 	resp := ret.Get(key)
-	if err = c.pubKey.Verify(hash, []byte(resp.Raw), signByte); err != nil {
-		return lib.Fail(err)
+	if err = c.pubKey.Verify(xhash, []byte(resp.Raw), signByte); err != nil {
+		return internal.Fail(err)
 	}
 	return resp, nil
 }
@@ -302,7 +302,7 @@ func (c *Client) DecodeEncryptData(hash crypto.Hash, data, sign string) ([]byte,
 }
 
 // VerifyNotify 验证回调通知表单数据
-func (c *Client) VerifyNotify(form url.Values) (value.V, error) {
+func (c *Client) VerifyNotify(form url.Values) (V, error) {
 	if c.pubKey == nil {
 		return nil, errors.New("public key is nil (forgotten configure?)")
 	}
@@ -312,7 +312,7 @@ func (c *Client) VerifyNotify(form url.Values) (value.V, error) {
 		return nil, err
 	}
 
-	v := value.V{}
+	v := V{}
 	for key, vals := range form {
 		if key == "sign_type" || key == "sign" || len(vals) == 0 {
 			continue
@@ -321,11 +321,11 @@ func (c *Client) VerifyNotify(form url.Values) (value.V, error) {
 	}
 	str := v.Encode("=", "&", value.WithEmptyMode(value.EmptyIgnore))
 
-	hash := crypto.SHA256
+	xhash := crypto.SHA256
 	if form.Get("sign_type") == "RSA" {
-		hash = crypto.SHA1
+		xhash = crypto.SHA1
 	}
-	if err = c.pubKey.Verify(hash, []byte(str), sign); err != nil {
+	if err = c.pubKey.Verify(xhash, []byte(str), sign); err != nil {
 		return nil, err
 	}
 	return v, nil
@@ -368,7 +368,7 @@ func NewClient(appid, aesKey string, options ...Option) *Client {
 		appid:   appid,
 		aesKey:  aesKey,
 		gateway: "https://openapi.alipay.com/gateway.do",
-		client:  lib.NewClient(),
+		client:  internal.NewClient(),
 	}
 	for _, f := range options {
 		f(c)
@@ -382,7 +382,7 @@ func NewSandbox(appid, aesKey string, options ...Option) *Client {
 		appid:   appid,
 		aesKey:  aesKey,
 		gateway: "https://openapi-sandbox.dl.alipaydev.com/gateway.do",
-		client:  lib.NewClient(),
+		client:  internal.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

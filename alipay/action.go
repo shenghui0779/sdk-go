@@ -9,14 +9,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/yiigo/sdk-go/internal"
+	"github.com/yiigo/sdk-go/internal/value"
 )
 
 type Action struct {
 	method  string
-	params  value.V
-	bizData lib.X
+	params  V
+	bizData internal.X
 	encrypt bool
 }
 
@@ -31,7 +31,7 @@ func (a *Action) Encode(c *Client) (string, error) {
 		return "", errors.New("private key is nil (forgotten configure?)")
 	}
 
-	v := make(value.V)
+	v := make(V)
 
 	v.Set("app_id", c.appid)
 	v.Set("method", a.method)
@@ -135,7 +135,7 @@ func WithKVParam(k, v string) ActionOption {
 }
 
 // WithBizContent 设置「biz_content」参数
-func WithBizContent(data lib.X) ActionOption {
+func WithBizContent(data internal.X) ActionOption {
 	return func(a *Action) {
 		a.bizData = data
 	}
@@ -153,7 +153,7 @@ func WithEncrypt() ActionOption {
 func NewAction(method string, options ...ActionOption) *Action {
 	action := &Action{
 		method: method,
-		params: make(value.V),
+		params: make(V),
 	}
 
 	for _, f := range options {

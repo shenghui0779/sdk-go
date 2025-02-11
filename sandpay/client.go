@@ -13,8 +13,8 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/yiigo/sdk-go/internal"
+	"github.com/yiigo/sdk-go/internal/xcrypto"
 )
 
 // Client 杉德支付客户端
@@ -33,7 +33,7 @@ func (c *Client) MchID() string {
 
 // Do 请求杉德API
 func (c *Client) Do(ctx context.Context, reqURL string, form *Form) (*Form, error) {
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
 
 	body, err := form.URLEncode(c.mchID, c.prvKey)
@@ -45,7 +45,7 @@ func (c *Client) Do(ctx context.Context, reqURL string, form *Form) (*Form, erro
 
 	resp, err := c.client.R().
 		SetContext(ctx).
-		SetHeader(lib.HeaderContentType, lib.ContentForm).
+		SetHeader(internal.HeaderContentType, internal.ContentForm).
 		SetBody(body).
 		Post(reqURL)
 	if err != nil {
@@ -128,7 +128,7 @@ func WithLogger(fn func(ctx context.Context, err error, data map[string]string))
 func NewClient(mchID string, options ...Option) *Client {
 	c := &Client{
 		mchID:  mchID,
-		client: lib.NewClient(),
+		client: internal.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

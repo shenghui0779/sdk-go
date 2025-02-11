@@ -15,8 +15,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/yiigo/sdk-go/internal"
 )
 
 // ServerConfig 服务器配置
@@ -63,10 +62,10 @@ func (oa *OfficialAccount) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (oa *OfficialAccount) do(ctx context.Context, method, path string, header http.Header, query url.Values, params lib.X) ([]byte, error) {
+func (oa *OfficialAccount) do(ctx context.Context, method, path string, header http.Header, query url.Values, params internal.X) ([]byte, error) {
 	reqURL := oa.url(path, query)
 
-	log := lib.NewReqLog(method, reqURL)
+	log := internal.NewReqLog(method, reqURL)
 	defer log.Do(ctx, oa.logger)
 
 	var (
@@ -142,12 +141,12 @@ func (oa *OfficialAccount) Code2OAuthToken(ctx context.Context, code string) (gj
 
 	b, err := oa.do(ctx, http.MethodGet, "/sns/oauth2/access_token", nil, query, nil)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -162,12 +161,12 @@ func (oa *OfficialAccount) RefreshOAuthToken(ctx context.Context, refreshToken s
 
 	b, err := oa.do(ctx, http.MethodGet, "/sns/oauth2/refresh_token", nil, query, nil)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -182,12 +181,12 @@ func (oa *OfficialAccount) AccessToken(ctx context.Context) (gjson.Result, error
 
 	b, err := oa.do(ctx, http.MethodGet, "/cgi-bin/token", nil, query, nil)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -198,7 +197,7 @@ func (oa *OfficialAccount) AccessToken(ctx context.Context) (gjson.Result, error
 //	[普通模式] access_token 有效期内重复调用该接口不会更新 access_token，绝大部分场景下使用该模式；
 //	[强制刷新模式] 会导致上次获取的 access_token 失效，并返回新的 access_token
 func (oa *OfficialAccount) StableAccessToken(ctx context.Context, forceRefresh bool) (gjson.Result, error) {
-	params := lib.X{
+	params := internal.X{
 		"grant_type":    "client_credential",
 		"appid":         oa.appid,
 		"secret":        oa.secret,
@@ -206,16 +205,16 @@ func (oa *OfficialAccount) StableAccessToken(ctx context.Context, forceRefresh b
 	}
 
 	header := http.Header{}
-	header.Set(lib.HeaderContentType, lib.ContentJSON)
+	header.Set(internal.HeaderContentType, internal.ContentJSON)
 
 	b, err := oa.do(ctx, http.MethodPost, "/cgi-bin/stable_token", header, nil, params)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -288,7 +287,7 @@ func (oa *OfficialAccount) getToken() (string, error) {
 func (oa *OfficialAccount) GetJSON(ctx context.Context, path string, query url.Values) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	if query == nil {
 		query = url.Values{}
@@ -297,36 +296,36 @@ func (oa *OfficialAccount) GetJSON(ctx context.Context, path string, query url.V
 
 	b, err := oa.do(ctx, http.MethodGet, path, nil, query, nil)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
 
 // PostJSON POST请求JSON数据
-func (oa *OfficialAccount) PostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
+func (oa *OfficialAccount) PostJSON(ctx context.Context, path string, params internal.X) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
 	header := http.Header{}
-	header.Set(lib.HeaderContentType, lib.ContentJSON)
+	header.Set(internal.HeaderContentType, internal.ContentJSON)
 
 	b, err := oa.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -355,7 +354,7 @@ func (oa *OfficialAccount) GetBuffer(ctx context.Context, path string, query url
 }
 
 // PostBuffer POST请求获取buffer (如：获取二维码)
-func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params lib.X) ([]byte, error) {
+func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params internal.X) ([]byte, error) {
 	token, err := oa.getToken()
 	if err != nil {
 		return nil, err
@@ -364,7 +363,7 @@ func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params l
 	query.Set(AccessToken, token)
 
 	header := http.Header{}
-	header.Set(lib.HeaderContentType, lib.ContentJSON)
+	header.Set(internal.HeaderContentType, internal.ContentJSON)
 
 	b, err := oa.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
@@ -379,10 +378,10 @@ func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params l
 }
 
 // Upload 上传媒体资源
-func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData lib.Form, query url.Values) (gjson.Result, error) {
+func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData internal.Form, query url.Values) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	if query == nil {
@@ -392,7 +391,7 @@ func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, fileP
 
 	reqURL := oa.url(reqPath, query)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, oa.logger)
 
 	resp, err := oa.client.R().
@@ -402,27 +401,27 @@ func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, fileP
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+		return internal.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
 	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
 
 // UploadWithReader 上传媒体资源
-func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData lib.Form, query url.Values) (gjson.Result, error) {
+func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData internal.Form, query url.Values) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	if query == nil {
@@ -432,7 +431,7 @@ func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldN
 
 	reqURL := oa.url(reqPath, query)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, oa.logger)
 
 	resp, err := oa.client.R().
@@ -442,18 +441,18 @@ func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldN
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+		return internal.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
 	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -489,7 +488,7 @@ func (oa *OfficialAccount) DecodeEventMsg(encrypt string) ([]byte, error) {
 //
 //	根据配置的数据格式，输出 XML/JSON
 //	[参考](https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Message_encryption_and_decryption_instructions.html)
-func (oa *OfficialAccount) EncodeEventReply(msg value.V) (value.V, error) {
+func (oa *OfficialAccount) EncodeEventReply(msg V) (V, error) {
 	return EventReply(oa.appid, oa.srvCfg.token, oa.srvCfg.aeskey, msg)
 }
 
@@ -527,7 +526,7 @@ func NewOfficialAccount(appid, secret string, options ...OAOption) *OfficialAcco
 		appid:  appid,
 		secret: secret,
 		srvCfg: new(ServerConfig),
-		client: lib.NewClient(),
+		client: internal.NewClient(),
 	}
 	for _, f := range options {
 		f(oa)

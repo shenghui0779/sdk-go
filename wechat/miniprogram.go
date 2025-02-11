@@ -19,9 +19,8 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/value"
-	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/yiigo/sdk-go/internal"
+	"github.com/yiigo/sdk-go/internal/xcrypto"
 )
 
 // SafeMode 安全鉴权模式配置
@@ -72,10 +71,10 @@ func (mp *MiniProgram) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (mp *MiniProgram) do(ctx context.Context, method, path string, header http.Header, query url.Values, params lib.X) ([]byte, error) {
+func (mp *MiniProgram) do(ctx context.Context, method, path string, header http.Header, query url.Values, params internal.X) ([]byte, error) {
 	reqURL := mp.url(path, query)
 
-	log := lib.NewReqLog(method, reqURL)
+	log := internal.NewReqLog(method, reqURL)
 	defer log.Do(ctx, mp.logger)
 
 	var (
@@ -110,10 +109,10 @@ func (mp *MiniProgram) do(ctx context.Context, method, path string, header http.
 	return resp.Body(), nil
 }
 
-func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query url.Values, params lib.X) ([]byte, error) {
+func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query url.Values, params internal.X) ([]byte, error) {
 	reqURL := mp.url(path, query)
 
-	log := lib.NewReqLog(method, reqURL)
+	log := internal.NewReqLog(method, reqURL)
 	defer log.Do(ctx, mp.logger)
 
 	now := time.Now().Unix()
@@ -140,7 +139,7 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 	}
 
 	reqHeader := http.Header{}
-	reqHeader.Set(lib.HeaderContentType, lib.ContentJSON)
+	reqHeader.Set(internal.HeaderContentType, internal.ContentJSON)
 	reqHeader.Set(HeaderMPAppID, mp.appid)
 	reqHeader.Set(HeaderMPTimestamp, strconv.FormatInt(now, 10))
 	reqHeader.Set(HeaderMPSignature, sign)
@@ -178,16 +177,16 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 	return data, nil
 }
 
-func (mp *MiniProgram) encrypt(log *lib.ReqLog, path string, query url.Values, params lib.X, timestamp int64) (lib.X, error) {
+func (mp *MiniProgram) encrypt(log *internal.ReqLog, path string, query url.Values, params internal.X, timestamp int64) (internal.X, error) {
 	if len(mp.sfMode.aeskey) == 0 {
 		return nil, errors.New("aes-gcm key not found (forgotten configure?)")
 	}
 
 	if params == nil {
-		params = lib.X{}
+		params = internal.X{}
 	}
 
-	params["_n"] = base64.StdEncoding.EncodeToString(lib.NonceByte(16))
+	params["_n"] = base64.StdEncoding.EncodeToString(internal.NonceByte(16))
 	params["_appid"] = mp.appid
 	params["_timestamp"] = timestamp
 
@@ -211,7 +210,7 @@ func (mp *MiniProgram) encrypt(log *lib.ReqLog, path string, query url.Values, p
 		return nil, err
 	}
 
-	iv := lib.NonceByte(12)
+	iv := internal.NonceByte(12)
 	aad := fmt.Sprintf("%s|%s|%d|%s", mp.url(path, nil), mp.appid, timestamp, mp.sfMode.aesSN)
 
 	ct, err := xcrypto.AESEncryptGCM(key, iv, data, []byte(aad), nil)
@@ -220,7 +219,7 @@ func (mp *MiniProgram) encrypt(log *lib.ReqLog, path string, query url.Values, p
 		return nil, err
 	}
 
-	body := lib.X{
+	body := internal.X{
 		"iv":      base64.StdEncoding.EncodeToString(iv),
 		"data":    base64.StdEncoding.EncodeToString(ct.Data()),
 		"authtag": base64.StdEncoding.EncodeToString(ct.Tag()),
@@ -330,12 +329,12 @@ func (mp *MiniProgram) Code2Session(ctx context.Context, code string) (gjson.Res
 
 	b, err := mp.do(ctx, http.MethodGet, "/sns/jscode2session", nil, query, nil)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -350,12 +349,12 @@ func (mp *MiniProgram) AccessToken(ctx context.Context) (gjson.Result, error) {
 
 	b, err := mp.do(ctx, http.MethodGet, "/cgi-bin/token", nil, query, nil)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -366,7 +365,7 @@ func (mp *MiniProgram) AccessToken(ctx context.Context) (gjson.Result, error) {
 //	[普通模式] access_token有效期内重复调用该接口不会更新access_token，绝大部分场景下使用该模式；
 //	[强制刷新模式] 会导致上次获取的access_token失效，并返回新的access_token
 func (mp *MiniProgram) StableAccessToken(ctx context.Context, forceRefresh bool) (gjson.Result, error) {
-	params := lib.X{
+	params := internal.X{
 		"grant_type":    "client_credential",
 		"appid":         mp.appid,
 		"secret":        mp.secret,
@@ -374,16 +373,16 @@ func (mp *MiniProgram) StableAccessToken(ctx context.Context, forceRefresh bool)
 	}
 
 	header := http.Header{}
-	header.Set(lib.HeaderContentType, lib.ContentJSON)
+	header.Set(internal.HeaderContentType, internal.ContentJSON)
 
 	b, err := mp.do(ctx, http.MethodPost, "/cgi-bin/stable_token", header, nil, params)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -457,7 +456,7 @@ func (mp *MiniProgram) getToken() (string, error) {
 func (mp *MiniProgram) GetJSON(ctx context.Context, path string, query url.Values) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	if query == nil {
 		query = url.Values{}
@@ -466,12 +465,12 @@ func (mp *MiniProgram) GetJSON(ctx context.Context, path string, query url.Value
 
 	b, err := mp.do(ctx, http.MethodGet, path, nil, query, nil)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -500,31 +499,31 @@ func (mp *MiniProgram) GetBuffer(ctx context.Context, path string, query url.Val
 }
 
 // PostJSON POST请求JSON数据
-func (mp *MiniProgram) PostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
+func (mp *MiniProgram) PostJSON(ctx context.Context, path string, params internal.X) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
 	header := http.Header{}
-	header.Set(lib.HeaderContentType, lib.ContentJSON)
+	header.Set(internal.HeaderContentType, internal.ContentJSON)
 
 	b, err := mp.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
 
 // PostBuffer POST请求获取buffer (如：获取二维码)
-func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params lib.X) ([]byte, error) {
+func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params internal.X) ([]byte, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return nil, err
@@ -533,7 +532,7 @@ func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params lib.X
 	query.Set(AccessToken, token)
 
 	header := http.Header{}
-	header.Set(lib.HeaderContentType, lib.ContentJSON)
+	header.Set(internal.HeaderContentType, internal.ContentJSON)
 
 	b, err := mp.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
@@ -551,22 +550,22 @@ func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params lib.X
 //
 //	[安全鉴权模式](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html)
 //	[支持的API](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc)
-func (mp *MiniProgram) SafePostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
+func (mp *MiniProgram) SafePostJSON(ctx context.Context, path string, params internal.X) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
 	b, err := mp.doSafe(ctx, http.MethodPost, path, query, params)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -575,7 +574,7 @@ func (mp *MiniProgram) SafePostJSON(ctx context.Context, path string, params lib
 //
 //	[安全鉴权模式](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html)
 //	[支持的API](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc)
-func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params lib.X) ([]byte, error) {
+func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params internal.X) ([]byte, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return nil, err
@@ -596,10 +595,10 @@ func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params l
 }
 
 // Upload 上传媒体资源
-func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData lib.Form, query url.Values) (gjson.Result, error) {
+func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData internal.Form, query url.Values) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	if query == nil {
@@ -609,7 +608,7 @@ func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath 
 
 	reqURL := mp.url(reqPath, query)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, mp.logger)
 
 	resp, err := mp.client.R().
@@ -619,27 +618,27 @@ func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath 
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+		return internal.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
 	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
 
 // UploadWithReader 上传媒体资源
-func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData lib.Form, query url.Values) (gjson.Result, error) {
+func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData internal.Form, query url.Values) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	if query == nil {
@@ -649,7 +648,7 @@ func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName,
 
 	reqURL := mp.url(reqPath, query)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, mp.logger)
 
 	resp, err := mp.client.R().
@@ -659,18 +658,18 @@ func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName,
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+		return internal.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
 	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -725,7 +724,7 @@ func (mp *MiniProgram) DecodeEventMsg(encrypt string) ([]byte, error) {
 //
 //	根据配置的数据格式，输出 XML/JSON
 //	[参考](https://developers.weixin.qq.com/miniprogram/dev/framework/server-ability/message-push.html)
-func (mp *MiniProgram) EncodeEventReply(msg value.V) (value.V, error) {
+func (mp *MiniProgram) EncodeEventReply(msg V) (V, error) {
 	return EventReply(mp.appid, mp.srvCfg.token, mp.srvCfg.aeskey, msg)
 }
 
@@ -786,7 +785,7 @@ func NewMiniProgram(appid, secret string, options ...MPOption) *MiniProgram {
 		appid:  appid,
 		secret: secret,
 		srvCfg: new(ServerConfig),
-		client: lib.NewClient(),
+		client: internal.NewClient(),
 	}
 	for _, f := range options {
 		f(mp)

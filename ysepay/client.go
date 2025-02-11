@@ -15,9 +15,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/tidwall/gjson"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/value"
-	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/yiigo/sdk-go/internal"
+	"github.com/yiigo/sdk-go/internal/value"
+	"github.com/yiigo/sdk-go/internal/xcrypto"
 )
 
 // Client 银盛支付客户端
@@ -78,45 +78,45 @@ func (c *Client) Decrypt(cipher string) (string, error) {
 }
 
 // PostForm 发送POST表单请求
-func (c *Client) PostForm(ctx context.Context, api, serviceNO string, bizData value.V) (gjson.Result, error) {
+func (c *Client) PostForm(ctx context.Context, api, serviceNO string, bizData V) (gjson.Result, error) {
 	reqURL := c.url(api)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
 
 	form, err := c.reqForm(uuid.NewString(), serviceNO, bizData)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetReqBody(form)
 
 	resp, err := c.client.R().
 		SetContext(ctx).
-		SetHeader(lib.HeaderContentType, lib.ContentForm).
+		SetHeader(internal.HeaderContentType, internal.ContentForm).
 		SetBody(form).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+		return internal.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
 	return c.verifyResp(resp.Body())
 }
 
 // reqForm 生成请求表单
-func (c *Client) reqForm(reqID, serviceNO string, bizData value.V) (string, error) {
+func (c *Client) reqForm(reqID, serviceNO string, bizData V) (string, error) {
 	if c.prvKey == nil {
 		return "", errors.New("private key is nil (forgotten configure?)")
 	}
 
-	v := value.V{}
+	v := V{}
 
 	v.Set("requestId", reqID)
 	v.Set("srcMerchantNo", c.mchNO)
@@ -145,17 +145,17 @@ func (c *Client) reqForm(reqID, serviceNO string, bizData value.V) (string, erro
 
 func (c *Client) verifyResp(body []byte) (gjson.Result, error) {
 	if c.pubKey == nil {
-		return lib.Fail(errors.New("public key is nil (forgotten configure?)"))
+		return internal.Fail(errors.New("public key is nil (forgotten configure?)"))
 	}
 
 	ret := gjson.ParseBytes(body)
 
 	sign, err := base64.StdEncoding.DecodeString(ret.Get("sign").String())
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
-	v := value.V{}
+	v := V{}
 
 	v.Set("requestId", ret.Get("requestId").String())
 	v.Set("code", ret.Get("code").String())
@@ -164,13 +164,13 @@ func (c *Client) verifyResp(body []byte) (gjson.Result, error) {
 
 	err = c.pubKey.Verify(crypto.SHA1, []byte(v.Encode("=", "&", value.WithEmptyMode(value.EmptyIgnore))), sign)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	if code := ret.Get("code").String(); code != SysOK {
 		if code == SysAccepting {
-			return lib.Fail(ErrSysAccepting)
+			return internal.Fail(ErrSysAccepting)
 		}
-		return lib.Fail(fmt.Errorf("%s | %s", code, ret.Get("msg").String()))
+		return internal.Fail(fmt.Errorf("%s | %s", code, ret.Get("msg").String()))
 	}
 	return ret.Get("bizResponseJson"), nil
 }
@@ -178,15 +178,15 @@ func (c *Client) verifyResp(body []byte) (gjson.Result, error) {
 // VerifyNotify 解析并验证异步回调通知，返回BizJSON数据
 func (c *Client) VerifyNotify(form url.Values) (gjson.Result, error) {
 	if c.pubKey == nil {
-		return lib.Fail(errors.New("public key is nil (forgotten configure?)"))
+		return internal.Fail(errors.New("public key is nil (forgotten configure?)"))
 	}
 
 	sign, err := base64.StdEncoding.DecodeString(form.Get("sign"))
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
-	v := value.V{}
+	v := V{}
 
 	v.Set("requestId", form.Get("requestId"))
 	v.Set("version", form.Get("version"))
@@ -197,7 +197,7 @@ func (c *Client) VerifyNotify(form url.Values) (gjson.Result, error) {
 
 	err = c.pubKey.Verify(crypto.SHA1, []byte(v.Encode("=", "&", value.WithEmptyMode(value.EmptyIgnore))), sign)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	return gjson.Parse(form.Get("bizResponseJson")), nil
 }
@@ -239,7 +239,7 @@ func NewClient(mchNO, desKey string, options ...Option) *Client {
 		host:   "https://eqt.ysepay.com",
 		mchNO:  mchNO,
 		desKey: desKey,
-		client: lib.NewClient(),
+		client: internal.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

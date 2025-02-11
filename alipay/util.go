@@ -3,9 +3,12 @@ package alipay
 import (
 	"strings"
 
-	"github.com/shenghui0779/sdk-go/lib/xcrypto"
 	"github.com/tidwall/gjson"
+	"github.com/yiigo/sdk-go/internal/value"
+	"github.com/yiigo/sdk-go/internal/xcrypto"
 )
+
+type V = value.V
 
 const CodeOK = "10000" // API请求成功
 

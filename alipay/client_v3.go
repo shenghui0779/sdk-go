@@ -18,8 +18,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/tidwall/gjson"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/yiigo/sdk-go/internal"
+	"github.com/yiigo/sdk-go/internal/xcrypto"
 )
 
 // ClientV3 支付宝V3客户端(仅支持v3版本的接口可用)
@@ -52,10 +52,10 @@ func (c *ClientV3) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values, params lib.X, header http.Header) (*APIResult, error) {
+func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values, params internal.X, header http.Header) (*APIResult, error) {
 	reqURL := c.url(path, query)
 
-	log := lib.NewReqLog(method, reqURL)
+	log := internal.NewReqLog(method, reqURL)
 	defer log.Do(ctx, c.logger)
 
 	var (
@@ -88,7 +88,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 		log.SetError(err)
 		return nil, err
 	}
-	header.Set(lib.HeaderAuthorization, authStr)
+	header.Set(internal.HeaderAuthorization, authStr)
 	log.SetReqHeader(header)
 
 	resp, err := c.client.R().SetContext(ctx).SetHeaderMultiValues(header).SetBody(body).Execute(method, reqURL)
@@ -126,7 +126,7 @@ func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values
 // GetJSON GET请求JSON数据
 func (c *ClientV3) GetJSON(ctx context.Context, path string, query url.Values, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
-	header.Set(lib.HeaderAccept, lib.ContentJSON)
+	header.Set(internal.HeaderAccept, internal.ContentJSON)
 	header.Set(HeaderRequestID, uuid.NewString())
 	for _, f := range options {
 		f(header)
@@ -135,11 +135,11 @@ func (c *ClientV3) GetJSON(ctx context.Context, path string, query url.Values, o
 }
 
 // PostJSON POST请求JSON数据
-func (c *ClientV3) PostJSON(ctx context.Context, path string, params lib.X, options ...V3HeaderOption) (*APIResult, error) {
+func (c *ClientV3) PostJSON(ctx context.Context, path string, params internal.X, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
-	header.Set(lib.HeaderAccept, lib.ContentJSON)
+	header.Set(internal.HeaderAccept, internal.ContentJSON)
 	header.Set(HeaderRequestID, uuid.NewString())
-	header.Set(lib.HeaderContentType, lib.ContentJSON)
+	header.Set(internal.HeaderContentType, internal.ContentJSON)
 	for _, f := range options {
 		f(header)
 	}
@@ -147,11 +147,11 @@ func (c *ClientV3) PostJSON(ctx context.Context, path string, params lib.X, opti
 }
 
 // PostJSON POST加密请求
-func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params lib.X, options ...V3HeaderOption) (*APIResult, error) {
+func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params internal.X, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
 	header.Set(HeaderRequestID, uuid.NewString())
 	header.Set(HeaderEncryptType, "AES")
-	header.Set(lib.HeaderContentType, lib.ContentText)
+	header.Set(internal.HeaderContentType, internal.ContentText)
 	for _, f := range options {
 		f(header)
 	}
@@ -165,7 +165,7 @@ func (c *ClientV3) Upload(ctx context.Context, reqPath, fieldName, filePath, biz
 	reqID := uuid.NewString()
 	reqURL := c.url(reqPath, nil)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
 
 	log.Set("biz_data", bizData)
@@ -180,14 +180,14 @@ func (c *ClientV3) Upload(ctx context.Context, reqPath, fieldName, filePath, biz
 		log.SetError(err)
 		return nil, err
 	}
-	reqHeader.Set(lib.HeaderAuthorization, authStr)
+	reqHeader.Set(internal.HeaderAuthorization, authStr)
 	log.SetReqHeader(reqHeader)
 
 	resp, err := c.client.R().
 		SetContext(ctx).
 		SetHeaderMultiValues(reqHeader).
 		SetFile(fieldName, filePath).
-		SetMultipartField("data", "", lib.ContentJSON, strings.NewReader(bizData)).
+		SetMultipartField("data", "", internal.ContentJSON, strings.NewReader(bizData)).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
@@ -217,7 +217,7 @@ func (c *ClientV3) UploadWithReader(ctx context.Context, reqPath, fieldName, fil
 	reqID := uuid.NewString()
 	reqURL := c.url(reqPath, nil)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
 
 	log.Set("biz_data", bizData)
@@ -232,14 +232,14 @@ func (c *ClientV3) UploadWithReader(ctx context.Context, reqPath, fieldName, fil
 		log.SetError(err)
 		return nil, err
 	}
-	reqHeader.Set(lib.HeaderAuthorization, authStr)
+	reqHeader.Set(internal.HeaderAuthorization, authStr)
 	log.SetReqHeader(reqHeader)
 
 	resp, err := c.client.R().
 		SetContext(ctx).
 		SetHeaderMultiValues(reqHeader).
 		SetMultipartField(fieldName, fileName, "", reader).
-		SetMultipartField("data", "", lib.ContentJSON, strings.NewReader(bizData)).
+		SetMultipartField("data", "", internal.ContentJSON, strings.NewReader(bizData)).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
@@ -268,7 +268,7 @@ func (c *ClientV3) Authorization(method, path string, query url.Values, body []b
 		return "", errors.New("private key not found (forgotten configure?)")
 	}
 
-	authStr := fmt.Sprintf("app_id=%s,nonce=%s,timestamp=%d", c.appid, lib.Nonce(32), time.Now().UnixMilli())
+	authStr := fmt.Sprintf("app_id=%s,nonce=%s,timestamp=%d", c.appid, internal.Nonce(32), time.Now().UnixMilli())
 
 	var builder strings.Builder
 
@@ -390,7 +390,7 @@ func NewClientV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		host:   "https://openapi.alipay.com",
 		appid:  appid,
 		aesKey: aesKey,
-		client: lib.NewClient(),
+		client: internal.NewClient(),
 	}
 	for _, f := range options {
 		f(c)
@@ -404,7 +404,7 @@ func NewSandboxV3(appid, aesKey string, options ...V3Option) *ClientV3 {
 		host:   "http://openapi.sandbox.dl.alipaydev.com",
 		appid:  appid,
 		aesKey: aesKey,
-		client: lib.NewClient(),
+		client: internal.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

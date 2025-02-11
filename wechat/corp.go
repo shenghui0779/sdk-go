@@ -15,8 +15,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/yiigo/sdk-go/internal"
 )
 
 // Corp 企业微信(企业内部开发)
@@ -56,10 +55,10 @@ func (c *Corp) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (c *Corp) do(ctx context.Context, method, path string, header http.Header, query url.Values, params lib.X) ([]byte, error) {
+func (c *Corp) do(ctx context.Context, method, path string, header http.Header, query url.Values, params internal.X) ([]byte, error) {
 	reqURL := c.url(path, query)
 
-	log := lib.NewReqLog(method, reqURL)
+	log := internal.NewReqLog(method, reqURL)
 	defer log.Do(ctx, c.logger)
 
 	var (
@@ -119,12 +118,12 @@ func (c *Corp) AccessToken(ctx context.Context) (gjson.Result, error) {
 
 	b, err := c.do(ctx, http.MethodGet, "/cgi-bin/gettoken", nil, query, nil)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -172,7 +171,7 @@ func (c *Corp) getToken() (string, error) {
 func (c *Corp) GetJSON(ctx context.Context, path string, query url.Values) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	if query == nil {
 		query = url.Values{}
@@ -181,36 +180,36 @@ func (c *Corp) GetJSON(ctx context.Context, path string, query url.Values) (gjso
 
 	b, err := c.do(ctx, http.MethodGet, path, nil, query, nil)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
 
 // PostJSON POST请求JSON数据
-func (c *Corp) PostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
+func (c *Corp) PostJSON(ctx context.Context, path string, params internal.X) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	query := url.Values{}
 	query.Set(AccessToken, token)
 
 	header := http.Header{}
-	header.Set(lib.HeaderContentType, lib.ContentJSON)
+	header.Set(internal.HeaderContentType, internal.ContentJSON)
 
 	b, err := c.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	ret := gjson.ParseBytes(b)
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -239,7 +238,7 @@ func (c *Corp) GetBuffer(ctx context.Context, path string, query url.Values) ([]
 }
 
 // PostBuffer POST请求获取buffer (如：获取二维码)
-func (c *Corp) PostBuffer(ctx context.Context, path string, params lib.X) ([]byte, error) {
+func (c *Corp) PostBuffer(ctx context.Context, path string, params internal.X) ([]byte, error) {
 	token, err := c.getToken()
 	if err != nil {
 		return nil, err
@@ -248,7 +247,7 @@ func (c *Corp) PostBuffer(ctx context.Context, path string, params lib.X) ([]byt
 	query.Set(AccessToken, token)
 
 	header := http.Header{}
-	header.Set(lib.HeaderContentType, lib.ContentJSON)
+	header.Set(internal.HeaderContentType, internal.ContentJSON)
 
 	b, err := c.do(ctx, http.MethodPost, path, header, query, params)
 	if err != nil {
@@ -263,10 +262,10 @@ func (c *Corp) PostBuffer(ctx context.Context, path string, params lib.X) ([]byt
 }
 
 // Upload 上传媒体资源
-func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData lib.Form, query url.Values) (gjson.Result, error) {
+func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData internal.Form, query url.Values) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	if query == nil {
@@ -276,7 +275,7 @@ func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, 
 
 	reqURL := c.url(reqPath, query)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
 
 	resp, err := c.client.R().
@@ -286,27 +285,27 @@ func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, 
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+		return internal.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
 	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
 
 // UploadWithReader 上传媒体资源
-func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData lib.Form, query url.Values) (gjson.Result, error) {
+func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData internal.Form, query url.Values) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 
 	if query == nil {
@@ -316,7 +315,7 @@ func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileNam
 
 	reqURL := c.url(reqPath, query)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
 
 	resp, err := c.client.R().
@@ -326,18 +325,18 @@ func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileNam
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+		return internal.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
 	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("errcode").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("errmsg").String()))
 	}
 	return ret, nil
 }
@@ -370,7 +369,7 @@ func (c *Corp) DecodeEventMsg(encrypt string) ([]byte, error) {
 // EncodeEventReply 事件回复加密
 //
 //	[参考](https://developer.work.weixin.qq.com/document/path/96211)
-func (c *Corp) EncodeEventReply(msg value.V) (value.V, error) {
+func (c *Corp) EncodeEventReply(msg V) (V, error) {
 	return EventReply(c.corpid, c.srvCfg.token, c.srvCfg.aeskey, msg)
 }
 
@@ -408,7 +407,7 @@ func NewCorp(corpid, secret string, options ...CorpOption) *Corp {
 		corpid: corpid,
 		secret: secret,
 		srvCfg: new(ServerConfig),
-		client: lib.NewClient(),
+		client: internal.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

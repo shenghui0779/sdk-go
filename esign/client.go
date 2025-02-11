@@ -21,7 +21,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
-	"github.com/shenghui0779/sdk-go/lib"
+	"github.com/yiigo/sdk-go/internal"
 )
 
 // Client E签宝客户端
@@ -49,15 +49,15 @@ func (c *Client) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (c *Client) do(ctx context.Context, method, path string, query url.Values, params lib.X) (gjson.Result, error) {
+func (c *Client) do(ctx context.Context, method, path string, query url.Values, params internal.X) (gjson.Result, error) {
 	reqURL := c.url(path, query)
 
-	log := lib.NewReqLog(method, reqURL)
+	log := internal.NewReqLog(method, reqURL)
 	defer log.Do(ctx, c.logger)
 
 	header := http.Header{}
 
-	header.Set(lib.HeaderAccept, AcceptAll)
+	header.Set(internal.HeaderAccept, AcceptAll)
 	header.Set(HeaderTSignOpenAppID, c.appid)
 	header.Set(HeaderTSignOpenAuthMode, AuthModeSign)
 	header.Set(HeaderTSignOpenCaTimestamp, strconv.FormatInt(time.Now().UnixMilli(), 10))
@@ -76,13 +76,13 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 		body, err = json.Marshal(params)
 		if err != nil {
 			log.SetError(err)
-			return lib.Fail(err)
+			return internal.Fail(err)
 		}
 		log.SetReqBody(string(body))
 
 		contentMD5 := ContentMD5(body)
 
-		header.Set(lib.HeaderContentType, "application/json; charset=UTF-8")
+		header.Set(internal.HeaderContentType, "application/json; charset=UTF-8")
 		header.Set(HeaderContentMD5, contentMD5)
 
 		options = append(options, WithSignContMD5(contentMD5), WithSignContType("application/json; charset=UTF-8"))
@@ -99,24 +99,24 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 		Execute(method, reqURL)
 	if err != nil {
 		log.SetError(err)
-		return lib.Fail(err)
+		return internal.Fail(err)
 	}
 	log.SetRespHeader(resp.Header())
 	log.SetStatusCode(resp.StatusCode())
 	log.SetRespBody(string(resp.Body()))
 	if !resp.IsSuccess() {
-		return lib.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
+		return internal.Fail(fmt.Errorf("HTTP Request Error, StatusCode = %d", resp.StatusCode()))
 	}
 
 	ret := gjson.ParseBytes(resp.Body())
 	if code := ret.Get("code").Int(); code != 0 {
-		return lib.Fail(fmt.Errorf("%d | %s", code, ret.Get("message")))
+		return internal.Fail(fmt.Errorf("%d | %s", code, ret.Get("message")))
 	}
 	return ret.Get("data"), nil
 }
 
 func (c *Client) doStream(ctx context.Context, uploadURL string, reader io.ReadSeeker) error {
-	log := lib.NewReqLog(http.MethodPut, uploadURL)
+	log := internal.NewReqLog(http.MethodPut, uploadURL)
 	defer log.Do(ctx, c.logger)
 
 	h := md5.New()
@@ -126,7 +126,7 @@ func (c *Client) doStream(ctx context.Context, uploadURL string, reader io.ReadS
 	}
 
 	header := http.Header{}
-	header.Set(lib.HeaderContentType, lib.ContentStream)
+	header.Set(internal.HeaderContentType, internal.ContentStream)
 	header.Set(HeaderContentMD5, base64.StdEncoding.EncodeToString(h.Sum(nil)))
 	log.SetReqHeader(header)
 
@@ -171,7 +171,7 @@ func (c *Client) GetJSON(ctx context.Context, path string, query url.Values) (gj
 }
 
 // PostJSON POST请求JSON数据
-func (c *Client) PostJSON(ctx context.Context, path string, params lib.X) (gjson.Result, error) {
+func (c *Client) PostJSON(ctx context.Context, path string, params internal.X) (gjson.Result, error) {
 	return c.do(ctx, http.MethodPost, path, nil, params)
 }
 
@@ -233,7 +233,7 @@ func NewClient(appid, secret string, options ...Option) *Client {
 		host:   "https://openapi.esign.cn",
 		appid:  appid,
 		secret: secret,
-		client: lib.NewClient(),
+		client: internal.NewClient(),
 	}
 	for _, f := range options {
 		f(c)
@@ -247,7 +247,7 @@ func NewSandbox(appid, secret string, options ...Option) *Client {
 		host:   "https://smlopenapi.esign.cn",
 		appid:  appid,
 		secret: secret,
-		client: lib.NewClient(),
+		client: internal.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

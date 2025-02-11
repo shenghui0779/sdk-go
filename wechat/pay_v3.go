@@ -18,9 +18,8 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/value"
-	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/yiigo/sdk-go/internal"
+	"github.com/yiigo/sdk-go/internal/xcrypto"
 )
 
 // PayV3 微信支付V3
@@ -82,7 +81,7 @@ func (p *PayV3) reloadCerts() error {
 
 	reqURL := p.url("/v3/certificates", nil)
 
-	log := lib.NewReqLog(http.MethodGet, reqURL)
+	log := internal.NewReqLog(http.MethodGet, reqURL)
 	defer log.Do(ctx, p.logger)
 
 	authStr, err := p.Authorization(http.MethodGet, "/v3/certificates", nil, "")
@@ -90,12 +89,12 @@ func (p *PayV3) reloadCerts() error {
 		log.SetError(err)
 		return err
 	}
-	log.Set(lib.HeaderAuthorization, authStr)
+	log.Set(internal.HeaderAuthorization, authStr)
 
 	resp, err := p.client.R().
 		SetContext(ctx).
-		SetHeader(lib.HeaderAccept, lib.ContentJSON).
-		SetHeader(lib.HeaderAuthorization, authStr).
+		SetHeader(internal.HeaderAccept, internal.ContentJSON).
+		SetHeader(internal.HeaderAuthorization, authStr).
 		Get(reqURL)
 	if err != nil {
 		log.SetError(err)
@@ -158,10 +157,10 @@ func (p *PayV3) reloadCerts() error {
 	return nil
 }
 
-func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, params lib.X) (*APIResult, error) {
+func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, params internal.X) (*APIResult, error) {
 	reqURL := p.url(path, query)
 
-	log := lib.NewReqLog(method, reqURL)
+	log := internal.NewReqLog(method, reqURL)
 	defer log.Do(ctx, p.logger)
 
 	var (
@@ -183,13 +182,13 @@ func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, p
 		log.SetError(err)
 		return nil, err
 	}
-	log.Set(lib.HeaderAuthorization, authStr)
+	log.Set(internal.HeaderAuthorization, authStr)
 
 	resp, err := p.client.R().
 		SetContext(ctx).
-		SetHeader(lib.HeaderAccept, lib.ContentJSON).
-		SetHeader(lib.HeaderAuthorization, authStr).
-		SetHeader(lib.HeaderContentType, lib.ContentJSON).
+		SetHeader(internal.HeaderAccept, internal.ContentJSON).
+		SetHeader(internal.HeaderAuthorization, authStr).
+		SetHeader(internal.HeaderContentType, internal.ContentJSON).
 		SetBody(body).
 		Execute(method, reqURL)
 	if err != nil {
@@ -239,7 +238,7 @@ func (p *PayV3) GetJSON(ctx context.Context, path string, query url.Values) (*AP
 }
 
 // PostJSON POST请求JSON数据
-func (p *PayV3) PostJSON(ctx context.Context, path string, params lib.X) (*APIResult, error) {
+func (p *PayV3) PostJSON(ctx context.Context, path string, params internal.X) (*APIResult, error) {
 	return p.do(ctx, http.MethodPost, path, nil, params)
 }
 
@@ -247,7 +246,7 @@ func (p *PayV3) PostJSON(ctx context.Context, path string, params lib.X) (*APIRe
 func (p *PayV3) Upload(ctx context.Context, reqPath, fieldName, filePath, metadata string, query url.Values) (*APIResult, error) {
 	reqURL := p.url(reqPath, nil)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, p.logger)
 
 	authStr, err := p.Authorization(http.MethodPost, reqPath, query, metadata)
@@ -255,13 +254,13 @@ func (p *PayV3) Upload(ctx context.Context, reqPath, fieldName, filePath, metada
 		log.SetError(err)
 		return nil, err
 	}
-	log.Set(lib.HeaderAuthorization, authStr)
+	log.Set(internal.HeaderAuthorization, authStr)
 
 	resp, err := p.client.R().
 		SetContext(ctx).
-		SetHeader(lib.HeaderAuthorization, authStr).
+		SetHeader(internal.HeaderAuthorization, authStr).
 		SetFile(fieldName, filePath).
-		SetMultipartField("meta", "", lib.ContentJSON, strings.NewReader(metadata)).
+		SetMultipartField("meta", "", internal.ContentJSON, strings.NewReader(metadata)).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
@@ -288,7 +287,7 @@ func (p *PayV3) Upload(ctx context.Context, reqPath, fieldName, filePath, metada
 func (p *PayV3) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, metadata string, query url.Values) (*APIResult, error) {
 	reqURL := p.url(reqPath, nil)
 
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, p.logger)
 
 	authStr, err := p.Authorization(http.MethodPost, reqPath, query, metadata)
@@ -296,13 +295,13 @@ func (p *PayV3) UploadWithReader(ctx context.Context, reqPath, fieldName, fileNa
 		log.SetError(err)
 		return nil, err
 	}
-	log.Set(lib.HeaderAuthorization, authStr)
+	log.Set(internal.HeaderAuthorization, authStr)
 
 	resp, err := p.client.R().
 		SetContext(ctx).
-		SetHeader(lib.HeaderAuthorization, authStr).
+		SetHeader(internal.HeaderAuthorization, authStr).
 		SetMultipartField(fieldName, fileName, "", reader).
-		SetMultipartField("meta", "", lib.ContentJSON, strings.NewReader(metadata)).
+		SetMultipartField("meta", "", internal.ContentJSON, strings.NewReader(metadata)).
 		Post(reqURL)
 	if err != nil {
 		log.SetError(err)
@@ -327,7 +326,7 @@ func (p *PayV3) UploadWithReader(ctx context.Context, reqPath, fieldName, fileNa
 
 // Download 下载资源 (需先获取download_url)
 func (p *PayV3) Download(ctx context.Context, downloadURL string, w io.Writer) error {
-	log := lib.NewReqLog(http.MethodGet, downloadURL)
+	log := internal.NewReqLog(http.MethodGet, downloadURL)
 	defer log.Do(ctx, p.logger)
 
 	// 获取 download_url
@@ -336,11 +335,11 @@ func (p *PayV3) Download(ctx context.Context, downloadURL string, w io.Writer) e
 		log.SetError(err)
 		return err
 	}
-	log.Set(lib.HeaderAuthorization, authStr)
+	log.Set(internal.HeaderAuthorization, authStr)
 
 	resp, err := p.client.R().
 		SetContext(ctx).
-		SetHeader(lib.HeaderAuthorization, authStr).
+		SetHeader(internal.HeaderAuthorization, authStr).
 		SetDoNotParseResponse(true).
 		Get(downloadURL)
 	if err != nil {
@@ -360,7 +359,7 @@ func (p *PayV3) Authorization(method, path string, query url.Values, body string
 		return "", errors.New("private key not found (forgotten configure?)")
 	}
 
-	nonce := lib.Nonce(32)
+	nonce := internal.Nonce(32)
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
 	var builder strings.Builder
@@ -417,11 +416,11 @@ func (p *PayV3) Verify(ctx context.Context, header http.Header, body []byte) err
 }
 
 // APPAPI 用于APP拉起支付
-func (p *PayV3) APPAPI(appid, prepayID string) (value.V, error) {
-	nonce := lib.Nonce(32)
+func (p *PayV3) APPAPI(appid, prepayID string) (V, error) {
+	nonce := internal.Nonce(32)
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
-	v := value.V{}
+	v := V{}
 
 	v.Set("appid", appid)
 	v.Set("partnerid", p.mchid)
@@ -452,11 +451,11 @@ func (p *PayV3) APPAPI(appid, prepayID string) (value.V, error) {
 }
 
 // JSAPI 用于JS拉起支付
-func (p *PayV3) JSAPI(appid, prepayID string) (value.V, error) {
-	nonce := lib.Nonce(32)
+func (p *PayV3) JSAPI(appid, prepayID string) (V, error) {
+	nonce := internal.Nonce(32)
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
-	v := value.V{}
+	v := V{}
 
 	v.Set("appId", appid)
 	v.Set("nonceStr", nonce)
@@ -516,7 +515,7 @@ func NewPayV3(mchid, apikey string, options ...PayV3Option) *PayV3 {
 		host:   "https://api.mch.weixin.qq.com",
 		mchid:  mchid,
 		apikey: apikey,
-		client: lib.NewClient(),
+		client: internal.NewClient(),
 	}
 	for _, f := range options {
 		f(pay)

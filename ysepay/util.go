@@ -1,6 +1,12 @@
 package ysepay
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/yiigo/sdk-go/internal/value"
+)
+
+type V = value.V
 
 // ErrSysAccepting 网关受理中
 var ErrSysAccepting = errors.New("SYS001 | 网关受理中")

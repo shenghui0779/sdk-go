@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/yiigo/sdk-go/internal/value"
 )
 
 type signfields struct {
@@ -15,8 +15,8 @@ type signfields struct {
 	contMD5  string
 	contType string
 	date     string
-	headers  value.V
-	params   value.V
+	headers  V
+	params   V
 }
 
 // SignOption 签名选项
@@ -99,8 +99,8 @@ func (s *Signer) String() string {
 func NewSigner(method, path string, options ...SignOption) *Signer {
 	fields := &signfields{
 		accept:  "*/*",
-		headers: make(value.V),
-		params:  make(value.V),
+		headers: make(V),
+		params:  make(V),
 	}
 
 	for _, f := range options {

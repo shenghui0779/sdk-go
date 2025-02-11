@@ -6,11 +6,13 @@ import (
 	"io"
 	"strings"
 
-	"github.com/shenghui0779/sdk-go/lib/value"
+	"github.com/yiigo/sdk-go/internal/value"
 )
 
+type V = value.V
+
 // ValueToXML value to xml
-func ValueToXML(vals value.V) (string, error) {
+func ValueToXML(vals V) (string, error) {
 	var builder strings.Builder
 
 	builder.WriteString("<xml>")
@@ -27,8 +29,8 @@ func ValueToXML(vals value.V) (string, error) {
 }
 
 // XMLToValue xml to value
-func XMLToValue(b []byte) (value.V, error) {
-	m := make(value.V)
+func XMLToValue(b []byte) (V, error) {
+	m := make(V)
 
 	xmlReader := bytes.NewReader(b)
 

@@ -5,12 +5,12 @@ import (
 	"fmt"
 )
 
-func (c *client) QueryTransaction(ctx context.Context, hash string) (string, error) {
-	return c.chainCall(ctx, "QUERYTRANSACTION", WithParam("hash", hash))
+func (c *client) QueryTransaction(ctx context.Context, xhash string) (string, error) {
+	return c.chainCall(ctx, "QUERYTRANSACTION", WithParam("xhash", xhash))
 }
 
-func (c *client) QueryReceipt(ctx context.Context, hash string) (string, error) {
-	return c.chainCall(ctx, "QUERYRECEIPT", WithParam("hash", hash))
+func (c *client) QueryReceipt(ctx context.Context, xhash string) (string, error) {
+	return c.chainCall(ctx, "QUERYRECEIPT", WithParam("xhash", xhash))
 }
 
 func (c *client) QueryBlockHeader(ctx context.Context, blockNumber int64) (string, error) {

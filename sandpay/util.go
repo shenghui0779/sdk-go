@@ -7,17 +7,19 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/value"
-	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/yiigo/sdk-go/internal"
+	"github.com/yiigo/sdk-go/internal/value"
+	"github.com/yiigo/sdk-go/internal/xcrypto"
 )
+
+type V = value.V
 
 const OK = "000000"
 
 // Form 数据表单
 type Form struct {
-	Head value.V `json:"Head"`
-	Body value.V `json:"body"`
+	Head V `json:"Head"`
+	Body V `json:"body"`
 }
 
 // URLEncode 数据表单格式化为POST表单
@@ -28,7 +30,7 @@ func (f *Form) URLEncode(mid string, key *xcrypto.PrivateKey) (string, error) {
 
 	f.Head["mid"] = mid
 
-	b, err := lib.MarshalNoEscapeHTML(f)
+	b, err := internal.MarshalNoEscapeHTML(f)
 	if err != nil {
 		return "", err
 	}
@@ -78,9 +80,9 @@ func WithChannelType(v string) HeadOption {
 }
 
 // NewReqForm 生成请求数据表单
-func NewReqForm(method, productID string, body value.V, options ...HeadOption) *Form {
+func NewReqForm(method, productID string, body V, options ...HeadOption) *Form {
 	form := &Form{
-		Head: value.V{
+		Head: V{
 			"version":     "1.0",
 			"method":      method,
 			"productId":   productID,

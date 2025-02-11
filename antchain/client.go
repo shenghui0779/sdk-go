@@ -14,8 +14,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/tidwall/gjson"
 
-	"github.com/shenghui0779/sdk-go/lib"
-	"github.com/shenghui0779/sdk-go/lib/xcrypto"
+	"github.com/yiigo/sdk-go/internal"
+	"github.com/yiigo/sdk-go/internal/xcrypto"
 )
 
 // Config 客户端配置
@@ -43,10 +43,10 @@ type Client interface {
 	AsyncCallSolidity(ctx context.Context, contractName, methodSign, inputParams, outTypes string, gas int) (string, error)
 
 	// QueryTransaction 查询交易
-	QueryTransaction(ctx context.Context, hash string) (string, error)
+	QueryTransaction(ctx context.Context, xhash string) (string, error)
 
 	// QueryReceipt 查询交易回执
-	QueryReceipt(ctx context.Context, hash string) (string, error)
+	QueryReceipt(ctx context.Context, xhash string) (string, error)
 
 	// QueryBlockHeader 查询块头
 	QueryBlockHeader(ctx context.Context, blockNumber int64) (string, error)
@@ -62,10 +62,10 @@ type Client interface {
 }
 
 // ChainCallOption 链调用选项
-type ChainCallOption func(params lib.X)
+type ChainCallOption func(params internal.X)
 
 func WithParam(key string, value any) ChainCallOption {
-	return func(params lib.X) {
+	return func(params internal.X) {
 		params[key] = value
 	}
 }
@@ -85,7 +85,7 @@ func (c *client) shakehand(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	params := lib.X{
+	params := internal.X{
 		"accessId": c.config.AccessID,
 		"time":     timeStr,
 		"secret":   hex.EncodeToString(sign),
@@ -99,7 +99,7 @@ func (c *client) chainCall(ctx context.Context, method string, options ...ChainC
 		return "", err
 	}
 
-	params := lib.X{}
+	params := internal.X{}
 	for _, f := range options {
 		f(params)
 	}
@@ -117,7 +117,7 @@ func (c *client) chainCallForBiz(ctx context.Context, method string, options ...
 		return "", err
 	}
 
-	params := lib.X{}
+	params := internal.X{}
 	for _, f := range options {
 		f(params)
 	}
@@ -133,8 +133,8 @@ func (c *client) chainCallForBiz(ctx context.Context, method string, options ...
 	return c.do(ctx, c.endpoint+CHAIN_CALL_FOR_BIZ, params)
 }
 
-func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, error) {
-	log := lib.NewReqLog(http.MethodPost, reqURL)
+func (c *client) do(ctx context.Context, reqURL string, params internal.X) (string, error) {
+	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
 
 	body, err := json.Marshal(params)
@@ -146,7 +146,7 @@ func (c *client) do(ctx context.Context, reqURL string, params lib.X) (string, e
 
 	resp, err := c.httpCli.R().
 		SetContext(ctx).
-		SetHeader(lib.HeaderContentType, lib.ContentJSON).
+		SetHeader(internal.HeaderContentType, internal.ContentJSON).
 		SetBody(body).
 		Post(reqURL)
 	if err != nil {
@@ -189,7 +189,7 @@ func NewClient(cfg *Config, options ...Option) Client {
 	c := &client{
 		endpoint: "https://rest.baas.alipay.com",
 		config:   cfg,
-		httpCli:  lib.NewClient(),
+		httpCli:  internal.NewClient(),
 	}
 	for _, f := range options {
 		f(c)

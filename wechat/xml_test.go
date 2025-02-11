@@ -4,12 +4,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/shenghui0779/sdk-go/lib/value"
 )
 
 func TestXML(t *testing.T) {
-	m := value.V{
+	m := V{
 		"appid":     "wx2421b1c4370ec43b",
 		"partnerid": "10000100",
 		"prepayid":  "WX1217752501201407033233368018",
