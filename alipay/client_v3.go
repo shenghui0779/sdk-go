@@ -52,7 +52,7 @@ func (c *ClientV3) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values, params internal.X, header http.Header) (*APIResult, error) {
+func (c *ClientV3) do(ctx context.Context, method, path string, query url.Values, params X, header http.Header) (*APIResult, error) {
 	reqURL := c.url(path, query)
 
 	log := internal.NewReqLog(method, reqURL)
@@ -135,7 +135,7 @@ func (c *ClientV3) GetJSON(ctx context.Context, path string, query url.Values, o
 }
 
 // PostJSON POST请求JSON数据
-func (c *ClientV3) PostJSON(ctx context.Context, path string, params internal.X, options ...V3HeaderOption) (*APIResult, error) {
+func (c *ClientV3) PostJSON(ctx context.Context, path string, params X, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
 	header.Set(internal.HeaderAccept, internal.ContentJSON)
 	header.Set(HeaderRequestID, uuid.NewString())
@@ -147,7 +147,7 @@ func (c *ClientV3) PostJSON(ctx context.Context, path string, params internal.X,
 }
 
 // PostJSON POST加密请求
-func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params internal.X, options ...V3HeaderOption) (*APIResult, error) {
+func (c *ClientV3) PostEncrypt(ctx context.Context, path string, params X, options ...V3HeaderOption) (*APIResult, error) {
 	header := http.Header{}
 	header.Set(HeaderRequestID, uuid.NewString())
 	header.Set(HeaderEncryptType, "AES")

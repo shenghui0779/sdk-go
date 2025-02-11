@@ -9,14 +9,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/yiigo/sdk-go/internal"
 	"github.com/yiigo/sdk-go/internal/value"
 )
 
 type Action struct {
 	method  string
 	params  V
-	bizData internal.X
+	bizData X
 	encrypt bool
 }
 
@@ -135,7 +134,7 @@ func WithKVParam(k, v string) ActionOption {
 }
 
 // WithBizContent 设置「biz_content」参数
-func WithBizContent(data internal.X) ActionOption {
+func WithBizContent(data X) ActionOption {
 	return func(a *Action) {
 		a.bizData = data
 	}

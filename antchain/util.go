@@ -7,6 +7,8 @@ import (
 	"math/big"
 )
 
+type X map[string]any
+
 const (
 	CHAIN_CALL_FOR_BIZ = "/api/contract/chainCallForBiz"
 	CHAIN_CALL         = "/api/contract/chainCall"

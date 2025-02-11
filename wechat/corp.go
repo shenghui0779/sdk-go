@@ -55,7 +55,7 @@ func (c *Corp) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (c *Corp) do(ctx context.Context, method, path string, header http.Header, query url.Values, params internal.X) ([]byte, error) {
+func (c *Corp) do(ctx context.Context, method, path string, header http.Header, query url.Values, params X) ([]byte, error) {
 	reqURL := c.url(path, query)
 
 	log := internal.NewReqLog(method, reqURL)
@@ -191,7 +191,7 @@ func (c *Corp) GetJSON(ctx context.Context, path string, query url.Values) (gjso
 }
 
 // PostJSON POST请求JSON数据
-func (c *Corp) PostJSON(ctx context.Context, path string, params internal.X) (gjson.Result, error) {
+func (c *Corp) PostJSON(ctx context.Context, path string, params X) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
 		return internal.Fail(err)
@@ -238,7 +238,7 @@ func (c *Corp) GetBuffer(ctx context.Context, path string, query url.Values) ([]
 }
 
 // PostBuffer POST请求获取buffer (如：获取二维码)
-func (c *Corp) PostBuffer(ctx context.Context, path string, params internal.X) ([]byte, error) {
+func (c *Corp) PostBuffer(ctx context.Context, path string, params X) ([]byte, error) {
 	token, err := c.getToken()
 	if err != nil {
 		return nil, err
@@ -262,7 +262,7 @@ func (c *Corp) PostBuffer(ctx context.Context, path string, params internal.X) (
 }
 
 // Upload 上传媒体资源
-func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData internal.Form, query url.Values) (gjson.Result, error) {
+func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData Form, query url.Values) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
 		return internal.Fail(err)
@@ -302,7 +302,7 @@ func (c *Corp) Upload(ctx context.Context, reqPath, fieldName, filePath string, 
 }
 
 // UploadWithReader 上传媒体资源
-func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData internal.Form, query url.Values) (gjson.Result, error) {
+func (c *Corp) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData Form, query url.Values) (gjson.Result, error) {
 	token, err := c.getToken()
 	if err != nil {
 		return internal.Fail(err)

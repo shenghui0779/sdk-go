@@ -157,7 +157,7 @@ func (p *PayV3) reloadCerts() error {
 	return nil
 }
 
-func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, params internal.X) (*APIResult, error) {
+func (p *PayV3) do(ctx context.Context, method, path string, query url.Values, params X) (*APIResult, error) {
 	reqURL := p.url(path, query)
 
 	log := internal.NewReqLog(method, reqURL)
@@ -238,7 +238,7 @@ func (p *PayV3) GetJSON(ctx context.Context, path string, query url.Values) (*AP
 }
 
 // PostJSON POST请求JSON数据
-func (p *PayV3) PostJSON(ctx context.Context, path string, params internal.X) (*APIResult, error) {
+func (p *PayV3) PostJSON(ctx context.Context, path string, params X) (*APIResult, error) {
 	return p.do(ctx, http.MethodPost, path, nil, params)
 }
 

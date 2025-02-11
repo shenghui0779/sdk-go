@@ -4,6 +4,10 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+type X map[string]any
+
+type Form map[string]string
+
 // APIResult API结果 (支付v3)
 type APIResult struct {
 	Code int // HTTP状态码

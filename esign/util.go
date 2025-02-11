@@ -11,6 +11,8 @@ import (
 
 type V = value.V
 
+type X map[string]any
+
 const (
 	HeaderContentMD5           = "Content-MD5"
 	HeaderTSignOpenAppID       = "X-Tsign-Open-App-Id"

@@ -49,7 +49,7 @@ func (c *Client) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (c *Client) do(ctx context.Context, method, path string, query url.Values, params internal.X) (gjson.Result, error) {
+func (c *Client) do(ctx context.Context, method, path string, query url.Values, params X) (gjson.Result, error) {
 	reqURL := c.url(path, query)
 
 	log := internal.NewReqLog(method, reqURL)
@@ -171,7 +171,7 @@ func (c *Client) GetJSON(ctx context.Context, path string, query url.Values) (gj
 }
 
 // PostJSON POST请求JSON数据
-func (c *Client) PostJSON(ctx context.Context, path string, params internal.X) (gjson.Result, error) {
+func (c *Client) PostJSON(ctx context.Context, path string, params X) (gjson.Result, error) {
 	return c.do(ctx, http.MethodPost, path, nil, params)
 }
 

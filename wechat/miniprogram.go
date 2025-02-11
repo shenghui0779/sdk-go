@@ -71,7 +71,7 @@ func (mp *MiniProgram) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (mp *MiniProgram) do(ctx context.Context, method, path string, header http.Header, query url.Values, params internal.X) ([]byte, error) {
+func (mp *MiniProgram) do(ctx context.Context, method, path string, header http.Header, query url.Values, params X) ([]byte, error) {
 	reqURL := mp.url(path, query)
 
 	log := internal.NewReqLog(method, reqURL)
@@ -109,7 +109,7 @@ func (mp *MiniProgram) do(ctx context.Context, method, path string, header http.
 	return resp.Body(), nil
 }
 
-func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query url.Values, params internal.X) ([]byte, error) {
+func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query url.Values, params X) ([]byte, error) {
 	reqURL := mp.url(path, query)
 
 	log := internal.NewReqLog(method, reqURL)
@@ -177,13 +177,13 @@ func (mp *MiniProgram) doSafe(ctx context.Context, method, path string, query ur
 	return data, nil
 }
 
-func (mp *MiniProgram) encrypt(log *internal.ReqLog, path string, query url.Values, params internal.X, timestamp int64) (internal.X, error) {
+func (mp *MiniProgram) encrypt(log *internal.ReqLog, path string, query url.Values, params X, timestamp int64) (X, error) {
 	if len(mp.sfMode.aeskey) == 0 {
 		return nil, errors.New("aes-gcm key not found (forgotten configure?)")
 	}
 
 	if params == nil {
-		params = internal.X{}
+		params = X{}
 	}
 
 	params["_n"] = base64.StdEncoding.EncodeToString(internal.NonceByte(16))
@@ -219,7 +219,7 @@ func (mp *MiniProgram) encrypt(log *internal.ReqLog, path string, query url.Valu
 		return nil, err
 	}
 
-	body := internal.X{
+	body := X{
 		"iv":      base64.StdEncoding.EncodeToString(iv),
 		"data":    base64.StdEncoding.EncodeToString(ct.Data()),
 		"authtag": base64.StdEncoding.EncodeToString(ct.Tag()),
@@ -365,7 +365,7 @@ func (mp *MiniProgram) AccessToken(ctx context.Context) (gjson.Result, error) {
 //	[普通模式] access_token有效期内重复调用该接口不会更新access_token，绝大部分场景下使用该模式；
 //	[强制刷新模式] 会导致上次获取的access_token失效，并返回新的access_token
 func (mp *MiniProgram) StableAccessToken(ctx context.Context, forceRefresh bool) (gjson.Result, error) {
-	params := internal.X{
+	params := X{
 		"grant_type":    "client_credential",
 		"appid":         mp.appid,
 		"secret":        mp.secret,
@@ -499,7 +499,7 @@ func (mp *MiniProgram) GetBuffer(ctx context.Context, path string, query url.Val
 }
 
 // PostJSON POST请求JSON数据
-func (mp *MiniProgram) PostJSON(ctx context.Context, path string, params internal.X) (gjson.Result, error) {
+func (mp *MiniProgram) PostJSON(ctx context.Context, path string, params X) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return internal.Fail(err)
@@ -523,7 +523,7 @@ func (mp *MiniProgram) PostJSON(ctx context.Context, path string, params interna
 }
 
 // PostBuffer POST请求获取buffer (如：获取二维码)
-func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params internal.X) ([]byte, error) {
+func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params X) ([]byte, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return nil, err
@@ -550,7 +550,7 @@ func (mp *MiniProgram) PostBuffer(ctx context.Context, path string, params inter
 //
 //	[安全鉴权模式](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html)
 //	[支持的API](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc)
-func (mp *MiniProgram) SafePostJSON(ctx context.Context, path string, params internal.X) (gjson.Result, error) {
+func (mp *MiniProgram) SafePostJSON(ctx context.Context, path string, params X) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return internal.Fail(err)
@@ -574,7 +574,7 @@ func (mp *MiniProgram) SafePostJSON(ctx context.Context, path string, params int
 //
 //	[安全鉴权模式](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/getting_started/api_signature.html)
 //	[支持的API](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc)
-func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params internal.X) ([]byte, error) {
+func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params X) ([]byte, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return nil, err
@@ -595,7 +595,7 @@ func (mp *MiniProgram) SafePostBuffer(ctx context.Context, path string, params i
 }
 
 // Upload 上传媒体资源
-func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData internal.Form, query url.Values) (gjson.Result, error) {
+func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData Form, query url.Values) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return internal.Fail(err)
@@ -635,7 +635,7 @@ func (mp *MiniProgram) Upload(ctx context.Context, reqPath, fieldName, filePath 
 }
 
 // UploadWithReader 上传媒体资源
-func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData internal.Form, query url.Values) (gjson.Result, error) {
+func (mp *MiniProgram) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData Form, query url.Values) (gjson.Result, error) {
 	token, err := mp.getToken()
 	if err != nil {
 		return internal.Fail(err)

@@ -10,6 +10,8 @@ import (
 
 type V = value.V
 
+type X map[string]any
+
 const CodeOK = "10000" // API请求成功
 
 const (

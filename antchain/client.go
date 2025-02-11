@@ -62,10 +62,10 @@ type Client interface {
 }
 
 // ChainCallOption 链调用选项
-type ChainCallOption func(params internal.X)
+type ChainCallOption func(params X)
 
 func WithParam(key string, value any) ChainCallOption {
-	return func(params internal.X) {
+	return func(params X) {
 		params[key] = value
 	}
 }
@@ -85,7 +85,7 @@ func (c *client) shakehand(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	params := internal.X{
+	params := X{
 		"accessId": c.config.AccessID,
 		"time":     timeStr,
 		"secret":   hex.EncodeToString(sign),
@@ -99,7 +99,7 @@ func (c *client) chainCall(ctx context.Context, method string, options ...ChainC
 		return "", err
 	}
 
-	params := internal.X{}
+	params := X{}
 	for _, f := range options {
 		f(params)
 	}
@@ -117,7 +117,7 @@ func (c *client) chainCallForBiz(ctx context.Context, method string, options ...
 		return "", err
 	}
 
-	params := internal.X{}
+	params := X{}
 	for _, f := range options {
 		f(params)
 	}
@@ -133,7 +133,7 @@ func (c *client) chainCallForBiz(ctx context.Context, method string, options ...
 	return c.do(ctx, c.endpoint+CHAIN_CALL_FOR_BIZ, params)
 }
 
-func (c *client) do(ctx context.Context, reqURL string, params internal.X) (string, error) {
+func (c *client) do(ctx context.Context, reqURL string, params X) (string, error) {
 	log := internal.NewReqLog(http.MethodPost, reqURL)
 	defer log.Do(ctx, c.logger)
 

@@ -62,7 +62,7 @@ func (oa *OfficialAccount) url(path string, query url.Values) string {
 	return builder.String()
 }
 
-func (oa *OfficialAccount) do(ctx context.Context, method, path string, header http.Header, query url.Values, params internal.X) ([]byte, error) {
+func (oa *OfficialAccount) do(ctx context.Context, method, path string, header http.Header, query url.Values, params X) ([]byte, error) {
 	reqURL := oa.url(path, query)
 
 	log := internal.NewReqLog(method, reqURL)
@@ -197,7 +197,7 @@ func (oa *OfficialAccount) AccessToken(ctx context.Context) (gjson.Result, error
 //	[普通模式] access_token 有效期内重复调用该接口不会更新 access_token，绝大部分场景下使用该模式；
 //	[强制刷新模式] 会导致上次获取的 access_token 失效，并返回新的 access_token
 func (oa *OfficialAccount) StableAccessToken(ctx context.Context, forceRefresh bool) (gjson.Result, error) {
-	params := internal.X{
+	params := X{
 		"grant_type":    "client_credential",
 		"appid":         oa.appid,
 		"secret":        oa.secret,
@@ -307,7 +307,7 @@ func (oa *OfficialAccount) GetJSON(ctx context.Context, path string, query url.V
 }
 
 // PostJSON POST请求JSON数据
-func (oa *OfficialAccount) PostJSON(ctx context.Context, path string, params internal.X) (gjson.Result, error) {
+func (oa *OfficialAccount) PostJSON(ctx context.Context, path string, params X) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
 		return internal.Fail(err)
@@ -354,7 +354,7 @@ func (oa *OfficialAccount) GetBuffer(ctx context.Context, path string, query url
 }
 
 // PostBuffer POST请求获取buffer (如：获取二维码)
-func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params internal.X) ([]byte, error) {
+func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params X) ([]byte, error) {
 	token, err := oa.getToken()
 	if err != nil {
 		return nil, err
@@ -378,7 +378,7 @@ func (oa *OfficialAccount) PostBuffer(ctx context.Context, path string, params i
 }
 
 // Upload 上传媒体资源
-func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData internal.Form, query url.Values) (gjson.Result, error) {
+func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, filePath string, formData Form, query url.Values) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
 		return internal.Fail(err)
@@ -418,7 +418,7 @@ func (oa *OfficialAccount) Upload(ctx context.Context, reqPath, fieldName, fileP
 }
 
 // UploadWithReader 上传媒体资源
-func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData internal.Form, query url.Values) (gjson.Result, error) {
+func (oa *OfficialAccount) UploadWithReader(ctx context.Context, reqPath, fieldName, fileName string, reader io.Reader, formData Form, query url.Values) (gjson.Result, error) {
 	token, err := oa.getToken()
 	if err != nil {
 		return internal.Fail(err)
