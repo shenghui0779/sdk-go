@@ -2,7 +2,10 @@ package wechat
 
 import (
 	"github.com/tidwall/gjson"
+	"github.com/yiigo/sdk-go/internal/value"
 )
+
+type V = value.V
 
 type X map[string]any
 

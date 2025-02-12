@@ -5,11 +5,7 @@ import (
 	"encoding/xml"
 	"io"
 	"strings"
-
-	"github.com/yiigo/sdk-go/internal/value"
 )
-
-type V = value.V
 
 // ValueToXML value to xml
 func ValueToXML(vals V) (string, error) {
